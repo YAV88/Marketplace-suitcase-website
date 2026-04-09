@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чемодан — Маркетплейс вещей в Сербии</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .item-card:hover .item-overlay { opacity: 1; }
+        .category-pill:hover { background-color: #ef4444; color: white; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
 
+    <!-- Navigation -->
+    <nav class="bg-white border-b sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-red-500 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-briefcase text-xl"></i>
+                </div>
+                <span class="text-2xl font-black text-gray-800 tracking-tight">ЧЕМОДАН</span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-medium text-gray-600">
+                <a href="#" class="hover:text-red-500">Купить</a>
+                <a href="#" class="hover:text-red-500">Срочно</a>
+                <a href="#" class="hover:text-red-500">Помощь</a>
+            </div>
+            <button class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full font-bold transition shadow-lg shadow-red-200">
+                + Подать объявление
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero / Categories -->
+    <section class="bg-white py-8 border-b">
+        <div class="container mx-auto px-4">
+            <h2 class="text-center text-xl font-bold text-gray-400 mb-6 uppercase tracking-widest">Что ищем сегодня?</h2>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="#" class="category-pill border-2 border-gray-200 px-6 py-2 rounded-full transition font-semibold text-gray-700">Мебель</a>
+                <a href="#" class="category-pill border-2 border-gray-200 px-6 py-2 rounded-full transition font-semibold text-gray-700">Техника</a>
+                <a href="#" class="category-pill border-2 border-gray-200 px-6 py-2 rounded-full transition font-semibold text-gray-700">Детское</a>
+                <a href="#" class="category-pill border-2 border-gray-200 px-6 py-2 rounded-full transition font-semibold text-gray-700">Растения</a>
+                <a href="#" class="category-pill border-2 border-gray-200 px-6 py-2 rounded-full transition font-semibold text-gray-700">Обогреватели</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Grid -->
+    <main class="container mx-auto px-4 py-10">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-black text-gray-800">Новые поступления <span class="text-red-500">в Нови-Саде</span></h3>
+            <div class="flex gap-2">
+                <button class="p-2 border rounded-md bg-white hover:bg-gray-50"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            
+            <!-- Item 1 (Sponsored/Premium) -->
+            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 relative group border-2 border-yellow-400">
+                <div class="absolute top-2 left-2 z-10 bg-yellow-400 text-xs font-bold px-2 py-1 rounded">СРОЧНО</div>
+                <div class="h-56 bg-gray-200 relative">
+                    <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80" alt="Стул" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg leading-tight">Стул IKEA Millberget</h4>
+                        <span class="text-red-500 font-black">4500 RSD</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">Состояние идеальное, пользовались 2 месяца. Самовывоз из центра.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400"><i class="fa-solid fa-clock"></i> 2 часа назад</span>
+                        <button class="text-blue-500 font-bold text-sm">Написать <i class="fa-brands fa-telegram"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 relative group">
+                <div class="h-56 bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80" alt="Планшет" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg leading-tight">iPad Air (2022) 64GB</h4>
+                        <span class="text-red-500 font-black">520 EUR</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">Полный комплект, чек есть. Куплен в Gigatron.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400"><i class="fa-solid fa-clock"></i> 5 часов назад</span>
+                        <button class="text-blue-500 font-bold text-sm">Написать <i class="fa-brands fa-telegram"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 relative group">
+                <div class="h-56 bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&w=500&q=80" alt="Растение" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg leading-tight">Монстера большая</h4>
+                        <span class="text-red-500 font-black">2000 RSD</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">Здоровая, с горшком. Не помещается в машину при переезде.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400"><i class="fa-solid fa-clock"></i> Вчера</span>
+                        <button class="text-blue-500 font-bold text-sm">Написать <i class="fa-brands fa-telegram"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 relative group">
+                <div class="h-56 bg-gray-200">
+                    <img src="https://images.unsplash.com/photo-1585333126541-64d03750a36a?auto=format&fit=crop&w=500&q=80" alt="Обогреватель" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg leading-tight">Конвектор Xiaomi</h4>
+                        <span class="text-red-500 font-black">6000 RSD</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">Умный дом, управление с телефона. Идеально для зимы.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400"><i class="fa-solid fa-clock"></i> 10 мин назад</span>
+                        <button class="text-blue-500 font-bold text-sm">Написать <i class="fa-brands fa-telegram"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CTA for Sellers -->
+        <div class="mt-16 bg-gray-900 rounded-3xl p-8 md:p-12 text-center text-white overflow-hidden relative">
+            <div class="relative z-10">
+                <h2 class="text-3xl md:text-4xl font-black mb-4">Уезжаете из Сербии?</h2>
+                <p class="text-gray-400 mb-8 max-w-xl mx-auto text-lg">Продайте всё разом! Создайте "виртуальный чемодан" со своими вещами и получите одну ссылку для всех чатов.</p>
+                <button class="bg-white text-gray-900 px-8 py-4 rounded-full font-black hover:bg-red-500 hover:text-white transition transform hover:scale-105">
+                    Создать Чемодан
+                </button>
+            </div>
+            <!-- Decorative icon background -->
+            <i class="fa-solid fa-plane absolute -bottom-10 -right-10 text-9xl text-white opacity-5 rotate-12"></i>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t py-10 mt-10">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>© 2024 Чемодан Маркет. Помогаем экспатам в Сербии с 2022 года.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
