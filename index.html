@@ -77,6 +77,21 @@
             20% { clip: rect(12px, 9999px, 30px, 0); }
             100% { clip: rect(67px, 9999px, 92px, 0); }
         }
+
+        /* Lang switch styles */
+        .lang-link {
+            transition: all 0.2s;
+            opacity: 0.4;
+            cursor: pointer;
+        }
+        .lang-link:hover {
+            opacity: 0.8;
+        }
+        .lang-link.active {
+            opacity: 1;
+            color: #ef4444;
+            font-weight: 800;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -84,28 +99,42 @@
     <!-- Navigation -->
     <nav class="bg-white border-b sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-4 group cursor-pointer">
-                <!-- Advanced Abstract Logo retained -->
-                <div class="custom-logo scale-90 md:scale-100">
-                    <div class="logo-shape shape-1"></div>
-                    <div class="logo-shape shape-2"></div>
-                    <div class="logo-shape shape-3"></div>
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-4 group cursor-pointer" onclick="window.location.reload()">
+                    <!-- Advanced Abstract Logo -->
+                    <div class="custom-logo scale-90 md:scale-100">
+                        <div class="logo-shape shape-1"></div>
+                        <div class="logo-shape shape-2"></div>
+                        <div class="logo-shape shape-3"></div>
+                    </div>
+                    
+                    <div class="flex flex-col leading-none">
+                        <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font glitch-effect italic">SVALKA</span>
+                    </div>
                 </div>
-                
-                <div class="flex flex-col leading-none">
-                    <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font glitch-effect italic">SVALKA</span>
-                    <span class="text-[9px] font-bold text-red-600 tracking-[0.3em] uppercase ml-1">Premium Second</span>
+
+                <!-- Language Selector -->
+                <div class="hidden sm:flex items-center gap-4 border-l pl-8 border-gray-100">
+                    <button onclick="changeLang('ru')" id="lang-ru" class="lang-link active flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest">
+                        <img src="https://flagcdn.com/w20/ru.png" width="16" alt="RU"> RU
+                    </button>
+                    <button onclick="changeLang('rs')" id="lang-rs" class="lang-link flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest">
+                        <img src="https://flagcdn.com/w20/rs.png" width="16" alt="RS"> SRB
+                    </button>
+                    <button onclick="changeLang('en')" id="lang-en" class="lang-link flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest">
+                        <img src="https://flagcdn.com/w20/gb.png" width="16" alt="EN"> EN
+                    </button>
                 </div>
             </div>
             
-            <div class="hidden md:flex space-x-6 font-bold text-gray-500 uppercase text-[10px] tracking-widest">
+            <div class="hidden lg:flex space-x-6 font-bold text-gray-500 uppercase text-[10px] tracking-widest">
                 <a href="#" class="hover:text-red-600 transition">Купить</a>
                 <a href="#" class="hover:text-red-600 transition">Срочно</a>
                 <a href="#" class="hover:text-red-600 transition">О нас</a>
             </div>
             
             <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-black transition shadow-lg shadow-red-100 uppercase text-[10px] tracking-widest">
-                + Продать вещь
+                + Пристроить добро
             </button>
         </div>
     </nav>
@@ -114,11 +143,14 @@
     <section class="bg-white py-6 border-b">
         <div class="container mx-auto px-4">
             <div class="flex flex-wrap justify-center gap-3">
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Вся мебель</a>
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Электроника</a>
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Для детей</a>
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Растения</a>
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Обогрев</a>
+                <button class="category-pill border-2 border-gray-900 bg-gray-900 text-white px-6 py-2 rounded-full transition font-bold text-sm">Всё подряд</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Мебель</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Электроника</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Одежда</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Для дома</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Детское</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Транспорт</button>
+                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Другое</button>
             </div>
         </div>
     </section>
@@ -138,8 +170,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Item 1 (Urgent) -->
+            <!-- Item Card 1 -->
             <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shadow-md uppercase tracking-widest">Срочно</div>
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
@@ -158,7 +189,7 @@
                 </div>
             </div>
 
-            <!-- Item 2 -->
+            <!-- Item Card 2 -->
             <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80" alt="iPad" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -176,7 +207,7 @@
                 </div>
             </div>
 
-            <!-- Item 3 -->
+            <!-- Item Card 3 -->
             <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&w=500&q=80" alt="Растение" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -194,7 +225,7 @@
                 </div>
             </div>
 
-            <!-- Item 4 -->
+            <!-- Item Card 4 -->
             <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1585333126541-64d03750a36a?auto=format&fit=crop&w=500&q=80" alt="Обогреватель" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
@@ -211,17 +242,16 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- Call to Action -->
         <div class="mt-24 bg-gray-900 rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative shadow-2xl">
             <div class="relative z-10">
                 <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic logo-font">Ненужное — это клад.</h2>
-                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium">Освободи место для новой жизни в Сербии. Продай хлам на <span class="text-red-600 font-black italic">SVALKA</span>.</p>
+                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium">Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на <span class="text-red-600 font-black italic">SVALKA</span>.</p>
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
                     <button class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-red-700 transition transform hover:scale-105 shadow-xl shadow-red-900/20 uppercase tracking-wider">
-                        Начать продавать
+                        + Пристроить добро
                     </button>
                     <button class="bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-100 transition transform hover:scale-105 uppercase tracking-wider">
                         Найти сокровища
@@ -252,5 +282,19 @@
         </div>
     </footer>
 
+    <script>
+        function changeLang(lang) {
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.lang-link').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Добавляем активный класс выбранной кнопке
+            document.getElementById('lang-' + lang).classList.add('active');
+            
+            // Здесь будет логика смены текста, когда мы добавим словарь
+            console.log('Language changed to:', lang);
+        }
+    </script>
 </body>
 </html>
