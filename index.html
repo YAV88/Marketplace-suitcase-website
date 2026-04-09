@@ -9,13 +9,12 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;600;800&display=swap');
         
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; }
         .logo-font { font-family: 'Montserrat', sans-serif; }
 
         .item-card:hover { transform: translateY(-5px); }
         .category-pill:hover { background-color: #ef4444; color: white; border-color: #ef4444; }
         
-        /* Advanced Custom Logo Styles */
         .custom-logo {
             position: relative;
             width: 42px;
@@ -56,10 +55,7 @@
         .custom-logo:hover .shape-1 { transform: translate(0, 0) scale(1.1) rotate(5deg); }
         .custom-logo:hover .shape-2 { transform: translate(0, 0) scale(1.05) rotate(-5deg); }
 
-        .glitch-effect {
-            position: relative;
-        }
-        
+        .glitch-effect { position: relative; }
         .glitch-effect::after {
             content: 'SVALKA';
             position: absolute;
@@ -78,19 +74,29 @@
             100% { clip: rect(67px, 9999px, 92px, 0); }
         }
 
-        /* Lang switch styles */
         .lang-link {
             transition: all 0.2s;
             opacity: 0.4;
             cursor: pointer;
         }
-        .lang-link:hover {
-            opacity: 0.8;
-        }
+        .lang-link:hover { opacity: 0.8; }
         .lang-link.active {
             opacity: 1;
             color: #ef4444;
             font-weight: 800;
+        }
+
+        /* Filter Panel Animation */
+        #filter-panel {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #filter-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -101,13 +107,11 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-8">
                 <div class="flex items-center gap-4 group cursor-pointer" onclick="window.location.reload()">
-                    <!-- Advanced Abstract Logo -->
                     <div class="custom-logo scale-90 md:scale-100">
                         <div class="logo-shape shape-1"></div>
                         <div class="logo-shape shape-2"></div>
                         <div class="logo-shape shape-3"></div>
                     </div>
-                    
                     <div class="flex flex-col leading-none">
                         <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font glitch-effect italic">SVALKA</span>
                     </div>
@@ -128,43 +132,62 @@
             </div>
             
             <div class="hidden lg:flex space-x-6 font-bold text-gray-500 uppercase text-[10px] tracking-widest">
-                <a href="#" class="hover:text-red-600 transition">Купить</a>
-                <a href="#" class="hover:text-red-600 transition">Срочно</a>
-                <a href="#" class="hover:text-red-600 transition">О нас</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="nav_buy">Купить</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="nav_urgent">Срочно</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="nav_about">О нас</a>
             </div>
             
-            <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-black transition shadow-lg shadow-red-100 uppercase text-[10px] tracking-widest">
+            <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-black transition shadow-lg shadow-red-100 uppercase text-[10px] tracking-widest" data-t="btn_add">
                 + Пристроить добро
             </button>
         </div>
     </nav>
 
-    <!-- Categories -->
-    <section class="bg-white py-6 border-b">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-wrap justify-center gap-3">
-                <button class="category-pill border-2 border-gray-900 bg-gray-900 text-white px-6 py-2 rounded-full transition font-bold text-sm">Всё подряд</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Мебель</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Электроника</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Одежда</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Для дома</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Детское</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Транспорт</button>
-                <button class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Другое</button>
+    <!-- Filter Panel (Hidden by default) -->
+    <div id="filter-panel" class="bg-white border-b absolute w-full z-40 shadow-xl overflow-hidden">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                    <h5 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4" data-t="filter_cat">Категории</h5>
+                    <div class="flex flex-col gap-2 font-bold text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="checkbox" class="accent-red-600"> <span data-t="cat_furniture">Мебель</span></label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="checkbox" class="accent-red-600"> <span data-t="cat_electronics">Электроника</span></label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="checkbox" class="accent-red-600"> <span data-t="cat_clothes">Одежда</span></label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="checkbox" class="accent-red-600"> <span data-t="cat_home">Для дома</span></label>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4" data-t="filter_city">Город</h5>
+                    <div class="flex flex-col gap-2 font-bold text-sm text-gray-600">
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="radio" name="city" class="accent-red-600"> Нови-Сад</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="radio" name="city" class="accent-red-600"> Белград</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-red-600"><input type="radio" name="city" class="accent-red-600"> Суботица</label>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4" data-t="filter_price">Цена</h5>
+                    <div class="flex gap-2">
+                        <input type="number" placeholder="От" class="w-full bg-gray-50 border p-2 rounded-lg text-xs outline-none focus:border-red-600">
+                        <input type="number" placeholder="До" class="w-full bg-gray-50 border p-2 rounded-lg text-xs outline-none focus:border-red-600">
+                    </div>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="toggleFilters()" class="w-full bg-gray-900 text-white p-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-red-600 transition" data-t="filter_apply">Применить</button>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Main Grid -->
     <main class="container mx-auto px-4 py-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight uppercase italic logo-font">Свежий завоз</h3>
-                <p class="text-gray-500 font-medium mt-1">Лучшие находки в <span class="text-red-600">Нови-Саде</span> и Белграде</p>
+                <h3 class="text-3xl font-black text-gray-900 tracking-tight uppercase italic logo-font" data-t="main_title">Свежий завоз</h3>
+                <p class="text-gray-500 font-medium mt-1"><span data-t="main_subtitle">Лучшие находки в</span> <span class="text-red-600">Нови-Саде</span> <span data-t="and">и</span> <span data-t="belgrade">Белграде</span></p>
             </div>
             <div class="flex gap-2">
-                <button class="flex items-center gap-2 px-5 py-2.5 border-2 border-gray-100 rounded-xl bg-white hover:bg-gray-50 transition font-bold text-gray-700 text-sm">
-                    <i class="fa-solid fa-filter"></i> Фильтры
+                <button onclick="toggleFilters()" class="flex items-center gap-2 px-5 py-2.5 border-2 border-gray-900 rounded-xl bg-white hover:bg-gray-50 transition font-black text-gray-900 text-sm shadow-sm">
+                    <i class="fa-solid fa-filter"></i> <span data-t="btn_filter">Фильтры</span>
                 </button>
             </div>
         </div>
@@ -172,19 +195,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Item Card 1 -->
             <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
-                <div class="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shadow-md uppercase tracking-widest">Срочно</div>
+                <div class="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shadow-md uppercase tracking-widest" data-t="card_urgent">Срочно</div>
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80" alt="IKEA стул" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
                 <div class="p-6">
-                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Стул IKEA Millberget</h4>
+                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1" data-t="item1_name">Стул IKEA Millberget</h4>
                     <div class="text-red-600 font-black text-xl mb-3 italic">4.500 RSD</div>
-                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Отличное состояние. Продаю в связи с переездом. Центр города.</p>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed" data-t="item1_desc">Отличное состояние. Продаю в связи с переездом. Центр города.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[9px] uppercase font-bold text-gray-400">2 часа назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Забрать
-                        </button>
+                        <span class="text-[9px] uppercase font-bold text-gray-400">2 <span data-t="hours_ago">часа назад</span></span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition" data-t="btn_take">Забрать</button>
                     </div>
                 </div>
             </div>
@@ -197,12 +218,10 @@
                 <div class="p-6">
                     <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">iPad Air (2022) 64GB</h4>
                     <div class="text-red-600 font-black text-xl mb-3 italic">520 EUR</div>
-                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Состояние идеал. Куплен полгода назад, на гарантии.</p>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed" data-t="item2_desc">Состояние идеал. Куплен полгода назад, на гарантии.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[9px] uppercase font-bold text-gray-400">5 часов назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Забрать
-                        </button>
+                        <span class="text-[9px] uppercase font-bold text-gray-400">5 <span data-t="hours_ago">часов назад</span></span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition" data-t="btn_take">Забрать</button>
                     </div>
                 </div>
             </div>
@@ -213,14 +232,12 @@
                     <img src="https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&w=500&q=80" alt="Растение" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
                 <div class="p-6">
-                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Монстера высокая</h4>
+                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1" data-t="item3_name">Монстера высокая</h4>
                     <div class="text-red-600 font-black text-xl mb-3 italic">2.000 RSD</div>
-                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Здоровая и ухоженная. Отдаю вместе с керамическим горшком.</p>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed" data-t="item3_desc">Здоровая и ухоженная. Отдаю вместе с керамическим горшком.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[9px] uppercase font-bold text-gray-400">Вчера</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Забрать
-                        </button>
+                        <span class="text-[9px] uppercase font-bold text-gray-400" data-t="yesterday">Вчера</span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition" data-t="btn_take">Забрать</button>
                     </div>
                 </div>
             </div>
@@ -231,14 +248,12 @@
                     <img src="https://images.unsplash.com/photo-1585333126541-64d03750a36a?auto=format&fit=crop&w=500&q=80" alt="Обогреватель" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
                 <div class="p-6">
-                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Конвектор Xiaomi</h4>
+                    <h4 class="font-black text-lg leading-tight text-gray-900 mb-1" data-t="item4_name">Конвектор Xiaomi</h4>
                     <div class="text-red-600 font-black text-xl mb-3 italic">6.000 RSD</div>
-                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Незаменим зимой. Почти новый, использовался один сезон.</p>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed" data-t="item4_desc">Незаменим зимой. Почти новый, использовался один сезон.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[9px] uppercase font-bold text-gray-400">10 мин назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Забрать
-                        </button>
+                        <span class="text-[9px] uppercase font-bold text-gray-400">10 <span data-t="mins_ago">мин назад</span></span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition" data-t="btn_take">Забрать</button>
                     </div>
                 </div>
             </div>
@@ -247,18 +262,17 @@
         <!-- Call to Action -->
         <div class="mt-24 bg-gray-900 rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative shadow-2xl">
             <div class="relative z-10">
-                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic logo-font">Ненужное — это клад.</h2>
-                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium">Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на <span class="text-red-600 font-black italic">SVALKA</span>.</p>
+                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic logo-font" data-t="cta_title">Ненужное — это клад.</h2>
+                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium" data-t="cta_subtitle">Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.</p>
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
-                    <button class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-red-700 transition transform hover:scale-105 shadow-xl shadow-red-900/20 uppercase tracking-wider">
+                    <button class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-red-700 transition transform hover:scale-105 shadow-xl shadow-red-900/20 uppercase tracking-wider" data-t="btn_add">
                         + Пристроить добро
                     </button>
-                    <button class="bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-100 transition transform hover:scale-105 uppercase tracking-wider">
+                    <button class="bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-100 transition transform hover:scale-105 uppercase tracking-wider" data-t="btn_find">
                         Найти сокровища
                     </button>
                 </div>
             </div>
-            <!-- Background Decoration -->
             <div class="absolute -top-10 -left-10 w-64 h-64 bg-red-600 rounded-full blur-[120px] opacity-20"></div>
             <div class="absolute bottom-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[120px] opacity-10"></div>
         </div>
@@ -274,27 +288,97 @@
                 <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font italic">SVALKA</span>
             </div>
             <div class="flex gap-8 mb-8 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">
-                <a href="#" class="hover:text-red-600 transition">Политика</a>
-                <a href="#" class="hover:text-red-600 transition">Правила</a>
-                <a href="#" class="hover:text-red-600 transition">Поддержка</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="foot_policy">Политика</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="foot_rules">Правила</a>
+                <a href="#" class="hover:text-red-600 transition" data-t="foot_support">Поддержка</a>
             </div>
-            <p class="text-gray-300 text-[9px] font-black uppercase tracking-[0.4em]">© 2024 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.</p>
+            <p class="text-gray-300 text-[9px] font-black uppercase tracking-[0.4em]" data-t="foot_copy">© 2024 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.</p>
         </div>
     </footer>
 
     <script>
+        // Dictionary for translations
+        const i18n = {
+            ru: {
+                nav_buy: "Купить", nav_urgent: "Срочно", nav_about: "О нас", btn_add: "+ Пристроить добро",
+                btn_filter: "Фильтры", main_title: "Свежий завоз", main_subtitle: "Лучшие находки в",
+                and: "и", belgrade: "Белграде", filter_cat: "Категории", filter_city: "Город",
+                filter_price: "Цена", filter_apply: "Применить", cat_furniture: "Мебель",
+                cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Для дома",
+                card_urgent: "Срочно", yesterday: "Вчера", hours_ago: "часа назад", mins_ago: "мин назад",
+                btn_take: "Забрать", item1_name: "Стул IKEA Millberget", 
+                item1_desc: "Отличное состояние. Продаю в связи с переездом. Центр города.",
+                item2_desc: "Состояние идеал. Куплен полгода назад, на гарантии.",
+                item3_name: "Монстера высокая", item3_desc: "Здоровая и ухоженная. Отдаю вместе с керамическим горшком.",
+                item4_name: "Конвектор Xiaomi", item4_desc: "Незаменим зимой. Почти новый, использовался один сезон.",
+                cta_title: "Ненужное — это клад.", cta_subtitle: "Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.",
+                btn_find: "Найти сокровища", foot_policy: "Политика", foot_rules: "Правила", foot_support: "Поддержка",
+                foot_copy: "© 2024 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ."
+            },
+            rs: {
+                nav_buy: "Kupi", nav_urgent: "Hitno", nav_about: "O nama", btn_add: "+ Udomi stvari",
+                btn_filter: "Filteri", main_title: "Novi dolasci", main_subtitle: "Najbolji nalazi u",
+                and: "i", belgrade: "Beogradu", filter_cat: "Kategorije", filter_city: "Grad",
+                filter_price: "Cena", filter_apply: "Primeni", cat_furniture: "Nameštaj",
+                cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću",
+                card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije",
+                btn_take: "Uzmi", item1_name: "IKEA stolica Millberget",
+                item1_desc: "Odlično stanje. Prodajem zbog selidbe. Centar grada.",
+                item2_desc: "Idealno stanje. Kupljen pre pola godine, pod garancijom.",
+                item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana. Dajem uz keramičku saksiju.",
+                item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi. Skoro nov, korišćen jednu sezonu.",
+                cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji. Prenesi svoje vrednosti u dobre ruke na SVALKA.",
+                btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška",
+                foot_copy: "© 2024 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA."
+            },
+            en: {
+                nav_buy: "Buy", nav_urgent: "Urgent", nav_about: "About Us", btn_add: "+ Rehome items",
+                btn_filter: "Filters", main_title: "New Arrivals", main_subtitle: "Best finds in",
+                and: "and", belgrade: "Belgrade", filter_cat: "Categories", filter_city: "City",
+                filter_price: "Price", filter_apply: "Apply", cat_furniture: "Furniture",
+                cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home",
+                card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago",
+                btn_take: "Grab it", item1_name: "IKEA Millberget Chair",
+                item1_desc: "Excellent condition. Selling due to relocation. City center.",
+                item2_desc: "Mint condition. Bought 6 months ago, under warranty.",
+                item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained. Comes with ceramic pot.",
+                item4_name: "Xiaomi Convector", item4_desc: "Essential for winter. Almost new, used for one season.",
+                cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia. Pass your valuables to good hands on SVALKA.",
+                btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support",
+                foot_copy: "© 2024 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY."
+            }
+        };
+
         function changeLang(lang) {
-            // Убираем активный класс у всех кнопок
-            document.querySelectorAll('.lang-link').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Добавляем активный класс выбранной кнопке
+            // Update active states for buttons
+            document.querySelectorAll('.lang-link').forEach(btn => btn.classList.remove('active'));
             document.getElementById('lang-' + lang).classList.add('active');
             
-            // Здесь будет логика смены текста, когда мы добавим словарь
-            console.log('Language changed to:', lang);
+            // Translate all elements with data-t attribute
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (i18n[lang][key]) {
+                    el.innerText = i18n[lang][key];
+                }
+            });
+            
+            // Log for debug
+            console.log('Language switched to:', lang);
         }
+
+        function toggleFilters() {
+            const panel = document.getElementById('filter-panel');
+            panel.classList.toggle('active');
+        }
+
+        // Close filters on click outside
+        window.addEventListener('mousedown', function(e) {
+            const panel = document.getElementById('filter-panel');
+            const btn = document.querySelector('[onclick="toggleFilters()"]');
+            if (!panel.contains(e.target) && !btn.contains(e.target) && panel.classList.contains('active')) {
+                toggleFilters();
+            }
+        });
     </script>
 </body>
 </html>
