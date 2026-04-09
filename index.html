@@ -3,32 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>БАЗАР — Барахолка вещей в Сербии</title>
+    <title>SVALKA — Маркетплейс вещей в Сербии</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .item-card:hover .item-overlay { opacity: 1; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;600;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+        .logo-font { font-family: 'Montserrat', sans-serif; }
+
+        .item-card:hover { transform: translateY(-5px); }
         .category-pill:hover { background-color: #ef4444; color: white; border-color: #ef4444; }
+        
+        /* Advanced Custom Logo Styles */
+        .custom-logo {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 8px 12px rgba(239, 68, 68, 0.25));
+        }
+
+        .logo-shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .shape-1 {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            clip-path: polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%);
+            opacity: 0.95;
+            transform: translate(-3px, -2px);
+        }
+
+        .shape-2 {
+            background: #111;
+            clip-path: polygon(0% 15%, 85% 15%, 100% 85%, 15% 85%);
+            opacity: 0.85;
+            mix-blend-mode: multiply;
+        }
+
+        .shape-3 {
+            border: 1.5px solid #ef4444;
+            clip-path: polygon(30% 20%, 70% 20%, 70% 80%, 30% 80%);
+            transform: translate(4px, 3px);
+        }
+
+        .custom-logo:hover .shape-1 { transform: translate(0, 0) scale(1.1) rotate(5deg); }
+        .custom-logo:hover .shape-2 { transform: translate(0, 0) scale(1.05) rotate(-5deg); }
+
+        .glitch-effect {
+            position: relative;
+        }
+        
+        .glitch-effect::after {
+            content: 'SVALKA';
+            position: absolute;
+            left: 2px;
+            text-shadow: -1px 0 #ef4444;
+            top: 0;
+            color: transparent;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: glitch 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch {
+            0% { clip: rect(44px, 9999px, 56px, 0); }
+            20% { clip: rect(12px, 9999px, 30px, 0); }
+            100% { clip: rect(67px, 9999px, 92px, 0); }
+        }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<body class="bg-gray-50 text-gray-900">
 
     <!-- Navigation -->
     <nav class="bg-white border-b sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-red-600 text-white p-2 rounded-lg shadow-lg shadow-red-200">
-                    <i class="fa-solid fa-tag text-xl"></i>
+            <div class="flex items-center gap-4 group cursor-pointer">
+                <!-- Advanced Abstract Logo retained -->
+                <div class="custom-logo scale-90 md:scale-100">
+                    <div class="logo-shape shape-1"></div>
+                    <div class="logo-shape shape-2"></div>
+                    <div class="logo-shape shape-3"></div>
                 </div>
-                <span class="text-2xl font-black text-gray-900 tracking-tighter">БАЗАР</span>
+                
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font glitch-effect italic">SVALKA</span>
+                    <span class="text-[9px] font-bold text-red-600 tracking-[0.3em] uppercase ml-1">Premium Second</span>
+                </div>
             </div>
-            <div class="hidden md:flex space-x-6 font-bold text-gray-600 uppercase text-xs tracking-widest">
+            
+            <div class="hidden md:flex space-x-6 font-bold text-gray-500 uppercase text-[10px] tracking-widest">
                 <a href="#" class="hover:text-red-600 transition">Купить</a>
                 <a href="#" class="hover:text-red-600 transition">Срочно</a>
                 <a href="#" class="hover:text-red-600 transition">О нас</a>
             </div>
-            <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-black transition shadow-lg shadow-red-200 uppercase text-xs tracking-wider">
-                + Продать
+            
+            <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-black transition shadow-lg shadow-red-100 uppercase text-[10px] tracking-widest">
+                + Продать вещь
             </button>
         </div>
     </nav>
@@ -41,7 +118,7 @@
                 <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Электроника</a>
                 <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Для детей</a>
                 <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Растения</a>
-                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Обогреватели</a>
+                <a href="#" class="category-pill border-2 border-gray-100 px-6 py-2 rounded-full transition font-bold text-gray-600 text-sm">Обогрев</a>
             </div>
         </div>
     </section>
@@ -50,8 +127,8 @@
     <main class="container mx-auto px-4 py-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight uppercase italic">Горячие лоты</h3>
-                <p class="text-gray-500 font-medium">Объявления в <span class="text-red-600">Нови-Саде</span> и Белграде</p>
+                <h3 class="text-3xl font-black text-gray-900 tracking-tight uppercase italic logo-font">Свежий завоз</h3>
+                <p class="text-gray-500 font-medium mt-1">Лучшие находки в <span class="text-red-600">Нови-Саде</span> и Белграде</p>
             </div>
             <div class="flex gap-2">
                 <button class="flex items-center gap-2 px-5 py-2.5 border-2 border-gray-100 rounded-xl bg-white hover:bg-gray-50 transition font-bold text-gray-700 text-sm">
@@ -63,73 +140,73 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             
             <!-- Item 1 (Urgent) -->
-            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border-2 border-transparent hover:border-red-100">
+            <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shadow-md uppercase tracking-widest">Срочно</div>
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80" alt="IKEA стул" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
-                <div class="p-5">
+                <div class="p-6">
                     <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Стул IKEA Millberget</h4>
-                    <div class="text-red-600 font-black text-xl mb-3">4.500 RSD</div>
-                    <p class="text-gray-500 text-sm mb-5 line-clamp-2">Отличное состояние. Почти не сидели. Продаю, так как переезжаю в другой город.</p>
+                    <div class="text-red-600 font-black text-xl mb-3 italic">4.500 RSD</div>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Отличное состояние. Продаю в связи с переездом. Центр города.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[10px] uppercase font-bold text-gray-400">2 часа назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Написать
+                        <span class="text-[9px] uppercase font-bold text-gray-400">2 часа назад</span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
+                            Забрать
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Item 2 -->
-            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border-2 border-transparent hover:border-red-100">
+            <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80" alt="iPad" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
-                <div class="p-5">
+                <div class="p-6">
                     <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">iPad Air (2022) 64GB</h4>
-                    <div class="text-red-600 font-black text-xl mb-3">520 EUR</div>
-                    <p class="text-gray-500 text-sm mb-5 line-clamp-2">Состояние 10/10. Всегда был в чехле и с защитным стеклом.</p>
+                    <div class="text-red-600 font-black text-xl mb-3 italic">520 EUR</div>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Состояние идеал. Куплен полгода назад, на гарантии.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[10px] uppercase font-bold text-gray-400">5 часов назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Написать
+                        <span class="text-[9px] uppercase font-bold text-gray-400">5 часов назад</span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
+                            Забрать
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Item 3 -->
-            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border-2 border-transparent hover:border-red-100">
+            <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&w=500&q=80" alt="Растение" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
-                <div class="p-5">
+                <div class="p-6">
                     <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Монстера высокая</h4>
-                    <div class="text-red-600 font-black text-xl mb-3">2.000 RSD</div>
-                    <p class="text-gray-500 text-sm mb-5 line-clamp-2">Красивое домашнее растение для вашей новой квартиры в Сербии.</p>
+                    <div class="text-red-600 font-black text-xl mb-3 italic">2.000 RSD</div>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Здоровая и ухоженная. Отдаю вместе с керамическим горшком.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[10px] uppercase font-bold text-gray-400">Вчера</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Написать
+                        <span class="text-[9px] uppercase font-bold text-gray-400">Вчера</span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
+                            Забрать
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Item 4 -->
-            <div class="item-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border-2 border-transparent hover:border-red-100">
+            <div class="item-card bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-500 relative group border border-gray-50">
                 <div class="h-64 bg-gray-100 relative overflow-hidden">
                     <img src="https://images.unsplash.com/photo-1585333126541-64d03750a36a?auto=format&fit=crop&w=500&q=80" alt="Обогреватель" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 </div>
-                <div class="p-5">
+                <div class="p-6">
                     <h4 class="font-black text-lg leading-tight text-gray-900 mb-1">Конвектор Xiaomi</h4>
-                    <div class="text-red-600 font-black text-xl mb-3">6.000 RSD</div>
-                    <p class="text-gray-500 text-sm mb-5 line-clamp-2">Умный дом, Wi-Fi. Незаменим в сербских домах без центрального отопления.</p>
+                    <div class="text-red-600 font-black text-xl mb-3 italic">6.000 RSD</div>
+                    <p class="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">Незаменим зимой. Почти новый, использовался один сезон.</p>
                     <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                        <span class="text-[10px] uppercase font-bold text-gray-400">10 мин назад</span>
-                        <button class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-red-600 transition">
-                            Написать
+                        <span class="text-[9px] uppercase font-bold text-gray-400">10 мин назад</span>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-600 transition">
+                            Забрать
                         </button>
                     </div>
                 </div>
@@ -138,39 +215,40 @@
         </div>
 
         <!-- Call to Action -->
-        <div class="mt-20 bg-gray-900 rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative border-b-8 border-red-600 shadow-2xl">
+        <div class="mt-24 bg-gray-900 rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative shadow-2xl">
             <div class="relative z-10">
-                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic">Твоё — другим.</h2>
-                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium">Продай лишнее, найди нужное. Самый быстрый <span class="text-red-500 font-black italic">БАЗАР</span> для тех, кто в Сербии.</p>
+                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase italic logo-font">Ненужное — это клад.</h2>
+                <p class="text-gray-400 mb-10 max-w-2xl mx-auto text-lg md:text-xl font-medium">Освободи место для новой жизни в Сербии. Продай хлам на <span class="text-red-600 font-black italic">SVALKA</span>.</p>
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
                     <button class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-red-700 transition transform hover:scale-105 shadow-xl shadow-red-900/20 uppercase tracking-wider">
                         Начать продавать
                     </button>
                     <button class="bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-100 transition transform hover:scale-105 uppercase tracking-wider">
-                        Смотреть всё
+                        Найти сокровища
                     </button>
                 </div>
             </div>
             <!-- Background Decoration -->
             <div class="absolute -top-10 -left-10 w-64 h-64 bg-red-600 rounded-full blur-[120px] opacity-20"></div>
-            <i class="fa-solid fa-tag absolute -bottom-10 -right-10 text-[18rem] text-white opacity-5 rotate-12"></i>
+            <div class="absolute bottom-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[120px] opacity-10"></div>
         </div>
     </main>
 
-    <footer class="bg-white border-t py-12">
+    <footer class="bg-white border-t py-16">
         <div class="container mx-auto px-4 flex flex-col items-center">
-             <div class="flex items-center gap-2 mb-6">
-                <div class="bg-red-600 text-white p-1 rounded">
-                    <i class="fa-solid fa-tag text-xs"></i>
+             <div class="flex items-center gap-4 mb-8">
+                <div class="custom-logo grayscale opacity-50 scale-75">
+                    <div class="logo-shape shape-1"></div>
+                    <div class="logo-shape shape-2"></div>
                 </div>
-                <span class="text-xl font-black text-gray-900 tracking-tighter">БАЗАР</span>
+                <span class="text-2xl font-black text-gray-900 tracking-tighter logo-font italic">SVALKA</span>
             </div>
-            <div class="flex gap-8 mb-8 text-gray-400 font-bold uppercase text-[10px] tracking-widest">
+            <div class="flex gap-8 mb-8 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">
                 <a href="#" class="hover:text-red-600 transition">Политика</a>
                 <a href="#" class="hover:text-red-600 transition">Правила</a>
                 <a href="#" class="hover:text-red-600 transition">Поддержка</a>
             </div>
-            <p class="text-gray-400 text-xs font-medium">© 2024 Базар Сербия. Найдено экспатами для экспатов.</p>
+            <p class="text-gray-300 text-[9px] font-black uppercase tracking-[0.4em]">© 2024 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.</p>
         </div>
     </footer>
 
