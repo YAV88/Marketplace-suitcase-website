@@ -704,147 +704,111 @@
 
         // 2. Базовая конфигурация и UI переменные
         let currentAppLang = 'ru'; 
+        
+        // ПОЛНЫЙ СЛОВАРЬ ПЕРЕВОДОВ (Восстановлен)
         const i18n = {
-            ru: { btn_add: "+ Пристроить добро", fresh_title: "Свежие объявления", fresh_subtitle: "Последние добавленные вещи от пользователей", btn_take: "Подробнее \u2192", modal_condition: "Б/У", mins_ago: "мин назад", hours_ago: "часов назад", add_title: "Новое объявление", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!", search_placeholder: "Поиск вещей..." },
-            rs: { btn_add: "+ Udomi stvari", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", btn_take: "Više \u2192", modal_condition: "Polovno", mins_ago: "min ranije", hours_ago: "sati ranije", add_title: "Novi oglas", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", search_placeholder: "Pretraga stvari..." },
-            en: { btn_add: "+ Rehome items", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", btn_take: "Details \u2192", modal_condition: "Used", mins_ago: "mins ago", hours_ago: "hours ago", add_title: "New Listing", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", search_placeholder: "Search items..." }
-        };
-
-        // 3. Инициализация Firebase
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "svalka-demo" };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'svalka-v1';
-        let currentUser = null;
-
-        // 4. Логика Авторизации
-        async function initAuth() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) { console.error("Auth error:", err); }
-        }
-
-        initAuth();
-
-        // 5. Загрузка данных из Firestore
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-                onSnapshot(itemsRef, (snapshot) => {
-                    let items = [];
-                    snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); });
-                    renderDynamicItems(items);
-                }, (error) => {
-                    console.error("Error listening to items: ", error);
-                });
-            }
-        });
-
-        // 6. Отрисовка карточек на странице
-        function renderDynamicItems(items) {
-            const grid = document.getElementById('fresh-items-grid');
-            grid.innerHTML = ''; // Очищаем от заглушек
-            
-            // Сортировка (новые сверху)
-            items.sort((a, b) => b.createdAt - a.createdAt);
-
-            if (items.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Здесь пока ничего нет. Стань первым!</div>';
-                return;
-            }
-
-            items.forEach(item => {
-                // Вычисляем время
-                const diffMins = Math.floor((Date.now() - item.createdAt) / 60000);
-                const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
-
-                const cardHTML = `
-                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="window.openDynamicModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}', '${item.price}', '${item.desc.replace(/'/g, "\\'")}', '${item.authorName}')">
-                    <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)">
-                        <i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i>
-                    </button>
-                    <div class="h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-                        <img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                    </div>
-                    <div class="p-6 md:p-7 flex flex-col h-[220px]">
-                        <h4 class="font-black text-xl leading-tight text-gray-900 dark:text-white mb-2 line-clamp-1">${item.title}</h4>
-                        <div class="text-red-600 dark:text-red-500 font-black text-2xl mb-3 italic">${item.price} RSD</div>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-auto line-clamp-2 leading-relaxed">${item.desc}</p>
-                        <div class="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-gray-700 mt-4">
-                            <span class="text-[10px] uppercase font-bold text-gray-400">${timeText}</span>
-                            <span class="font-bold text-xs text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
-                        </div>
-                    </div>
-                </div>`;
-                grid.innerHTML += cardHTML;
-            });
-        }
-
-        // 7. Функция публикации нового объявления
-        window.submitNewItem = async function(event) {
-            event.preventDefault();
-            if (!currentUser) return;
-
-            const title = document.getElementById('item-title').value;
-            const category = document.getElementById('item-category').value;
-            const price = document.getElementById('item-price').value;
-            const desc = document.getElementById('item-desc').value;
-
-            // Заглушки для картинок из Unsplash чтобы не хранить тяжелый Base64 (Правило производительности Firestore)
-            const randomImages = [
-                "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80",
-                "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?auto=format&fit=crop&w=500&q=80",
-                "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&w=500&q=80",
-                "https://images.unsplash.com/photo-1550508139-9b517721867c?auto=format&fit=crop&w=500&q=80"
-            ];
-            const fakeImgUrl = randomImages[Math.floor(Math.random() * randomImages.length)];
-
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'items'), {
-                    title: title,
-                    category: category,
-                    price: price,
-                    desc: desc,
-                    imageUrl: fakeImgUrl,
-                    createdAt: Date.now(),
-                    authorName: "Гость", // Для демо
-                    userId: currentUser.uid
-                });
-                
-                window.closeModal('add-modal');
-                window.showToast('toast_published');
-                event.target.reset(); // Очищаем форму
-            } catch (err) {
-                console.error("Error adding document: ", err);
+            ru: {
+                nav_buy: "Купить", nav_urgent: "Срочно", btn_add: "+ Пристроить добро", nav_profile: "Профиль",
+                btn_filter: "Фильтры", main_title: "Рекомендуемое", main_subtitle: "Товары, которые заслуживают особого внимания",
+                fresh_title: "Свежие объявления", fresh_subtitle: "Последние добавленные вещи от пользователей",
+                promo_title: "Продавайте в 5 раз быстрее!", promo_subtitle: "Закрепите объявление в блоке «Рекомендуемое» всего за 300 RSD.", btn_promo: "Узнать подробнее",
+                load_more: "Показать еще",
+                filter_cat: "Категории", filter_city: "Город", filter_price: "Цена", filter_apply: "Применить", 
+                cat_furniture: "Мебель", cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Для дома",
+                cat_kids: "Детское", cat_auto: "Авто/Мото", cat_sports: "Спорт", cat_free: "Отдам даром",
+                city_all: "Вся Сербия", city_bg: "Белград", city_ns: "Нови-Сад", city_nis: "Ниш", city_sub: "Суботица", city_krag: "Крагуевац",
+                sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие",
+                card_urgent: "Срочно", yesterday: "Вчера", hours_ago: "часа назад", mins_ago: "мин назад",
+                btn_take: "Подробнее \u2192", item1_name: "Стул IKEA Millberget", 
+                item1_desc: "Отличное состояние. Продаю в связи с переездом. Центр города.",
+                item2_desc: "Состояние идеал. Куплен полгода назад, на гарантии.",
+                item3_name: "Монстера высокая", item3_desc: "Здоровая и ухоженная. Отдаю вместе с керамическим горшком.",
+                item4_name: "Конвектор Xiaomi", item4_desc: "Незаменим зимой. Почти новый, использовался один сезон.",
+                cta_title: "Ненужное — это клад.", cta_subtitle: "Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.",
+                btn_find: "Найти сокровища", foot_policy: "Политика", foot_rules: "Правила", foot_support: "Поддержка",
+                foot_copy: "© 2024 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.",
+                search_placeholder: "Поиск вещей...", modal_condition: "Б/У", seller_reviews: "(12 отзывов)",
+                modal_contact: "Написать продавцу", safety_warning: "Никогда не переводите деньги заранее. Встречайтесь с продавцом лично.",
+                add_title: "Новое объявление", add_photo: "Загрузить фото", add_name: "Название", add_price: "Цена (RSD / EUR)",
+                add_desc: "Описание", btn_publish: "Опубликовать", chat_today: "Сегодня", chat_input: "Написать сообщение...",
+                empty_title: "Ничего не найдено", empty_subtitle: "Попробуйте изменить параметры фильтра или поисковый запрос.",
+                seo_text: "SVALKA — современный маркетплейс в Сербии для покупки и продажи б/у вещей. Найдите мебель, электронику, одежду и многое другое в Белграде, Нови-Саде и других городах. Покупайте выгодно, продавайте быстро и безопасно!",
+                map_placeholder_title: "Интерактивная карта", map_placeholder_desc: "В этой области будет отображена карта с пинами товаров, чтобы вы могли находить сокровища рядом с домом.",
+                auth_title: "С возвращением!", auth_subtitle: "Авторизуйтесь, чтобы публиковать объявления и общаться с продавцами.",
+                auth_pass: "Пароль", auth_login_btn: "Войти", auth_no_account: "Нет аккаунта?", auth_register_btn: "Зарегистрироваться",
+                profile_logout: "Выйти", profile_tab_items: "Мои объявления (2)", profile_tab_saved: "Заначка (0)",
+                toast_copied: "Ссылка скопирована!", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!"
+            },
+            rs: {
+                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil",
+                btn_filter: "Filteri", main_title: "Preporučeno", main_subtitle: "Stvari koje zaslužuju posebnu pažnju",
+                fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika",
+                promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku preporučenih za samo 300 RSD.", btn_promo: "Saznaj više",
+                load_more: "Prikaži još",
+                filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", 
+                cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću",
+                cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno",
+                city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac",
+                sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje",
+                card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije",
+                btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget",
+                item1_desc: "Odlično stanje. Prodajem zbog selidbe. Centar grada.",
+                item2_desc: "Idealno stanje. Kupljen pre pola godine, pod garancijom.",
+                item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana. Dajem uz keramičku saksiju.",
+                item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi. Skoro nov, korišćen jednu sezonu.",
+                cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji. Prenesi svoje vrednosti u dobre ruke na SVALKA.",
+                btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška",
+                foot_copy: "© 2024 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.",
+                search_placeholder: "Pretraga stvari...", modal_condition: "Polovno", seller_reviews: "(12 recenzija)",
+                modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred. Nađite se sa prodavcem lično.",
+                add_title: "Novi oglas", add_photo: "Dodaj fotografiju", add_name: "Naziv", add_price: "Cena",
+                add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...",
+                empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere ili pretragu.",
+                seo_text: "SVALKA je moderno tržište u Srbiji za kupovinu i prodaju polovnih stvari. Pronađite nameštaj, elektroniku i još mnogo toga u Beogradu, Novom Sadu i drugim gradovima. Kupujte isplativo, prodajte brzo i sigurno!",
+                map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa sa pino-vima artikala.",
+                auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase i komunicirali sa prodavcima.",
+                auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija",
+                profile_logout: "Odjavi se", profile_tab_items: "Moji oglasi (2)", profile_tab_saved: "Sačuvano (0)",
+                toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!"
+            },
+            en: {
+                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile",
+                btn_filter: "Filters", main_title: "Recommended", main_subtitle: "Items that deserve special attention",
+                fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users",
+                promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in Recommended for only 300 RSD.", btn_promo: "Learn more",
+                load_more: "Load more",
+                filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", 
+                cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home",
+                cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free",
+                city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac",
+                sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive",
+                card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago",
+                btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair",
+                item1_desc: "Excellent condition. Selling due to relocation. City center.",
+                item2_desc: "Mint condition. Bought 6 months ago, under warranty.",
+                item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained. Comes with ceramic pot.",
+                item4_name: "Xiaomi Convector", item4_desc: "Essential for winter. Almost new, used for one season.",
+                cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia. Pass your valuables to good hands on SVALKA.",
+                btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support",
+                foot_copy: "© 2024 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.",
+                search_placeholder: "Search items...", modal_condition: "Used", seller_reviews: "(12 reviews)",
+                modal_contact: "Message Seller", safety_warning: "Never transfer money in advance. Meet the seller in person.",
+                add_title: "New Listing", add_photo: "Upload Photo", add_name: "Title", add_price: "Price",
+                add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...",
+                empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters or search query.",
+                seo_text: "SVALKA is a modern marketplace in Serbia for buying and selling used items. Find furniture, electronics, clothing, and more in Belgrade, Novi Sad, and other cities. Buy smart, sell fast and safely!",
+                map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed in this area so you can find treasures nearby.",
+                auth_title: "Welcome back!", auth_subtitle: "Log in to post listings and communicate with sellers.",
+                auth_pass: "Password", auth_login_btn: "Log in", auth_no_account: "No account?", auth_register_btn: "Sign up",
+                profile_logout: "Log out", profile_tab_items: "My Listings (2)", profile_tab_saved: "Stash (0)",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!"
             }
         };
 
-        // Экспортируем остальные функции в глобальную область, чтобы работали inline onclick HTML
-        window.openDynamicModal = function(imgSrc, title, price, desc, author = "Пользователь") {
-            document.getElementById('modal-img').src = imgSrc;
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-price').innerText = price + " RSD";
-            document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-author').innerText = author;
-            document.getElementById('chat-item-title').innerText = title; 
-            window.openModal('item-modal');
-        };
-
-        window.openItemModal = function(element) {
-            const imgSrc = element.querySelector('img').src;
-            const title = element.querySelector('h4').innerText;
-            const price = element.querySelector('.text-red-600, .dark\\:text-red-500').innerText;
-            const desc = element.querySelector('p').innerText;
-            window.openDynamicModal(imgSrc, title, price, desc);
-        };
-
-        // --- Базовые UI Функции (из прошлых версий) ---
+        // ==============================================================================
+        // 3. БЛОК UI ФУНКЦИЙ (Определяем ИХ ДО ИНИЦИАЛИЗАЦИИ ФАЙРБЕЙЗА, ЧТОБЫ КНОПКИ РАБОТАЛИ ВСЕГДА)
+        // ==============================================================================
+        
         window.changeLang = function(lang) {
             currentAppLang = lang;
             const flags = { 'ru': 'https://flagcdn.com/w20/ru.png', 'rs': 'https://flagcdn.com/w20/rs.png', 'en': 'https://flagcdn.com/w20/gb.png' };
@@ -952,8 +916,175 @@
             }
         };
 
+        window.openDynamicModal = function(imgSrc, title, price, desc, author = "Пользователь") {
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-price').innerText = price + " RSD";
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-author').innerText = author;
+            document.getElementById('chat-item-title').innerText = title; 
+            window.openModal('item-modal');
+        };
+
+        window.openItemModal = function(element) {
+            const imgSrc = element.querySelector('img').src;
+            const title = element.querySelector('h4').innerText;
+            const price = element.querySelector('.text-red-600, .dark\\:text-red-500').innerText;
+            const desc = element.querySelector('p').innerText;
+            window.openDynamicModal(imgSrc, title, price, desc);
+        };
+
+        // Закрытие модалок по клику вне
+        window.addEventListener('mousedown', function(e) {
+            const panel = document.getElementById('filter-panel');
+            const btn = document.querySelector('[onclick="window.toggleFilters()"]');
+            if (panel && btn) {
+                if (!panel.contains(e.target) && !btn.contains(e.target) && panel.classList.contains('active')) {
+                    window.toggleFilters();
+                }
+            }
+            if (e.target.classList.contains('modal-overlay')) {
+                window.closeModal(e.target.id);
+            }
+        });
+
+
+        // ==============================================================================
+        // 4. БЛОК FIREBASE И БАЗЫ ДАННЫХ (С защитой от сбоев на внешних хостингах)
+        // ==============================================================================
+        
+        // Фейковая функция публикации (будет переопределена, если Firebase подключится)
+        window.submitNewItem = function(event) {
+            event.preventDefault();
+            window.closeModal('add-modal');
+            window.showToast('toast_published');
+            event.target.reset(); 
+        };
+
+        try {
+            // Проверка: Находимся ли мы в среде, где есть конфиг (Canvas) или на GitHub Pages
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'svalka-v1';
+                let currentUser = null;
+
+                async function initAuth() {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (err) { console.error("Auth error:", err); }
+                }
+
+                initAuth();
+
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    if (user) {
+                        const itemsRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+                        onSnapshot(itemsRef, (snapshot) => {
+                            let items = [];
+                            snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); });
+                            renderDynamicItems(items);
+                        }, (error) => {
+                            console.error("Error listening to items: ", error);
+                        });
+                    }
+                });
+
+                function renderDynamicItems(items) {
+                    const grid = document.getElementById('fresh-items-grid');
+                    grid.innerHTML = ''; 
+                    
+                    items.sort((a, b) => b.createdAt - a.createdAt);
+
+                    if (items.length === 0) {
+                        grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Здесь пока ничего нет. Стань первым!</div>';
+                        return;
+                    }
+
+                    items.forEach(item => {
+                        const diffMins = Math.floor((Date.now() - item.createdAt) / 60000);
+                        const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
+
+                        const cardHTML = `
+                        <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="window.openDynamicModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}', '${item.price}', '${item.desc.replace(/'/g, "\\'")}', '${item.authorName}')">
+                            <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)">
+                                <i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i>
+                            </button>
+                            <div class="h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                                <img src="${item.imageUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            </div>
+                            <div class="p-6 md:p-7 flex flex-col h-[220px]">
+                                <h4 class="font-black text-xl leading-tight text-gray-900 dark:text-white mb-2 line-clamp-1">${item.title}</h4>
+                                <div class="text-red-600 dark:text-red-500 font-black text-2xl mb-3 italic">${item.price} RSD</div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm mb-auto line-clamp-2 leading-relaxed">${item.desc}</p>
+                                <div class="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-gray-700 mt-4">
+                                    <span class="text-[10px] uppercase font-bold text-gray-400">${timeText}</span>
+                                    <span class="font-bold text-xs text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
+                                </div>
+                            </div>
+                        </div>`;
+                        grid.innerHTML += cardHTML;
+                    });
+                }
+
+                // Переопределяем функцию для работы с реальной БД
+                window.submitNewItem = async function(event) {
+                    event.preventDefault();
+                    if (!currentUser) return;
+
+                    const title = document.getElementById('item-title').value;
+                    const category = document.getElementById('item-category').value;
+                    const price = document.getElementById('item-price').value;
+                    const desc = document.getElementById('item-desc').value;
+
+                    const randomImages = [
+                        "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80",
+                        "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?auto=format&fit=crop&w=500&q=80",
+                        "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&w=500&q=80",
+                        "https://images.unsplash.com/photo-1550508139-9b517721867c?auto=format&fit=crop&w=500&q=80"
+                    ];
+                    const fakeImgUrl = randomImages[Math.floor(Math.random() * randomImages.length)];
+
+                    try {
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'items'), {
+                            title: title,
+                            category: category,
+                            price: price,
+                            desc: desc,
+                            imageUrl: fakeImgUrl,
+                            createdAt: Date.now(),
+                            authorName: "Гость SVALKA",
+                            userId: currentUser.uid
+                        });
+                        
+                        window.closeModal('add-modal');
+                        window.showToast('toast_published');
+                        event.target.reset();
+                    } catch (err) {
+                        console.error("Error adding document: ", err);
+                    }
+                };
+            } else {
+                console.warn("⚠️ Firebase конфиг не найден (GitHub Pages). Сайт работает в режиме UI-демо без БД.");
+                // Скрываем плейсхолдер загрузки, раз БД нет
+                const loader = document.getElementById('loading-placeholder');
+                if (loader) loader.style.display = 'none';
+            }
+        } catch(e) {
+            console.error("Ошибка инициализации:", e);
+        }
+
         // Первоначальная загрузка
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { window.toggleDarkMode(); }
+        window.changeLang('ru');
     </script>
 </body>
 </html>
