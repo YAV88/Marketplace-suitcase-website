@@ -457,9 +457,10 @@
             <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white mb-8 uppercase italic" data-t="add_title">Новое объявление</h2>
             
             <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
-                <label class="w-full h-40 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-red-600 transition cursor-pointer bg-gray-50 dark:bg-gray-800/50 group relative">
+                <label id="photo-upload-container" class="w-full h-40 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:border-red-600 transition cursor-pointer bg-gray-50 dark:bg-gray-800/50 group relative overflow-hidden">
                     <i class="fa-solid fa-cloud-arrow-up text-4xl mb-3 group-hover:-translate-y-1 transition-transform"></i>
-                    <span class="font-bold text-sm uppercase tracking-widest" data-t="add_photo">Выбрать фото</span><input type="file" class="hidden" accept="image/*">
+                    <span class="font-bold text-sm uppercase tracking-widest" data-t="add_photo">Выбрать фото</span>
+                    <input type="file" class="hidden" accept="image/*" onchange="window.previewPhoto(event)">
                 </label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_name">Название</label><input type="text" id="item-title" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition" required></div>
@@ -544,15 +545,15 @@
                 auth_title: "С возвращением!", auth_subtitle: "Авторизуйтесь, чтобы публиковать объявления и общаться с продавцами.", auth_pass: "Пароль", auth_login_btn: "Войти", auth_no_account: "Нет аккаунта?", auth_register_btn: "Зарегистрироваться",
                 auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_reg_submit: "Создать аккаунт", auth_have_account: "Уже есть аккаунт?", auth_login_link: "Войти", auth_name: "Имя",
                 profile_logout: "Войти в аккаунт", profile_tab_items: "Мои объявления (0)", profile_tab_saved: "Заначка (0)",
-                toast_copied: "Ссылка скопирована!", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!",
+                toast_copied: "Ссылка скопирована!", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!", toast_auth_error: "Ошибка БД. Проверьте настройки авторизации!",
                 add_housing_hint: "* Для категории 'Жилье': разрешена только сдача комнат и переуступка аренды.", add_rules_agree: "Я согласен с",
                 rules_title: "Правила SVALKA", rules_ok: "Я понял(а)", rules_1_title: "1. Запрет на спам", rules_1_text: "Запрещена массовая публикация однотипных объявлений.", rules_2_title: "2. Ограничения категории 'Жилье'", rules_2_text: "Продажа недвижимости строго запрещена.", rules_3_title: "3. Нелегальные товары", rules_3_text: "Запрещена продажа незаконных товаров.", rules_4_title: "4. Уважение и безопасность", rules_4_text: "Мошенничество карается баном."
             },
             rs: {
-                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Preporučeno", main_subtitle: "Stvari koje zaslužuju posebnu pažnju", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku preporučenih za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno", seller_reviews: "(12 recenzija)", modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Novi oglas", add_photo: "Dodaj fotografiju", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...", empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_reg_submit: "Napravi nalog", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", profile_logout: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Slažem se sa", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem."
+                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Preporučeno", main_subtitle: "Stvari koje zaslužuju posebnu pažnju", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku preporučenih za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno", seller_reviews: "(12 recenzija)", modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Novi oglas", add_photo: "Dodaj fotografiju", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...", empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_reg_submit: "Napravi nalog", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", profile_logout: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", toast_auth_error: "Greška u bazi podataka!", add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Slažem se sa", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem."
             },
             en: {
-                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Recommended", main_subtitle: "Items that deserve special attention", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in Recommended for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used", seller_reviews: "(12 reviews)", modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "New Listing", add_photo: "Upload Photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...", empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_reg_submit: "Create account", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", profile_logout: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I agree to the", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban."
+                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Recommended", main_subtitle: "Items that deserve special attention", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in Recommended for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used", seller_reviews: "(12 reviews)", modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "New Listing", add_photo: "Upload Photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...", empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_reg_submit: "Create account", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", profile_logout: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_auth_error: "Database Error! Check settings.", add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I agree to the", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban."
             }
         };
 
@@ -730,8 +731,72 @@
             window.openDynamicModal(imgSrc, title, price, desc);
         };
 
+        // --- ЛОГИКА ПРЕВЬЮ ФОТОГРАФИИ ---
+        window.tempPhotoData = null;
+        window.previewPhoto = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    window.tempPhotoData = e.target.result;
+                    const container = document.getElementById('photo-upload-container');
+                    container.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" />`;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.resetPhotoUpload = function() {
+            window.tempPhotoData = null;
+            const container = document.getElementById('photo-upload-container');
+            if(container) {
+                container.innerHTML = `
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl mb-3 group-hover:-translate-y-1 transition-transform"></i>
+                    <span class="font-bold text-sm uppercase tracking-widest" data-t="add_photo">${window.i18n[window.currentAppLang]['add_photo'] || 'Выбрать фото'}</span>
+                    <input type="file" class="hidden" accept="image/*" onchange="window.previewPhoto(event)">
+                `;
+            }
+        };
+
+        // Фолбэк-функция создания (Отработает, если Firebase не подключен или произошла ошибка)
         window.submitNewItem = function(event) {
-            event.preventDefault(); window.closeModal('add-modal'); window.showToast('toast_published'); event.target.reset(); 
+            event.preventDefault(); 
+            
+            const title = document.getElementById('item-title').value;
+            const price = document.getElementById('item-price').value;
+            const desc = document.getElementById('item-desc').value;
+            let imgUrl = window.tempPhotoData || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80";
+
+            // Рендерим локально
+            const grid = document.getElementById('fresh-items-grid');
+            const cardHTML = `
+                <div class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="window.openDynamicModal('${imgUrl}', '${title.replace(/'/g, "\\'")}', '${price}', '${desc.replace(/'/g, "\\'")}', 'Гость SVALKA')">
+                    <button class="btn-stash absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)">
+                        <i class="fa-solid fa-box-open text-base drop-shadow-sm"></i>
+                    </button>
+                    <div class="h-48 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                        <img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    </div>
+                    <div class="p-4 md:p-5 flex flex-col h-[180px]">
+                        <h4 class="font-black text-base md:text-lg leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${title}</h4>
+                        <div class="text-red-600 dark:text-red-500 font-black text-xl mb-2 italic">${price} RSD</div>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs mb-auto line-clamp-2 leading-relaxed">${desc}</p>
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700 mt-3">
+                            <span class="text-[9px] uppercase font-bold text-gray-400">Только что</span>
+                            <span class="font-bold text-[10px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
+                        </div>
+                    </div>
+                </div>`;
+            
+            const placeholder = document.getElementById('loading-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+
+            grid.insertAdjacentHTML('afterbegin', cardHTML);
+
+            window.closeModal('add-modal'); 
+            window.showToast('toast_published'); 
+            event.target.reset(); 
+            window.resetPhotoUpload();
         };
 
         // Закрытие модалок по клику вне
@@ -750,12 +815,12 @@
         try {
             // ЗАМЕНИ ЭТОТ БЛОК НА СВОЙ ИЗ FIREBASE CONSOLE
             const firebaseConfig = {
-              apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
-              authDomain: "svalka-rs.firebaseapp.com",
-              projectId: "svalka-rs",
-              storageBucket: "svalka-rs.firebasestorage.app",
-              messagingSenderId: "75834217375",
-              appId: "1:75834217375:web:ffb4bb3b2e2f0df542e3aa"
+                apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
+                authDomain: "svalka-rs.firebaseapp.com",
+                projectId: "svalka-rs",
+                storageBucket: "svalka-rs.firebasestorage.app",
+                messagingSenderId: "75834217375",
+                appId: "1:75834217375:web:ffb4bb3b2e2f0df542e3aa"
             };
 
             const app = initializeApp(firebaseConfig);
@@ -820,41 +885,51 @@
             // Переопределяем функцию для работы с реальной БД
             window.submitNewItem = async function(event) {
                 event.preventDefault();
-                if (!currentUser) return;
+                
+                if (!currentUser) {
+                    console.error("Ошибка: Пользователь не авторизован (Не включена Anonymous Auth в Firebase).");
+                    window.showToast('toast_auth_error');
+                    return;
+                }
+
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerText;
+                submitBtn.innerText = "Загрузка...";
+                submitBtn.disabled = true;
 
                 const title = document.getElementById('item-title').value;
                 const category = document.getElementById('item-category').value;
                 const price = document.getElementById('item-price').value;
                 const desc = document.getElementById('item-desc').value;
-
-                const randomImages = [
-                    "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80",
-                    "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?auto=format&fit=crop&w=500&q=80",
-                    "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&w=500&q=80",
-                    "https://images.unsplash.com/photo-1550508139-9b517721867c?auto=format&fit=crop&w=500&q=80"
-                ];
-                const fakeImgUrl = randomImages[Math.floor(Math.random() * randomImages.length)];
+                const imgUrl = window.tempPhotoData || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80";
 
                 try {
                     await addDoc(collection(db, 'items'), {
-                        title: title, category: category, price: price, desc: desc, imageUrl: fakeImgUrl,
+                        title: title, category: category, price: price, desc: desc, imageUrl: imgUrl,
                         createdAt: Date.now(), authorName: "Гость SVALKA", userId: currentUser.uid
                     });
                     
                     window.closeModal('add-modal');
                     window.showToast('toast_published');
                     event.target.reset();
-                } catch (err) { console.error("Error adding doc:", err); }
+                    window.resetPhotoUpload();
+                } catch (err) { 
+                    console.error("Error adding doc:", err); 
+                    window.showToast('toast_auth_error');
+                } finally {
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
             };
 
             const loader = document.getElementById('loading-placeholder');
             if (loader) loader.style.display = 'none';
 
         } catch(e) {
-            console.error("Ошибка Firebase (скорее всего отсутствуют ключи):", e);
+            console.error("Ошибка инициализации Firebase:", e);
         }
 
-        // Инициализация
+        // Инициализация при загрузке
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { window.toggleDarkMode(); }
         window.changeLang('ru');
     </script>
