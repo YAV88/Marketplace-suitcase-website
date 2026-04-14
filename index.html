@@ -1006,12 +1006,6 @@
             window.submitNewItem = async function(event) {
                 event.preventDefault();
                 
-                if (!currentUser) {
-                    console.error("Ошибка: Пользователь не авторизован (Не включена Anonymous Auth в Firebase).");
-                    window.showToast('toast_auth_error');
-                    return;
-                }
-
                 const submitBtn = event.target.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerText;
                 submitBtn.innerText = "Загрузка...";
@@ -1027,8 +1021,13 @@
                 
                 const imgUrlsToSave = window.tempPhotos.slice(0, 5); // До 5 фотографий
                 const fallbackImg = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80";
+                const displayImg = imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : fallbackImg;
 
                 try {
+                    if (!currentUser) {
+                        throw new Error("Не включен Anonymous Auth в Firebase или доступ заблокирован по домену.");
+                    }
+
                     await addDoc(collection(db, dbPath), {
                         title: title, 
                         category: category, 
@@ -1037,7 +1036,7 @@
                         price: price, 
                         currency: currency, 
                         desc: desc, 
-                        imageUrl: imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : fallbackImg, // Первая картинка для превью
+                        imageUrl: displayImg, // Первая картинка для превью
                         images: imgUrlsToSave.length > 0 ? imgUrlsToSave : [fallbackImg], // Весь массив для галереи
                         createdAt: Date.now(), 
                         authorName: "Гость SVALKA", 
@@ -1049,8 +1048,33 @@
                     event.target.reset();
                     window.resetPhotoUpload();
                 } catch (err) { 
-                    console.error("Error adding doc:", err); 
+                    console.error("🚨 Ошибка базы данных Firebase:", err.message); 
                     window.showToast('toast_auth_error');
+
+                    // Локальное добавление на экран, чтобы интерфейс продолжал работать для тестов
+                    const grid = document.getElementById('fresh-items-grid');
+                    if (grid) {
+                        const cardHTML = `
+                        <div class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer">
+                            <div class="h-48 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                                <img src="${displayImg}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            </div>
+                            <div class="p-4 md:p-5 flex flex-col h-[180px]">
+                                <h4 class="font-black text-base md:text-lg leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${title}</h4>
+                                <div class="text-red-600 dark:text-red-500 font-black text-xl mb-2 italic">${price} ${currency}</div>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs mb-auto line-clamp-2 leading-relaxed">${desc}</p>
+                                <div class="text-red-500 text-[10px] font-bold mt-2 uppercase tracking-widest">Отображается локально (Ошибка БД)</div>
+                            </div>
+                        </div>`;
+                        
+                        const placeholder = document.getElementById('loading-placeholder');
+                        if (placeholder) placeholder.style.display = 'none';
+                        grid.insertAdjacentHTML('afterbegin', cardHTML);
+                    }
+
+                    window.closeModal('add-modal');
+                    event.target.reset();
+                    window.resetPhotoUpload();
                 } finally {
                     submitBtn.innerText = originalText;
                     submitBtn.disabled = false;
