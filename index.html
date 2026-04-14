@@ -550,7 +550,7 @@
     <!-- Scripts and Firebase Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.currentAppLang = 'ru'; 
@@ -719,7 +719,8 @@
             }
             
             toast.classList.add('show'); 
-            setTimeout(() => toast.classList.remove('show'), 5000);
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
         };
 
         window.shareItem = function() {
@@ -752,7 +753,7 @@
 
         window.toggleFavorite = async function(btn, event, itemId) {
             event.stopPropagation();
-            if (!window.currentUser || window.currentUser.isAnonymous) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+            if (!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
             if (!itemId) {
                 btn.classList.toggle('liked'); const icon = btn.querySelector('i');
                 btn.classList.contains('liked') ? (icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm') : (icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm');
@@ -760,7 +761,7 @@
             }
 
             const isLiked = window.userFavorites.has(itemId);
-            const favRef = window.getFavDocRef(window.currentUser.uid, itemId);
+            const favRef = doc(window.db, `users/${window.currentUser.uid}/favorites`, itemId);
 
             btn.classList.toggle('liked'); const icon = btn.querySelector('i');
             if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
@@ -771,14 +772,9 @@
                 window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
             } catch(e) {
                 console.error("Error toggling favorite", e);
-                if (window.isCanvas || e.code === 'permission-denied') {
-                    if (isLiked) window.userFavorites.delete(itemId);
-                    else window.userFavorites.add(itemId);
-                    window.renderProfileTabs();
-                } else {
-                    btn.classList.toggle('liked');
-                    if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
-                }
+                window.showToast('', true, "Ошибка: " + e.message);
+                btn.classList.toggle('liked');
+                if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
             }
         };
 
@@ -921,33 +917,25 @@
         });
 
         // =========================================================================================
-        // === FIREBASE CONFIGURATION ===
+        // === НАСТРОЙКИ FIREBASE (ОБЯЗАТЕЛЬНО ЗАМЕНИТЕ НА СВОИ!) ===
         // =========================================================================================
-        try {
-            let firebaseConfig; 
-            window.isCanvas = typeof __firebase_config !== 'undefined' && __firebase_config;
-            window.appId = window.isCanvas ? __app_id : 'svalka-v1';
-
-            if (window.isCanvas) {
-                firebaseConfig = JSON.parse(__firebase_config); 
-            } else {
-                firebaseConfig = { apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8", authDomain: "svalka-rs.firebaseapp.com", projectId: "svalka-rs", storageBucket: "svalka-rs.firebasestorage.app", messagingSenderId: "75834217375", appId: "1:75834217375:web:ffb4bb3b2e2f0df542e3aa" };
-            }
+        
+        // ВНИМАНИЕ: Если вы тестируете на GitHub Pages, вы ОБЯЗАНЫ заменить этот блок на данные из вашей Firebase Console!
+        // Иначе Google Cloud заблокирует запросы с вашего сайта!
+        const firebaseConfig = {
+            apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
+            authDomain: "svalka-rs.firebaseapp.com",
+            projectId: "svalka-rs",
+            storageBucket: "svalka-rs.firebasestorage.app",
+            messagingSenderId: "75834217375",
+            appId: "1:75834217375:web:ffb4bb3b2e2f0df542e3aa"
+        };
             
-            window.dbPath = window.isCanvas ? `artifacts/${window.appId}/public/data/items` : 'items';
-            window.getFavColRef = (uid) => collection(window.db, window.isCanvas ? `artifacts/${window.appId}/users/${uid}/favorites` : `users/${uid}/favorites`);
-            window.getFavDocRef = (uid, itemId) => doc(window.db, window.isCanvas ? `artifacts/${window.appId}/users/${uid}/favorites` : `users/${uid}/favorites`, itemId);
-
+        try {
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
             window.db = getFirestore(app);
             window.currentUser = null;
-
-            async function initAuth() {
-                try { if (window.isCanvas && typeof __initial_auth_token !== 'undefined') { await signInWithCustomToken(auth, __initial_auth_token); } else { await signInAnonymously(auth); } } 
-                catch (err) { console.warn("Local Preview Mode:", err.message); const p = document.getElementById('loading-placeholder'); if (p) p.innerHTML = '<i class="fa-solid fa-shield-halved text-4xl text-orange-400 mb-4"></i><p class="text-sm font-bold text-gray-500 uppercase tracking-widest text-center">Режим предпросмотра<br><span class="text-[10px] text-gray-400 normal-case mt-2 block">База данных защищена. Откройте на GitHub.</span></p>'; }
-            }
-            initAuth();
 
             window.submitAuth = async function(event) {
                 event.preventDefault(); 
@@ -969,7 +957,7 @@
                         await updateProfile(uc.user, { displayName: name || "Пользователь SVALKA", photoURL: avatar }); 
                         await sendEmailVerification(uc.user);
 
-                        window.currentUser = auth.currentUser; // Force UI update
+                        window.currentUser = auth.currentUser; 
                         document.getElementById('profile-name').innerText = window.currentUser.displayName;
                         if(window.currentUser.photoURL) document.getElementById('profile-avatar-container').innerHTML = `<img src="${window.currentUser.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`;
 
@@ -986,7 +974,7 @@
                     else if (err.code === 'auth/weak-password') { window.showToast('toast_weak_password', true); } 
                     else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') { window.showToast('toast_auth_fail', true); } 
                     else if (err.code === 'auth/user-not-found') { window.showToast('toast_user_not_found', true); }
-                    else { window.showToast('', true, "Ошибка: " + err.message); } // ВЫВОД РЕАЛЬНОЙ ОШИБКИ ИЗ FIREBASE
+                    else { window.showToast('', true, "Ошибка: " + err.message); } 
                 } finally { 
                     submitBtn.innerText = origText; submitBtn.disabled = false; 
                 }
@@ -996,26 +984,31 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
+            // Отслеживание глобальной базы товаров ПРОИСХОДИТ ОДИН РАЗ, независимо от авторизации
+            onSnapshot(collection(window.db, 'items'), (snapshot) => { 
+                let items = []; 
+                snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
+                window.renderDynamicItems(items); 
+            }, (error) => { 
+                console.error("Ошибка БД при чтении:", error); 
+                const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
+                const g = document.getElementById('fresh-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
+            });
+
+            // Отслеживание статуса конкретного пользователя
             onAuthStateChanged(auth, (user) => {
                 window.currentUser = user;
                 const pName = document.getElementById('profile-name'); const pEmail = document.getElementById('profile-email'); const lBtn = document.getElementById('profile-logout-btn'); const loginBtnWrapper = document.getElementById('profile-login-btn').parentElement; const pAvatarContainer = document.getElementById('profile-avatar-container');
                 
-                if (user && !user.isAnonymous) {
+                if (user) {
                     pName.innerText = user.displayName || "Пользователь"; pEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${user.email}`;
                     lBtn.style.display = 'flex'; loginBtnWrapper.style.display = 'none';
                     if (user.photoURL) { pAvatarContainer.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`; } else { pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`; }
                     
-                    window.favUnsubscribe = onSnapshot(window.getFavColRef(user.uid), (snapshot) => { window.userFavorites = new Set(); snapshot.forEach(doc => window.userFavorites.add(doc.id)); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems); }, (e) => console.error("Error favs:", e));
+                    window.favUnsubscribe = onSnapshot(collection(window.db, `users/${user.uid}/favorites`), (snapshot) => { window.userFavorites = new Set(); snapshot.forEach(doc => window.userFavorites.add(doc.id)); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems); }, (e) => console.error("Error favs:", e));
                 } else {
                     pName.innerText = "Гость SVALKA"; pEmail.innerText = "Не авторизован"; lBtn.style.display = 'none'; loginBtnWrapper.style.display = 'block'; pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
                     window.userFavorites = new Set(); if (window.favUnsubscribe) window.favUnsubscribe(); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
-                }
-
-                if (user) {
-                    onSnapshot(collection(window.db, window.dbPath), (snapshot) => { let items = []; snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); window.renderDynamicItems(items); }, (e) => console.error("Error items: ", e));
-                } else {
-                    const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-                    const g = document.getElementById('fresh-items-grid'); if (g) g.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10 font-bold uppercase tracking-widest text-sm">Чтобы увидеть объявления, <button type="button" class="text-red-600 hover:underline" onclick="window.openModal(\'auth-modal\')">войдите в аккаунт</button></div>';
                 }
             });
 
@@ -1037,28 +1030,21 @@
 
             window.submitNewItem = async function(event) {
                 event.preventDefault();
-                if (!window.currentUser || window.currentUser.isAnonymous) { window.closeModal('add-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+                if (!window.currentUser) { window.closeModal('add-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
                 const submitBtn = event.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = "Загрузка..."; submitBtn.disabled = true;
 
                 const title = document.getElementById('item-title').value; const category = document.getElementById('item-category').value; const city = document.getElementById('item-city').value; const address = document.getElementById('item-address').value; const condition = document.getElementById('item-condition').value; const price = document.getElementById('item-price').value || 0; const currency = document.getElementById('item-currency').value; const desc = document.getElementById('item-desc').value;
                 const imgUrlsToSave = window.tempPhotos.slice(0, 3); const fallbackImg = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80"; const displayImg = imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : fallbackImg;
                 
                 try {
-                    await addDoc(collection(window.db, window.dbPath), { title: title, category: category, city: city, address: address, condition: condition, price: price, currency: currency, desc: desc, imageUrl: displayImg, images: imgUrlsToSave.length > 0 ? imgUrlsToSave : [fallbackImg], createdAt: Date.now(), authorName: window.currentUser.displayName || "Пользователь SVALKA", authorAvatar: window.currentUser.photoURL || "", userId: window.currentUser.uid });
+                    const newItemObj = { title: title, category: category, city: city, address: address, condition: condition, price: Number(price), currency: currency, desc: desc, imageUrl: displayImg, images: imgUrlsToSave.length > 0 ? imgUrlsToSave : [fallbackImg], createdAt: Date.now(), authorName: window.currentUser.displayName || "Пользователь SVALKA", authorAvatar: window.currentUser.photoURL || "", userId: window.currentUser.uid };
+                    
+                    await addDoc(collection(window.db, 'items'), newItemObj);
                     window.closeModal('add-modal'); window.showToast('toast_published'); event.target.reset(); window.resetPhotoUpload();
                 } catch (err) { 
-                    console.error("Error Firebase:", err.message); 
-                    
-                    if (window.isCanvas) {
-                        window.showToast('toast_local_fallback', true);
-                        const fakeItem = { id: 'local-' + Date.now(), title, category, city, address, condition, price, currency, desc, imageUrl: displayImg, images: imgUrlsToSave.length > 0 ? imgUrlsToSave : [fallbackImg], createdAt: Date.now(), authorName: window.currentUser.displayName || "Пользователь SVALKA", authorAvatar: window.currentUser.photoURL || "", userId: window.currentUser.uid };
-                        window.loadedItems.unshift(fakeItem); window.renderDynamicItems(window.loadedItems);
-                        window.closeModal('add-modal'); event.target.reset(); window.resetPhotoUpload();
-                    } else {
-                        window.showToast('', true, "Ошибка БД: " + err.message); // Вывод точной ошибки
-                    }
-                } 
-                finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
+                    console.error("Ошибка Firebase при добавлении:", err); 
+                    window.showToast('', true, "Ошибка БД: " + err.message); 
+                } finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
             };
         } catch(e) { console.error("Firebase Init Error:", e); }
 
