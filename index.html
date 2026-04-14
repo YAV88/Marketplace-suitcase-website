@@ -1198,6 +1198,13 @@
             window.submitNewItem = async function(event) {
                 event.preventDefault();
                 
+                if (!currentUser) {
+                    window.closeModal('add-modal');
+                    window.openModal('auth-modal');
+                    window.showToast('toast_auth_required');
+                    return;
+                }
+
                 const submitBtn = event.target.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerText;
                 submitBtn.innerText = "Загрузка...";
@@ -1216,19 +1223,12 @@
                 const fallbackImg = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80";
                 const displayImg = imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : fallbackImg;
                 
-                const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-                const safeDesc = desc.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "\\n");
-                const safeAddress = address.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-                const authorName = currentUser ? (currentUser.displayName || "Пользователь SVALKA") : "Гость";
-
                 try {
-                    if (!currentUser) throw new Error("Необходима авторизация.");
-
                     await addDoc(collection(db, dbPath), {
                         title: title, category: category, city: city, address: address, condition: condition,
                         price: price, currency: currency, desc: desc, 
                         imageUrl: displayImg, images: imgUrlsToSave.length > 0 ? imgUrlsToSave : [fallbackImg],
-                        createdAt: Date.now(), authorName: currentUser.displayName || "Пользователь", userId: currentUser.uid
+                        createdAt: Date.now(), authorName: currentUser.displayName || "Пользователь SVALKA", userId: currentUser.uid
                     });
                     
                     window.closeModal('add-modal');
@@ -1236,33 +1236,8 @@
                     event.target.reset();
                     window.resetPhotoUpload();
                 } catch (err) { 
-                    console.warn("Ошибка Firebase:", err.message); 
-                    window.showToast('toast_local_fallback');
-
-                    const grid = document.getElementById('fresh-items-grid');
-                    if (grid) {
-                        // Точно такая же компактная flex-карточка для локального добавления, теперь КЛИКАБЕЛЬНАЯ
-                        const cardHTML = `
-                        <div class="item-card bg-white dark:bg-gray-800 rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['${displayImg}'], '${safeTitle}', '${price}', '${currency}', '${safeDesc}', '${authorName}', '${city}', '${safeAddress}', '${condition}', '${category}')">
-                            <div class="h-32 sm:h-36 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0">
-                                <img src="${displayImg}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                            </div>
-                            <div class="p-3 md:p-4 flex flex-col flex-1">
-                                <h4 class="font-black text-sm leading-tight text-gray-900 dark:text-white mb-1 line-clamp-2">${title}</h4>
-                                <div class="text-red-600 dark:text-red-500 font-black text-base mb-2 italic">${price} ${currency}</div>
-                                <p class="text-gray-500 dark:text-gray-400 text-[10px] mb-auto line-clamp-2 leading-relaxed">${desc}</p>
-                                <div class="text-red-500 text-[8px] font-bold mt-3 uppercase tracking-widest pt-2 border-t border-gray-100 dark:border-gray-700">Локально (Ошибка БД)</div>
-                            </div>
-                        </div>`;
-                        
-                        const placeholder = document.getElementById('loading-placeholder');
-                        if (placeholder) placeholder.style.display = 'none';
-                        grid.insertAdjacentHTML('afterbegin', cardHTML);
-                    }
-
-                    window.closeModal('add-modal');
-                    event.target.reset();
-                    window.resetPhotoUpload();
+                    console.error("Ошибка Firebase:", err.message); 
+                    window.showToast('toast_auth_error');
                 } finally {
                     submitBtn.innerText = originalText;
                     submitBtn.disabled = false;
