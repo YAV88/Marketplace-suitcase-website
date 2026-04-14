@@ -361,18 +361,18 @@
                     <button onclick="window.setAuthMode('login')" id="tab-login" class="text-lg font-black text-red-600 border-b-2 border-red-600 pb-2 transition" data-t="auth_tab_login">Вход</button>
                     <button onclick="window.setAuthMode('register')" id="tab-register" class="text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition" data-t="auth_tab_register">Регистрация</button>
                 </div>
-                <form class="flex flex-col gap-4 text-left" onsubmit="event.preventDefault(); window.closeModal('auth-modal'); window.showToast('toast_login_success'); setTimeout(()=>window.openModal('profile-modal'), 500);">
+                <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
                     <div id="auth-name-field" class="hidden">
                         <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_name">Имя</label>
-                        <input type="text" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition">
+                        <input type="text" id="auth-name" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition">
                     </div>
                     <div>
                         <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Email</label>
-                        <input type="email" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition" required>
+                        <input type="email" id="auth-email" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition" required>
                     </div>
                     <div>
                         <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_pass">Пароль</label>
-                        <input type="password" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition" required>
+                        <input type="password" id="auth-password" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition" required minlength="6">
                     </div>
                     <button type="submit" id="auth-submit-btn" class="bg-red-600 text-white w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-700 transition shadow-lg mt-2" data-t="auth_login_btn">Войти</button>
                 </form>
@@ -388,10 +388,13 @@
                 <div class="flex flex-col md:flex-row items-center gap-6">
                     <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-4xl border-4 border-white dark:border-gray-800 shadow-md"><i class="fa-solid fa-user"></i></div>
                     <div class="text-center md:text-left">
-                        <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-1">Гость SVALKA</h2>
-                        <div class="text-yellow-400 text-sm font-black flex items-center justify-center md:justify-start gap-1 mb-2"><i class="fa-solid fa-star"></i> <span class="text-gray-900 dark:text-white">Новичек</span></div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold bg-white dark:bg-gray-800 px-3 py-1 rounded-lg inline-block border border-gray-100 dark:border-gray-700 shadow-sm"><i class="fa-solid fa-calendar-check mr-1"></i> Недавно зарегистрирован</p>
+                        <h2 id="profile-name" class="text-3xl font-black text-gray-900 dark:text-white mb-1">Гость SVALKA</h2>
+                        <div class="text-yellow-400 text-sm font-black flex items-center justify-center md:justify-start gap-1 mb-2"><i class="fa-solid fa-star"></i> <span class="text-gray-900 dark:text-white">Пользователь</span></div>
+                        <p id="profile-email" class="text-xs text-gray-500 dark:text-gray-400 font-semibold bg-white dark:bg-gray-800 px-3 py-1 rounded-lg inline-block border border-gray-100 dark:border-gray-700 shadow-sm">Не авторизован</p>
                     </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-col gap-2">
+                    <button id="profile-action-btn" onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest hover:text-red-600 dark:hover:text-red-500 transition"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Войти в аккаунт</button>
                 </div>
             </div>
             <div class="flex border-b border-gray-100 dark:border-gray-800 px-8">
@@ -583,7 +586,7 @@
     <!-- Scripts and Firebase Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.currentAppLang = 'ru'; 
@@ -608,17 +611,17 @@
                 seo_text: "SVALKA — современный маркетплейс в Сербии для покупки и продажи б/у вещей.", map_placeholder_title: "Интерактивная карта", map_placeholder_desc: "В этой области будет отображена карта с пинами товаров.",
                 auth_title: "С возвращением!", auth_subtitle: "Авторизуйтесь, чтобы публиковать объявления и общаться с продавцами.", auth_pass: "Пароль", auth_login_btn: "Войти", auth_no_account: "Нет аккаунта?", auth_register_btn: "Зарегистрироваться",
                 auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_reg_submit: "Создать аккаунт", auth_have_account: "Уже есть аккаунт?", auth_login_link: "Войти", auth_name: "Имя",
-                profile_logout: "Войти в аккаунт", profile_tab_items: "Мои объявления (0)", profile_tab_saved: "Заначка (0)",
-                toast_copied: "Ссылка скопирована!", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!", toast_auth_error: "Ошибка БД. Проверьте настройки авторизации!",
+                profile_logout: "Выйти", profile_login: "Войти в аккаунт", profile_tab_items: "Мои объявления (0)", profile_tab_saved: "Заначка (0)",
+                toast_copied: "Ссылка скопирована!", toast_published: "Объявление опубликовано!", toast_login_success: "Вы успешно вошли!", toast_logout_success: "Вы вышли из аккаунта", toast_auth_error: "Ошибка БД. Проверьте настройки авторизации!", toast_auth_fail: "Ошибка: неверный логин или пароль", toast_local_fallback: "Сохранено локально (БД недоступна)",
                 add_housing_hint: "* Для категории 'Жилье': разрешена только сдача комнат и переуступка аренды.", add_rules_agree: "Я согласен с",
                 rules_title: "Правила SVALKA", rules_ok: "Я понял(а)", rules_1_title: "1. Запрет на спам", rules_1_text: "Запрещена массовая публикация однотипных объявлений.", rules_2_title: "2. Ограничения категории 'Жилье'", rules_2_text: "Продажа недвижимости строго запрещена.", rules_3_title: "3. Нелегальные товары", rules_3_text: "Запрещена продажа незаконных товаров.", rules_4_title: "4. Уважение и безопасность", rules_4_text: "Мошенничество карается баном.",
                 add_condition: "Состояние", cond_new: "Новое", cond_used_exc: "Б/У (Отличное)", cond_used_good: "Б/У (Хорошее)", cond_parts: "На запчасти", modal_category: "Категория"
             },
             rs: {
-                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Preporučeno", main_subtitle: "Stvari koje zaslužuju posebnu pažnju", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku preporučenih za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno", seller_reviews: "(12 recenzija)", modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Novi oglas", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...", empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_reg_submit: "Napravi nalog", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", profile_logout: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", toast_auth_error: "Greška u bazi podataka!", add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Slažem se sa", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija"
+                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Preporučeno", main_subtitle: "Stvari koje zaslužuju posebnu pažnju", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku preporučenih za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno", seller_reviews: "(12 recenzija)", modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Novi oglas", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...", empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_reg_submit: "Napravi nalog", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", profile_logout: "Odjavi se", profile_login: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", toast_logout_success: "Odjavljeni ste", toast_auth_fail: "Greška: pogrešan email ili lozinka", toast_auth_error: "Greška u bazi podataka!", toast_local_fallback: "Sačuvano lokalno (Baza nije dostupna)", add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Slažem se sa", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija"
             },
             en: {
-                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Recommended", main_subtitle: "Items that deserve special attention", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in Recommended for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used", seller_reviews: "(12 reviews)", modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "New Listing", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...", empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_reg_submit: "Create account", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", profile_logout: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_auth_error: "Database Error! Check settings.", add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I agree to the", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category"
+                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Recommended", main_subtitle: "Items that deserve special attention", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in Recommended for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used", seller_reviews: "(12 reviews)", modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "New Listing", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...", empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_reg_submit: "Create account", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_auth_error: "Database Error! Check settings.", toast_local_fallback: "Saved locally (DB unavailable)", add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I agree to the", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category"
             }
         };
 
@@ -926,37 +929,93 @@
             const db = getFirestore(app);
             let currentUser = null;
 
+            // Теперь мы ждем только реальную авторизацию (анонимная как фоллбэк только для Canvas)
             async function initAuth() {
                 try { 
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth); 
                     }
                 } catch (err) { 
-                    console.error("Auth error:", err); 
-                    const loader = document.getElementById('loading-placeholder');
-                    if (loader) loader.style.display = 'none';
-                    const grid = document.getElementById('fresh-items-grid');
-                    if (grid) grid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-sm">Ошибка доступа (Домен заблокирован). Это нормально для предпросмотра.</div>';
+                    console.error("Auth init error:", err); 
                 }
             }
-
             initAuth();
 
+            // Логика Входа и Регистрации
+            window.submitAuth = async function(event) {
+                event.preventDefault();
+                const submitBtn = document.getElementById('auth-submit-btn');
+                const origText = submitBtn.innerText;
+                submitBtn.innerText = "Загрузка...";
+                submitBtn.disabled = true;
+
+                const email = document.getElementById('auth-email').value;
+                const pass = document.getElementById('auth-password').value;
+                const name = document.getElementById('auth-name').value;
+
+                try {
+                    if (window.isLoginMode) {
+                        await signInWithEmailAndPassword(auth, email, pass);
+                        window.showToast('toast_login_success');
+                    } else {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                        await updateProfile(userCredential.user, { displayName: name || "Пользователь SVALKA" });
+                        window.showToast('toast_login_success');
+                    }
+                    window.closeModal('auth-modal');
+                    event.target.reset();
+                    setTimeout(()=>window.openModal('profile-modal'), 500);
+                } catch (err) {
+                    console.error("Auth Error:", err);
+                    window.showToast('toast_auth_fail');
+                } finally {
+                    submitBtn.innerText = origText;
+                    submitBtn.disabled = false;
+                }
+            };
+
+            // Логика выхода
+            window.logout = async function() {
+                try {
+                    await signOut(auth);
+                    window.closeModal('profile-modal');
+                    window.showToast('toast_logout_success');
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+
+            // Отслеживание состояния пользователя
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
-                if (user) {
-                    const itemsRef = collection(db, dbPath);
-                    onSnapshot(itemsRef, (snapshot) => {
-                        let items = [];
-                        snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); });
-                        renderDynamicItems(items);
-                    }, (error) => { console.error("Error listening to items: ", error); });
+                
+                // Обновляем модалку профиля
+                const profileName = document.getElementById('profile-name');
+                const profileEmail = document.getElementById('profile-email');
+                const profileActionBtn = document.getElementById('profile-action-btn');
+
+                if (user && !user.isAnonymous) {
+                    profileName.innerText = user.displayName || "Пользователь SVALKA";
+                    profileEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${user.email}`;
+                    profileActionBtn.innerHTML = `<i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> ${window.i18n[window.currentAppLang]['profile_logout'] || 'Выйти'}`;
+                    profileActionBtn.onclick = window.logout;
                 } else {
-                    const loader = document.getElementById('loading-placeholder');
-                    if (loader) loader.style.display = 'none';
+                    profileName.innerText = "Гость SVALKA";
+                    profileEmail.innerText = "Не авторизован";
+                    profileActionBtn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> ${window.i18n[window.currentAppLang]['profile_login'] || 'Войти в аккаунт'}`;
+                    profileActionBtn.onclick = () => { window.closeModal('profile-modal'); window.openModal('auth-modal'); };
                 }
+
+                // Загружаем базу товаров
+                const itemsRef = collection(db, dbPath);
+                onSnapshot(itemsRef, (snapshot) => {
+                    let items = [];
+                    snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); });
+                    renderDynamicItems(items);
+                }, (error) => { console.error("Error listening to items: ", error); });
+                
+                const loader = document.getElementById('loading-placeholder');
+                if (loader) loader.style.display = 'none';
             });
 
             function renderDynamicItems(items) {
@@ -979,22 +1038,21 @@
                     const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80");
                     const currency = item.currency || 'RSD';
 
-                    // Теперь клик вызывает openItemDetails по ID, это надежнее чем передавать длинные строки
                     const cardHTML = `
-                    <div class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="window.openItemDetails('${item.id}')">
-                        <button class="btn-stash absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)">
-                            <i class="fa-solid fa-box-open text-base drop-shadow-sm"></i>
+                    <div class="item-card bg-white dark:bg-gray-800 rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="window.openItemDetails('${item.id}')">
+                        <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)">
+                            <i class="fa-solid fa-box-open text-sm drop-shadow-sm"></i>
                         </button>
-                        <div class="h-48 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                        <div class="h-36 sm:h-40 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
                             <img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
-                        <div class="p-4 md:p-5 flex flex-col h-[180px]">
-                            <h4 class="font-black text-base md:text-lg leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${item.title}</h4>
-                            <div class="text-red-600 dark:text-red-500 font-black text-xl mb-2 italic">${item.price} ${currency}</div>
-                            <p class="text-gray-500 dark:text-gray-400 text-xs mb-auto line-clamp-2 leading-relaxed">${item.desc}</p>
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700 mt-3">
-                                <span class="text-[9px] uppercase font-bold text-gray-400">${timeText}</span>
-                                <span class="font-bold text-[10px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
+                        <div class="p-3 md:p-4 flex flex-col h-[150px]">
+                            <h4 class="font-black text-sm md:text-base leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${item.title}</h4>
+                            <div class="text-red-600 dark:text-red-500 font-black text-lg mb-2 italic">${item.price} ${currency}</div>
+                            <p class="text-gray-500 dark:text-gray-400 text-[11px] mb-auto line-clamp-2 leading-relaxed">${item.desc}</p>
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700 mt-2">
+                                <span class="text-[8px] uppercase font-bold text-gray-400">${timeText}</span>
+                                <span class="font-bold text-[9px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
                             </div>
                         </div>
                     </div>`;
@@ -1014,6 +1072,7 @@
                 const title = document.getElementById('item-title').value;
                 const category = document.getElementById('item-category').value;
                 const city = document.getElementById('item-city').value;
+                const address = document.getElementById('item-address').value;
                 const condition = document.getElementById('item-condition').value;
                 const price = document.getElementById('item-price').value;
                 const currency = document.getElementById('item-currency').value;
@@ -1032,6 +1091,7 @@
                         title: title, 
                         category: category, 
                         city: city,
+                        address: address,
                         condition: condition,
                         price: price, 
                         currency: currency, 
@@ -1049,21 +1109,21 @@
                     window.resetPhotoUpload();
                 } catch (err) { 
                     console.error("🚨 Ошибка базы данных Firebase:", err.message); 
-                    window.showToast('toast_auth_error');
+                    window.showToast('toast_local_fallback');
 
                     // Локальное добавление на экран, чтобы интерфейс продолжал работать для тестов
                     const grid = document.getElementById('fresh-items-grid');
                     if (grid) {
                         const cardHTML = `
-                        <div class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer">
-                            <div class="h-48 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                        <div class="item-card bg-white dark:bg-gray-800 rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer">
+                            <div class="h-36 sm:h-40 bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
                                 <img src="${displayImg}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             </div>
-                            <div class="p-4 md:p-5 flex flex-col h-[180px]">
-                                <h4 class="font-black text-base md:text-lg leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${title}</h4>
-                                <div class="text-red-600 dark:text-red-500 font-black text-xl mb-2 italic">${price} ${currency}</div>
-                                <p class="text-gray-500 dark:text-gray-400 text-xs mb-auto line-clamp-2 leading-relaxed">${desc}</p>
-                                <div class="text-red-500 text-[10px] font-bold mt-2 uppercase tracking-widest">Отображается локально (Ошибка БД)</div>
+                            <div class="p-3 md:p-4 flex flex-col h-[150px]">
+                                <h4 class="font-black text-sm md:text-base leading-tight text-gray-900 dark:text-white mb-1 line-clamp-1">${title}</h4>
+                                <div class="text-red-600 dark:text-red-500 font-black text-lg mb-2 italic">${price} ${currency}</div>
+                                <p class="text-gray-500 dark:text-gray-400 text-[11px] mb-auto line-clamp-2 leading-relaxed">${desc}</p>
+                                <div class="text-red-500 text-[8px] font-bold mt-2 uppercase tracking-widest">Отображается локально (Ошибка БД)</div>
                             </div>
                         </div>`;
                         
