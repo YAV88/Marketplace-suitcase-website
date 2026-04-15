@@ -84,9 +84,9 @@
                     <button onclick="window.topUpWallet()" class="ml-1 w-6 h-6 bg-green-500 text-white rounded-md flex items-center justify-center hover:bg-green-600 transition shadow-sm" title="Пополнить"><i class="fa-solid fa-plus text-[10px]"></i></button>
                 </div>
                 
-                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="text-gray-500 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 font-bold text-xs uppercase tracking-widest transition px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm">Войти</button>
+                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="text-gray-500 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 font-bold text-xs uppercase tracking-widest transition px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm" data-t="auth_login_btn">Войти</button>
                 <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="hidden text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
-                <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest">+ Пристроить добро</button>
+                <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
             </div>
             <div class="lg:hidden flex items-center gap-3 ml-4">
                 <button onclick="window.toggleDarkMode()" class="text-gray-400 dark:text-gray-300 text-xl p-2"><i id="theme-icon-mob" class="fa-solid fa-moon"></i></button>
@@ -277,18 +277,18 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
-                                <!-- Males: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <!-- Females: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Males -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Females -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Mia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Mia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -315,7 +315,6 @@
     <!-- Profile Modal -->
     <div id="profile-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-4xl h-[85vh] rounded-[2.5rem] shadow-2xl overflow-hidden relative border dark:border-gray-800 flex flex-col">
-            <!-- ВЕРСТКА ШАПКИ ПРОФИЛЯ БЕЗ НАЛОЖЕНИЙ -->
             <div class="p-6 md:p-10 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 relative">
                 
                 <div class="absolute top-4 right-4 md:top-6 md:right-6 z-20 flex gap-2">
@@ -323,7 +322,7 @@
                     <button onclick="window.closeModal('profile-modal')" class="text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full mt-10 md:mt-0">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full pr-0 md:pr-24 mt-8 md:mt-0">
                     <div id="profile-avatar-container" class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-4xl border-4 border-white dark:border-gray-800 shadow-md overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
@@ -691,9 +690,7 @@
         window.changeLang = function(lang) {
             window.currentAppLang = lang;
             const flags = { 'ru': 'https://flagcdn.com/w20/ru.png', 'rs': 'https://flagcdn.com/w20/rs.png', 'en': 'https://flagcdn.com/w20/gb.png' };
-            const texts = { 'ru': 'RU', 'rs': 'SRB', 'en': 'EN' };
             if(document.getElementById('current-lang-flag')) document.getElementById('current-lang-flag').src = flags[lang];
-            if(document.getElementById('current-lang-text')) document.getElementById('current-lang-text').innerText = texts[lang];
             
             document.querySelectorAll('[data-t]').forEach(el => {
                 const key = el.getAttribute('data-t');
@@ -1022,7 +1019,10 @@
 
         window.renderProfileTabs = function() {
             if (!window.currentUser) return;
-            const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.uid).sort((a, b) => b.createdAt - a.createdAt);
+            
+            const getMs = (t) => t?.seconds ? t.seconds * 1000 : (t || 0);
+
+            const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.uid).sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt));
             const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
             const grid = document.getElementById('profile-items-grid'); const empty = document.getElementById('profile-empty');
             
@@ -1045,7 +1045,9 @@
                         const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : item.imageUrl;
                         const isLiked = window.userFavorites && window.userFavorites.has(item.id);
                         const isHighlighted = item.status !== 'sold' && item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
-                        const ageDays = item.createdAt ? (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24) : 0;
+                        
+                        const createdAtMs = getMs(item.createdAt) || Date.now();
+                        const ageDays = (Date.now() - createdAtMs) / (1000 * 60 * 60 * 24);
                         const isExpired = ageDays > 30;
 
                         let statusOverlay = ''; let badgeHtml = '';
@@ -1226,6 +1228,83 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
+            function createCardHTML(item) {
+                const getMs = (t) => t?.seconds ? t.seconds * 1000 : (t || 0);
+                const diffMins = Math.floor((Date.now() - (getMs(item.createdAt) || Date.now())) / 60000); 
+                const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
+                const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80");
+                const isLiked = window.userFavorites && window.userFavorites.has(item.id); 
+                const iconClass = isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open';
+                
+                const isHighlighted = item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
+                const cardBorder = isHighlighted ? 'border-2 border-orange-500 shadow-lg shadow-orange-500/20 bg-orange-50 dark:bg-gray-800' : 'border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800';
+                
+                let badgeHtml = isHighlighted ? `<div class="absolute top-2 left-2 z-10 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">СРОЧНО 🔥</div>` : '';
+                if (item.status === 'reserved') {
+                    badgeHtml = `<div class="absolute top-2 left-2 z-10 bg-purple-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">${window.i18n[window.currentAppLang]['badge_reserved'] || 'РЕЗЕРВ'}</div>`;
+                }
+
+                return `<div class="item-card ${cardBorder} rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl transition duration-400 relative group cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
+                    ${badgeHtml}
+                    <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>
+                    <div class="h-32 sm:h-36 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0"><img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>
+                    <div class="p-3 md:p-4 flex flex-col flex-1">
+                        <h4 class="font-black text-sm leading-tight text-gray-900 dark:text-white mb-1 line-clamp-2">${item.title}</h4>
+                        <div class="text-red-600 dark:text-red-500 font-black text-base mb-2 italic">${item.price || 0} ${item.currency || 'RSD'}</div>
+                        <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700 mt-auto">
+                            <span class="text-[8px] uppercase font-bold text-gray-400">${timeText}</span>
+                            <span class="font-bold text-[9px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            window.renderDynamicItems = function(items, isReRender = false) {
+                if (!isReRender) window.loadedItems = items; 
+                const grid = document.getElementById('main-items-grid'); if(!grid) return;
+                grid.innerHTML = ''; 
+                
+                const getMs = (t) => t?.seconds ? t.seconds * 1000 : (t || 0);
+
+                let activeItems = (window.loadedItems || []).filter(item => {
+                    const createdAtMs = getMs(item.createdAt) || Date.now();
+                    const ageDays = (Date.now() - createdAtMs) / (1000 * 60 * 60 * 24);
+                    return (item.status === 'active' || item.status === 'reserved' || !item.status) && ageDays <= 30;
+                });
+
+                if (window.currentCategoryFilter && window.currentCategoryFilter !== 'Все') {
+                    activeItems = activeItems.filter(item => item.category === window.currentCategoryFilter);
+                }
+
+                if (window.currentSearchQuery) {
+                    activeItems = activeItems.filter(item => 
+                        (item.title && item.title.toLowerCase().includes(window.currentSearchQuery)) || 
+                        (item.desc && item.desc.toLowerCase().includes(window.currentSearchQuery)) ||
+                        (item.city && item.city.toLowerCase().includes(window.currentSearchQuery))
+                    );
+                }
+
+                if (window.showOnlyUrgent) {
+                    activeItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
+                }
+
+                if (window.currentSortMode === 'cheap') {
+                    activeItems.sort((a, b) => Number(a.price) - Number(b.price));
+                } else if (window.currentSortMode === 'exp') {
+                    activeItems.sort((a, b) => Number(b.price) - Number(a.price));
+                } else {
+                    activeItems.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt));
+                }
+
+                if (activeItems.length === 0) { 
+                    grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Ничего не найдено</div>'; 
+                    return; 
+                }
+
+                activeItems.forEach(item => { grid.innerHTML += createCardHTML(item); });
+                const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
+            };
+
             // Отслеживание глобальной ленты
             onSnapshot(collection(window.db, 'items'), (snapshot) => { 
                 let items = []; 
@@ -1234,7 +1313,7 @@
             }, (error) => { 
                 console.error("Ошибка БД при чтении:", error); 
                 const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-                const g = document.getElementById('main-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
+                const g = document.getElementById('main-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: Убедитесь, что правила Firestore обновлены</div>`;
             });
 
             onAuthStateChanged(auth, (user) => {
