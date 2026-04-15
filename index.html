@@ -42,8 +42,6 @@
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
         .active-mob-lang { background-color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: #ef4444; }
         .dark .active-mob-lang { background-color: #374151; color: #ef4444; box-shadow: none; }
-        .view-btn.active { background-color: white; color: #111827; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .dark .view-btn.active { background-color: #374151; color: white; }
         .profile-tab.active { border-bottom-color: #ef4444; color: #ef4444; }
         .btn-stash.liked { color: #f97316; animation: boxSnap 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes boxSnap { 0% { transform: scale(1); } 50% { transform: scale(1.2) rotate(-5deg); } 100% { transform: scale(1); } }
@@ -86,7 +84,12 @@
                     <button onclick="window.topUpWallet()" class="ml-1 w-6 h-6 bg-green-500 text-white rounded-md flex items-center justify-center hover:bg-green-600 transition shadow-sm" title="Пополнить"><i class="fa-solid fa-plus text-[10px]"></i></button>
                 </div>
                 
-                <button onclick="window.openModal('profile-modal')" class="text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
+                <!-- Кнопка Войти (для гостей) -->
+                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="text-gray-500 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 font-bold text-xs uppercase tracking-widest transition px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm" data-t="auth_login_btn">Войти</button>
+                
+                <!-- Иконка Профиля (для авторизованных) -->
+                <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="hidden text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
+                
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
             </div>
             <div class="lg:hidden flex items-center gap-3 ml-4">
@@ -116,11 +119,12 @@
                 <div>
                     <h5 class="font-black text-[11px] uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4" data-t="filter_city">Город</h5>
                     <div class="flex flex-col gap-3 font-semibold text-sm max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" class="w-4 h-4 accent-red-600" checked> <span data-t="city_all">Вся Сербия</span></label>
-                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" class="w-4 h-4 accent-red-600"> <span data-t="city_bg">Белград</span></label>
-                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" class="w-4 h-4 accent-red-600"> <span data-t="city_ns">Нови-Сад</span></label>
-                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" class="w-4 h-4 accent-red-600"> <span data-t="city_nis">Ниш</span></label>
-                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" class="w-4 h-4 accent-red-600"> <span data-t="city_sub">Суботица</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Вся Сербия" class="w-4 h-4 accent-red-600" checked> <span data-t="city_all">Вся Сербия</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Белград" class="w-4 h-4 accent-red-600"> <span data-t="city_bg">Белград</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Нови-Сад" class="w-4 h-4 accent-red-600"> <span data-t="city_ns">Нови-Сад</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Ниш" class="w-4 h-4 accent-red-600"> <span data-t="city_nis">Ниш</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Суботица" class="w-4 h-4 accent-red-600"> <span data-t="city_sub">Суботица</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition"><input type="radio" name="city" value="Другой" class="w-4 h-4 accent-red-600"> <span data-t="city_other">Другой</span></label>
                     </div>
                 </div>
                 <div>
@@ -155,10 +159,6 @@
                 <p class="text-gray-500 dark:text-gray-400 font-medium text-sm md:text-base" data-t="main_subtitle">Самые свежие и актуальные объявления</p>
             </div>
             <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                <div class="bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl flex items-center shrink-0">
-                    <button id="btn-view-grid" onclick="window.toggleViewMode('grid')" class="view-btn active px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold text-sm transition" title="Сетка"><i class="fa-solid fa-border-all"></i></button>
-                    <button id="btn-view-map" onclick="window.toggleViewMode('map')" class="view-btn px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold text-sm transition" title="Карта"><i class="fa-solid fa-map-location-dot"></i></button>
-                </div>
                 <div class="relative flex-1 lg:flex-none">
                     <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl pl-5 pr-10 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 cursor-pointer outline-none focus:border-red-500 transition">
                         <option value="new" data-t="sort_new">Сначала новые</option>
@@ -190,29 +190,13 @@
             </div>
         </div>
 
-        <!-- MAP VIEW -->
-        <div id="map-view" class="hidden w-full h-[600px] rounded-[2.5rem] overflow-hidden relative bg-gray-200 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-inner mb-16">
-            <div id="real-map" class="w-full h-full z-[1]"></div>
-            <div id="map-loader" class="absolute inset-0 z-[2] flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 transition-opacity duration-500">
-                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Загрузка карты...</p>
-            </div>
-        </div>
-
         <!-- GRID VIEW -->
         <div id="grid-view">
-            <!-- Единая сетка товаров -->
             <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-4">Загрузка...</p>
                 </div>
-            </div>
-            
-            <div class="flex justify-center mb-16">
-                <button class="flex items-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-gray-700 rounded-2xl bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition font-black text-gray-600 dark:text-gray-300 text-sm uppercase tracking-widest group">
-                    <i class="fa-solid fa-arrow-rotate-right group-hover:rotate-180 transition-transform duration-500"></i> <span data-t="load_more">Показать еще</span>
-                </button>
             </div>
         </div>
 
@@ -255,7 +239,7 @@
                 <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
                 <input type="text" oninput="window.handleSearch(event)" placeholder="Поиск вещей..." class="bg-transparent border-none outline-none ml-4 w-full text-base font-semibold text-gray-900 dark:text-white" data-t="search_placeholder">
             </div>
-            <!-- Блок Кошелька в мобильном меню -->
+            
             <div id="mob-wallet-block" class="hidden items-center justify-between bg-green-50 dark:bg-green-900/20 rounded-2xl px-5 py-4 border border-green-200 dark:border-green-800/50 mt-2">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-wallet text-green-600 dark:text-green-500 text-lg"></i>
@@ -265,7 +249,8 @@
             </div>
             
             <div class="flex flex-col gap-6 font-black text-2xl uppercase tracking-wider mt-4">
-                <a href="#" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-red-600"></i> <span data-t="nav_profile">Профиль</span></a>
+                <a href="#" id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-solid fa-arrow-right-to-bracket text-red-600"></i> <span data-t="auth_login_btn">Войти</span></a>
+                <a href="#" id="mob-nav-profile" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="hidden text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-red-600"></i> <span data-t="nav_profile">Профиль</span></a>
             </div>
             <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition hover:bg-red-700" data-t="btn_add">+ Пристроить добро</button>
             <div class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mt-2">
@@ -371,11 +356,6 @@
                             </div>
                         </div>
 
-                        <div id="profile-login-wrapper" class="mt-4 md:mt-0 md:absolute md:bottom-10 md:right-10 shrink-0">
-                            <button id="profile-login-btn" onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-500 transition px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-sm">
-                                <i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Войти в аккаунт
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -428,7 +408,7 @@
                     </div>
                 </div>
 
-                <!-- Панель управления владельца товара (Скрыта по умолчанию) -->
+                <!-- Панель управления владельца товара -->
                 <div id="modal-owner-controls" class="hidden flex-col gap-3 mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
                     <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center mb-1">Управление объявлением</div>
                     <div class="flex flex-wrap gap-2">
@@ -510,47 +490,6 @@
         <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain modal-content shadow-2xl">
     </div>
 
-    <!-- Support Modal -->
-    <div id="support-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800">
-            <button onclick="window.closeModal('support-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
-            <div class="flex flex-col items-center text-center mb-6">
-                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-600 text-3xl mb-4"><i class="fa-solid fa-headset"></i></div>
-                <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="foot_support">Поддержка</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Служба заботы о пользователях SVALKA</p>
-            </div>
-            <div class="space-y-4">
-                <a href="mailto:support@svalka.rs" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-700 group">
-                    <i class="fa-solid fa-envelope text-2xl text-gray-400 group-hover:text-red-600 transition"></i>
-                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Email</div><div class="text-sm font-bold text-gray-900 dark:text-white">support@svalka.rs</div></div>
-                </a>
-                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-[#0088cc]/10 transition border border-gray-200 dark:border-gray-700 group">
-                    <i class="fa-brands fa-telegram text-2xl text-gray-400 group-hover:text-[#0088cc] transition"></i>
-                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Telegram Bot</div><div class="text-sm font-bold text-gray-900 dark:text-white">@SvalkaSupportBot</div></div>
-                </a>
-            </div>
-            <p class="text-xs text-center text-gray-400 mt-8 font-medium">Мы отвечаем каждый день с 10:00 до 20:00 по Белграду.</p>
-        </div>
-    </div>
-
-    <!-- Policy Modal -->
-    <div id="policy-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
-            <button onclick="window.closeModal('policy-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic mb-6" data-t="foot_policy">Политика конфиденциальности</h2>
-            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                <p>Мы, команда SVALKA, серьезно относимся к защите ваших персональных данных. Настоящая Политика описывает, как мы собираем, используем и храним вашу информацию.</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">1. Сбор данных</h4>
-                <p>Мы собираем только ту информацию, которая необходима для работы сервиса: ваш email при регистрации, имя профиля и данные объявлений, которые вы публикуете (включая загруженные фото и примерное местоположение).</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">2. Использование данных</h4>
-                <p>Ваши данные используются исключительно для предоставления доступа к платформе, связи между покупателями и продавцами, а также для предотвращения мошеннических действий.</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">3. Безопасность</h4>
-                <p>Мы не передаем ваши пароли в открытом виде и используем надежные протоколы шифрования Google Firebase для защиты вашей базы данных.</p>
-            </div>
-            <button onclick="window.closeModal('policy-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
-        </div>
-    </div>
-
     <!-- Add/Edit Item Modal -->
     <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
@@ -625,7 +564,46 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] border dark:border-gray-200 flex items-center gap-3"><i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i><span id="toast-msg">Успешно!</span></div>
+    <!-- Support Modal -->
+    <div id="support-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800">
+            <button onclick="window.closeModal('support-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-600 text-3xl mb-4"><i class="fa-solid fa-headset"></i></div>
+                <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="foot_support">Поддержка</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Служба заботы о пользователях SVALKA</p>
+            </div>
+            <div class="space-y-4">
+                <a href="mailto:support@svalka.rs" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-700 group">
+                    <i class="fa-solid fa-envelope text-2xl text-gray-400 group-hover:text-red-600 transition"></i>
+                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Email</div><div class="text-sm font-bold text-gray-900 dark:text-white">support@svalka.rs</div></div>
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-[#0088cc]/10 transition border border-gray-200 dark:border-gray-700 group">
+                    <i class="fa-brands fa-telegram text-2xl text-gray-400 group-hover:text-[#0088cc] transition"></i>
+                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Telegram Bot</div><div class="text-sm font-bold text-gray-900 dark:text-white">@SvalkaSupportBot</div></div>
+                </a>
+            </div>
+            <p class="text-xs text-center text-gray-400 mt-8 font-medium">Мы отвечаем каждый день с 10:00 до 20:00 по Белграду.</p>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div id="policy-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic mb-6" data-t="foot_policy">Политика конфиденциальности</h2>
+            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                <p>Мы, команда SVALKA, серьезно относимся к защите ваших персональных данных. Настоящая Политика описывает, как мы собираем, используем и храним вашу информацию.</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">1. Сбор данных</h4>
+                <p>Мы собираем только ту информацию, которая необходима для работы сервиса: ваш email при регистрации, имя профиля и данные объявлений, которые вы публикуете (включая загруженные фото и примерное местоположение).</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">2. Использование данных</h4>
+                <p>Ваши данные используются исключительно для предоставления доступа к платформе, связи между покупателями и продавцами, а также для предотвращения мошеннических действий.</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">3. Безопасность</h4>
+                <p>Мы не передаем ваши пароли в открытом виде и используем надежные протоколы шифрования Google Firebase для защиты вашей базы данных.</p>
+            </div>
+            <button onclick="window.closeModal('policy-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 pt-16 pb-8 transition-colors duration-300">
@@ -655,7 +633,7 @@
         window.userFavorites = new Set();
         window.currentProfileTab = 'items';
         window.authMode = 'login'; 
-        window.currentUserData = null; 
+        window.currentUserData = { walletBalance: 0, isPro: false, freeListingsUsed: {} }; 
         window.editingItemId = null;
         window.currentCategoryFilter = 'Все';
         window.currentSortMode = 'new';
@@ -673,8 +651,7 @@
                 city_all: "Вся Сербия", city_bg: "Белград", city_ns: "Нови-Сад", city_nis: "Ниш", city_sub: "Суботица", city_krag: "Крагуевац", city_other: "Другой",
                 sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие",
                 card_urgent: "Срочно", yesterday: "Вчера", hours_ago: "часа назад", mins_ago: "мин назад",
-                btn_take: "Подробнее \u2192", item1_name: "Стул IKEA Millberget", item1_desc: "Отличное состояние. Продаю в связи с переездом. Центр города.", item2_desc: "Состояние идеал. Куплен полгода назад, на гарантии.", item3_name: "Монстера высокая", item3_desc: "Здоровая и ухоженная. Отдаю вместе с керамическим горшком.", item4_name: "Конвектор Xiaomi", item4_desc: "Незаменим зимой. Почти новый, использовался один сезон.",
-                cta_title: "Ненужное — это клад.", cta_subtitle: "Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.", btn_find: "Найти сокровища", foot_policy: "Политика", foot_rules: "Правила", foot_support: "Поддержка", foot_copy: "© 2026 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.", search_placeholder: "Поиск вещей...", modal_condition: "Б/У",
+                btn_take: "Подробнее \u2192", cta_title: "Ненужное — это клад.", cta_subtitle: "Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.", btn_find: "Найти сокровища", foot_policy: "Политика", foot_rules: "Правила", foot_support: "Поддержка", foot_copy: "© 2026 SVALKA SERBIA. ТВОЙ ХЛАМ — ЧЬЁ-ТО СЧАСТЬЕ.", search_placeholder: "Поиск вещей...", modal_condition: "Б/У",
                 modal_contact: "Написать продавцу", safety_warning: "Никогда не переводите деньги заранее. Встречайтесь с продавцом лично.",
                 add_title: "Пристроить добро", edit_title: "Редактировать объявление", btn_save: "Сохранить изменения", add_photos_label: "Фотографии", add_photo_btn: "Добавить", add_name: "Название", add_price: "Цена", add_desc: "Описание", btn_publish: "Опубликовать", chat_today: "Сегодня", chat_input: "Написать сообщение...",
                 btn_edit: "Редактировать", btn_reserve: "В резерв", btn_unreserve: "Снять резерв", btn_sold: "Продано", badge_reserved: "РЕЗЕРВ", badge_sold: "ПРОДАНО", badge_expired: "ИСТЕКЛО СРОК",
@@ -694,25 +671,27 @@
             rs: {
                 nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Najnoviji i najaktuelniji oglasi", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Dopuni novčanik", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", 
                 cat_all: "Sve kategorije", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", 
-                city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
+                city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
                 modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Udomi stvari", edit_title: "Uredi oglas", btn_save: "Sačuvaj", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...",
                 btn_edit: "Uredi", btn_reserve: "Rezerviši", btn_unreserve: "Skini rezervaciju", btn_sold: "Prodato", badge_reserved: "REZERV.", badge_sold: "PRODATO", badge_expired: "ISTEKLO",
                 empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_reg_submit: "Registruj se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", auth_avatar: "Avatar",
                 auth_forgot_pass: "Zaboravili ste lozinku?", auth_reset_btn: "Resetuj lozinku",
-                profile_logout: "Odjavi se", profile_login: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", profile_new_user: "Novi korisnik",
+                profile_logout: "Odjavi se", profile_login: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", profile_new_user: "Novi korisnik", profile_wallet: "Moj Novčanik",
                 toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", toast_logout_success: "Odjavljeni ste", toast_auth_fail: "Greška: pogrešan email ili lozinka", toast_email_in_use: "Ovaj Email je već registrovan", toast_weak_password: "Lozinka mora imati najmanje 6 karaktera", toast_auth_required: "Molimo vas da se prijavite!", toast_reg_success: "Uspešno! Email je poslat.", toast_reset_sent: "Link za resetovanje je poslat.", toast_user_not_found: "Korisnik nije pronađen",
+                toast_not_enough_money: "Nedovoljno sredstava na računu!", toast_item_bumped: "Oglas je podignut!", toast_item_highlighted: "Oglas je istaknut!", toast_pro_success: "Postali ste PRO Prodavac!",
                 add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Prihvatam", add_rules_link: "SVALKA Pravila", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija", add_address: "Tačna adresa", modal_location: "Lokacija", share_title: "Podeli", share_copy: "Link"
             },
             en: {
                 nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "The freshest and most relevant listings", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Top up wallet", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", 
                 cat_all: "All Categories", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", 
-                city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
+                city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
                 modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "Rehome items", edit_title: "Edit Listing", btn_save: "Save changes", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...",
                 btn_edit: "Edit", btn_reserve: "Reserve", btn_unreserve: "Unreserve", btn_sold: "Sold!", badge_reserved: "RESERVED", badge_sold: "SOLD", badge_expired: "EXPIRED",
                 empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
                 auth_forgot_pass: "Forgot Password?", auth_reset_btn: "Reset Password",
-                profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user",
-                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_error: "Authentication Error!", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user", profile_wallet: "My Wallet",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                toast_not_enough_money: "Not enough funds on balance!", toast_item_bumped: "Listing bumped to top!", toast_item_highlighted: "Listing highlighted!", toast_pro_success: "You are now a PRO Seller!",
                 add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I accept the", add_rules_link: "SVALKA Rules", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category", add_address: "Exact address", modal_location: "Location", share_title: "Share", share_copy: "Link"
             }
         };
@@ -740,16 +719,6 @@
                     }
                 }
             });
-        };
-
-        window.toggleViewMode = function(mode) {
-            const gridView = document.getElementById('grid-view'); const mapView = document.getElementById('map-view'); const btnGrid = document.getElementById('btn-view-grid'); const btnMap = document.getElementById('btn-view-map');
-            if (mode === 'grid') {
-                gridView.classList.remove('hidden'); mapView.classList.add('hidden'); btnGrid.classList.add('active'); btnMap.classList.remove('active');
-            } else {
-                gridView.classList.add('hidden'); mapView.classList.remove('hidden'); btnMap.classList.add('active'); btnGrid.classList.remove('active');
-                if (!window.myMap) { window.initMap(); } else { setTimeout(() => window.myMap.invalidateSize(), 100); }
-            }
         };
 
         window.resetFilters = function() {
@@ -874,30 +843,6 @@
             window.changeLang(window.currentAppLang);
         };
 
-        window.myMap = null; window.mainMapMarkers = [];
-
-        window.updateMainMapMarkers = function(items) {
-            if (!window.myMap) return;
-            window.mainMapMarkers.forEach(m => window.myMap.removeLayer(m)); window.mainMapMarkers = [];
-            const customIcon = L.divIcon({ className: 'custom-map-marker', html: '<div style="color: #ef4444; font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"><i class="fa-solid fa-location-dot"></i></div>', iconSize: [24, 24], iconAnchor: [12, 24] });
-            
-            items.forEach(item => {
-                if(item.coords && item.coords.length === 2 && (!item.status || item.status === 'active' || item.status === 'reserved')) {
-                    const m = L.marker(item.coords, {icon: customIcon}).addTo(window.myMap).bindPopup(`<b>${item.title}</b><br><span style="color: #ef4444; font-weight: bold;">${item.price || 0} ${item.currency || 'RSD'}</span>`);
-                    window.mainMapMarkers.push(m);
-                }
-            });
-        };
-
-        window.initMap = function() {
-            window.myMap = L.map('real-map').setView([44.0165, 21.0059], 7);
-            const isDark = document.documentElement.classList.contains('dark');
-            const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-            L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(window.myMap);
-            setTimeout(() => { document.getElementById('map-loader').style.opacity = '0'; setTimeout(() => document.getElementById('map-loader').style.display = 'none', 500); }, 500);
-            if (window.loadedItems && window.loadedItems.length > 0) window.updateMainMapMarkers(window.loadedItems);
-        };
-
         window.showToast = function(translationKey, isError = false, rawMessage = null) {
             const toast = document.getElementById('toast'); const icon = document.getElementById('toast-icon');
             if(!toast || !icon) return;
@@ -933,7 +878,6 @@
             [document.getElementById('theme-icon'), document.getElementById('theme-icon-mob')].forEach(icon => {
                 if(icon) { if(isDark) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } else { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); } }
             });
-            if (window.myMap) { const newUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; window.myMap.eachLayer((layer) => { if (layer instanceof L.TileLayer) { layer.setUrl(newUrl); } }); }
         };
 
         window.toggleFilters = function() { document.getElementById('filter-panel').classList.toggle('active'); };
@@ -1060,7 +1004,7 @@
                     const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : item.imageUrl;
                     const isLiked = window.userFavorites && window.userFavorites.has(item.id);
                     const isHighlighted = item.status !== 'sold' && item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
-                    const ageDays = (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24);
+                    const ageDays = item.createdAt ? (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24) : 0;
                     const isExpired = ageDays > 30;
 
                     let statusOverlay = ''; let badgeHtml = '';
@@ -1175,7 +1119,7 @@
         window.resetPhotoUpload = function() { window.tempPhotos = []; window.renderPhotoPreviews(); };
 
         // =========================================================================================
-        // === НАСТРОЙКИ FIREBASE (ОБЯЗАТЕЛЬНО СВОИ) ===
+        // === НАСТРОЙКИ FIREBASE ===
         // =========================================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
@@ -1260,7 +1204,17 @@
                 const navWalletBlock = document.getElementById('nav-wallet-block');
                 const mobWalletBlock = document.getElementById('mob-wallet-block');
                 
+                const navLoginBtn = document.getElementById('nav-login-btn');
+                const navProfileBtn = document.getElementById('nav-profile-btn');
+                const mobNavLogin = document.getElementById('mob-nav-login');
+                const mobNavProfile = document.getElementById('mob-nav-profile');
+
                 if (user) {
+                    if(navLoginBtn) navLoginBtn.classList.add('hidden');
+                    if(navProfileBtn) { navProfileBtn.classList.remove('hidden'); navProfileBtn.classList.add('flex'); }
+                    if(mobNavLogin) mobNavLogin.classList.add('hidden');
+                    if(mobNavProfile) { mobNavProfile.classList.remove('hidden'); mobNavProfile.classList.add('flex'); }
+
                     pName.innerText = user.displayName || "Пользователь"; pEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${user.email}`;
                     lBtn.style.display = 'flex'; loginBtnWrapper.style.display = 'none'; ecoSection.classList.remove('hidden'); ecoSection.classList.add('flex');
                     if(navWalletBlock) navWalletBlock.classList.replace('hidden', 'flex');
@@ -1271,25 +1225,34 @@
                     window.userDocUnsub = onSnapshot(doc(window.db, `users`, user.uid), (docSnap) => { 
                         if(docSnap.exists()) {
                             window.currentUserData = docSnap.data();
-                            window.userFavorites = new Set(window.currentUserData.favorites || []);
-                            
-                            const bal = window.currentUserData.walletBalance || 0;
-                            document.getElementById('profile-balance').innerText = bal;
-                            const navBal = document.getElementById('nav-wallet-balance'); if(navBal) navBal.innerText = bal + ' RSD';
-                            const mobBal = document.getElementById('mob-wallet-balance'); if(mobBal) mobBal.innerText = bal;
-
-                            if (window.currentUserData.isPro) {
-                                document.getElementById('profile-pro-badge').classList.remove('hidden');
-                                document.getElementById('profile-pro-offer').classList.add('hidden');
-                                document.getElementById('photo-limit-text').innerText = "PRO: Максимум 10 фото";
-                                window.maxPhotos = 10;
-                            } else {
-                                window.maxPhotos = 3;
-                            }
+                        } else {
+                            window.currentUserData = { walletBalance: 0, isPro: false, freeListingsUsed: {} };
                         }
+                        
+                        window.userFavorites = new Set(window.currentUserData.favorites || []);
+                        
+                        const bal = window.currentUserData.walletBalance || 0;
+                        document.getElementById('profile-balance').innerText = bal;
+                        const navBal = document.getElementById('nav-wallet-balance'); if(navBal) navBal.innerText = bal + ' RSD';
+                        const mobBal = document.getElementById('mob-wallet-balance'); if(mobBal) mobBal.innerText = bal;
+
+                        if (window.currentUserData.isPro) {
+                            document.getElementById('profile-pro-badge').classList.remove('hidden');
+                            document.getElementById('profile-pro-offer').classList.add('hidden');
+                            document.getElementById('photo-limit-text').innerText = "PRO: Максимум 10 фото";
+                            window.maxPhotos = 10;
+                        } else {
+                            window.maxPhotos = 3;
+                        }
+                        
                         window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true); 
                     });
                 } else {
+                    if(navLoginBtn) navLoginBtn.classList.remove('hidden');
+                    if(navProfileBtn) { navProfileBtn.classList.add('hidden'); navProfileBtn.classList.remove('flex'); }
+                    if(mobNavLogin) mobNavLogin.classList.remove('hidden');
+                    if(mobNavProfile) { mobNavProfile.classList.add('hidden'); mobNavProfile.classList.remove('flex'); }
+
                     pName.innerText = "Гость SVALKA"; pEmail.innerText = "Не авторизован"; lBtn.style.display = 'none'; loginBtnWrapper.style.display = 'block'; ecoSection.classList.remove('flex'); ecoSection.classList.add('hidden'); document.getElementById('profile-pro-badge').classList.add('hidden');
                     if(navWalletBlock) navWalletBlock.classList.replace('flex', 'hidden');
                     if(mobWalletBlock) mobWalletBlock.classList.replace('flex', 'hidden');
@@ -1299,11 +1262,7 @@
             });
 
             window.topUpWallet = async function() {
-                if(!window.currentUser) {
-                    window.openModal('auth-modal');
-                    window.showToast('toast_auth_required', true);
-                    return;
-                }
+                if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
                 await setDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: (window.currentUserData?.walletBalance || 0) + 1000 }, {merge: true});
                 window.showToast('', false, "+ 1000 RSD на баланс (Демо)");
             };
