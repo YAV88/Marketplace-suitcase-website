@@ -271,7 +271,7 @@
                     <button type="button" onclick="window.setAuthMode('login')" id="tab-login" class="text-lg font-black text-red-600 border-b-2 border-red-600 pb-2 transition" data-t="auth_tab_login">Вход</button>
                     <button type="button" onclick="window.setAuthMode('register')" id="tab-register" class="text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition" data-t="auth_tab_register">Регистрация</button>
                 </div>
-                <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
+                <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="event.preventDefault(); window.submitAuth(event);">
                     
                     <div id="auth-name-field" class="hidden flex-col gap-4">
                         <div>
@@ -281,18 +281,18 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
-                                <!-- Males: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <!-- Females: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Males -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Females -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -497,7 +497,7 @@
             <h2 id="add-modal-title" class="text-3xl font-display font-black text-gray-900 dark:text-white mb-2 uppercase italic" data-t="add_title">Пристроить добро</h2>
             <p id="add-limits-warning" class="text-xs font-bold text-orange-500 mb-6 hidden">Лимит бесплатных объявлений исчерпан. Публикация стоит 150 RSD.</p>
             
-            <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
+            <form id="add-form" class="flex flex-col gap-6" onsubmit="event.preventDefault(); window.submitNewItem(event);">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex justify-between items-end mb-2">
                         <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest" data-t="add_photos_label">Фотографии</label>
@@ -605,6 +605,8 @@
         </div>
     </div>
 
+    <div id="toast" class="fixed bottom-10 left-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] border dark:border-gray-200 flex items-center gap-3"><i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i><span id="toast-msg">Успешно!</span></div>
+
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 pt-16 pb-8 transition-colors duration-300">
         <div class="container mx-auto px-4 flex flex-col items-center">
@@ -622,7 +624,7 @@
     <!-- Scripts and Firebase Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =========================================================================================
@@ -639,6 +641,15 @@
         window.currentSortMode = 'new';
         window.currentSearchQuery = '';
         window.showOnlyUrgent = false;
+
+        // --- УНИВЕРСАЛЬНАЯ ЛОГИКА ДЛЯ GITHUB И CANVAS ---
+        window.isCanvas = typeof __firebase_config !== 'undefined';
+        window.appId = window.isCanvas && typeof __app_id !== 'undefined' ? __app_id : 'svalka-rs';
+        window.dbPath = window.isCanvas ? `artifacts/${window.appId}/public/data/items` : 'items';
+        window.usersPath = window.isCanvas ? `artifacts/${window.appId}/users` : 'users';
+
+        window.getFavDocRef = (uid, itemId) => doc(window.db, window.usersPath, uid, 'favorites', itemId);
+        window.getFavColRef = (uid) => collection(window.db, window.usersPath, uid, 'favorites');
 
         window.i18n = {
             ru: {
@@ -690,7 +701,7 @@
                 empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
                 auth_forgot_pass: "Forgot Password?", auth_reset_btn: "Reset Password",
                 profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user", profile_wallet: "My Wallet",
-                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_error: "Authentication Error!", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
                 toast_not_enough_money: "Not enough funds on balance!", toast_item_bumped: "Listing bumped to top!", toast_item_highlighted: "Listing highlighted!", toast_pro_success: "You are now a PRO Seller!",
                 add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I accept the", add_rules_link: "SVALKA Rules", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category", add_address: "Exact address", modal_location: "Location", share_title: "Share", share_copy: "Link"
             }
@@ -1157,7 +1168,7 @@
                         await sendEmailVerification(uc.user);
                         
                         try {
-                            await setDoc(doc(window.db, 'users', uc.user.uid), { walletBalance: 1000, isPro: false, freeListingsUsed: {} }, { merge: true });
+                            await setDoc(doc(window.db, window.usersPath, uc.user.uid), { walletBalance: 1000, isPro: false, freeListingsUsed: {} }, { merge: true });
                         } catch(e) { console.warn("User Setup Ignore:", e); }
 
                         window.currentUser = auth.currentUser; 
@@ -1187,7 +1198,7 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
-            onSnapshot(collection(window.db, 'items'), (snapshot) => { 
+            onSnapshot(collection(window.db, window.dbPath), (snapshot) => { 
                 let items = []; 
                 snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
                 window.renderDynamicItems(items); 
@@ -1222,14 +1233,20 @@
                     if (user.photoURL) { pAvatarContainer.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`; } else { pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`; }
                     
                     if(window.userDocUnsub) window.userDocUnsub();
-                    window.userDocUnsub = onSnapshot(doc(window.db, `users`, user.uid), (docSnap) => { 
+                    window.userDocUnsub = onSnapshot(doc(window.db, window.usersPath, user.uid), (docSnap) => { 
                         if(docSnap.exists()) {
                             window.currentUserData = docSnap.data();
                         } else {
                             window.currentUserData = { walletBalance: 0, isPro: false, freeListingsUsed: {} };
                         }
                         
-                        window.userFavorites = new Set(window.currentUserData.favorites || []);
+                        // Получение коллекции избранного
+                        onSnapshot(window.getFavColRef(user.uid), (favSnap) => {
+                            window.userFavorites = new Set();
+                            favSnap.forEach(fDoc => window.userFavorites.add(fDoc.id));
+                            window.renderProfileTabs(); 
+                            if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
+                        });
                         
                         const bal = window.currentUserData.walletBalance || 0;
                         document.getElementById('profile-balance').innerText = bal;
@@ -1244,8 +1261,6 @@
                         } else {
                             window.maxPhotos = 3;
                         }
-                        
-                        window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true); 
                     });
                 } else {
                     if(navLoginBtn) navLoginBtn.classList.remove('hidden');
@@ -1262,15 +1277,19 @@
             });
 
             window.topUpWallet = async function() {
-                if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
-                await setDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: (window.currentUserData?.walletBalance || 0) + 1000 }, {merge: true});
+                if(!window.currentUser) {
+                    window.openModal('auth-modal');
+                    window.showToast('toast_auth_required', true);
+                    return;
+                }
+                await setDoc(doc(window.db, window.usersPath, window.currentUser.uid), { walletBalance: (window.currentUserData?.walletBalance || 0) + 1000 }, {merge: true});
                 window.showToast('', false, "+ 1000 RSD на баланс (Демо)");
             };
 
             window.buyPro = async function() {
                 if(!window.currentUser || !window.currentUserData) return;
                 if(window.currentUserData.walletBalance < 1500) { window.showToast('toast_not_enough_money', true); return; }
-                await setDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 1500, isPro: true }, {merge: true});
+                await setDoc(doc(window.db, window.usersPath, window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 1500, isPro: true }, {merge: true});
                 window.showToast('toast_pro_success');
             };
 
@@ -1278,8 +1297,8 @@
                 event.stopPropagation();
                 if(!window.currentUser || !window.currentUserData) return;
                 if(window.currentUserData.walletBalance < 50) { window.showToast('toast_not_enough_money', true); return; }
-                await updateDoc(doc(window.db, 'items', itemId), { createdAt: Date.now() });
-                await updateDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 50 });
+                await updateDoc(doc(window.db, window.dbPath, itemId), { createdAt: Date.now() });
+                await updateDoc(doc(window.db, window.usersPath, window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 50 });
                 window.showToast('toast_item_bumped');
             };
 
@@ -1287,8 +1306,8 @@
                 event.stopPropagation();
                 if(!window.currentUser || !window.currentUserData) return;
                 if(window.currentUserData.walletBalance < 100) { window.showToast('toast_not_enough_money', true); return; }
-                await updateDoc(doc(window.db, 'items', itemId), { isHighlighted: true, highlightExpiresAt: Date.now() + (3 * 24 * 60 * 60 * 1000) });
-                await updateDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 100 });
+                await updateDoc(doc(window.db, window.dbPath, itemId), { isHighlighted: true, highlightExpiresAt: Date.now() + (3 * 24 * 60 * 60 * 1000) });
+                await updateDoc(doc(window.db, window.usersPath, window.currentUser.uid), { walletBalance: window.currentUserData.walletBalance - 100 });
                 window.showToast('toast_item_highlighted');
             };
 
@@ -1298,15 +1317,15 @@
                 if (!itemId) return;
 
                 const isLiked = window.userFavorites.has(itemId);
-                const userDocRef = doc(window.db, `users`, window.currentUser.uid);
+                const favRef = window.getFavDocRef(window.currentUser.uid, itemId);
 
                 btn.classList.toggle('liked'); const icon = btn.querySelector('i');
                 if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
 
                 try {
-                    const newFavs = Array.from(window.userFavorites);
-                    if (isLiked) { const index = newFavs.indexOf(itemId); if (index > -1) newFavs.splice(index, 1); } else { newFavs.push(itemId); }
-                    await setDoc(userDocRef, { favorites: newFavs }, { merge: true });
+                    if (isLiked) { await deleteDoc(favRef); window.userFavorites.delete(itemId); } 
+                    else { await setDoc(favRef, { savedAt: Date.now() }); window.userFavorites.add(itemId); }
+                    window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
                 } catch(e) {
                     console.error("Ошибка избранного:", e); window.showToast('', true, "Ошибка: " + e.message);
                     btn.classList.toggle('liked'); if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
@@ -1316,7 +1335,7 @@
             window.markItemStatus = async function(itemId, newStatus) {
                 if(!window.currentUser) return;
                 try {
-                    await updateDoc(doc(window.db, 'items', itemId), { status: newStatus });
+                    await updateDoc(doc(window.db, window.dbPath, itemId), { status: newStatus });
                     window.showToast('', false, "Статус обновлен!");
                     if(newStatus === 'sold') window.closeModal('item-modal');
                 } catch(e) { console.error(e); }
@@ -1353,14 +1372,14 @@
 
                     if (window.editingItemId) {
                         const updateObj = { title, category, city, address, condition, price: Number(price), currency, desc, imageUrl: displayImg, images: imgUrlsToSave, coords: itemCoords };
-                        await updateDoc(doc(window.db, 'items', window.editingItemId), updateObj);
+                        await updateDoc(doc(window.db, window.dbPath, window.editingItemId), updateObj);
                         window.showToast('', false, "Изменения сохранены!");
                     } else {
                         const newItemObj = { title: title, category: category, city: city, address: address, condition: condition, price: Number(price), currency: currency, desc: desc, imageUrl: displayImg, images: imgUrlsToSave, createdAt: Date.now(), authorName: window.currentUser.displayName || "Пользователь SVALKA", authorAvatar: window.currentUser.photoURL || "", isProAuthor: window.currentUserData?.isPro || false, userId: window.currentUser.uid, coords: itemCoords, isHighlighted: false, status: 'active' };
-                        await addDoc(collection(window.db, 'items'), newItemObj);
+                        await addDoc(collection(window.db, window.dbPath), newItemObj);
                         
                         try {
-                            const userRef = doc(window.db, 'users', window.currentUser.uid);
+                            const userRef = doc(window.db, window.usersPath, window.currentUser.uid);
                             let newUsed = window.currentUserData?.freeListingsUsed || {};
                             newUsed[category] = (newUsed[category] || 0) + 1;
                             if (window.currentListingCost > 0) {
