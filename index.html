@@ -65,7 +65,7 @@
                 </div>
                 <div class="hidden md:flex items-center bg-gray-100 dark:bg-gray-700 rounded-2xl px-4 py-2.5 flex-1 max-w-md border border-transparent focus-within:border-red-600 focus-within:bg-white dark:focus-within:bg-gray-800 transition-all ml-4">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 dark:text-gray-300"></i>
-                    <input type="text" placeholder="Поиск вещей..." class="bg-transparent border-none outline-none ml-3 w-full text-sm font-semibold text-gray-700 dark:text-gray-200" data-t="search_placeholder">
+                    <input type="text" oninput="window.handleSearch(event)" placeholder="Поиск вещей..." class="bg-transparent border-none outline-none ml-3 w-full text-sm font-semibold text-gray-700 dark:text-gray-200" data-t="search_placeholder">
                 </div>
                 <div class="hidden sm:flex items-center gap-4 ml-auto">
                     <button onclick="window.toggleDarkMode()" class="text-gray-400 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-400 text-lg transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
@@ -83,8 +83,7 @@
             </div>
             <div class="hidden lg:flex items-center gap-6 ml-6 pl-6 border-l border-gray-200 dark:border-gray-700">
                 <div class="flex space-x-6 font-bold text-gray-500 dark:text-gray-300 uppercase text-[11px] tracking-widest">
-                    <a href="#" class="hover:text-red-600 transition" data-t="nav_buy">Купить</a>
-                    <a href="#" class="hover:text-red-600 transition" data-t="nav_urgent">Срочно</a>
+                    <button id="btn-nav-urgent" onclick="window.toggleUrgentFilter()" class="hover:text-red-600 transition" data-t="nav_urgent">Срочно</button>
                 </div>
                 <button onclick="window.openModal('profile-modal')" class="text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
@@ -252,11 +251,10 @@
         <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto">
             <div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-2xl px-5 py-4 border border-transparent focus-within:border-red-600 transition-all">
                 <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
-                <input type="text" placeholder="Поиск вещей..." class="bg-transparent border-none outline-none ml-4 w-full text-base font-semibold text-gray-900 dark:text-white" data-t="search_placeholder">
+                <input type="text" oninput="window.handleSearch(event)" placeholder="Поиск вещей..." class="bg-transparent border-none outline-none ml-4 w-full text-base font-semibold text-gray-900 dark:text-white" data-t="search_placeholder">
             </div>
             <div class="flex flex-col gap-6 font-black text-2xl uppercase tracking-wider mt-4">
-                <a href="#" class="text-gray-900 dark:text-white hover:text-red-600 transition" data-t="nav_buy">Купить</a>
-                <a href="#" class="text-gray-900 dark:text-white hover:text-red-600 transition" data-t="nav_urgent">Срочно</a>
+                <button id="btn-nav-urgent-mob" onclick="window.toggleUrgentFilter(); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition text-left" data-t="nav_urgent">Срочно</button>
                 <a href="#" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-red-600"></i> <span data-t="nav_profile">Профиль</span></a>
             </div>
             <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition hover:bg-red-700" data-t="btn_add">+ Пристроить добро</button>
@@ -650,11 +648,13 @@
         window.editingItemId = null;
         window.currentCategoryFilter = 'Все';
         window.currentSortMode = 'new';
+        window.currentSearchQuery = '';
+        window.showOnlyUrgent = false;
 
         window.i18n = {
             ru: {
                 nav_buy: "Купить", nav_urgent: "Срочно", btn_add: "+ Пристроить добро", nav_profile: "Профиль",
-                btn_filter: "Фильтры", main_title: "Находки", main_subtitle: "Все объявления и сокровища вне очереди",
+                btn_filter: "Фильтры", main_title: "Находки", main_subtitle: "Самые свежие и актуальные объявления",
                 fresh_title: "Свежие объявления", fresh_subtitle: "Последние добавленные вещи от пользователей",
                 promo_title: "Продавайте в 5 раз быстрее!", promo_subtitle: "Выделите свое объявление рамкой или поднимите в ТОП.", btn_promo: "Узнать подробнее",
                 load_more: "Показать еще", filter_cat: "Категории", filter_city: "Город", filter_price: "Цена", filter_apply: "Применить", filter_reset: "Сбросить", filter_reset_success: "Фильтры сброшены",
@@ -681,7 +681,7 @@
                 add_address: "Точный адрес", modal_location: "Местоположение", share_title: "Поделиться", share_copy: "Ссылка"
             },
             rs: {
-                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Svi oglasi i blago preko reda", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", 
+                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Najnoviji i najaktuelniji oglasi", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", 
                 cat_all: "Sve kategorije", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", 
                 city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
                 modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Udomi stvari", edit_title: "Uredi oglas", btn_save: "Sačuvaj", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...",
@@ -693,7 +693,7 @@
                 add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Prihvatam", add_rules_link: "SVALKA Pravila", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija", add_address: "Tačna adresa", modal_location: "Lokacija", share_title: "Podeli", share_copy: "Link"
             },
             en: {
-                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "All listings and bumped items", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", 
+                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "The freshest and most relevant listings", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", 
                 cat_all: "All Categories", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", 
                 city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
                 modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "Rehome items", edit_title: "Edit Listing", btn_save: "Save changes", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...",
@@ -760,6 +760,29 @@
                     btn.className = "cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap";
                 }
             });
+            if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
+        };
+
+        window.handleSearch = function(event) {
+            window.currentSearchQuery = event.target.value.toLowerCase();
+            const desktopInp = document.querySelector('nav input[type="text"]');
+            const mobileInp = document.querySelector('#mobile-menu input[type="text"]');
+            if (desktopInp && event.target !== desktopInp) desktopInp.value = event.target.value;
+            if (mobileInp && event.target !== mobileInp) mobileInp.value = event.target.value;
+            if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
+        };
+
+        window.toggleUrgentFilter = function() {
+            window.showOnlyUrgent = !window.showOnlyUrgent;
+            const btnDesk = document.getElementById('btn-nav-urgent');
+            const btnMob = document.getElementById('btn-nav-urgent-mob');
+            if (window.showOnlyUrgent) {
+                if(btnDesk) btnDesk.classList.add('text-red-600');
+                if(btnMob) btnMob.classList.add('text-red-600');
+            } else {
+                if(btnDesk) btnDesk.classList.remove('text-red-600');
+                if(btnMob) btnMob.classList.remove('text-red-600');
+            }
             if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
         };
 
@@ -1308,7 +1331,21 @@
                     activeItems = activeItems.filter(item => item.category === window.currentCategoryFilter);
                 }
 
-                // 3. Сортировка
+                // 3. Поиск по тексту
+                if (window.currentSearchQuery) {
+                    activeItems = activeItems.filter(item => 
+                        (item.title && item.title.toLowerCase().includes(window.currentSearchQuery)) || 
+                        (item.desc && item.desc.toLowerCase().includes(window.currentSearchQuery)) ||
+                        (item.city && item.city.toLowerCase().includes(window.currentSearchQuery))
+                    );
+                }
+
+                // 4. Фильтр "Срочно"
+                if (window.showOnlyUrgent) {
+                    activeItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
+                }
+
+                // 5. Сортировка
                 if (window.currentSortMode === 'cheap') {
                     activeItems.sort((a, b) => Number(a.price) - Number(b.price));
                 } else if (window.currentSortMode === 'exp') {
