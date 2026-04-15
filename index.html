@@ -87,7 +87,7 @@
                     <a href="#" class="hover:text-red-600 transition" data-t="nav_urgent">Срочно</a>
                 </div>
                 <button onclick="window.openModal('profile-modal')" class="text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
-                <button onclick="window.openModal('add-modal')" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
+                <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
             </div>
             <div class="lg:hidden flex items-center gap-3 ml-4">
                 <button onclick="window.toggleDarkMode()" class="text-gray-400 dark:text-gray-300 text-xl p-2"><i id="theme-icon-mob" class="fa-solid fa-moon"></i></button>
@@ -185,7 +185,7 @@
             <!-- VIP Items Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
                 <!-- VIP Card 1 -->
-                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-red-900/20 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80'], 'Стул IKEA Millberget', '4.500', 'RSD', 'Отличное состояние. Продаю в связи с переездом. Центр города.', 'Пользователь SVALKA', 'Нови-Сад', 'ул. Пушкина, 10', 'Б/У (Отличное)', 'Мебель')">
+                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-red-900/20 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80'], 'Стул IKEA Millberget', '4.500', 'RSD', 'Отличное состояние. Продаю в связи с переездом. Центр города.', 'Пользователь', 'Нови-Сад', 'ул. Пушкина, 10', 'Б/У (Отличное)', 'Мебель')">
                     <div class="absolute top-4 left-5 z-10 text-red-500 text-2xl gem-animate" title="VIP"><i class="fa-solid fa-gem"></i></div>
                     <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)"><i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i></button>
                     <div class="h-56 sm:h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0">
@@ -202,7 +202,7 @@
                     </div>
                 </div>
                 <!-- VIP Card 2 -->
-                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80'], 'iPad Air (2022) 64GB', '520', 'EUR', 'Состояние идеал. Куплен полгода назад, на гарантии.', 'Пользователь SVALKA', 'Белград', 'Булевар Краља Александра', 'Новое', 'Электроника')">
+                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80'], 'iPad Air (2022) 64GB', '520', 'EUR', 'Состояние идеал. Куплен полгода назад, на гарантии.', 'Пользователь', 'Белград', 'Булевар Краља Александра', 'Новое', 'Электроника')">
                     <div class="absolute top-4 left-5 z-10 text-red-500 text-2xl gem-animate" title="VIP"><i class="fa-solid fa-gem"></i></div>
                     <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)"><i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i></button>
                     <div class="h-56 sm:h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0">
@@ -261,7 +261,7 @@
                 <h2 class="text-5xl md:text-7xl font-display font-black mb-6 tracking-tighter uppercase italic" data-t="cta_title">Ненужное — это клад.</h2>
                 <p class="text-gray-400 mb-12 max-w-2xl mx-auto text-lg md:text-xl font-medium leading-relaxed" data-t="cta_subtitle">Освободи место для новой жизни в Сербии. Передай свои ценности в хорошие руки на SVALKA.</p>
                 <div class="flex flex-col md:flex-row gap-5 justify-center">
-                    <button onclick="window.openModal('add-modal')" class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-sm md:text-base hover:bg-red-700 transition transform hover:-translate-y-1 shadow-xl shadow-red-900/20 uppercase tracking-widest" data-t="btn_add">+ Пристроить добро</button>
+                    <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 text-white px-10 py-5 rounded-2xl font-black text-sm md:text-base hover:bg-red-700 transition transform hover:-translate-y-1 shadow-xl shadow-red-900/20 uppercase tracking-widest" data-t="btn_add">+ Пристроить добро</button>
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-sm md:text-base hover:bg-gray-100 transition transform hover:-translate-y-1 uppercase tracking-widest" data-t="btn_find">Найти сокровища</button>
                 </div>
             </div>
@@ -287,7 +287,7 @@
                 <a href="#" class="text-gray-900 dark:text-white hover:text-red-600 transition" data-t="nav_urgent">Срочно</a>
                 <a href="#" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-red-600"></i> <span data-t="nav_profile">Профиль</span></a>
             </div>
-            <button onclick="window.openModal('add-modal'); window.toggleMobileMenu();" class="mt-auto bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition hover:bg-red-700" data-t="btn_add">+ Пристроить добро</button>
+            <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-red-900/30 transition hover:bg-red-700" data-t="btn_add">+ Пристроить добро</button>
             <div class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mt-2">
                 <button onclick="window.changeLang('ru'); window.toggleMobileMenu();" id="mob-lang-ru" class="flex-1 py-4 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-gray-700 transition active-mob-lang">RU</button>
                 <button onclick="window.changeLang('rs'); window.toggleMobileMenu();" id="mob-lang-rs" class="flex-1 py-4 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-gray-700 transition">SRB</button>
@@ -303,8 +303,8 @@
             <div class="p-8 md:p-10 text-center">
                 <div class="custom-logo mx-auto mb-6"><div class="logo-shape shape-1"></div><div class="logo-shape shape-2"></div></div>
                 <div class="flex justify-center gap-6 mb-6 border-b border-gray-100 dark:border-gray-800 pb-2">
-                    <button onclick="window.setAuthMode('login')" id="tab-login" class="text-lg font-black text-red-600 border-b-2 border-red-600 pb-2 transition" data-t="auth_tab_login">Вход</button>
-                    <button onclick="window.setAuthMode('register')" id="tab-register" class="text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition" data-t="auth_tab_register">Регистрация</button>
+                    <button type="button" onclick="window.setAuthMode('login')" id="tab-login" class="text-lg font-black text-red-600 border-b-2 border-red-600 pb-2 transition" data-t="auth_tab_login">Вход</button>
+                    <button type="button" onclick="window.setAuthMode('register')" id="tab-register" class="text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition" data-t="auth_tab_register">Регистрация</button>
                 </div>
                 <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
                     
@@ -316,12 +316,12 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="flex justify-between gap-2">
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Brian" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Brian" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Mia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Mia" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Lily" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Lily" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-110" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -531,6 +531,94 @@
         </div>
     </div>
 
+    <!-- Add Item Modal -->
+    <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 z-20 text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white mb-8 uppercase italic" data-t="add_title">Новое объявление</h2>
+            
+            <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
+                <div class="col-span-1 md:col-span-2">
+                    <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_photos_label">Фотографии</label>
+                    <div id="photo-preview-list" class="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+                        <label class="w-32 h-32 shrink-0 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl flex flex-col items-center justify-center text-gray-400 hover:border-red-600 hover:text-red-600 transition cursor-pointer bg-gray-50 dark:bg-gray-800/50 group">
+                            <i class="fa-solid fa-plus text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-[10px] uppercase tracking-widest" data-t="add_photo_btn">Добавить</span>
+                            <input type="file" class="hidden" accept="image/*" multiple onchange="window.previewPhotos(event)">
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_name">Название</label><input type="text" id="item-title" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required></div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_cat">Категория</label>
+                        <div class="relative">
+                            <select id="item-category" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option data-t="cat_furniture">Мебель</option><option data-t="cat_electronics">Электроника</option><option data-t="cat_clothes">Одежда</option><option data-t="cat_home">Для дома</option><option data-t="cat_kids">Детское</option><option data-t="cat_auto">Авто/Мото</option><option data-t="cat_sports">Спорт</option><option data-t="cat_free">Отдам даром</option><option data-t="cat_housing">Жилье / Соседи</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2 font-medium leading-tight" data-t="add_housing_hint">* Для категории "Жилье": разрешена только сдача комнат и переуступка аренды. Продажа домов запрещена.</p>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_city">Город</label>
+                        <div class="relative">
+                            <select id="item-city" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option data-t="city_bg">Белград</option><option data-t="city_ns">Нови-Сад</option><option data-t="city_nis">Ниш</option><option data-t="city_sub">Суботица</option><option data-t="city_krag">Крагуевац</option><option data-t="city_other">Другой</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_address">Точный адрес</label>
+                        <input type="text" id="item-address" placeholder="ул. Пушкина, 10" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_price">Цена</label>
+                        <div class="flex">
+                            <input type="number" id="item-price" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
+                            <select id="item-currency" class="bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-700 rounded-r-xl px-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition cursor-pointer appearance-none">
+                                <option value="RSD">RSD</option><option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_condition">Состояние</label>
+                        <div class="relative">
+                            <select id="item-condition" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option value="Новое" data-t="cond_new">Новое</option><option value="Б/У (Отличное)" data-t="cond_used_exc">Б/У (Отличное)</option><option value="Б/У (Хорошее)" data-t="cond_used_good">Б/У (Хорошее)</option><option value="На запчасти" data-t="cond_parts">На запчасти</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_desc">Описание</label><textarea id="item-desc" rows="6" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition resize-none"></textarea></div>
+                </div>
+                <div class="mt-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" required class="w-5 h-5 accent-red-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded cursor-pointer transition">
+                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"><span data-t="add_rules_agree">Я принимаю</span> <button type="button" onclick="window.openModal('rules-modal')" class="text-red-600 dark:text-red-500 hover:underline" data-t="add_rules_link">Правила SVALKA</button></span>
+                    </label>
+                </div>
+                <button type="submit" class="bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-200 dark:shadow-red-900/30 mt-2" data-t="btn_publish">Опубликовать</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center gap-3 mb-6"><i class="fa-solid fa-scale-balanced text-3xl text-red-600"></i><h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="rules_title">Правила SVALKA</h2></div>
+            <div class="space-y-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_1_title">1. Запрет на спам</strong><p data-t="rules_1_text">Запрещена массовая публикация однотипных объявлений.</p></div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_2_title">2. Ограничения 'Жилье'</strong><p data-t="rules_2_text">Только поиск сожителей и сдача комнат.</p></div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_3_title">3. Нелегальные товары</strong><p data-t="rules_3_text">Запрещена продажа оружия, наркотических веществ.</p></div>
+            </div>
+            <button onclick="window.closeModal('rules-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
+        </div>
+    </div>
+
     <div id="toast" class="fixed bottom-10 left-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] border dark:border-gray-200 flex items-center gap-3"><i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i><span id="toast-msg">Успешно!</span></div>
 
     <!-- Footer -->
@@ -553,6 +641,9 @@
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // =========================================================================================
+        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ФУНКЦИИ ИНТЕРФЕЙСА ===
+        // =========================================================================================
         window.currentAppLang = 'ru'; 
         window.loadedItems = []; 
         window.userFavorites = new Set();
@@ -653,6 +744,15 @@
             window.showToast('filter_reset_success');
         };
 
+        window.checkAuthAndOpenAddModal = function() {
+            if (!window.currentUser) {
+                window.openModal('auth-modal');
+                window.showToast('toast_auth_required', true);
+            } else {
+                window.openModal('add-modal');
+            }
+        };
+
         window.setAuthMode = function(mode) {
             window.authMode = mode; 
             
@@ -750,33 +850,6 @@
 
         window.toggleFilters = function() { document.getElementById('filter-panel').classList.toggle('active'); };
         window.toggleMobileMenu = function() { const menu = document.getElementById('mobile-menu'); menu.classList.toggle('active'); menu.classList.contains('active') ? document.body.classList.add('modal-open') : window.checkBodyScroll(); };
-
-        window.toggleFavorite = async function(btn, event, itemId) {
-            event.stopPropagation();
-            if (!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
-            if (!itemId) {
-                btn.classList.toggle('liked'); const icon = btn.querySelector('i');
-                btn.classList.contains('liked') ? (icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm') : (icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm');
-                return;
-            }
-
-            const isLiked = window.userFavorites.has(itemId);
-            const favRef = doc(window.db, `users/${window.currentUser.uid}/favorites`, itemId);
-
-            btn.classList.toggle('liked'); const icon = btn.querySelector('i');
-            if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
-
-            try {
-                if (isLiked) { await deleteDoc(favRef); window.userFavorites.delete(itemId); } 
-                else { await setDoc(favRef, { savedAt: Date.now() }); window.userFavorites.add(itemId); }
-                window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
-            } catch(e) {
-                console.error("Error toggling favorite", e);
-                window.showToast('', true, "Ошибка: " + e.message);
-                btn.classList.toggle('liked');
-                if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
-            }
-        };
 
         window.openChatModal = function() { setTimeout(() => { window.openModal('chat-modal'); }, 100); };
         window.openModal = function(id) { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-open'); };
@@ -917,11 +990,10 @@
         });
 
         // =========================================================================================
-        // === НАСТРОЙКИ FIREBASE (ОБЯЗАТЕЛЬНО ЗАМЕНИТЕ НА СВОИ!) ===
+        // === FIREBASE CONFIGURATION ===
         // =========================================================================================
         
-        // ВНИМАНИЕ: Если вы тестируете на GitHub Pages, вы ОБЯЗАНЫ заменить этот блок на данные из вашей Firebase Console!
-        // Иначе Google Cloud заблокирует запросы с вашего сайта!
+        // 1. ВАШИ НАСТРОЙКИ FIREBASE (Не меняем)
         const firebaseConfig = {
             apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
             authDomain: "svalka-rs.firebaseapp.com",
@@ -936,6 +1008,30 @@
             const auth = getAuth(app);
             window.db = getFirestore(app);
             window.currentUser = null;
+
+            // Логика добавления в избранное
+            window.toggleFavorite = async function(btn, event, itemId) {
+                event.stopPropagation();
+                if (!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+                if (!itemId) return; // Игнорируем статичные демо-карточки
+
+                const isLiked = window.userFavorites.has(itemId);
+                const favRef = doc(window.db, `users/${window.currentUser.uid}/favorites`, itemId);
+
+                btn.classList.toggle('liked'); const icon = btn.querySelector('i');
+                if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+
+                try {
+                    if (isLiked) { await deleteDoc(favRef); window.userFavorites.delete(itemId); } 
+                    else { await setDoc(favRef, { savedAt: Date.now() }); window.userFavorites.add(itemId); }
+                    window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
+                } catch(e) {
+                    console.error("Ошибка избранного:", e);
+                    window.showToast('', true, "Ошибка: " + e.message);
+                    btn.classList.toggle('liked');
+                    if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+                }
+            };
 
             window.submitAuth = async function(event) {
                 event.preventDefault(); 
@@ -984,7 +1080,7 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
-            // Отслеживание глобальной базы товаров ПРОИСХОДИТ ОДИН РАЗ, независимо от авторизации
+            // Отслеживание глобальной ленты происходит всегда (без проверок)
             onSnapshot(collection(window.db, 'items'), (snapshot) => { 
                 let items = []; 
                 snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
@@ -995,7 +1091,6 @@
                 const g = document.getElementById('fresh-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
             });
 
-            // Отслеживание статуса конкретного пользователя
             onAuthStateChanged(auth, (user) => {
                 window.currentUser = user;
                 const pName = document.getElementById('profile-name'); const pEmail = document.getElementById('profile-email'); const lBtn = document.getElementById('profile-logout-btn'); const loginBtnWrapper = document.getElementById('profile-login-btn').parentElement; const pAvatarContainer = document.getElementById('profile-avatar-container');
@@ -1030,7 +1125,7 @@
 
             window.submitNewItem = async function(event) {
                 event.preventDefault();
-                if (!window.currentUser) { window.closeModal('add-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+                
                 const submitBtn = event.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = "Загрузка..."; submitBtn.disabled = true;
 
                 const title = document.getElementById('item-title').value; const category = document.getElementById('item-category').value; const city = document.getElementById('item-city').value; const address = document.getElementById('item-address').value; const condition = document.getElementById('item-condition').value; const price = document.getElementById('item-price').value || 0; const currency = document.getElementById('item-currency').value; const desc = document.getElementById('item-desc').value;
