@@ -49,8 +49,6 @@
         @keyframes boxSnap { 0% { transform: scale(1); } 50% { transform: scale(1.2) rotate(-5deg); } 100% { transform: scale(1); } }
         #toast { transition: opacity 0.3s, transform 0.3s; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 9999; }
         #toast.show { opacity: 1; transform: translate(-50%, 0); }
-        @keyframes gemFloat { 0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.4)); } 50% { transform: translateY(-4px) scale(1.1); filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.9)); } }
-        .gem-animate { animation: gemFloat 2.5s infinite ease-in-out; display: inline-block; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 antialiased">
@@ -203,6 +201,7 @@
 
         <!-- GRID VIEW -->
         <div id="grid-view">
+            <!-- Единая сетка товаров -->
             <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
@@ -297,18 +296,18 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
-                                <!-- Males -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Felix&baseColor=f9c9b6" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/micah/svg?seed=Felix&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jack&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jack&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jude&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jude&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Leo&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Leo&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Oliver&baseColor=8b605a" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Oliver&baseColor=8b605a" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <!-- Females -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Aneka&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Aneka&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Sophia&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Sophia&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Avery&baseColor=f9c9b6" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Avery&baseColor=f9c9b6" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Mia&baseColor=8b605a" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Mia&baseColor=8b605a" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Males: 4 light, 1 dark -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Females: 4 light, 1 dark -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -549,6 +548,80 @@
                 <p>Мы не передаем ваши пароли в открытом виде и используем надежные протоколы шифрования Google Firebase для защиты вашей базы данных.</p>
             </div>
             <button onclick="window.closeModal('policy-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 z-20 text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="add-modal-title" class="text-3xl font-display font-black text-gray-900 dark:text-white mb-2 uppercase italic" data-t="add_title">Пристроить добро</h2>
+            <p id="add-limits-warning" class="text-xs font-bold text-orange-500 mb-6 hidden">Лимит бесплатных объявлений исчерпан. Публикация стоит 150 RSD.</p>
+            
+            <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest" data-t="add_photos_label">Фотографии</label>
+                        <span id="photo-limit-text" class="text-[10px] font-bold text-gray-400">Максимум 3 фото</span>
+                    </div>
+                    <div id="photo-preview-list" class="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+                        <!-- Preview images will be rendered here -->
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_name">Название</label><input type="text" id="item-title" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required></div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_cat">Категория</label>
+                        <div class="relative">
+                            <select id="item-category" onchange="window.checkListingLimits()" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option data-t="cat_furniture">Мебель</option><option data-t="cat_electronics">Электроника</option><option data-t="cat_clothes">Одежда</option><option data-t="cat_home">Для дома</option><option data-t="cat_kids">Детское</option><option data-t="cat_auto">Авто/Мото</option><option data-t="cat_sports">Спорт</option><option data-t="cat_free">Отдам даром</option><option data-t="cat_housing">Жилье / Соседи</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                        <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2 font-medium leading-tight" data-t="add_housing_hint">* Для категории "Жилье": разрешена только сдача комнат и переуступка аренды. Продажа домов запрещена.</p>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_city">Город</label>
+                        <div class="relative">
+                            <select id="item-city" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option data-t="city_bg">Белград</option><option data-t="city_ns">Нови-Сад</option><option data-t="city_nis">Ниш</option><option data-t="city_sub">Суботица</option><option data-t="city_krag">Крагуевац</option><option data-t="city_other">Другой</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_address">Точный адрес</label>
+                        <input type="text" id="item-address" placeholder="ул. Пушкина, 10" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_price">Цена</label>
+                        <div class="flex">
+                            <input type="number" id="item-price" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
+                            <select id="item-currency" class="bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-700 rounded-r-xl px-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition cursor-pointer appearance-none">
+                                <option value="RSD">RSD</option><option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_condition">Состояние</label>
+                        <div class="relative">
+                            <select id="item-condition" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
+                                <option value="Новое" data-t="cond_new">Новое</option><option value="Б/У (Отличное)" data-t="cond_used_exc">Б/У (Отличное)</option><option value="Б/У (Хорошее)" data-t="cond_used_good">Б/У (Хорошее)</option><option value="На запчасти" data-t="cond_parts">На запчасти</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_desc">Описание</label><textarea id="item-desc" rows="6" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition resize-none"></textarea></div>
+                </div>
+                <div class="mt-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" id="item-rules-agree" required class="w-5 h-5 accent-red-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded cursor-pointer transition">
+                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"><span data-t="add_rules_agree">Я принимаю</span> <button type="button" onclick="window.openModal('rules-modal')" class="text-red-600 dark:text-red-500 hover:underline" data-t="add_rules_link">Правила SVALKA</button></span>
+                    </label>
+                </div>
+                <button type="submit" id="add-submit-btn" class="bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-200 dark:shadow-red-900/30 mt-2" data-t="btn_publish">Опубликовать</button>
+            </form>
         </div>
     </div>
 
@@ -865,25 +938,18 @@
 
         window.toggleFilters = function() { document.getElementById('filter-panel').classList.toggle('active'); };
         window.toggleMobileMenu = function() { const menu = document.getElementById('mobile-menu'); menu.classList.toggle('active'); menu.classList.contains('active') ? document.body.classList.add('modal-open') : window.checkBodyScroll(); };
-        window.openChatModal = function() { setTimeout(() => { window.openModal('chat-modal'); }, 100); };
         
-        // Надежное открытие и закрытие модальных окон
         window.openModal = function(id) { 
             const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('active'); 
-                document.body.classList.add('modal-open'); 
-            }
+            if (modal) { modal.classList.add('active'); document.body.classList.add('modal-open'); }
         };
         window.closeModal = function(id) { 
             const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.remove('active'); 
-                window.checkBodyScroll(); 
-            }
+            if (modal) { modal.classList.remove('active'); window.checkBodyScroll(); }
         };
         window.checkBodyScroll = function() { if (document.querySelectorAll('.modal-overlay.active, #mobile-menu.active').length === 0) { document.body.classList.remove('modal-open'); } };
         
+        window.openChatModal = function() { setTimeout(() => { window.openModal('chat-modal'); }, 100); };
         window.openLightbox = function() { document.getElementById('lightbox-img').src = document.getElementById('modal-img').src; window.openModal('lightbox-modal'); };
 
         window.toggleMapFullscreen = function(e) {
@@ -1026,14 +1092,12 @@
             }
         };
 
-        // ПРОВЕРКА ЛИМИТОВ БЕСПЛАТНЫХ ОБЪЯВЛЕНИЙ
         window.checkListingLimits = function() {
             const cat = document.getElementById('item-category').value;
             const btn = document.getElementById('add-submit-btn');
             const warning = document.getElementById('add-limits-warning');
             const photoLimitText = document.getElementById('photo-limit-text');
             
-            // Если мы редактируем товар, лимиты не проверяются
             if (window.editingItemId) {
                 warning.classList.add('hidden');
                 btn.innerText = window.i18n[window.currentAppLang]['btn_save'] || "СОХРАНИТЬ ИЗМЕНЕНИЯ";
@@ -1110,16 +1174,9 @@
         window.removePhoto = function(index) { window.tempPhotos.splice(index, 1); window.renderPhotoPreviews(); };
         window.resetPhotoUpload = function() { window.tempPhotos = []; window.renderPhotoPreviews(); };
 
-        window.addEventListener('mousedown', function(e) {
-            const panel = document.getElementById('filter-panel'); const btn = document.querySelector('[onclick="window.toggleFilters()"]');
-            if (panel && btn) { if (!panel.contains(e.target) && !btn.contains(e.target) && panel.classList.contains('active')) { window.toggleFilters(); } }
-            if (e.target.classList.contains('modal-overlay')) { window.closeModal(e.target.id); }
-        });
-
         // =========================================================================================
-        // === ВАШИ НАСТРОЙКИ FIREBASE ===
+        // === НАСТРОЙКИ FIREBASE (ОБЯЗАТЕЛЬНО СВОИ) ===
         // =========================================================================================
-        
         const firebaseConfig = {
             apiKey: "AIzaSyCrTdMeBi4R8R0nCcCNcPCu46jxbuOQ-c8",
             authDomain: "svalka-rs.firebaseapp.com",
@@ -1186,7 +1243,6 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
-            // Отслеживание глобальной ленты
             onSnapshot(collection(window.db, 'items'), (snapshot) => { 
                 let items = []; 
                 snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
@@ -1277,6 +1333,27 @@
                 window.showToast('toast_item_highlighted');
             };
 
+            window.toggleFavorite = async function(btn, event, itemId) {
+                event.stopPropagation();
+                if (!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+                if (!itemId) return;
+
+                const isLiked = window.userFavorites.has(itemId);
+                const userDocRef = doc(window.db, `users`, window.currentUser.uid);
+
+                btn.classList.toggle('liked'); const icon = btn.querySelector('i');
+                if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+
+                try {
+                    const newFavs = Array.from(window.userFavorites);
+                    if (isLiked) { const index = newFavs.indexOf(itemId); if (index > -1) newFavs.splice(index, 1); } else { newFavs.push(itemId); }
+                    await setDoc(userDocRef, { favorites: newFavs }, { merge: true });
+                } catch(e) {
+                    console.error("Ошибка избранного:", e); window.showToast('', true, "Ошибка: " + e.message);
+                    btn.classList.toggle('liked'); if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+                }
+            };
+
             window.markItemStatus = async function(itemId, newStatus) {
                 if(!window.currentUser) return;
                 try {
@@ -1284,85 +1361,6 @@
                     window.showToast('', false, "Статус обновлен!");
                     if(newStatus === 'sold') window.closeModal('item-modal');
                 } catch(e) { console.error(e); }
-            };
-
-            function createCardHTML(item) {
-                const diffMins = Math.floor((Date.now() - item.createdAt) / 60000); 
-                const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
-                const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80");
-                const isLiked = window.userFavorites && window.userFavorites.has(item.id); 
-                const iconClass = isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open';
-                
-                const isHighlighted = item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
-                const cardBorder = isHighlighted ? 'border-2 border-orange-500 shadow-lg shadow-orange-500/20 bg-orange-50 dark:bg-gray-800' : 'border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800';
-                
-                let badgeHtml = isHighlighted ? `<div class="absolute top-2 left-2 z-10 bg-orange-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">СРОЧНО 🔥</div>` : '';
-                if (item.status === 'reserved') {
-                    badgeHtml = `<div class="absolute top-2 left-2 z-10 bg-purple-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">${window.i18n[window.currentAppLang]['badge_reserved'] || 'РЕЗЕРВ'}</div>`;
-                }
-
-                return `<div class="item-card ${cardBorder} rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl transition duration-400 relative group cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
-                    ${badgeHtml}
-                    <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>
-                    <div class="h-32 sm:h-36 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0"><img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>
-                    <div class="p-3 md:p-4 flex flex-col flex-1">
-                        <h4 class="font-black text-sm leading-tight text-gray-900 dark:text-white mb-1 line-clamp-2">${item.title}</h4>
-                        <div class="text-red-600 dark:text-red-500 font-black text-base mb-2 italic">${item.price || 0} ${item.currency || 'RSD'}</div>
-                        <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700 mt-auto">
-                            <span class="text-[8px] uppercase font-bold text-gray-400">${timeText}</span>
-                            <span class="font-bold text-[9px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
-                        </div>
-                    </div>
-                </div>`;
-            }
-
-            window.renderDynamicItems = function(items, isReRender = false) {
-                if (!isReRender) window.loadedItems = items; 
-                const grid = document.getElementById('main-items-grid'); if(!grid) return;
-                grid.innerHTML = ''; 
-                
-                // 1. Фильтрация (Архивация): Не показываем проданные и старше 30 дней
-                let activeItems = (window.loadedItems || []).filter(item => {
-                    const ageDays = (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24);
-                    return (item.status === 'active' || item.status === 'reserved' || !item.status) && ageDays <= 30;
-                });
-
-                // 2. Фильтрация по выбранной категории (Сверху)
-                if (window.currentCategoryFilter && window.currentCategoryFilter !== 'Все') {
-                    activeItems = activeItems.filter(item => item.category === window.currentCategoryFilter);
-                }
-
-                // 3. Поиск по тексту
-                if (window.currentSearchQuery) {
-                    activeItems = activeItems.filter(item => 
-                        (item.title && item.title.toLowerCase().includes(window.currentSearchQuery)) || 
-                        (item.desc && item.desc.toLowerCase().includes(window.currentSearchQuery)) ||
-                        (item.city && item.city.toLowerCase().includes(window.currentSearchQuery))
-                    );
-                }
-
-                // 4. Фильтр "Срочно"
-                if (window.showOnlyUrgent) {
-                    activeItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
-                }
-
-                // 5. Сортировка
-                if (window.currentSortMode === 'cheap') {
-                    activeItems.sort((a, b) => Number(a.price) - Number(b.price));
-                } else if (window.currentSortMode === 'exp') {
-                    activeItems.sort((a, b) => Number(b.price) - Number(a.price));
-                } else {
-                    activeItems.sort((a, b) => b.createdAt - a.createdAt);
-                }
-
-                if (activeItems.length === 0) { 
-                    grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Ничего не найдено</div>'; 
-                    return; 
-                }
-
-                activeItems.forEach(item => { grid.innerHTML += createCardHTML(item); });
-                const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-                window.updateMainMapMarkers(activeItems);
             };
 
             window.submitNewItem = async function(event) {
@@ -1395,12 +1393,10 @@
                     submitBtn.innerText = "СОХРАНЕНИЕ...";
 
                     if (window.editingItemId) {
-                        // РЕДАКТИРОВАНИЕ СУЩЕСТВУЮЩЕГО
                         const updateObj = { title, category, city, address, condition, price: Number(price), currency, desc, imageUrl: displayImg, images: imgUrlsToSave, coords: itemCoords };
                         await updateDoc(doc(window.db, 'items', window.editingItemId), updateObj);
                         window.showToast('', false, "Изменения сохранены!");
                     } else {
-                        // СОЗДАНИЕ НОВОГО
                         const newItemObj = { title: title, category: category, city: city, address: address, condition: condition, price: Number(price), currency: currency, desc: desc, imageUrl: displayImg, images: imgUrlsToSave, createdAt: Date.now(), authorName: window.currentUser.displayName || "Пользователь SVALKA", authorAvatar: window.currentUser.photoURL || "", isProAuthor: window.currentUserData?.isPro || false, userId: window.currentUser.uid, coords: itemCoords, isHighlighted: false, status: 'active' };
                         await addDoc(collection(window.db, 'items'), newItemObj);
                         
@@ -1417,7 +1413,7 @@
                         window.showToast('toast_published');
                     }
 
-                    window.closeModal('add-modal'); event.target.reset(); window.resetPhotoUpload(); window.editingItemId = null;
+                    window.closeModal('add-modal'); document.getElementById('add-form').reset(); window.resetPhotoUpload(); window.editingItemId = null;
                 } catch (err) { 
                     console.error("Ошибка Firebase при сохранении:", err); window.showToast('', true, "Ошибка БД: " + err.message); 
                 } finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
