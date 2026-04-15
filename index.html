@@ -78,6 +78,11 @@
                 </div>
             </div>
             <div class="hidden lg:flex items-center gap-4 ml-6 pl-6 border-l border-gray-200 dark:border-gray-700">
+                <!-- Срочно (Вернули в шапку) -->
+                <div class="flex space-x-6 font-bold text-gray-500 dark:text-gray-300 uppercase text-[11px] tracking-widest mr-2">
+                    <button id="nav-urgent-btn" onclick="window.toggleUrgentFilter()" class="hover:text-red-600 transition flex items-center gap-1"><i class="fa-solid fa-fire"></i> <span data-t="nav_urgent">Срочно</span></button>
+                </div>
+
                 <div id="nav-wallet-block" class="hidden items-center gap-2 mr-2 bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-xl border border-green-200 dark:border-green-800/50">
                     <i class="fa-solid fa-wallet text-green-600 dark:text-green-500"></i>
                     <span id="nav-wallet-balance" class="font-bold text-sm text-green-700 dark:text-green-400">0 RSD</span>
@@ -177,7 +182,6 @@
         <div class="mb-10 overflow-x-auto custom-scrollbar pb-3">
             <div class="flex items-center gap-3 w-max">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap" data-t="cat_all">Все категории</button>
-                <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-900/50 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-fire mr-2"></i><span data-t="nav_urgent">Срочно</span></button>
                 <button data-cat="Мебель" onclick="window.filterByCategory('Мебель')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-couch mr-2"></i><span data-t="cat_furniture">Мебель</span></button>
                 <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-laptop mr-2"></i><span data-t="cat_electronics">Электроника</span></button>
                 <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-shirt mr-2"></i><span data-t="cat_clothes">Одежда</span></button>
@@ -190,7 +194,7 @@
             </div>
         </div>
 
-        <!-- GRID VIEW -->
+        <!-- GRID VIEW (Очищенная единая сетка) -->
         <div id="grid-view">
             <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
@@ -249,6 +253,7 @@
             </div>
             
             <div class="flex flex-col gap-6 font-black text-2xl uppercase tracking-wider mt-4">
+                <button id="mob-nav-urgent-btn" onclick="window.toggleUrgentFilter(); window.toggleMobileMenu();" class="text-left text-gray-900 dark:text-white hover:text-red-600 transition" data-t="nav_urgent">Срочно</button>
                 <a href="#" id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-solid fa-arrow-right-to-bracket text-red-600"></i> <span data-t="auth_login_btn">Войти</span></a>
                 <a href="#" id="mob-nav-profile" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="hidden text-gray-900 dark:text-white hover:text-red-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-red-600"></i> <span data-t="nav_profile">Профиль</span></a>
             </div>
@@ -281,18 +286,18 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
-                                <!-- Males -->
+                                <!-- Males: 4 light, 1 dark -->
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <!-- Females -->
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&amp;skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&amp;skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Females: 4 light, 1 dark -->
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&amp;skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&amp;skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -356,6 +361,11 @@
                             </div>
                         </div>
 
+                        <div id="profile-login-wrapper" class="mt-4 md:mt-0 md:absolute md:bottom-10 md:right-10 shrink-0">
+                            <button id="profile-login-btn" onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-500 transition px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-sm">
+                                <i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Войти в аккаунт
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -490,80 +500,6 @@
         <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain modal-content shadow-2xl">
     </div>
 
-    <!-- Add/Edit Item Modal -->
-    <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
-            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 z-20 text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title" class="text-3xl font-display font-black text-gray-900 dark:text-white mb-2 uppercase italic" data-t="add_title">Пристроить добро</h2>
-            <p id="add-limits-warning" class="text-xs font-bold text-orange-500 mb-6 hidden">Лимит бесплатных объявлений исчерпан. Публикация стоит 150 RSD.</p>
-            
-            <form id="add-form" class="flex flex-col gap-6" onsubmit="event.preventDefault(); window.submitNewItem(event);">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex justify-between items-end mb-2">
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest" data-t="add_photos_label">Фотографии</label>
-                        <span id="photo-limit-text" class="text-[10px] font-bold text-gray-400">Максимум 3 фото</span>
-                    </div>
-                    <div id="photo-preview-list" class="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
-                        <!-- Preview images will be rendered here -->
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_name">Название</label><input type="text" id="item-title" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required></div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_cat">Категория</label>
-                        <div class="relative">
-                            <select id="item-category" onchange="window.checkListingLimits()" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option data-t="cat_furniture">Мебель</option><option data-t="cat_electronics">Электроника</option><option data-t="cat_clothes">Одежда</option><option data-t="cat_home">Для дома</option><option data-t="cat_kids">Детское</option><option data-t="cat_auto">Авто/Мото</option><option data-t="cat_sports">Спорт</option><option data-t="cat_free">Отдам даром</option><option data-t="cat_housing">Жилье / Соседи</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                        <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2 font-medium leading-tight" data-t="add_housing_hint">* Для категории "Жилье": разрешена только сдача комнат и переуступка аренды. Продажа домов запрещена.</p>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_city">Город</label>
-                        <div class="relative">
-                            <select id="item-city" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option data-t="city_bg">Белград</option><option data-t="city_ns">Нови-Сад</option><option data-t="city_nis">Ниш</option><option data-t="city_sub">Суботица</option><option data-t="city_krag">Крагуевац</option><option data-t="city_other">Другой</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_address">Точный адрес</label>
-                        <input type="text" id="item-address" placeholder="ул. Пушкина, 10" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_price">Цена</label>
-                        <div class="flex">
-                            <input type="number" id="item-price" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
-                            <select id="item-currency" class="bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-700 rounded-r-xl px-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition cursor-pointer appearance-none">
-                                <option value="RSD">RSD</option><option value="EUR">EUR</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_condition">Состояние</label>
-                        <div class="relative">
-                            <select id="item-condition" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option value="Новое" data-t="cond_new">Новое</option><option value="Б/У (Отличное)" data-t="cond_used_exc">Б/У (Отличное)</option><option value="Б/У (Хорошее)" data-t="cond_used_good">Б/У (Хорошее)</option><option value="На запчасти" data-t="cond_parts">На запчасти</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                    </div>
-                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_desc">Описание</label><textarea id="item-desc" rows="6" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition resize-none"></textarea></div>
-                </div>
-                <div class="mt-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" id="item-rules-agree" required class="w-5 h-5 accent-red-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded cursor-pointer transition">
-                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"><span data-t="add_rules_agree">Я принимаю</span> <button type="button" onclick="window.openModal('rules-modal')" class="text-red-600 dark:text-red-500 hover:underline" data-t="add_rules_link">Правила SVALKA</button></span>
-                    </label>
-                </div>
-                <button type="submit" id="add-submit-btn" class="bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-200 dark:shadow-red-900/30 mt-2" data-t="btn_publish">Опубликовать</button>
-            </form>
-        </div>
-    </div>
-
     <!-- Support Modal -->
     <div id="support-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800">
@@ -642,7 +578,6 @@
         window.currentSearchQuery = '';
         window.showOnlyUrgent = false;
 
-        // --- УНИВЕРСАЛЬНАЯ ЛОГИКА ДЛЯ GITHUB И CANVAS ---
         window.isCanvas = typeof __firebase_config !== 'undefined';
         window.appId = window.isCanvas && typeof __app_id !== 'undefined' ? __app_id : 'svalka-rs';
         window.dbPath = window.isCanvas ? `artifacts/${window.appId}/public/data/items` : 'items';
@@ -701,7 +636,7 @@
                 empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
                 auth_forgot_pass: "Forgot Password?", auth_reset_btn: "Reset Password",
                 profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user", profile_wallet: "My Wallet",
-                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_error: "Authentication Error!", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
                 toast_not_enough_money: "Not enough funds on balance!", toast_item_bumped: "Listing bumped to top!", toast_item_highlighted: "Listing highlighted!", toast_pro_success: "You are now a PRO Seller!",
                 add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I accept the", add_rules_link: "SVALKA Rules", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category", add_address: "Exact address", modal_location: "Location", share_title: "Share", share_copy: "Link"
             }
@@ -746,10 +681,12 @@
             window.currentCategoryFilter = cat;
             window.showOnlyUrgent = false; 
             
-            const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-900/50 transition shadow-sm whitespace-nowrap";
+            const urgentBtn = document.getElementById('nav-urgent-btn');
+            const urgentBtnMob = document.getElementById('mob-nav-urgent-btn');
+            if(urgentBtn) urgentBtn.classList.remove('text-red-600');
+            if(urgentBtnMob) urgentBtnMob.classList.remove('text-red-600');
 
-            document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(btn => {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
                 if(btn.dataset.cat === cat) {
                     btn.className = "cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap";
                 } else {
@@ -770,15 +707,19 @@
 
         window.toggleUrgentFilter = function() {
             window.showOnlyUrgent = !window.showOnlyUrgent;
-            const btn = document.getElementById('btn-cat-urgent');
+            const btn = document.getElementById('nav-urgent-btn');
+            const mobBtn = document.getElementById('mob-nav-urgent-btn');
+            
             if (window.showOnlyUrgent) {
-                if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-600 text-white dark:bg-red-600 border border-red-600 dark:border-red-600 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap";
+                if(btn) btn.classList.add('text-red-600');
+                if(mobBtn) mobBtn.classList.add('text-red-600');
                 window.currentCategoryFilter = null;
-                document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
+                document.querySelectorAll('.cat-btn').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap";
                 });
             } else {
-                if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-900/50 transition shadow-sm whitespace-nowrap";
+                if(btn) btn.classList.remove('text-red-600');
+                if(mobBtn) mobBtn.classList.remove('text-red-600');
                 window.filterByCategory('Все');
             }
             if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
@@ -793,7 +734,8 @@
                 if (form) form.reset();
                 const rulesParent = document.getElementById('item-rules-agree')?.parentElement;
                 if(rulesParent) rulesParent.style.display = 'flex';
-                document.getElementById('item-rules-agree')?.setAttribute('required', 'true');
+                const rulesBox = document.getElementById('item-rules-agree');
+                if(rulesBox) rulesBox.setAttribute('required', 'true');
                 window.resetPhotoUpload();
                 const titleEl = document.getElementById('add-modal-title');
                 if(titleEl) titleEl.innerText = window.i18n[window.currentAppLang]['add_title'] || "Пристроить добро";
@@ -809,24 +751,27 @@
             const item = window.loadedItems.find(i => i.id === id); if(!item) return;
             window.editingItemId = item.id;
             
-            document.getElementById('item-title').value = item.title;
-            document.getElementById('item-category').value = item.category;
-            document.getElementById('item-city').value = item.city;
-            document.getElementById('item-address').value = item.address;
-            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-title').value = item.title || '';
+            document.getElementById('item-category').value = item.category || 'Мебель';
+            document.getElementById('item-city').value = item.city || 'Вся Сербия';
+            document.getElementById('item-address').value = item.address || '';
+            document.getElementById('item-price').value = item.price || '';
             document.getElementById('item-currency').value = item.currency || 'RSD';
-            document.getElementById('item-condition').value = item.condition;
-            document.getElementById('item-desc').value = item.desc;
+            document.getElementById('item-condition').value = item.condition || 'Новое';
+            document.getElementById('item-desc').value = item.desc || '';
             
             const rulesParent = document.getElementById('item-rules-agree')?.parentElement;
             if(rulesParent) rulesParent.style.display = 'none';
-            document.getElementById('item-rules-agree')?.removeAttribute('required');
+            const rulesBox = document.getElementById('item-rules-agree');
+            if(rulesBox) rulesBox.removeAttribute('required');
 
             window.tempPhotos = [...(item.images || [item.imageUrl])];
             window.renderPhotoPreviews();
 
-            document.getElementById('add-modal-title').innerText = window.i18n[window.currentAppLang]['edit_title'] || "Редактировать объявление";
-            document.getElementById('add-submit-btn').innerText = window.i18n[window.currentAppLang]['btn_save'] || "Сохранить изменения";
+            const titleEl = document.getElementById('add-modal-title');
+            if(titleEl) titleEl.innerText = window.i18n[window.currentAppLang]['edit_title'] || "Редактировать объявление";
+            const submitBtn = document.getElementById('add-submit-btn');
+            if(submitBtn) submitBtn.innerText = window.i18n[window.currentAppLang]['btn_save'] || "Сохранить изменения";
             
             window.closeModal('item-modal');
             window.openModal('add-modal');
@@ -838,18 +783,27 @@
             const submitBtn = document.getElementById('auth-submit-btn'); const tabLogin = document.getElementById('tab-login'); const tabRegister = document.getElementById('tab-register');
             const nameInput = document.getElementById('auth-name'); const passInput = document.getElementById('auth-password');
 
-            tabLogin.className = "text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition";
-            tabRegister.className = "text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition";
+            if(tabLogin) tabLogin.className = "text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition";
+            if(tabRegister) tabRegister.className = "text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition";
 
             if (mode === 'login') {
-                nameField.classList.replace('flex', 'hidden'); nameInput.removeAttribute('required'); passField.classList.remove('hidden'); passInput.setAttribute('required', 'true'); extraLinks.classList.remove('hidden');
-                submitBtn.setAttribute('data-t', 'auth_login_btn'); tabLogin.classList.add('text-red-600', 'border-red-600');
+                if(nameField) nameField.classList.replace('flex', 'hidden'); if(nameInput) nameInput.removeAttribute('required'); 
+                if(passField) passField.classList.remove('hidden'); if(passInput) passInput.setAttribute('required', 'true'); 
+                if(extraLinks) extraLinks.classList.remove('hidden');
+                if(submitBtn) submitBtn.setAttribute('data-t', 'auth_login_btn'); 
+                if(tabLogin) tabLogin.classList.add('text-red-600', 'border-red-600');
             } else if (mode === 'register') {
-                nameField.classList.replace('hidden', 'flex'); nameInput.setAttribute('required', 'true'); passField.classList.remove('hidden'); passInput.setAttribute('required', 'true'); extraLinks.classList.add('hidden');
-                submitBtn.setAttribute('data-t', 'auth_reg_submit'); tabRegister.classList.add('text-red-600', 'border-red-600');
+                if(nameField) nameField.classList.replace('hidden', 'flex'); if(nameInput) nameInput.setAttribute('required', 'true'); 
+                if(passField) passField.classList.remove('hidden'); if(passInput) passInput.setAttribute('required', 'true'); 
+                if(extraLinks) extraLinks.classList.add('hidden');
+                if(submitBtn) submitBtn.setAttribute('data-t', 'auth_reg_submit'); 
+                if(tabRegister) tabRegister.classList.add('text-red-600', 'border-red-600');
             } else if (mode === 'reset') {
-                nameField.classList.replace('flex', 'hidden'); nameInput.removeAttribute('required'); passField.classList.add('hidden'); passInput.removeAttribute('required'); extraLinks.classList.remove('hidden');
-                submitBtn.setAttribute('data-t', 'auth_reset_btn'); tabLogin.classList.add('text-red-600', 'border-red-600'); 
+                if(nameField) nameField.classList.replace('flex', 'hidden'); if(nameInput) nameInput.removeAttribute('required'); 
+                if(passField) passField.classList.add('hidden'); if(passInput) passInput.removeAttribute('required'); 
+                if(extraLinks) extraLinks.classList.remove('hidden');
+                if(submitBtn) submitBtn.setAttribute('data-t', 'auth_reset_btn'); 
+                if(tabLogin) tabLogin.classList.add('text-red-600', 'border-red-600'); 
             }
             window.changeLang(window.currentAppLang);
         };
@@ -866,7 +820,7 @@
             
             toast.classList.add('show'); 
             if (window.toastTimeout) clearTimeout(window.toastTimeout);
-            window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
+            window.toastTimeout = setTimeout(() => { if(toast) toast.classList.remove('show'); }, 4000);
         };
 
         window.shareItem = function() {
@@ -876,7 +830,10 @@
         };
         
         window.shareTo = function(platform) {
-            const url = encodeURIComponent(window.location.href); const titleText = document.getElementById('modal-title').innerText || "SVALKA"; const text = encodeURIComponent(`Смотри, что я нашел на SVALKA: ${titleText} `);
+            const url = encodeURIComponent(window.location.href); 
+            const titleEl = document.getElementById('modal-title');
+            const titleText = titleEl ? titleEl.innerText : "SVALKA"; 
+            const text = encodeURIComponent(`Смотри, что я нашел на SVALKA: ${titleText} `);
             window.closeModal('share-modal');
             if (platform === 'tg') window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
             else if (platform === 'wa') window.open(`https://api.whatsapp.com/send?text=${text}${url}`, '_blank');
@@ -891,8 +848,8 @@
             });
         };
 
-        window.toggleFilters = function() { document.getElementById('filter-panel').classList.toggle('active'); };
-        window.toggleMobileMenu = function() { const menu = document.getElementById('mobile-menu'); menu.classList.toggle('active'); menu.classList.contains('active') ? document.body.classList.add('modal-open') : window.checkBodyScroll(); };
+        window.toggleFilters = function() { const fp = document.getElementById('filter-panel'); if(fp) fp.classList.toggle('active'); };
+        window.toggleMobileMenu = function() { const menu = document.getElementById('mobile-menu'); if(menu) { menu.classList.toggle('active'); menu.classList.contains('active') ? document.body.classList.add('modal-open') : window.checkBodyScroll(); } };
         
         window.openModal = function(id) { 
             const modal = document.getElementById(id);
@@ -905,10 +862,11 @@
         window.checkBodyScroll = function() { if (document.querySelectorAll('.modal-overlay.active, #mobile-menu.active').length === 0) { document.body.classList.remove('modal-open'); } };
         
         window.openChatModal = function() { setTimeout(() => { window.openModal('chat-modal'); }, 100); };
-        window.openLightbox = function() { document.getElementById('lightbox-img').src = document.getElementById('modal-img').src; window.openModal('lightbox-modal'); };
+        window.openLightbox = function() { const img = document.getElementById('lightbox-img'); const modalImg = document.getElementById('modal-img'); if(img && modalImg) { img.src = modalImg.src; window.openModal('lightbox-modal'); } };
 
         window.toggleMapFullscreen = function(e) {
             e.stopPropagation(); const container = document.getElementById('modal-map-container'); const icon = document.getElementById('map-fullscreen-icon');
+            if(!container || !icon) return;
             if (container.classList.contains('fixed')) {
                 container.classList.remove('fixed', 'inset-0', 'z-[100]', 'h-full', 'w-full', 'rounded-none', 'p-4', 'bg-black/50', 'backdrop-blur-sm'); container.classList.add('relative', 'h-32', 'rounded-xl', 'bg-gray-200', 'dark:bg-gray-800');
                 icon.className = 'fa-solid fa-expand';
@@ -924,6 +882,8 @@
             if (!coords || coords.length !== 2) return;
             setTimeout(() => {
                 if (!window.modalMapObj) {
+                    const mapEl = document.getElementById('modal-mini-map');
+                    if(!mapEl) return;
                     window.modalMapObj = L.map('modal-mini-map').setView(coords, 15);
                     const isDark = document.documentElement.classList.contains('dark');
                     const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -939,56 +899,77 @@
             const item = window.loadedItems.find(i => i.id === id); if(!item) return;
             const images = (item.images && item.images.length > 0) ? item.images : [item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80"];
             
-            document.getElementById('modal-img').src = images[0];
+            const modalImg = document.getElementById('modal-img');
+            if(modalImg) modalImg.src = images[0];
             const thumbContainer = document.getElementById('modal-thumbnails');
-            if(images.length > 1) {
-                thumbContainer.style.display = 'flex';
-                thumbContainer.innerHTML = images.map((src) => `<img src="${src}" onclick="document.getElementById('modal-img').src='${src}'" class="h-full w-20 object-cover rounded-xl cursor-pointer hover:opacity-80 transition border border-gray-200 dark:border-gray-700 flex-shrink-0">`).join('');
-            } else { thumbContainer.style.display = 'none'; }
+            if(thumbContainer) {
+                if(images.length > 1) {
+                    thumbContainer.style.display = 'flex';
+                    thumbContainer.innerHTML = images.map((src) => `<img src="${src}" onclick="document.getElementById('modal-img').src='${src}'" class="h-full w-20 object-cover rounded-xl cursor-pointer hover:opacity-80 transition border border-gray-200 dark:border-gray-700 flex-shrink-0">`).join('');
+                } else { thumbContainer.style.display = 'none'; }
+            }
 
-            document.getElementById('modal-title').innerText = item.title; document.getElementById('modal-price').innerText = item.price + " " + (item.currency || "RSD"); document.getElementById('modal-desc').innerText = item.desc; 
+            if(document.getElementById('modal-title')) document.getElementById('modal-title').innerText = item.title || ''; 
+            if(document.getElementById('modal-price')) document.getElementById('modal-price').innerText = (item.price || 0) + " " + (item.currency || "RSD"); 
+            if(document.getElementById('modal-desc')) document.getElementById('modal-desc').innerText = item.desc || ''; 
+            if(document.getElementById('modal-author')) document.getElementById('modal-author').innerText = item.authorName || "Пользователь"; 
             
-            document.getElementById('modal-author').innerText = item.authorName || "Пользователь"; 
             const authorAvatarEl = document.getElementById('modal-author-avatar');
-            if (item.authorAvatar) { authorAvatarEl.innerHTML = `<img src="${item.authorAvatar}" class="w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-800">`; } else { authorAvatarEl.innerHTML = `<i class="fa-solid fa-user"></i>`; }
-            if (item.isProAuthor) { document.getElementById('modal-author-pro').classList.remove('hidden'); } else { document.getElementById('modal-author-pro').classList.add('hidden'); }
+            if (authorAvatarEl) {
+                if (item.authorAvatar) { authorAvatarEl.innerHTML = `<img src="${item.authorAvatar}" class="w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-800">`; } 
+                else { authorAvatarEl.innerHTML = `<i class="fa-solid fa-user"></i>`; }
+            }
             
-            document.getElementById('chat-item-title').innerText = item.title; 
-            document.getElementById('modal-condition-badge').innerText = item.condition || window.i18n[window.currentAppLang]['cond_used_exc'] || "Б/У"; document.getElementById('modal-city-text').innerText = item.city || "Вся Сербия"; document.getElementById('modal-category-text').innerText = item.category || "Категория"; document.getElementById('modal-exact-address').innerText = (item.city || "Нови-Сад") + ", " + (item.address || "ул. Неизвестная");
+            const proBadge = document.getElementById('modal-author-pro');
+            if (proBadge) { if (item.isProAuthor) { proBadge.classList.remove('hidden'); } else { proBadge.classList.add('hidden'); } }
+            
+            if(document.getElementById('chat-item-title')) document.getElementById('chat-item-title').innerText = item.title || ''; 
+            if(document.getElementById('modal-condition-badge')) document.getElementById('modal-condition-badge').innerText = item.condition || window.i18n[window.currentAppLang]['cond_used_exc'] || "Б/У"; 
+            if(document.getElementById('modal-city-text')) document.getElementById('modal-city-text').innerText = item.city || "Вся Сербия"; 
+            if(document.getElementById('modal-category-text')) document.getElementById('modal-category-text').innerText = item.category || "Категория"; 
+            if(document.getElementById('modal-exact-address')) document.getElementById('modal-exact-address').innerText = (item.city || "Нови-Сад") + ", " + (item.address || "ул. Неизвестная");
 
             const isLiked = window.userFavorites && window.userFavorites.has(item.id);
             const favBtn = document.getElementById('modal-fav-btn');
-            favBtn.className = `w-[52px] h-[52px] shrink-0 border-2 border-gray-200 dark:border-gray-700 rounded-2xl flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-500 transition btn-stash bg-white dark:bg-gray-800 shadow-sm ${isLiked ? 'liked' : ''}`;
-            favBtn.querySelector('i').className = isLiked ? "fa-solid fa-box text-xl text-orange-500 drop-shadow-sm" : "fa-solid fa-box-open text-xl drop-shadow-sm";
-            favBtn.setAttribute('onclick', `window.toggleFavorite(this, event, '${item.id}')`);
+            if(favBtn) {
+                favBtn.className = `w-[52px] h-[52px] shrink-0 border-2 border-gray-200 dark:border-gray-700 rounded-2xl flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-500 transition btn-stash bg-white dark:bg-gray-800 shadow-sm ${isLiked ? 'liked' : ''}`;
+                favBtn.querySelector('i').className = isLiked ? "fa-solid fa-box text-xl text-orange-500 drop-shadow-sm" : "fa-solid fa-box-open text-xl drop-shadow-sm";
+                favBtn.setAttribute('onclick', `window.toggleFavorite(this, event, '${item.id}')`);
+            }
 
-            // Управление для владельца товара
             const isOwner = window.currentUser && window.currentUser.uid === item.userId;
             const controlsDiv = document.getElementById('modal-owner-controls');
-            if (isOwner) {
-                controlsDiv.style.display = 'flex';
-                document.getElementById('btn-owner-edit').setAttribute('onclick', `window.openEditModal('${item.id}')`);
-                
-                const btnRes = document.getElementById('btn-owner-reserve');
-                if (item.status === 'reserved') {
-                    btnRes.innerHTML = `<i class="fa-solid fa-unlock mr-1"></i> ${window.i18n[window.currentAppLang]['btn_unreserve'] || 'Снять резерв'}`;
-                    btnRes.setAttribute('onclick', `window.markItemStatus('${item.id}', 'active')`);
-                } else {
-                    btnRes.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${window.i18n[window.currentAppLang]['btn_reserve'] || 'В резерв'}`;
-                    btnRes.setAttribute('onclick', `window.markItemStatus('${item.id}', 'reserved')`);
-                }
+            if (controlsDiv) {
+                if (isOwner) {
+                    controlsDiv.style.display = 'flex';
+                    const btnEdit = document.getElementById('btn-owner-edit');
+                    if(btnEdit) btnEdit.setAttribute('onclick', `window.openEditModal('${item.id}')`);
+                    
+                    const btnRes = document.getElementById('btn-owner-reserve');
+                    if (btnRes) {
+                        if (item.status === 'reserved') {
+                            btnRes.innerHTML = `<i class="fa-solid fa-unlock mr-1"></i> ${window.i18n[window.currentAppLang]['btn_unreserve'] || 'Снять резерв'}`;
+                            btnRes.setAttribute('onclick', `window.markItemStatus('${item.id}', 'active')`);
+                        } else {
+                            btnRes.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${window.i18n[window.currentAppLang]['btn_reserve'] || 'В резерв'}`;
+                            btnRes.setAttribute('onclick', `window.markItemStatus('${item.id}', 'reserved')`);
+                        }
+                    }
 
-                const btnSold = document.getElementById('btn-owner-sold');
-                if (item.status === 'sold') {
-                    btnSold.style.display = 'none'; 
-                    btnRes.style.display = 'none';
+                    const btnSold = document.getElementById('btn-owner-sold');
+                    if (btnSold) {
+                        if (item.status === 'sold') {
+                            btnSold.style.display = 'none'; 
+                            if(btnRes) btnRes.style.display = 'none';
+                        } else {
+                            btnSold.style.display = 'block';
+                            if(btnRes) btnRes.style.display = 'block';
+                            btnSold.setAttribute('onclick', `window.markItemStatus('${item.id}', 'sold')`);
+                        }
+                    }
                 } else {
-                    btnSold.style.display = 'block';
-                    btnRes.style.display = 'block';
-                    btnSold.setAttribute('onclick', `window.markItemStatus('${item.id}', 'sold')`);
+                    controlsDiv.style.display = 'none';
                 }
-            } else {
-                controlsDiv.style.display = 'none';
             }
 
             if (item.coords && item.coords.length === 2) window.updateModalMap(item.coords);
@@ -996,7 +977,9 @@
         };
 
         window.switchProfileTab = function(tab) {
-            window.currentProfileTab = tab; document.getElementById('tab-my-items').classList.toggle('active', tab === 'items'); document.getElementById('tab-my-saved').classList.toggle('active', tab === 'saved');
+            window.currentProfileTab = tab; 
+            const t1 = document.getElementById('tab-my-items'); if(t1) t1.classList.toggle('active', tab === 'items'); 
+            const t2 = document.getElementById('tab-my-saved'); if(t2) t2.classList.toggle('active', tab === 'saved');
             window.renderProfileTabs();
         };
 
@@ -1005,73 +988,82 @@
             const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.uid).sort((a, b) => b.createdAt - a.createdAt);
             const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
             const grid = document.getElementById('profile-items-grid'); const empty = document.getElementById('profile-empty');
-            document.getElementById('tab-my-items').innerText = `${window.i18n[window.currentAppLang]['profile_tab_items'].split('(')[0]}(${myItems.length})`; document.getElementById('tab-my-saved').innerText = `${window.i18n[window.currentAppLang]['profile_tab_saved'].split('(')[0]}(${savedItems.length})`;
+            
+            const t1 = document.getElementById('tab-my-items');
+            if(t1 && window.i18n[window.currentAppLang]) t1.innerText = `${window.i18n[window.currentAppLang]['profile_tab_items'].split('(')[0]}(${myItems.length})`; 
+            
+            const t2 = document.getElementById('tab-my-saved');
+            if(t2 && window.i18n[window.currentAppLang]) t2.innerText = `${window.i18n[window.currentAppLang]['profile_tab_saved'].split('(')[0]}(${savedItems.length})`;
 
             const itemsToShow = window.currentProfileTab === 'items' ? myItems : savedItems;
 
-            if (itemsToShow.length === 0) { grid.style.display = 'none'; empty.style.display = 'flex'; } else {
-                empty.style.display = 'none'; grid.style.display = 'grid';
-                grid.innerHTML = itemsToShow.map(item => {
-                    const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : item.imageUrl;
-                    const isLiked = window.userFavorites && window.userFavorites.has(item.id);
-                    const isHighlighted = item.status !== 'sold' && item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
-                    const ageDays = item.createdAt ? (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24) : 0;
-                    const isExpired = ageDays > 30;
+            if (itemsToShow.length === 0) { 
+                if(grid) grid.style.display = 'none'; 
+                if(empty) empty.style.display = 'flex'; 
+            } else {
+                if(empty) empty.style.display = 'none'; 
+                if(grid) grid.style.display = 'grid';
+                if(grid) {
+                    grid.innerHTML = itemsToShow.map(item => {
+                        const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : item.imageUrl;
+                        const isLiked = window.userFavorites && window.userFavorites.has(item.id);
+                        const isHighlighted = item.status !== 'sold' && item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now();
+                        const ageDays = item.createdAt ? (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24) : 0;
+                        const isExpired = ageDays > 30;
 
-                    let statusOverlay = ''; let badgeHtml = '';
-                    if (item.status === 'sold') {
-                        statusOverlay = `<div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-black uppercase tracking-widest text-sm z-10 backdrop-blur-[2px]">${window.i18n[window.currentAppLang]['badge_sold'] || 'Продано'}</div>`;
-                    } else if (item.status === 'reserved') {
-                        badgeHtml = `<div class="absolute top-2 left-2 z-10 bg-purple-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">${window.i18n[window.currentAppLang]['badge_reserved'] || 'РЕЗЕРВ'}</div>`;
-                    } else if (isExpired) {
-                        statusOverlay = `<div class="absolute inset-0 bg-gray-900/60 flex items-center justify-center text-white font-black uppercase tracking-widest text-xs z-10 backdrop-blur-[1px] text-center px-2">${window.i18n[window.currentAppLang]['badge_expired'] || 'ИСТЕКЛО СРОК'}</div>`;
-                    }
+                        let statusOverlay = ''; let badgeHtml = '';
+                        if (item.status === 'sold') {
+                            statusOverlay = `<div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-black uppercase tracking-widest text-sm z-10 backdrop-blur-[2px]">${window.i18n[window.currentAppLang]['badge_sold'] || 'Продано'}</div>`;
+                        } else if (item.status === 'reserved') {
+                            badgeHtml = `<div class="absolute top-2 left-2 z-10 bg-purple-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">${window.i18n[window.currentAppLang]['badge_reserved'] || 'РЕЗЕРВ'}</div>`;
+                        } else if (isExpired) {
+                            statusOverlay = `<div class="absolute inset-0 bg-gray-900/60 flex items-center justify-center text-white font-black uppercase tracking-widest text-xs z-10 backdrop-blur-[1px] text-center px-2">${window.i18n[window.currentAppLang]['badge_expired'] || 'ИСТЕКЛО СРОК'}</div>`;
+                        }
 
-                    let economyButtons = '';
-                    if (window.currentProfileTab === 'items' && item.status !== 'sold' && !isExpired) {
-                        economyButtons = `<div class="flex gap-2 pt-2 mt-auto border-t border-gray-100 dark:border-gray-700">
-                            <button onclick="window.bumpItem('${item.id}', event)" class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 hover:text-red-600 text-gray-600 dark:text-gray-300 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg transition"><i class="fa-solid fa-arrow-up mr-1"></i> Поднять (50)</button>
-                            ${!isHighlighted ? `<button onclick="window.highlightItem('${item.id}', event)" class="flex-1 bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 text-orange-600 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg transition"><i class="fa-solid fa-fire mr-1"></i> Выделить (100)</button>` : `<div class="flex-1 bg-orange-50 text-orange-500 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg text-center flex items-center justify-center">Выделено</div>`}
-                        </div>`;
-                    }
+                        let economyButtons = '';
+                        if (window.currentProfileTab === 'items' && item.status !== 'sold' && !isExpired) {
+                            economyButtons = `<div class="flex gap-2 pt-2 mt-auto border-t border-gray-100 dark:border-gray-700">
+                                <button onclick="window.bumpItem('${item.id}', event)" class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 hover:text-red-600 text-gray-600 dark:text-gray-300 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg transition"><i class="fa-solid fa-arrow-up mr-1"></i> Поднять (50)</button>
+                                ${!isHighlighted ? `<button onclick="window.highlightItem('${item.id}', event)" class="flex-1 bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 text-orange-600 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg transition"><i class="fa-solid fa-fire mr-1"></i> Выделить (100)</button>` : `<div class="flex-1 bg-orange-50 text-orange-500 text-[9px] font-black uppercase tracking-widest py-2 rounded-lg text-center flex items-center justify-center">Выделено</div>`}
+                            </div>`;
+                        }
 
-                    return `<div class="item-card ${isHighlighted ? 'border-orange-500 bg-orange-50 dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-800'} rounded-xl overflow-hidden shadow-sm hover:shadow-md relative border dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
-                        ${badgeHtml}
-                        <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open'} text-sm drop-shadow-sm"></i></button>
-                        <div class="h-28 bg-gray-200 dark:bg-gray-700 relative overflow-hidden shrink-0">
-                            <img src="${imgUrl}" class="w-full h-full object-cover ${item.status==='sold' ? 'grayscale opacity-60' : ''}">
-                            ${statusOverlay}
-                        </div>
-                        <div class="p-3 flex flex-col flex-1"><h4 class="font-black text-xs text-gray-900 dark:text-white line-clamp-2 mb-1">${item.title}</h4><div class="text-red-600 dark:text-red-500 font-black text-sm italic mb-2">${item.price || 0} ${item.currency || 'RSD'}</div>${economyButtons}</div></div>`;
-                }).join('');
+                        return `<div class="item-card ${isHighlighted ? 'border-orange-500 bg-orange-50 dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-800'} rounded-xl overflow-hidden shadow-sm hover:shadow-md relative border dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
+                            ${badgeHtml}
+                            <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open'} text-sm drop-shadow-sm"></i></button>
+                            <div class="h-28 bg-gray-200 dark:bg-gray-700 relative overflow-hidden shrink-0">
+                                <img src="${imgUrl}" class="w-full h-full object-cover ${item.status==='sold' ? 'grayscale opacity-60' : ''}">
+                                ${statusOverlay}
+                            </div>
+                            <div class="p-3 flex flex-col flex-1"><h4 class="font-black text-xs text-gray-900 dark:text-white line-clamp-2 mb-1">${item.title}</h4><div class="text-red-600 dark:text-red-500 font-black text-sm italic mb-2">${item.price || 0} ${item.currency || 'RSD'}</div>${economyButtons}</div></div>`;
+                    }).join('');
+                }
             }
         };
 
         window.checkListingLimits = function() {
-            const cat = document.getElementById('item-category').value;
+            const cat = document.getElementById('item-category')?.value;
             const btn = document.getElementById('add-submit-btn');
             const warning = document.getElementById('add-limits-warning');
             const photoLimitText = document.getElementById('photo-limit-text');
             
+            if(!cat || !btn || !warning || !photoLimitText) return;
+
             if (window.editingItemId) {
                 warning.classList.add('hidden');
                 btn.innerText = window.i18n[window.currentAppLang]['btn_save'] || "СОХРАНИТЬ ИЗМЕНЕНИЯ";
                 window.currentListingCost = 0;
                 
                 if (window.currentUserData && window.currentUserData.isPro) {
-                    photoLimitText.innerText = "PRO: Максимум 10 фото";
-                    window.maxPhotos = 10;
+                    photoLimitText.innerText = "PRO: Максимум 10 фото"; window.maxPhotos = 10;
                 } else {
-                    photoLimitText.innerText = "Максимум 3 фото";
-                    window.maxPhotos = 3;
+                    photoLimitText.innerText = "Максимум 3 фото"; window.maxPhotos = 3;
                 }
                 return;
             }
 
             if(!window.currentUserData) {
-                 window.currentListingCost = 0;
-                 window.maxPhotos = 3;
-                 return;
+                 window.currentListingCost = 0; window.maxPhotos = 3; return;
             }
             
             let limit = 5;
@@ -1080,21 +1072,15 @@
             const used = window.currentUserData.freeListingsUsed?.[cat] || 0;
             
             if (used >= limit) {
-                warning.classList.remove('hidden');
-                btn.innerText = "ОПУБЛИКОВАТЬ (150 RSD)";
-                window.currentListingCost = 150;
+                warning.classList.remove('hidden'); btn.innerText = "ОПУБЛИКОВАТЬ (150 RSD)"; window.currentListingCost = 150;
             } else {
-                warning.classList.add('hidden');
-                btn.innerText = window.i18n[window.currentAppLang]['btn_publish'] || "ОПУБЛИКОВАТЬ БЕСПЛАТНО";
-                window.currentListingCost = 0;
+                warning.classList.add('hidden'); btn.innerText = window.i18n[window.currentAppLang]['btn_publish'] || "ОПУБЛИКОВАТЬ БЕСПЛАТНО"; window.currentListingCost = 0;
             }
             
             if(window.currentUserData.isPro) {
-                photoLimitText.innerText = "PRO: Максимум 10 фото";
-                window.maxPhotos = 10;
+                photoLimitText.innerText = "PRO: Максимум 10 фото"; window.maxPhotos = 10;
             } else {
-                photoLimitText.innerText = "Максимум 3 фото";
-                window.maxPhotos = 3;
+                photoLimitText.innerText = "Максимум 3 фото"; window.maxPhotos = 3;
             }
         };
         window.maxPhotos = 3; window.currentListingCost = 0;
@@ -1150,9 +1136,10 @@
             window.submitAuth = async function(event) {
                 event.preventDefault(); 
                 const submitBtn = document.getElementById('auth-submit-btn'); 
+                if(!submitBtn) return;
                 const origText = submitBtn.innerText; submitBtn.innerText = "Загрузка..."; submitBtn.disabled = true;
                 
-                const email = document.getElementById('auth-email').value; 
+                const email = document.getElementById('auth-email')?.value; 
                 const pass = document.getElementById('auth-password')?.value || ""; 
                 const name = document.getElementById('auth-name')?.value || "";
                 const avatar = document.querySelector('input[name="avatar"]:checked')?.value || "";
@@ -1172,8 +1159,11 @@
                         } catch(e) { console.warn("User Setup Ignore:", e); }
 
                         window.currentUser = auth.currentUser; 
-                        document.getElementById('profile-name').innerText = window.currentUser.displayName;
-                        if(window.currentUser.photoURL) document.getElementById('profile-avatar-container').innerHTML = `<img src="${window.currentUser.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`;
+                        const pName = document.getElementById('profile-name');
+                        if(pName) pName.innerText = window.currentUser.displayName;
+                        
+                        const pAvatarContainer = document.getElementById('profile-avatar-container');
+                        if(window.currentUser.photoURL && pAvatarContainer) pAvatarContainer.innerHTML = `<img src="${window.currentUser.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`;
 
                         window.showToast('toast_reg_success'); 
                         window.closeModal('auth-modal'); event.target.reset(); setTimeout(() => window.openModal('profile-modal'), 500);
@@ -1210,7 +1200,7 @@
 
             onAuthStateChanged(auth, (user) => {
                 window.currentUser = user;
-                const pName = document.getElementById('profile-name'); const pEmail = document.getElementById('profile-email'); const lBtn = document.getElementById('profile-logout-btn'); const loginBtnWrapper = document.getElementById('profile-login-btn').parentElement; const pAvatarContainer = document.getElementById('profile-avatar-container');
+                const pName = document.getElementById('profile-name'); const pEmail = document.getElementById('profile-email'); const lBtn = document.getElementById('profile-logout-btn'); const loginBtnWrapper = document.getElementById('profile-login-btn')?.parentElement; const pAvatarContainer = document.getElementById('profile-avatar-container');
                 const ecoSection = document.getElementById('profile-economy-section');
                 const navWalletBlock = document.getElementById('nav-wallet-block');
                 const mobWalletBlock = document.getElementById('mob-wallet-block');
@@ -1226,11 +1216,14 @@
                     if(mobNavLogin) mobNavLogin.classList.add('hidden');
                     if(mobNavProfile) { mobNavProfile.classList.remove('hidden'); mobNavProfile.classList.add('flex'); }
 
-                    pName.innerText = user.displayName || "Пользователь"; pEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${user.email}`;
-                    lBtn.style.display = 'flex'; loginBtnWrapper.style.display = 'none'; ecoSection.classList.remove('hidden'); ecoSection.classList.add('flex');
+                    if(pName) pName.innerText = user.displayName || "Пользователь"; 
+                    if(pEmail) pEmail.innerHTML = `<i class="fa-solid fa-envelope mr-1"></i> ${user.email}`;
+                    if(lBtn) lBtn.style.display = 'flex'; 
+                    if(loginBtnWrapper) loginBtnWrapper.style.display = 'none'; 
+                    if(ecoSection) { ecoSection.classList.remove('hidden'); ecoSection.classList.add('flex'); }
                     if(navWalletBlock) navWalletBlock.classList.replace('hidden', 'flex');
                     if(mobWalletBlock) mobWalletBlock.classList.replace('hidden', 'flex');
-                    if (user.photoURL) { pAvatarContainer.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`; } else { pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`; }
+                    if (user.photoURL && pAvatarContainer) { pAvatarContainer.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`; } else if(pAvatarContainer) { pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`; }
                     
                     if(window.userDocUnsub) window.userDocUnsub();
                     window.userDocUnsub = onSnapshot(doc(window.db, window.usersPath, user.uid), (docSnap) => { 
@@ -1240,8 +1233,8 @@
                             window.currentUserData = { walletBalance: 0, isPro: false, freeListingsUsed: {} };
                         }
                         
-                        // Получение коллекции избранного
-                        onSnapshot(window.getFavColRef(user.uid), (favSnap) => {
+                        if(window.favColUnsub) window.favColUnsub();
+                        window.favColUnsub = onSnapshot(window.getFavColRef(user.uid), (favSnap) => {
                             window.userFavorites = new Set();
                             favSnap.forEach(fDoc => window.userFavorites.add(fDoc.id));
                             window.renderProfileTabs(); 
@@ -1249,14 +1242,14 @@
                         });
                         
                         const bal = window.currentUserData.walletBalance || 0;
-                        document.getElementById('profile-balance').innerText = bal;
+                        const pBal = document.getElementById('profile-balance'); if(pBal) pBal.innerText = bal;
                         const navBal = document.getElementById('nav-wallet-balance'); if(navBal) navBal.innerText = bal + ' RSD';
                         const mobBal = document.getElementById('mob-wallet-balance'); if(mobBal) mobBal.innerText = bal;
 
                         if (window.currentUserData.isPro) {
-                            document.getElementById('profile-pro-badge').classList.remove('hidden');
-                            document.getElementById('profile-pro-offer').classList.add('hidden');
-                            document.getElementById('photo-limit-text').innerText = "PRO: Максимум 10 фото";
+                            const proBadge = document.getElementById('profile-pro-badge'); if(proBadge) proBadge.classList.remove('hidden');
+                            const proOffer = document.getElementById('profile-pro-offer'); if(proOffer) proOffer.classList.add('hidden');
+                            const limitText = document.getElementById('photo-limit-text'); if(limitText) limitText.innerText = "PRO: Максимум 10 фото";
                             window.maxPhotos = 10;
                         } else {
                             window.maxPhotos = 3;
@@ -1268,11 +1261,19 @@
                     if(mobNavLogin) mobNavLogin.classList.remove('hidden');
                     if(mobNavProfile) { mobNavProfile.classList.add('hidden'); mobNavProfile.classList.remove('flex'); }
 
-                    pName.innerText = "Гость SVALKA"; pEmail.innerText = "Не авторизован"; lBtn.style.display = 'none'; loginBtnWrapper.style.display = 'block'; ecoSection.classList.remove('flex'); ecoSection.classList.add('hidden'); document.getElementById('profile-pro-badge').classList.add('hidden');
+                    if(pName) pName.innerText = "Гость SVALKA"; 
+                    if(pEmail) pEmail.innerText = "Не авторизован"; 
+                    if(lBtn) lBtn.style.display = 'none'; 
+                    if(loginBtnWrapper) loginBtnWrapper.style.display = 'block'; 
+                    if(ecoSection) { ecoSection.classList.remove('flex'); ecoSection.classList.add('hidden'); }
+                    const proBadge = document.getElementById('profile-pro-badge'); if(proBadge) proBadge.classList.add('hidden');
                     if(navWalletBlock) navWalletBlock.classList.replace('flex', 'hidden');
                     if(mobWalletBlock) mobWalletBlock.classList.replace('flex', 'hidden');
-                    pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
-                    window.userFavorites = new Set(); window.currentUserData = null; if (window.userDocUnsub) window.userDocUnsub(); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
+                    if(pAvatarContainer) pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                    window.userFavorites = new Set(); window.currentUserData = null; 
+                    if (window.userDocUnsub) window.userDocUnsub(); 
+                    if (window.favColUnsub) window.favColUnsub();
+                    window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
                 }
             });
 
@@ -1391,7 +1392,7 @@
                         window.showToast('toast_published');
                     }
 
-                    window.closeModal('add-modal'); document.getElementById('add-form').reset(); window.resetPhotoUpload(); window.editingItemId = null;
+                    window.closeModal('add-modal'); const form = document.getElementById('add-form'); if(form) form.reset(); window.resetPhotoUpload(); window.editingItemId = null;
                 } catch (err) { 
                     console.error("Ошибка Firebase при сохранении:", err); window.showToast('', true, "Ошибка БД: " + err.message); 
                 } finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
