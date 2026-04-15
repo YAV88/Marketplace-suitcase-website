@@ -182,42 +182,9 @@
         </div>
 
         <div id="grid-view">
-            <!-- VIP Items Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
-                <!-- VIP Card 1 -->
-                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl dark:hover:shadow-red-900/20 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80'], 'Стул IKEA Millberget', '4.500', 'RSD', 'Отличное состояние. Продаю в связи с переездом. Центр города.', 'Пользователь', 'Нови-Сад', 'ул. Пушкина, 10', 'Б/У (Отличное)', 'Мебель', 'https://api.dicebear.com/9.x/avataaars/svg?seed=Alex&skinColor=light')">
-                    <div class="absolute top-4 left-5 z-10 text-red-500 text-2xl gem-animate" title="VIP"><i class="fa-solid fa-gem"></i></div>
-                    <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)"><i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i></button>
-                    <div class="h-56 sm:h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0">
-                        <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=500&q=80" alt="IKEA" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                    </div>
-                    <div class="p-6 md:p-7 flex flex-col flex-1">
-                        <h4 class="font-black text-xl leading-tight text-gray-900 dark:text-white mb-2 line-clamp-1" data-t="item1_name">Стул IKEA Millberget</h4>
-                        <div class="text-red-600 dark:text-red-500 font-black text-2xl mb-3 italic">4.500 RSD</div>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-auto line-clamp-2 leading-relaxed" data-t="item1_desc">Отличное состояние. Продаю в связи с переездом. Центр города.</p>
-                        <div class="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-gray-700 mt-5">
-                            <span class="text-[10px] uppercase font-bold text-gray-400">2 <span data-t="hours_ago">часа назад</span></span>
-                            <span class="font-bold text-xs text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition" data-t="btn_take">Подробнее &rarr;</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- VIP Card 2 -->
-                <div class="item-card bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openDynamicModal(['https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80'], 'iPad Air (2022) 64GB', '520', 'EUR', 'Состояние идеал. Куплен полгода назад, на гарантии.', 'Пользователь', 'Белград', 'Булевар Краља Александра', 'Новое', 'Электроника', 'https://api.dicebear.com/9.x/avataaars/svg?seed=Fiona&skinColor=pale')">
-                    <div class="absolute top-4 left-5 z-10 text-red-500 text-2xl gem-animate" title="VIP"><i class="fa-solid fa-gem"></i></div>
-                    <button class="btn-stash absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 transition shadow-sm" onclick="window.toggleFavorite(this, event)"><i class="fa-solid fa-box-open text-lg drop-shadow-sm"></i></button>
-                    <div class="h-56 sm:h-64 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0">
-                        <img src="https://images.unsplash.com/photo-1544244015-0cd4b3ffc6b0?auto=format&fit=crop&w=500&q=80" alt="iPad" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                    </div>
-                    <div class="p-6 md:p-7 flex flex-col flex-1">
-                        <h4 class="font-black text-xl leading-tight text-gray-900 dark:text-white mb-2 line-clamp-1">iPad Air (2022) 64GB</h4>
-                        <div class="text-red-600 dark:text-red-500 font-black text-2xl mb-3 italic">520 EUR</div>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-auto line-clamp-2 leading-relaxed" data-t="item2_desc">Состояние идеал. Куплен полгода назад, на гарантии.</p>
-                        <div class="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-gray-700 mt-5">
-                            <span class="text-[10px] uppercase font-bold text-gray-400">5 <span data-t="hours_ago">часов назад</span></span>
-                            <span class="font-bold text-xs text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition" data-t="btn_take">Подробнее &rarr;</span>
-                        </div>
-                    </div>
-                </div>
+            <!-- Динамическая сетка VIP -->
+            <div id="vip-items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
+                <!-- Карточки будут добавлены скриптом -->
             </div>
 
             <!-- Promo Banner -->
@@ -241,7 +208,7 @@
                 <p class="text-gray-500 dark:text-gray-400 font-medium text-sm md:text-base" data-t="fresh_subtitle">Последние добавленные вещи от пользователей</p>
             </div>
 
-            <!-- Firebase Dynamic Grid -->
+            <!-- Динамическая сетка Обычных товаров -->
             <div id="fresh-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
@@ -317,17 +284,17 @@
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
                                 <!-- Males: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=darkBrown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=darkBrown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&amp;skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&amp;skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <!-- Females: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=darkBrown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=darkBrown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&amp;skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&amp;skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
                     </div>
@@ -361,7 +328,7 @@
                 </div>
                 
                 <div class="flex flex-col md:flex-row items-center gap-6">
-                    <div id="profile-avatar-container" class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-4xl border-4 border-white dark:border-gray-800 shadow-md">
+                    <div id="profile-avatar-container" class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-4xl border-4 border-white dark:border-gray-800 shadow-md overflow-hidden">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <div class="text-center md:text-left">
@@ -537,80 +504,6 @@
         </div>
     </div>
 
-    <!-- Add Item Modal -->
-    <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
-            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 z-20 text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white mb-8 uppercase italic" data-t="add_title">Новое объявление</h2>
-            
-            <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_photos_label">Фотографии</label>
-                    <div id="photo-preview-list" class="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
-                        <label class="w-32 h-32 shrink-0 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl flex flex-col items-center justify-center text-gray-400 hover:border-red-600 hover:text-red-600 transition cursor-pointer bg-gray-50 dark:bg-gray-800/50 group">
-                            <i class="fa-solid fa-plus text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-[10px] uppercase tracking-widest" data-t="add_photo_btn">Добавить</span>
-                            <input type="file" class="hidden" accept="image/*" multiple onchange="window.previewPhotos(event)">
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_name">Название</label><input type="text" id="item-title" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required></div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_cat">Категория</label>
-                        <div class="relative">
-                            <select id="item-category" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option data-t="cat_furniture">Мебель</option><option data-t="cat_electronics">Электроника</option><option data-t="cat_clothes">Одежда</option><option data-t="cat_home">Для дома</option><option data-t="cat_kids">Детское</option><option data-t="cat_auto">Авто/Мото</option><option data-t="cat_sports">Спорт</option><option data-t="cat_free">Отдам даром</option><option data-t="cat_housing">Жилье / Соседи</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                        <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2 font-medium leading-tight" data-t="add_housing_hint">* Для категории "Жилье": разрешена только сдача комнат и переуступка аренды. Продажа домов запрещена.</p>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="filter_city">Город</label>
-                        <div class="relative">
-                            <select id="item-city" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option data-t="city_bg">Белград</option><option data-t="city_ns">Нови-Сад</option><option data-t="city_nis">Ниш</option><option data-t="city_sub">Суботица</option><option data-t="city_krag">Крагуевац</option><option data-t="city_other">Другой</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_address">Точный адрес</label>
-                        <input type="text" id="item-address" placeholder="ул. Пушкина, 10" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_price">Цена</label>
-                        <div class="flex">
-                            <input type="number" id="item-price" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition" required>
-                            <select id="item-currency" class="bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-700 rounded-r-xl px-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 transition cursor-pointer appearance-none">
-                                <option value="RSD">RSD</option><option value="EUR">EUR</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_condition">Состояние</label>
-                        <div class="relative">
-                            <select id="item-condition" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition appearance-none cursor-pointer">
-                                <option value="Новое" data-t="cond_new">Новое</option><option value="Б/У (Отличное)" data-t="cond_used_exc">Б/У (Отличное)</option><option value="Б/У (Хорошее)" data-t="cond_used_good">Б/У (Хорошее)</option><option value="На запчасти" data-t="cond_parts">На запчасти</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
-                        </div>
-                    </div>
-                    <div class="col-span-1 md:col-span-2"><label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="add_desc">Описание</label><textarea id="item-desc" rows="6" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-red-600 focus:bg-white dark:focus:bg-gray-900 transition resize-none"></textarea></div>
-                </div>
-                <div class="mt-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" required class="w-5 h-5 accent-red-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded cursor-pointer transition">
-                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"><span data-t="add_rules_agree">Я принимаю</span> <button type="button" onclick="window.openModal('rules-modal')" class="text-red-600 dark:text-red-500 hover:underline" data-t="add_rules_link">Правила SVALKA</button></span>
-                    </label>
-                </div>
-                <button type="submit" class="bg-red-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-200 dark:shadow-red-900/30 mt-2" data-t="btn_publish">Опубликовать</button>
-            </form>
-        </div>
-    </div>
-
     <div id="toast" class="fixed bottom-10 left-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] border dark:border-gray-200 flex items-center gap-3"><i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i><span id="toast-msg">Успешно!</span></div>
 
     <!-- Footer -->
@@ -682,7 +575,7 @@
                 modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "New Listing", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...", empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
                 auth_forgot_pass: "Forgot Password?", auth_reset_btn: "Reset Password",
                 profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user",
-                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_error: "Database or Permission Error!", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
                 add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I accept the", add_rules_link: "SVALKA Rules", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category", add_address: "Exact address", modal_location: "Location", share_title: "Share", share_copy: "Link"
             }
         };
@@ -785,16 +678,43 @@
         };
 
         window.myMap = null;
+        window.mainMapMarkers = [];
+
+        window.updateMainMapMarkers = function(items) {
+            if (!window.myMap) return;
+            
+            window.mainMapMarkers.forEach(m => window.myMap.removeLayer(m));
+            window.mainMapMarkers = [];
+
+            const cityCoords = { "Белград": [44.7866, 20.4489], "Нови-Сад": [45.2671, 19.8335], "Ниш": [43.3209, 21.8958], "Суботица": [46.1005, 19.6646], "Крагуевац": [44.0128, 20.9114], "Другой": [44.0165, 21.0059] };
+            
+            items.forEach(item => {
+                const base = cityCoords[item.city] || cityCoords["Нови-Сад"];
+                let hash = 0;
+                if(item.id) {
+                    for (let i = 0; i < item.id.length; i++) { hash = item.id.charCodeAt(i) + ((hash << 5) - hash); }
+                }
+                const offsetLat = (hash % 100) / 4000;
+                const offsetLng = ((hash >> 3) % 100) / 4000;
+                const coords = [base[0] + offsetLat, base[1] + offsetLng];
+
+                const customIcon = L.divIcon({ className: 'custom-map-marker', html: '<div style="color: #ef4444; font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"><i class="fa-solid fa-location-dot"></i></div>', iconSize: [24, 24], iconAnchor: [12, 24] });
+                const m = L.marker(coords, {icon: customIcon}).addTo(window.myMap).bindPopup(`<b>${item.title}</b><br><span style="color: #ef4444; font-weight: bold;">${item.price || 0} ${item.currency || 'RSD'}</span>`);
+                window.mainMapMarkers.push(m);
+            });
+        };
+
         window.initMap = function() {
             window.myMap = L.map('real-map').setView([45.2671, 19.8335], 13);
             const isDark = document.documentElement.classList.contains('dark');
             const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
             L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(window.myMap);
 
-            const customIcon = L.divIcon({ className: 'custom-map-marker', html: '<div style="color: #ef4444; font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"><i class="fa-solid fa-location-dot"></i></div>', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32] });
-            const markers = [{ coords: [45.2671, 19.8335], title: "Стул IKEA Millberget", price: "4.500 RSD" }, { coords: [45.2550, 19.8450], title: "Камера Sony a6400", price: "850 EUR" }, { coords: [45.2710, 19.8200], title: "Зимняя куртка", price: "12.000 RSD" }];
-            markers.forEach(m => { L.marker(m.coords, {icon: customIcon}).addTo(window.myMap).bindPopup(`<b>${m.title}</b><br><span style="color: #ef4444; font-weight: bold;">${m.price}</span>`); });
             setTimeout(() => { document.getElementById('map-loader').style.opacity = '0'; setTimeout(() => document.getElementById('map-loader').style.display = 'none', 500); }, 500);
+
+            if (window.loadedItems && window.loadedItems.length > 0) {
+                window.updateMainMapMarkers(window.loadedItems);
+            }
         };
 
         window.showToast = function(translationKey, isError = false, rawMessage = null) {
@@ -853,7 +773,7 @@
             }
 
             const isLiked = window.userFavorites.has(itemId);
-            const favRef = doc(window.db, `users/${window.currentUser.uid}/favorites`, itemId);
+            const favRef = window.getFavDocRef(window.currentUser.uid, itemId);
 
             btn.classList.toggle('liked'); const icon = btn.querySelector('i');
             if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
@@ -995,7 +915,7 @@
                 Array.from(files).forEach(file => { 
                     const reader = new FileReader(); 
                     reader.onload = function(e) { 
-                        // СЖАТИЕ ИЗОБРАЖЕНИЯ ПЕРЕД ОТПРАВКОЙ В БД (ЧТОБЫ НЕ ПРЕВЫШАТЬ ЛИМИТ 1MB)
+                        // СЖАТИЕ ИЗОБРАЖЕНИЯ ПЕРЕД ОТПРАВКОЙ В БД
                         const img = new Image();
                         img.onload = function() {
                             const canvas = document.createElement('canvas');
@@ -1013,7 +933,7 @@
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.7); // Сжимаем до 70% качества
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.7); // Сжатие до 70% качества
                             
                             if(window.tempPhotos.length < 5) { 
                                 window.tempPhotos.push(dataUrl); 
@@ -1042,7 +962,7 @@
         });
 
         // =========================================================================================
-        // === ВАШИ НАСТРОЙКИ FIREBASE (Не меняем!) ===
+        // === ВАШИ НАСТРОЙКИ FIREBASE ===
         // =========================================================================================
         
         const firebaseConfig = {
@@ -1059,6 +979,79 @@
             const auth = getAuth(app);
             window.db = getFirestore(app);
             window.currentUser = null;
+
+            // Функция генерации карточки
+            function createCardHTML(item, isVip) {
+                const diffMins = Math.floor((Date.now() - item.createdAt) / 60000); 
+                const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
+                const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80");
+                const currency = item.currency || 'RSD'; 
+                const isLiked = window.userFavorites && window.userFavorites.has(item.id); 
+                const iconClass = isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open';
+                
+                const vipBadge = isVip ? `<div class="absolute top-4 left-5 z-10 text-red-500 text-2xl gem-animate" title="VIP"><i class="fa-solid fa-gem"></i></div>` : '';
+                const cardRounding = isVip ? 'rounded-[2rem]' : 'rounded-[1.2rem]';
+                const imgHeight = isVip ? 'h-56 sm:h-64' : 'h-32 sm:h-36';
+                const titleClass = isVip ? 'text-xl' : 'text-sm';
+                const priceClass = isVip ? 'text-2xl mb-3' : 'text-base mb-2';
+
+                return `<div class="item-card bg-white dark:bg-gray-800 ${cardRounding} overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
+                    ${vipBadge}
+                    <button class="btn-stash absolute ${isVip ? 'top-4 right-4 w-10 h-10' : 'top-2 right-2 w-8 h-8'} z-20 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${iconClass} ${isVip ? 'text-lg' : 'text-sm'} drop-shadow-sm"></i></button>
+                    <div class="${imgHeight} bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0"><img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>
+                    <div class="${isVip ? 'p-6 md:p-7' : 'p-3 md:p-4'} flex flex-col flex-1">
+                        <h4 class="font-black ${titleClass} leading-tight text-gray-900 dark:text-white mb-1 line-clamp-2">${item.title}</h4>
+                        <div class="text-red-600 dark:text-red-500 font-black ${priceClass} italic mt-auto">${item.price || 0} ${currency}</div>
+                        <p class="text-gray-500 dark:text-gray-400 text-[10px] mb-auto line-clamp-2 leading-relaxed">${item.desc}</p>
+                        <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700 mt-3">
+                            <span class="text-[8px] uppercase font-bold text-gray-400">${timeText}</span>
+                            <span class="font-bold text-[9px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            window.renderDynamicItems = function(items) {
+                window.loadedItems = items; 
+                const sortedItems = [...items].sort((a, b) => b.createdAt - a.createdAt);
+                
+                const vipGrid = document.getElementById('vip-items-grid');
+                const freshGrid = document.getElementById('fresh-items-grid');
+                
+                if(!vipGrid || !freshGrid) return;
+                
+                vipGrid.innerHTML = '';
+                freshGrid.innerHTML = '';
+
+                const vipItems = sortedItems.slice(0, 4);
+                const freshItems = sortedItems.slice(4);
+
+                vipItems.forEach(item => { vipGrid.innerHTML += createCardHTML(item, true); });
+
+                for (let i = vipItems.length; i < 4; i++) {
+                    vipGrid.innerHTML += `
+                    <div class="item-card bg-gray-50 dark:bg-gray-800/50 rounded-[2rem] overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center h-full min-h-[320px] text-center p-6 group cursor-pointer" onclick="window.checkAuthAndOpenAddModal()">
+                        <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 text-2xl mb-4 group-hover:scale-110 transition-transform"><i class="fa-solid fa-crown"></i></div>
+                        <h4 class="font-black text-gray-900 dark:text-white mb-2">Место для VIP</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Ваш товар появится здесь. Нажмите, чтобы добавить.</p>
+                    </div>`;
+                }
+
+                if (freshItems.length === 0) {
+                    if (sortedItems.length > 0) {
+                         freshGrid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Больше объявлений пока нет.</div>';
+                    } else {
+                         freshGrid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Здесь пока ничего нет. Стань первым!</div>';
+                    }
+                } else {
+                    freshItems.forEach(item => { freshGrid.innerHTML += createCardHTML(item, false); });
+                }
+
+                const p = document.getElementById('loading-placeholder'); 
+                if (p) p.style.display = 'none';
+
+                window.updateMainMapMarkers(sortedItems);
+            };
 
             window.submitAuth = async function(event) {
                 event.preventDefault(); 
@@ -1118,6 +1111,8 @@
                 const g = document.getElementById('fresh-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
             });
 
+            window.favUnsubscribe = null;
+
             onAuthStateChanged(auth, (user) => {
                 window.currentUser = user;
                 const pName = document.getElementById('profile-name'); const pEmail = document.getElementById('profile-email'); const lBtn = document.getElementById('profile-logout-btn'); const loginBtnWrapper = document.getElementById('profile-login-btn').parentElement; const pAvatarContainer = document.getElementById('profile-avatar-container');
@@ -1127,28 +1122,50 @@
                     lBtn.style.display = 'flex'; loginBtnWrapper.style.display = 'none';
                     if (user.photoURL) { pAvatarContainer.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`; } else { pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`; }
                     
-                    window.favUnsubscribe = onSnapshot(collection(window.db, `users/${user.uid}/favorites`), (snapshot) => { window.userFavorites = new Set(); snapshot.forEach(doc => window.userFavorites.add(doc.id)); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems); }, (e) => console.error("Error favs:", e));
+                    if(window.favUnsubscribe) window.favUnsubscribe();
+                    window.favUnsubscribe = onSnapshot(doc(window.db, `users`, user.uid), (docSnap) => { 
+                        window.userFavorites = new Set(); 
+                        if(docSnap.exists() && docSnap.data().favorites) {
+                            docSnap.data().favorites.forEach(id => window.userFavorites.add(id));
+                        }
+                        window.renderProfileTabs(); 
+                        if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems); 
+                    }, (e) => console.error("Error favs:", e));
                 } else {
                     pName.innerText = "Гость SVALKA"; pEmail.innerText = "Не авторизован"; lBtn.style.display = 'none'; loginBtnWrapper.style.display = 'block'; pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
                     window.userFavorites = new Set(); if (window.favUnsubscribe) window.favUnsubscribe(); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
                 }
             });
 
-            window.renderDynamicItems = function(items) {
-                const grid = document.getElementById('fresh-items-grid'); grid.innerHTML = ''; window.loadedItems = items; items.sort((a, b) => b.createdAt - a.createdAt);
-                if (items.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Здесь пока ничего нет. Стань первым!</div>'; return; }
+            // Обновленное Избранное (храним массивом в документе пользователя)
+            window.getFavDocRef = (uid, itemId) => doc(window.db, `users`, uid);
+            window.toggleFavorite = async function(btn, event, itemId) {
+                event.stopPropagation();
+                if (!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
+                if (!itemId) return;
 
-                items.forEach(item => {
-                    const diffMins = Math.floor((Date.now() - item.createdAt) / 60000); const timeText = diffMins < 60 ? `${diffMins || 1} мин назад` : `${Math.floor(diffMins/60)} ч назад`;
-                    const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80");
-                    const currency = item.currency || 'RSD'; const isLiked = window.userFavorites && window.userFavorites.has(item.id); const iconClass = isLiked ? 'text-orange-500 fa-box' : 'text-gray-400 fa-box-open';
-                    grid.innerHTML += `<div class="item-card bg-white dark:bg-gray-800 rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl dark:hover:shadow-red-900/10 transition duration-400 relative group border border-gray-100 dark:border-gray-700 cursor-pointer flex flex-col h-full" onclick="window.openItemDetails('${item.id}')">
-                        <button class="btn-stash absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm ${isLiked ? 'liked' : ''}" onclick="window.toggleFavorite(this, event, '${item.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>
-                        <div class="h-32 sm:h-36 bg-gray-100 dark:bg-gray-700 relative overflow-hidden shrink-0"><img src="${imgUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>
-                        <div class="p-3 md:p-4 flex flex-col flex-1"><h4 class="font-black text-sm leading-tight text-gray-900 dark:text-white mb-1 line-clamp-2">${item.title}</h4><div class="text-red-600 dark:text-red-500 font-black text-base mb-2 italic">${item.price} ${currency}</div><p class="text-gray-500 dark:text-gray-400 text-[10px] mb-auto line-clamp-2 leading-relaxed">${item.desc}</p><div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700 mt-3"><span class="text-[8px] uppercase font-bold text-gray-400">${timeText}</span><span class="font-bold text-[9px] text-gray-900 dark:text-gray-200 group-hover:text-red-600 transition">Подробнее &rarr;</span></div></div></div>`;
-                });
-                const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-            }
+                const isLiked = window.userFavorites.has(itemId);
+                const userDocRef = doc(window.db, `users`, window.currentUser.uid);
+
+                btn.classList.toggle('liked'); const icon = btn.querySelector('i');
+                if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+
+                try {
+                    const newFavs = Array.from(window.userFavorites);
+                    if (isLiked) {
+                        const index = newFavs.indexOf(itemId);
+                        if (index > -1) newFavs.splice(index, 1);
+                    } else {
+                        newFavs.push(itemId);
+                    }
+                    await setDoc(userDocRef, { favorites: newFavs }, { merge: true });
+                } catch(e) {
+                    console.error("Ошибка избранного:", e);
+                    window.showToast('', true, "Ошибка: " + e.message);
+                    btn.classList.toggle('liked');
+                    if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
+                }
+            };
 
             window.submitNewItem = async function(event) {
                 event.preventDefault();
