@@ -146,7 +146,7 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-12">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-6">
             <div>
                 <div class="flex items-center gap-3 mb-2">
                     <i class="fa-solid fa-fire text-orange-500 text-2xl drop-shadow-sm"></i>
@@ -160,10 +160,10 @@
                     <button id="btn-view-map" onclick="window.toggleViewMode('map')" class="view-btn px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-bold text-sm transition" title="Карта"><i class="fa-solid fa-map-location-dot"></i></button>
                 </div>
                 <div class="relative flex-1 lg:flex-none">
-                    <select class="appearance-none w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl pl-5 pr-10 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 cursor-pointer outline-none focus:border-red-500 transition">
-                        <option data-t="sort_new">Сначала новые</option>
-                        <option data-t="sort_cheap">Сначала дешевые</option>
-                        <option data-t="sort_exp">Сначала дорогие</option>
+                    <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl pl-5 pr-10 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 cursor-pointer outline-none focus:border-red-500 transition">
+                        <option value="new" data-t="sort_new">Сначала новые</option>
+                        <option value="cheap" data-t="sort_cheap">Сначала дешевые</option>
+                        <option value="exp" data-t="sort_exp">Сначала дорогие</option>
                     </select>
                     <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                 </div>
@@ -173,6 +173,23 @@
             </div>
         </div>
 
+        <!-- Блок Категорий -->
+        <div class="mb-10 overflow-x-auto custom-scrollbar pb-3">
+            <div class="flex items-center gap-3 w-max">
+                <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap" data-t="cat_all">Все категории</button>
+                <button data-cat="Мебель" onclick="window.filterByCategory('Мебель')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-couch mr-2"></i><span data-t="cat_furniture">Мебель</span></button>
+                <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-laptop mr-2"></i><span data-t="cat_electronics">Электроника</span></button>
+                <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-shirt mr-2"></i><span data-t="cat_clothes">Одежда</span></button>
+                <button data-cat="Для дома" onclick="window.filterByCategory('Для дома')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-house mr-2"></i><span data-t="cat_home">Для дома</span></button>
+                <button data-cat="Детское" onclick="window.filterByCategory('Детское')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-baby-carriage mr-2"></i><span data-t="cat_kids">Детское</span></button>
+                <button data-cat="Авто/Мото" onclick="window.filterByCategory('Авто/Мото')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-car mr-2"></i><span data-t="cat_auto">Авто/Мото</span></button>
+                <button data-cat="Спорт" onclick="window.filterByCategory('Спорт')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-basketball mr-2"></i><span data-t="cat_sports">Спорт</span></button>
+                <button data-cat="Отдам даром" onclick="window.filterByCategory('Отдам даром')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-gift mr-2"></i><span data-t="cat_free">Отдам даром</span></button>
+                <button data-cat="Жилье / Соседи" onclick="window.filterByCategory('Жилье / Соседи')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap"><i class="fa-solid fa-key mr-2"></i><span data-t="cat_housing">Жилье / Соседи</span></button>
+            </div>
+        </div>
+
+        <!-- MAP VIEW -->
         <div id="map-view" class="hidden w-full h-[600px] rounded-[2.5rem] overflow-hidden relative bg-gray-200 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-inner mb-16">
             <div id="real-map" class="w-full h-full z-[1]"></div>
             <div id="map-loader" class="absolute inset-0 z-[2] flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 transition-opacity duration-500">
@@ -181,33 +198,10 @@
             </div>
         </div>
 
+        <!-- GRID VIEW -->
         <div id="grid-view">
-            <!-- Динамическая сетка VIP -->
-            <div id="vip-items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16"></div>
-
-            <!-- Promo Banner -->
-            <div class="mb-16 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
-                <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
-                    <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
-                        <span class="bg-white/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md">SVALKA PRO</span>
-                    </div>
-                    <h3 class="text-3xl md:text-4xl font-display font-black mb-2" data-t="promo_title">Продавайте в 5 раз быстрее!</h3>
-                    <p class="text-red-100 font-medium max-w-lg" data-t="promo_subtitle">Выделите свое объявление рамкой или поднимите в ТОП.</p>
-                </div>
-                <button class="relative z-10 bg-white text-red-600 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:scale-105 transition shrink-0" data-t="btn_promo">Узнать подробнее</button>
-            </div>
-
-            <!-- Fresh arrivals Header -->
-            <div class="mb-10">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-bolt text-red-500 text-2xl drop-shadow-sm"></i>
-                    <h3 class="text-3xl md:text-4xl font-display font-black text-gray-900 dark:text-white tracking-tight uppercase italic" data-t="fresh_title">Свежие объявления</h3>
-                </div>
-                <p class="text-gray-500 dark:text-gray-400 font-medium text-sm md:text-base" data-t="fresh_subtitle">Последние добавленные вещи от пользователей</p>
-            </div>
-
-            <!-- Динамическая сетка Обычных товаров -->
-            <div id="fresh-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
+            <!-- Единая сетка товаров -->
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
                     <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-4">Загрузка...</p>
@@ -221,6 +215,19 @@
             </div>
         </div>
 
+        <!-- Promo Banner -->
+        <div class="mb-16 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
+            <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
+                <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
+                    <span class="bg-white/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md">SVALKA PRO</span>
+                </div>
+                <h3 class="text-3xl md:text-4xl font-display font-black mb-2" data-t="promo_title">Продавайте в 5 раз быстрее!</h3>
+                <p class="text-red-100 font-medium max-w-lg" data-t="promo_subtitle">Выделите свое объявление рамкой или поднимите в ТОП.</p>
+            </div>
+            <button class="relative z-10 bg-white text-red-600 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:scale-105 transition shrink-0" data-t="btn_promo">Узнать подробнее</button>
+        </div>
+
+        <!-- CTA Section -->
         <div class="mt-12 bg-gray-900 dark:bg-black rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative shadow-2xl border dark:border-gray-800">
             <div class="relative z-10">
                 <h2 class="text-5xl md:text-7xl font-display font-black mb-6 tracking-tighter uppercase italic" data-t="cta_title">Ненужное — это клад.</h2>
@@ -282,16 +289,16 @@
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
                                 <!-- Males: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jack&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jude&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Leo&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <!-- Females: 4 light, 1 dark -->
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Jocelyn&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sophia&skinColor=light" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Avery&skinColor=pale" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="peer hidden"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Mia&skinColor=brown" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                             </div>
                         </div>
@@ -641,15 +648,17 @@
         window.authMode = 'login'; 
         window.currentUserData = null; 
         window.editingItemId = null;
+        window.currentCategoryFilter = 'Все';
+        window.currentSortMode = 'new';
 
         window.i18n = {
             ru: {
                 nav_buy: "Купить", nav_urgent: "Срочно", btn_add: "+ Пристроить добро", nav_profile: "Профиль",
-                btn_filter: "Фильтры", main_title: "Находки", main_subtitle: "Сокровища вне очереди: вещи, поднятые на самый верх",
+                btn_filter: "Фильтры", main_title: "Находки", main_subtitle: "Все объявления и сокровища вне очереди",
                 fresh_title: "Свежие объявления", fresh_subtitle: "Последние добавленные вещи от пользователей",
                 promo_title: "Продавайте в 5 раз быстрее!", promo_subtitle: "Выделите свое объявление рамкой или поднимите в ТОП.", btn_promo: "Узнать подробнее",
                 load_more: "Показать еще", filter_cat: "Категории", filter_city: "Город", filter_price: "Цена", filter_apply: "Применить", filter_reset: "Сбросить", filter_reset_success: "Фильтры сброшены",
-                cat_furniture: "Мебель", cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Для дома", cat_kids: "Детское", cat_auto: "Авто/Мото", cat_sports: "Спорт", cat_free: "Отдам даром", cat_housing: "Жилье / Соседи",
+                cat_all: "Все категории", cat_furniture: "Мебель", cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Для дома", cat_kids: "Детское", cat_auto: "Авто/Мото", cat_sports: "Спорт", cat_free: "Отдам даром", cat_housing: "Жилье / Соседи",
                 city_all: "Вся Сербия", city_bg: "Белград", city_ns: "Нови-Сад", city_nis: "Ниш", city_sub: "Суботица", city_krag: "Крагуевац", city_other: "Другой",
                 sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие",
                 card_urgent: "Срочно", yesterday: "Вчера", hours_ago: "часа назад", mins_ago: "мин назад",
@@ -672,7 +681,9 @@
                 add_address: "Точный адрес", modal_location: "Местоположение", share_title: "Поделиться", share_copy: "Ссылка"
             },
             rs: {
-                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Blago preko reda: stvari podignute na sam vrh", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
+                nav_buy: "Kupi", nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Svi oglasi i blago preko reda", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Saznaj više", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", 
+                cat_all: "Sve kategorije", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", 
+                city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", item1_name: "IKEA stolica Millberget", item1_desc: "Odlično stanje. Prodajem zbog selidbe.", item2_desc: "Idealno stanje. Kupljen pre pola godine.", item3_name: "Monstera visoka", item3_desc: "Zdrava i negovana.", item4_name: "Konvektor Xiaomi", item4_desc: "Nezamenljiv zimi.", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
                 modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Udomi stvari", edit_title: "Uredi oglas", btn_save: "Sačuvaj", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...",
                 btn_edit: "Uredi", btn_reserve: "Rezerviši", btn_unreserve: "Skini rezervaciju", btn_sold: "Prodato", badge_reserved: "REZERV.", badge_sold: "PRODATO", badge_expired: "ISTEKLO",
                 empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", map_placeholder_title: "Interaktivna mapa", map_placeholder_desc: "Na ovom području će biti prikazana mapa.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_reg_submit: "Registruj se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", auth_avatar: "Avatar",
@@ -682,7 +693,9 @@
                 add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Prihvatam", add_rules_link: "SVALKA Pravila", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija", add_address: "Tačna adresa", modal_location: "Lokacija", share_title: "Podeli", share_copy: "Link"
             },
             en: {
-                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "Treasures skipping the line: items bumped to the top", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
+                nav_buy: "Buy", nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "All listings and bumped items", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Learn more", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", 
+                cat_all: "All Categories", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", 
+                city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", item1_name: "IKEA Millberget Chair", item1_desc: "Excellent condition.", item2_desc: "Mint condition.", item3_name: "Tall Monstera", item3_desc: "Healthy and well-maintained.", item4_name: "Xiaomi Convector", item4_desc: "Essential for winter.", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
                 modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "Rehome items", edit_title: "Edit Listing", btn_save: "Save changes", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...",
                 btn_edit: "Edit", btn_reserve: "Reserve", btn_unreserve: "Unreserve", btn_sold: "Sold!", badge_reserved: "RESERVED", badge_sold: "SOLD", badge_expired: "EXPIRED",
                 empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", map_placeholder_title: "Interactive Map", map_placeholder_desc: "A map with item pins will be displayed.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
@@ -731,6 +744,23 @@
         window.resetFilters = function() {
             document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(cb => cb.checked = false); document.querySelectorAll('#filter-panel input[type="number"]').forEach(input => input.value = '');
             const allSerbiaRadio = document.querySelector('#filter-panel input[name="city"]'); if (allSerbiaRadio) allSerbiaRadio.checked = true; window.showToast('filter_reset_success');
+        };
+
+        window.handleSort = function() {
+            window.currentSortMode = document.getElementById('sort-select').value;
+            if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
+        };
+
+        window.filterByCategory = function(cat) {
+            window.currentCategoryFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.className = "cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap";
+                } else {
+                    btn.className = "cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition shadow-sm whitespace-nowrap";
+                }
+            });
+            if(window.loadedItems) window.renderDynamicItems(window.loadedItems, true);
         };
 
         window.checkAuthAndOpenAddModal = function() {
@@ -1149,7 +1179,7 @@
                 try { await signOut(auth); window.closeModal('profile-modal'); window.showToast('toast_logout_success'); } catch (err) { console.error(err); }
             };
 
-            // Отслеживание глобальной ленты (С ВЫРЕЗАНИЕМ ПРОДАННОГО И УСТАРЕВШЕГО)
+            // Отслеживание глобальной ленты
             onSnapshot(collection(window.db, 'items'), (snapshot) => { 
                 let items = []; 
                 snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
@@ -1157,7 +1187,7 @@
             }, (error) => { 
                 console.error("Ошибка БД при чтении:", error); 
                 const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-                const g = document.getElementById('fresh-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
+                const g = document.getElementById('main-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: ${error.message}</div>`;
             });
 
             onAuthStateChanged(auth, (user) => {
@@ -1183,12 +1213,12 @@
                                 window.maxPhotos = 10;
                             }
                         }
-                        window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems); 
+                        window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true); 
                     });
                 } else {
                     pName.innerText = "Гость SVALKA"; pEmail.innerText = "Не авторизован"; lBtn.style.display = 'none'; loginBtnWrapper.style.display = 'block'; ecoSection.classList.remove('flex'); ecoSection.classList.add('hidden'); document.getElementById('profile-pro-badge').classList.add('hidden');
                     pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
-                    window.userFavorites = new Set(); window.currentUserData = null; if (window.userDocUnsub) window.userDocUnsub(); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems);
+                    window.userFavorites = new Set(); window.currentUserData = null; if (window.userDocUnsub) window.userDocUnsub(); window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
                 }
             });
 
@@ -1262,18 +1292,35 @@
                 </div>`;
             }
 
-            window.renderDynamicItems = function(items) {
-                window.loadedItems = items; 
-                const grid = document.getElementById('fresh-items-grid'); if(!grid) return;
+            window.renderDynamicItems = function(items, isReRender = false) {
+                if (!isReRender) window.loadedItems = items; 
+                const grid = document.getElementById('main-items-grid'); if(!grid) return;
                 grid.innerHTML = ''; 
                 
-                // Фильтрация (Архивация): Не показываем проданные и старше 30 дней
-                const activeItems = items.filter(item => {
+                // 1. Фильтрация (Архивация): Не показываем проданные и старше 30 дней
+                let activeItems = (window.loadedItems || []).filter(item => {
                     const ageDays = (Date.now() - item.createdAt) / (1000 * 60 * 60 * 24);
                     return (item.status === 'active' || item.status === 'reserved' || !item.status) && ageDays <= 30;
-                }).sort((a, b) => b.createdAt - a.createdAt);
+                });
 
-                if (activeItems.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Здесь пока ничего нет. Стань первым!</div>'; return; }
+                // 2. Фильтрация по выбранной категории (Сверху)
+                if (window.currentCategoryFilter && window.currentCategoryFilter !== 'Все') {
+                    activeItems = activeItems.filter(item => item.category === window.currentCategoryFilter);
+                }
+
+                // 3. Сортировка
+                if (window.currentSortMode === 'cheap') {
+                    activeItems.sort((a, b) => Number(a.price) - Number(b.price));
+                } else if (window.currentSortMode === 'exp') {
+                    activeItems.sort((a, b) => Number(b.price) - Number(a.price));
+                } else {
+                    activeItems.sort((a, b) => b.createdAt - a.createdAt);
+                }
+
+                if (activeItems.length === 0) { 
+                    grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Ничего не найдено</div>'; 
+                    return; 
+                }
 
                 activeItems.forEach(item => { grid.innerHTML += createCardHTML(item); });
                 const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
