@@ -86,6 +86,7 @@
                 
                 <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="text-gray-500 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 font-bold text-xs uppercase tracking-widest transition px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm" data-t="auth_login_btn">Войти</button>
                 <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="hidden text-gray-400 hover:text-red-600 dark:text-gray-300 transition text-lg w-10 h-10 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600" title="Профиль"><i class="fa-regular fa-user"></i></button>
+                
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-red-600 hover:bg-red-700 text-white px-7 py-3 rounded-full font-black transition shadow-lg shadow-red-600/30 dark:shadow-red-900/50 uppercase text-[11px] tracking-widest" data-t="btn_add">+ Пристроить добро</button>
             </div>
             <div class="lg:hidden flex items-center gap-3 ml-4">
@@ -169,7 +170,7 @@
             </div>
         </div>
 
-        <!-- Блок Категорий -->
+        <!-- Блок Категорий (Срочно перенесено сюда) -->
         <div class="mb-10 overflow-x-auto custom-scrollbar pb-3">
             <div class="flex items-center gap-3 w-max">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap" data-t="cat_all">Все категории</button>
@@ -186,18 +187,13 @@
             </div>
         </div>
 
-        <!-- GRID VIEW (Очищенная единая сетка) -->
-        <div id="grid-view">
-            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
-                <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
-                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
-                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-4">Загрузка...</p>
-                </div>
-            </div>
+        <!-- VIP SECTION (Top 10) -->
+        <div id="vip-section" class="mb-12 hidden">
+            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"></div>
         </div>
 
         <!-- Promo Banner -->
-        <div class="mb-16 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
+        <div class="mb-12 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
             <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
                 <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
                     <span class="bg-white/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md">SVALKA PRO</span>
@@ -206,6 +202,22 @@
                 <p class="text-red-100 font-medium max-w-lg" data-t="promo_subtitle">Выделите свое объявление рамкой или поднимите в ТОП.</p>
             </div>
             <button onclick="window.topUpWallet()" class="relative z-10 bg-white text-red-600 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:scale-105 transition shrink-0" data-t="btn_promo">Пополнить кошелек</button>
+        </div>
+
+        <!-- REGULAR FEED SECTION -->
+        <div id="fresh-section">
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
+                <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest mt-4">Загрузка...</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mb-16">
+                <button class="flex items-center gap-2 px-8 py-4 border-2 border-gray-300 dark:border-gray-700 rounded-2xl bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition font-black text-gray-600 dark:text-gray-300 text-sm uppercase tracking-widest group">
+                    <i class="fa-solid fa-arrow-rotate-right group-hover:rotate-180 transition-transform duration-500"></i> <span data-t="load_more">Показать еще</span>
+                </button>
+            </div>
         </div>
 
         <!-- CTA Section -->
@@ -268,7 +280,6 @@
                     <button type="button" onclick="window.setAuthMode('register')" id="tab-register" class="text-lg font-black text-gray-400 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent pb-2 transition" data-t="auth_tab_register">Регистрация</button>
                 </div>
                 <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="event.preventDefault(); window.submitAuth(event);">
-                    
                     <div id="auth-name-field" class="hidden flex-col gap-4">
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_name">Имя</label>
@@ -277,13 +288,13 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
-                                <!-- Males -->
+                                <!-- Убраны параметры цвета кожи, чтобы API Dicebear не выдавал 400 Bad Request -->
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
-                                <!-- Females -->
+                                
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
@@ -492,6 +503,61 @@
         <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain modal-content shadow-2xl">
     </div>
 
+    <!-- Support Modal -->
+    <div id="support-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800">
+            <button onclick="window.closeModal('support-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-600 text-3xl mb-4"><i class="fa-solid fa-headset"></i></div>
+                <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="foot_support">Поддержка</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Служба заботы о пользователях SVALKA</p>
+            </div>
+            <div class="space-y-4">
+                <a href="mailto:support@svalka.rs" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-700 group">
+                    <i class="fa-solid fa-envelope text-2xl text-gray-400 group-hover:text-red-600 transition"></i>
+                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Email</div><div class="text-sm font-bold text-gray-900 dark:text-white">support@svalka.rs</div></div>
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-[#0088cc]/10 transition border border-gray-200 dark:border-gray-700 group">
+                    <i class="fa-brands fa-telegram text-2xl text-gray-400 group-hover:text-[#0088cc] transition"></i>
+                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Telegram Bot</div><div class="text-sm font-bold text-gray-900 dark:text-white">@SvalkaSupportBot</div></div>
+                </a>
+            </div>
+            <p class="text-xs text-center text-gray-400 mt-8 font-medium">Мы отвечаем каждый день с 10:00 до 20:00 по Белграду.</p>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div id="policy-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic mb-6" data-t="foot_policy">Политика конфиденциальности</h2>
+            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                <p>Мы, команда SVALKA, серьезно относимся к защите ваших персональных данных. Настоящая Политика описывает, как мы собираем, используем и храним вашу информацию.</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">1. Сбор данных</h4>
+                <p>Мы собираем только ту информацию, которая необходима для работы сервиса: ваш email при регистрации, имя профиля и данные объявлений, которые вы публикуете (включая загруженные фото и примерное местоположение).</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">2. Использование данных</h4>
+                <p>Ваши данные используются исключительно для предоставления доступа к платформе, связи между покупателями и продавцами, а также для предотвращения мошеннических действий.</p>
+                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">3. Безопасность</h4>
+                <p>Мы не передаем ваши пароли в открытом виде и используем надежные протоколы шифрования Google Firebase для защиты вашей базы данных.</p>
+            </div>
+            <button onclick="window.closeModal('policy-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center gap-3 mb-6"><i class="fa-solid fa-scale-balanced text-3xl text-red-600"></i><h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="rules_title">Правила SVALKA</h2></div>
+            <div class="space-y-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_1_title">1. Запрет на спам</strong><p data-t="rules_1_text">Запрещена массовая публикация однотипных объявлений.</p></div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_2_title">2. Ограничения 'Жилье'</strong><p data-t="rules_2_text">Только поиск сожителей и сдача комнат.</p></div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_3_title">3. Нелегальные товары</strong><p data-t="rules_3_text">Запрещена продажа оружия, наркотических веществ.</p></div>
+            </div>
+            <button onclick="window.closeModal('rules-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
+        </div>
+    </div>
+
     <!-- Add/Edit Item Modal -->
     <div id="add-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800 custom-scrollbar">
@@ -499,7 +565,7 @@
             <h2 id="add-modal-title" class="text-3xl font-display font-black text-gray-900 dark:text-white mb-2 uppercase italic" data-t="add_title">Пристроить добро</h2>
             <p id="add-limits-warning" class="text-xs font-bold text-orange-500 mb-6 hidden">Лимит бесплатных объявлений исчерпан. Публикация стоит 150 RSD.</p>
             
-            <form id="add-form" class="flex flex-col gap-6" onsubmit="window.submitNewItem(event)">
+            <form id="add-form" class="flex flex-col gap-6" onsubmit="event.preventDefault(); window.submitNewItem(event);">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex justify-between items-end mb-2">
                         <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest" data-t="add_photos_label">Фотографии</label>
@@ -566,61 +632,6 @@
         </div>
     </div>
 
-    <!-- Support Modal -->
-    <div id="support-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-lg max-h-[90vh] rounded-[2rem] shadow-2xl overflow-y-auto relative p-8 md:p-10 border dark:border-gray-800">
-            <button onclick="window.closeModal('support-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
-            <div class="flex flex-col items-center text-center mb-6">
-                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-600 text-3xl mb-4"><i class="fa-solid fa-headset"></i></div>
-                <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="foot_support">Поддержка</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Служба заботы о пользователях SVALKA</p>
-            </div>
-            <div class="space-y-4">
-                <a href="mailto:support@svalka.rs" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-700 group">
-                    <i class="fa-solid fa-envelope text-2xl text-gray-400 group-hover:text-red-600 transition"></i>
-                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Email</div><div class="text-sm font-bold text-gray-900 dark:text-white">support@svalka.rs</div></div>
-                </a>
-                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 hover:bg-[#0088cc]/10 transition border border-gray-200 dark:border-gray-700 group">
-                    <i class="fa-brands fa-telegram text-2xl text-gray-400 group-hover:text-[#0088cc] transition"></i>
-                    <div><div class="text-[10px] font-black uppercase tracking-widest text-gray-400">Telegram Bot</div><div class="text-sm font-bold text-gray-900 dark:text-white">@SvalkaSupportBot</div></div>
-                </a>
-            </div>
-            <p class="text-xs text-center text-gray-400 mt-8 font-medium">Мы отвечаем каждый день с 10:00 до 20:00 по Белграду.</p>
-        </div>
-    </div>
-
-    <!-- Policy Modal -->
-    <div id="policy-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
-            <button onclick="window.closeModal('policy-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic mb-6" data-t="foot_policy">Политика конфиденциальности</h2>
-            <div class="space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                <p>Мы, команда SVALKA, серьезно относимся к защите ваших персональных данных. Настоящая Политика описывает, как мы собираем, используем и храним вашу информацию.</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">1. Сбор данных</h4>
-                <p>Мы собираем только ту информацию, которая необходима для работы сервиса: ваш email при регистрации, имя профиля и данные объявлений, которые вы публикуете (включая загруженные фото и примерное местоположение).</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">2. Использование данных</h4>
-                <p>Ваши данные используются исключительно для предоставления доступа к платформе, связи между покупателями и продавцами, а также для предотвращения мошеннических действий.</p>
-                <h4 class="font-bold text-gray-900 dark:text-white text-base mt-4">3. Безопасность</h4>
-                <p>Мы не передаем ваши пароли в открытом виде и используем надежные протоколы шифрования Google Firebase для защиты вашей базы данных.</p>
-            </div>
-            <button onclick="window.closeModal('policy-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
-        </div>
-    </div>
-
-    <!-- Rules Modal -->
-    <div id="rules-modal" class="modal-overlay fixed inset-0 z-[90] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-y-auto relative p-8 md:p-12 border dark:border-gray-800 custom-scrollbar">
-            <button onclick="window.closeModal('rules-modal')" class="absolute top-6 right-6 z-20 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700"><i class="fa-solid fa-xmark"></i></button>
-            <div class="flex items-center gap-3 mb-6"><i class="fa-solid fa-scale-balanced text-3xl text-red-600"></i><h2 class="text-3xl font-display font-black text-gray-900 dark:text-white uppercase italic" data-t="rules_title">Правила SVALKA</h2></div>
-            <div class="space-y-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_1_title">1. Запрет на спам</strong><p data-t="rules_1_text">Запрещена массовая публикация однотипных объявлений.</p></div>
-                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_2_title">2. Ограничения 'Жилье'</strong><p data-t="rules_2_text">Только поиск сожителей и сдача комнат.</p></div>
-                <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800"><strong class="text-gray-900 dark:text-white mb-1 block" data-t="rules_3_title">3. Нелегальные товары</strong><p data-t="rules_3_text">Запрещена продажа оружия, наркотических веществ.</p></div>
-            </div>
-            <button onclick="window.closeModal('rules-modal')" class="w-full mt-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition shadow-lg" data-t="rules_ok">Я понял(а)</button>
-        </div>
-    </div>
-
     <div id="toast" class="fixed bottom-10 left-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl z-[100] border dark:border-gray-200 flex items-center gap-3"><i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i><span id="toast-msg">Успешно!</span></div>
 
     <!-- Footer -->
@@ -642,6 +653,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // =========================================================================================
         // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ФУНКЦИИ ИНТЕРФЕЙСА ===
@@ -657,6 +669,8 @@
         window.currentSortMode = 'new';
         window.currentSearchQuery = '';
         window.showOnlyUrgent = false;
+        
+        window.isCanvas = false;
 
         window.i18n = {
             ru: {
@@ -684,6 +698,32 @@
                 rules_title: "Правила SVALKA", rules_ok: "Я понял(а)", rules_1_title: "1. Запрет на спам", rules_1_text: "Запрещена массовая публикация однотипных объявлений.", rules_2_title: "2. Ограничения категории 'Жилье'", rules_2_text: "Продажа недвижимости строго запрещена.", rules_3_title: "3. Нелегальные товары", rules_3_text: "Запрещена продажа незаконных товаров.", rules_4_title: "4. Уважение и безопасность", rules_4_text: "Мошенничество карается баном.",
                 add_condition: "Состояние", cond_new: "Новое", cond_used_exc: "Б/У (Отличное)", cond_used_good: "Б/У (Хорошее)", cond_parts: "На запчасти", modal_category: "Категория",
                 add_address: "Точный адрес", modal_location: "Местоположение", share_title: "Поделиться", share_copy: "Ссылка"
+            },
+            rs: {
+                nav_urgent: "Hitno", btn_add: "+ Udomi stvari", nav_profile: "Profil", btn_filter: "Filteri", main_title: "Otkrića", main_subtitle: "Najnoviji i najaktuelniji oglasi", fresh_title: "Najnoviji oglasi", fresh_subtitle: "Nedavno dodate stvari od korisnika", promo_title: "Prodajte 5x brže!", promo_subtitle: "Istaknite oglas u bloku «Otkrića» za samo 300 RSD.", btn_promo: "Dopuni novčanik", load_more: "Prikaži još", filter_cat: "Kategorije", filter_city: "Grad", filter_price: "Cena", filter_apply: "Primeni", filter_reset: "Poništi", filter_reset_success: "Filteri su poništeni", 
+                cat_all: "Sve kategorije", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Za kuću", cat_kids: "Za decu", cat_auto: "Auto/Moto", cat_sports: "Sport", cat_free: "Dajem besplatno", cat_housing: "Smeštaj / Cimeri", 
+                city_all: "Cela Srbija", city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Ostalo", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", card_urgent: "Hitno", yesterday: "Juče", hours_ago: "sati ranije", mins_ago: "min ranije", btn_take: "Više \u2192", cta_title: "Nepotrebno je blago.", cta_subtitle: "Oslobodi prostor za novi život u Srbiji.", btn_find: "Pronađi blago", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", foot_copy: "© 2026 SVALKA SERBIA. TVOJE SMEĆE — TUĐA SREĆA.", search_placeholder: "Pretraga stvari...", modal_condition: "Polovno",
+                modal_contact: "Pošalji poruku", safety_warning: "Nikada ne šaljite novac unapred.", add_title: "Udomi stvari", edit_title: "Uredi oglas", btn_save: "Sačuvaj", add_photos_label: "Fotografije", add_photo_btn: "Dodaj", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi", chat_today: "Danas", chat_input: "Napiši poruku...",
+                btn_edit: "Uredi", btn_reserve: "Rezerviši", btn_unreserve: "Skini rezervaciju", btn_sold: "Prodato", badge_reserved: "REZERV.", badge_sold: "PRODATO", badge_expired: "ISTEKLO",
+                empty_title: "Ništa nije pronađeno", empty_subtitle: "Pokušajte da promenite filtere.", seo_text: "SVALKA je moderno tržište u Srbiji.", auth_title: "Dobrodošli nazad!", auth_subtitle: "Prijavite se da biste objavljivali oglase.", auth_pass: "Lozinka", auth_login_btn: "Prijavi se", auth_reg_submit: "Registruj se", auth_no_account: "Nemate nalog?", auth_register_btn: "Registracija", auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_have_account: "Već imate nalog?", auth_login_link: "Prijavi se", auth_name: "Ime", auth_avatar: "Avatar",
+                auth_forgot_pass: "Zaboravili ste lozinku?", auth_reset_btn: "Resetuj lozinku",
+                profile_logout: "Odjavi se", profile_login: "Prijavi se", profile_tab_items: "Moji oglasi (0)", profile_tab_saved: "Sačuvano (0)", profile_new_user: "Novi korisnik", profile_wallet: "Moj Novčanik",
+                toast_copied: "Link je kopiran!", toast_published: "Oglas je objavljen!", toast_login_success: "Uspešno ste prijavljeni!", toast_logout_success: "Odjavljeni ste", toast_auth_fail: "Greška: pogrešan email ili lozinka", toast_email_in_use: "Ovaj Email je već registrovan", toast_weak_password: "Lozinka mora imati najmanje 6 karaktera", toast_auth_required: "Molimo vas da se prijavite!", toast_reg_success: "Uspešno! Email je poslat.", toast_reset_sent: "Link za resetovanje je poslat.", toast_user_not_found: "Korisnik nije pronađen",
+                toast_not_enough_money: "Nedovoljno sredstava na računu!", toast_item_bumped: "Oglas je podignut!", toast_item_highlighted: "Oglas je istaknut!", toast_pro_success: "Postali ste PRO Prodavac!",
+                add_housing_hint: "* Za kategoriju 'Smeštaj': dozvoljeno je samo izdavanje soba i prenos zakupa.", add_rules_agree: "Prihvatam", add_rules_link: "SVALKA Pravila", rules_title: "Pravila SVALKA", rules_ok: "Razumem", rules_1_title: "1. Zabrana spama", rules_1_text: "Masovno objavljivanje istih oglasa je zabranjeno.", rules_2_title: "2. Ograničenja za 'Smeštaj'", rules_2_text: "Prodaja nekretnina je strogo zabranjena.", rules_3_title: "3. Nelegalni predmeti", rules_3_text: "Zabranjena je prodaja oružja, narkotika.", rules_4_title: "4. Poštovanje i sigurnost", rules_4_text: "Prevare se kažnjavaju banovanjem.", add_condition: "Stanje", cond_new: "Novo", cond_used_exc: "Polovno (Odlično)", cond_used_good: "Polovno (Dobro)", cond_parts: "Za delove", modal_category: "Kategorija", add_address: "Tačna adresa", modal_location: "Lokacija", share_title: "Podeli", share_copy: "Link"
+            },
+            en: {
+                nav_urgent: "Urgent", btn_add: "+ Rehome items", nav_profile: "Profile", btn_filter: "Filters", main_title: "Great Finds", main_subtitle: "The freshest and most relevant listings", fresh_title: "Fresh Listings", fresh_subtitle: "Recently added items by users", promo_title: "Sell 5x faster!", promo_subtitle: "Pin your listing in «Great Finds» for only 300 RSD.", btn_promo: "Top up wallet", load_more: "Load more", filter_cat: "Categories", filter_city: "City", filter_price: "Price", filter_apply: "Apply", filter_reset: "Reset", filter_reset_success: "Filters reset", 
+                cat_all: "All Categories", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothing", cat_home: "For Home", cat_kids: "Kids", cat_auto: "Auto/Moto", cat_sports: "Sports", cat_free: "For Free", cat_housing: "Housing / Roommates", 
+                city_all: "All Serbia", city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac", city_other: "Other", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", card_urgent: "Urgent", yesterday: "Yesterday", hours_ago: "hours ago", mins_ago: "mins ago", btn_take: "Details \u2192", cta_title: "Unused is a treasure.", cta_subtitle: "Make room for a new life in Serbia.", btn_find: "Find treasures", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", foot_copy: "© 2026 SVALKA SERBIA. YOUR JUNK — SOMEONE'S JOY.", search_placeholder: "Search items...", modal_condition: "Used",
+                modal_contact: "Message Seller", safety_warning: "Never transfer money in advance.", add_title: "Rehome items", edit_title: "Edit Listing", btn_save: "Save changes", add_photos_label: "Photos", add_photo_btn: "Add", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish", chat_today: "Today", chat_input: "Write a message...",
+                btn_edit: "Edit", btn_reserve: "Reserve", btn_unreserve: "Unreserve", btn_sold: "Sold!", badge_reserved: "RESERVED", badge_sold: "SOLD", badge_expired: "EXPIRED",
+                empty_title: "Nothing found", empty_subtitle: "Try changing your filter parameters.", seo_text: "SVALKA is a modern marketplace in Serbia.", auth_title: "Welcome back!", auth_subtitle: "Log in to post listings.", auth_pass: "Password", auth_login_btn: "Log in", auth_reg_submit: "Sign up", auth_no_account: "No account?", auth_register_btn: "Sign up", auth_tab_login: "Log in", auth_tab_register: "Sign up", auth_have_account: "Already have an account?", auth_login_link: "Log in", auth_name: "Name", auth_avatar: "Avatar",
+                auth_forgot_pass: "Forgot Password?", auth_reset_btn: "Reset Password",
+                profile_logout: "Log out", profile_login: "Log in", profile_tab_items: "My Listings (0)", profile_tab_saved: "Stash (0)", profile_new_user: "New user", profile_wallet: "My Wallet",
+                toast_copied: "Link copied!", toast_published: "Listing published!", toast_login_success: "Successfully logged in!", toast_logout_success: "Logged out successfully", toast_auth_fail: "Error: incorrect email or password", toast_email_in_use: "This Email is already registered", toast_weak_password: "Password must be at least 6 characters", toast_auth_error: "Authentication Error!", toast_auth_required: "Please log in!", toast_reg_success: "Success! Verification email sent.", toast_reset_sent: "Password reset link sent.", toast_user_not_found: "User not found",
+                toast_not_enough_money: "Not enough funds on balance!", toast_item_bumped: "Listing bumped to top!", toast_item_highlighted: "Listing highlighted!", toast_pro_success: "You are now a PRO Seller!",
+                add_housing_hint: "* For 'Housing': only room rentals and lease transfers are allowed.", add_rules_agree: "I accept the", add_rules_link: "SVALKA Rules", rules_title: "SVALKA Rules", rules_ok: "Understood", rules_1_title: "1. No Spam", rules_1_text: "Mass posting of similar ads is prohibited.", rules_2_title: "2. 'Housing' Restrictions", rules_2_text: "Real estate sales are strictly forbidden.", rules_3_title: "3. Illegal Items", rules_3_text: "The sale of weapons, narcotics is prohibited.", rules_4_title: "4. Respect & Safety", rules_4_text: "Scamming will result in a permanent ban.", add_condition: "Condition", cond_new: "New", cond_used_exc: "Used (Excellent)", cond_used_good: "Used (Good)", cond_parts: "For parts", modal_category: "Category", add_address: "Exact address", modal_location: "Location", share_title: "Share", share_copy: "Link"
             }
         };
 
@@ -970,7 +1010,6 @@
                 favBtn.setAttribute('onclick', `window.toggleFavorite(this, event, '${item.id}')`);
             }
 
-            // Управление для владельца товара
             const isOwner = window.currentUser && window.currentUser.uid === item.userId;
             const controlsDiv = document.getElementById('modal-owner-controls');
             if (controlsDiv) {
@@ -1170,10 +1209,10 @@
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
             window.db = getFirestore(app);
+            const storage = getStorage(app);
             window.currentUser = null;
 
             window.submitAuth = async function(event) {
-                event.preventDefault(); 
                 const submitBtn = document.getElementById('auth-submit-btn'); 
                 if(!submitBtn) return;
                 const origText = submitBtn.innerText; submitBtn.innerText = "Загрузка..."; submitBtn.disabled = true;
@@ -1187,38 +1226,29 @@
                     if (window.authMode === 'login') { 
                         await signInWithEmailAndPassword(auth, email, pass); 
                         window.showToast('toast_login_success'); 
-                        window.closeModal('auth-modal'); event.target.reset(); setTimeout(() => window.openModal('profile-modal'), 500);
+                        window.closeModal('auth-modal'); document.getElementById('auth-form').reset(); setTimeout(() => window.openModal('profile-modal'), 500);
                     } else if (window.authMode === 'register') { 
                         const uc = await createUserWithEmailAndPassword(auth, email, pass); 
                         await updateProfile(uc.user, { displayName: name || "Пользователь SVALKA", photoURL: avatar }); 
                         
                         try { await sendEmailVerification(uc.user); } catch(e) {}
-                        
-                        try {
-                            await setDoc(doc(window.db, 'users', uc.user.uid), { walletBalance: 1000, isPro: false, freeListingsUsed: {} }, { merge: true });
-                        } catch(e) { console.warn("User Setup Ignore:", e); }
+                        try { await setDoc(doc(window.db, 'users', uc.user.uid), { walletBalance: 1000, isPro: false, freeListingsUsed: {} }, { merge: true }); } catch(e) {}
 
                         window.currentUser = auth.currentUser; 
-                        const pName = document.getElementById('profile-name');
-                        if(pName) pName.innerText = window.currentUser.displayName;
-                        
-                        const pAvatarContainer = document.getElementById('profile-avatar-container');
-                        if(window.currentUser.photoURL && pAvatarContainer) pAvatarContainer.innerHTML = `<img src="${window.currentUser.photoURL}" class="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-md">`;
-
                         window.showToast('toast_reg_success'); 
-                        window.closeModal('auth-modal'); event.target.reset(); setTimeout(() => window.openModal('profile-modal'), 500);
+                        window.closeModal('auth-modal'); document.getElementById('auth-form').reset(); setTimeout(() => window.openModal('profile-modal'), 500);
                     } else if (window.authMode === 'reset') {
                         await sendPasswordResetEmail(auth, email);
                         window.showToast('toast_reset_sent');
-                        window.setAuthMode('login'); event.target.reset();
+                        window.setAuthMode('login'); document.getElementById('auth-form').reset();
                     }
                 } catch (err) { 
                     console.error("Auth Error Details:", err.code, err.message); 
-                    if (err.code === 'auth/email-already-in-use') { window.showToast('toast_email_in_use', true); } 
-                    else if (err.code === 'auth/weak-password') { window.showToast('toast_weak_password', true); } 
-                    else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') { window.showToast('toast_auth_fail', true); } 
-                    else if (err.code === 'auth/user-not-found') { window.showToast('toast_user_not_found', true); }
-                    else { window.showToast('', true, "Ошибка: " + err.message); } 
+                    if (err.code === 'auth/email-already-in-use') window.showToast('toast_email_in_use', true); 
+                    else if (err.code === 'auth/weak-password') window.showToast('toast_weak_password', true); 
+                    else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') window.showToast('toast_auth_fail', true); 
+                    else if (err.code === 'auth/user-not-found') window.showToast('toast_user_not_found', true); 
+                    else window.showToast('', true, "Ошибка: " + err.message);  
                 } finally { 
                     submitBtn.innerText = origText; submitBtn.disabled = false; 
                 }
@@ -1261,8 +1291,6 @@
 
             window.renderDynamicItems = function(items, isReRender = false) {
                 if (!isReRender) window.loadedItems = items; 
-                const grid = document.getElementById('main-items-grid'); if(!grid) return;
-                grid.innerHTML = ''; 
                 
                 const getMs = (t) => t?.seconds ? t.seconds * 1000 : (t || 0);
 
@@ -1275,7 +1303,6 @@
                 if (window.currentCategoryFilter && window.currentCategoryFilter !== 'Все') {
                     activeItems = activeItems.filter(item => item.category === window.currentCategoryFilter);
                 }
-
                 if (window.currentSearchQuery) {
                     activeItems = activeItems.filter(item => 
                         (item.title && item.title.toLowerCase().includes(window.currentSearchQuery)) || 
@@ -1284,28 +1311,53 @@
                     );
                 }
 
+                // Логика сортировки с VIP секцией
+                let vipItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
+                vipItems = vipItems.sort(() => 0.5 - Math.random()).slice(0, 10);
+                
+                const vipIds = new Set(vipItems.map(i => i.id));
+                let regularItems = activeItems.filter(item => !vipIds.has(item.id));
+
                 if (window.showOnlyUrgent) {
-                    activeItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
+                    regularItems = activeItems.filter(item => item.isHighlighted && item.highlightExpiresAt && item.highlightExpiresAt > Date.now());
+                    vipItems = []; // В режиме "Только срочные" все идут в основную ленту
                 }
 
                 if (window.currentSortMode === 'cheap') {
-                    activeItems.sort((a, b) => Number(a.price) - Number(b.price));
+                    regularItems.sort((a, b) => Number(a.price) - Number(b.price));
                 } else if (window.currentSortMode === 'exp') {
-                    activeItems.sort((a, b) => Number(b.price) - Number(a.price));
+                    regularItems.sort((a, b) => Number(b.price) - Number(a.price));
                 } else {
-                    activeItems.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt));
+                    regularItems.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt));
                 }
 
-                if (activeItems.length === 0) { 
-                    grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Ничего не найдено</div>'; 
-                    return; 
+                // Рендер VIP
+                const vipSection = document.getElementById('vip-section');
+                const vipGrid = document.getElementById('vip-items-grid');
+                if(vipSection && vipGrid) {
+                    if (vipItems.length > 0 && !window.showOnlyUrgent) {
+                        vipSection.classList.remove('hidden');
+                        vipGrid.innerHTML = vipItems.map(item => createCardHTML(item)).join('');
+                    } else {
+                        vipSection.classList.add('hidden');
+                        vipGrid.innerHTML = '';
+                    }
                 }
 
-                activeItems.forEach(item => { grid.innerHTML += createCardHTML(item); });
+                // Рендер обычных
+                const grid = document.getElementById('main-items-grid');
+                if(grid) {
+                    grid.innerHTML = '';
+                    if (regularItems.length === 0 && vipItems.length === 0) { 
+                        grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-10 font-bold uppercase tracking-widest text-sm">Ничего не найдено</div>'; 
+                    } else {
+                        regularItems.forEach(item => { grid.innerHTML += createCardHTML(item); });
+                    }
+                }
+
                 const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
             };
 
-            // Отслеживание глобальной ленты
             onSnapshot(collection(window.db, 'items'), (snapshot) => { 
                 let items = []; 
                 snapshot.forEach((doc) => { items.push({ id: doc.id, ...doc.data() }); }); 
@@ -1313,7 +1365,6 @@
             }, (error) => { 
                 console.error("Ошибка БД при чтении:", error); 
                 const p = document.getElementById('loading-placeholder'); if (p) p.style.display = 'none';
-                const g = document.getElementById('main-items-grid'); if (g) g.innerHTML = `<div class="col-span-full text-center text-red-500 py-10 font-bold uppercase tracking-widest text-sm">Ошибка БД: Убедитесь, что правила Firestore обновлены</div>`;
             });
 
             onAuthStateChanged(auth, (user) => {
@@ -1351,7 +1402,13 @@
                             window.currentUserData = { walletBalance: 0, isPro: false, freeListingsUsed: {} };
                         }
                         
-                        window.userFavorites = new Set(window.currentUserData.favorites || []);
+                        if(window.favColUnsub) window.favColUnsub();
+                        window.favColUnsub = onSnapshot(collection(window.db, 'users', user.uid, 'favorites'), (favSnap) => {
+                            window.userFavorites = new Set();
+                            favSnap.forEach(fDoc => window.userFavorites.add(fDoc.id));
+                            window.renderProfileTabs(); 
+                            if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
+                        }, (e) => {});
                         
                         const bal = window.currentUserData.walletBalance || 0;
                         const pBal = document.getElementById('profile-balance'); if(pBal) pBal.innerText = bal;
@@ -1366,8 +1423,6 @@
                         } else {
                             window.maxPhotos = 3;
                         }
-                        
-                        window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true); 
                     });
                 } else {
                     if(navLoginBtn) navLoginBtn.classList.remove('hidden');
@@ -1386,16 +1441,13 @@
                     if(pAvatarContainer) pAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
                     window.userFavorites = new Set(); window.currentUserData = null; 
                     if (window.userDocUnsub) window.userDocUnsub(); 
+                    if (window.favColUnsub) window.favColUnsub();
                     window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
                 }
             });
 
             window.topUpWallet = async function() {
-                if(!window.currentUser) {
-                    window.openModal('auth-modal');
-                    window.showToast('toast_auth_required', true);
-                    return;
-                }
+                if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
                 await setDoc(doc(window.db, 'users', window.currentUser.uid), { walletBalance: (window.currentUserData?.walletBalance || 0) + 1000 }, {merge: true});
                 window.showToast('', false, "+ 1000 RSD на баланс (Демо)");
             };
@@ -1431,19 +1483,16 @@
                 if (!itemId) return;
 
                 const isLiked = window.userFavorites.has(itemId);
-                const userDocRef = doc(window.db, 'users', window.currentUser.uid);
+                const favRef = doc(window.db, 'users', window.currentUser.uid, 'favorites', itemId);
 
                 btn.classList.toggle('liked'); const icon = btn.querySelector('i');
                 if(!isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
 
                 try {
-                    const newFavs = Array.from(window.userFavorites);
-                    if (isLiked) { const index = newFavs.indexOf(itemId); if (index > -1) newFavs.splice(index, 1); } else { newFavs.push(itemId); }
-                    await setDoc(userDocRef, { favorites: newFavs }, { merge: true });
-                } catch(e) {
-                    console.error("Ошибка избранного:", e); window.showToast('', true, "Ошибка: " + e.message);
-                    btn.classList.toggle('liked'); if(isLiked) { icon.className = 'fa-solid text-orange-500 fa-box drop-shadow-sm'; } else { icon.className = 'fa-solid text-gray-400 fa-box-open drop-shadow-sm'; }
-                }
+                    if (isLiked) { await deleteDoc(favRef); window.userFavorites.delete(itemId); } 
+                    else { await setDoc(favRef, { savedAt: Date.now() }); window.userFavorites.add(itemId); }
+                    window.renderProfileTabs(); if(window.loadedItems.length > 0) window.renderDynamicItems(window.loadedItems, true);
+                } catch(e) {}
             };
 
             window.markItemStatus = async function(itemId, newStatus) {
@@ -1456,7 +1505,6 @@
             };
 
             window.submitNewItem = async function(event) {
-                event.preventDefault();
                 if (!window.currentUser) { window.closeModal('add-modal'); window.openModal('auth-modal'); window.showToast('toast_auth_required', true); return; }
                 
                 const walletBal = window.currentUserData?.walletBalance || 0;
@@ -1469,7 +1517,23 @@
                 try {
                     const title = document.getElementById('item-title').value; const category = document.getElementById('item-category').value; const city = document.getElementById('item-city').value; const address = document.getElementById('item-address').value; const condition = document.getElementById('item-condition').value; const price = document.getElementById('item-price').value || 0; const currency = document.getElementById('item-currency').value; const desc = document.getElementById('item-desc').value;
                     const fallbackImg = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80"; 
-                    const imgUrlsToSave = window.tempPhotos.length > 0 ? window.tempPhotos.slice(0, window.maxPhotos) : [fallbackImg];
+                    
+                    // ЗАГРУЗКА В FIREBASE STORAGE
+                    submitBtn.innerText = "ЗАГРУЗКА ФОТО...";
+                    const imgUrlsToSave = [];
+                    for (let i = 0; i < window.tempPhotos.length && i < window.maxPhotos; i++) {
+                        const dataUrl = window.tempPhotos[i];
+                        if (dataUrl.startsWith('http')) {
+                            imgUrlsToSave.push(dataUrl); 
+                        } else {
+                            const fileName = `items/${window.currentUser.uid}_${Date.now()}_${i}.jpg`;
+                            const storageRef = ref(storage, fileName);
+                            await uploadString(storageRef, dataUrl, 'data_url');
+                            const downloadUrl = await getDownloadURL(storageRef);
+                            imgUrlsToSave.push(downloadUrl);
+                        }
+                    }
+                    if (imgUrlsToSave.length === 0) imgUrlsToSave.push(fallbackImg);
                     const displayImg = imgUrlsToSave[0];
                     
                     const cityCoords = { "Белград": [44.7866, 20.4489], "Нови-Сад": [45.2671, 19.8335], "Ниш": [43.3209, 21.8958], "Суботица": [46.1005, 19.6646], "Крагуевац": [44.0128, 20.9114], "Другой": [44.0165, 21.0059] };
@@ -1480,7 +1544,7 @@
                         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
                         const data = await res.json();
                         if (data && data.length > 0) itemCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                    } catch(e) { console.warn("Geocoding failed", e); }
+                    } catch(e) {}
 
                     submitBtn.innerText = "СОХРАНЕНИЕ...";
 
@@ -1501,13 +1565,13 @@
                             } else {
                                 await setDoc(userRef, { freeListingsUsed: newUsed }, {merge: true});
                             }
-                        } catch(e) { console.warn("Limits update ignored", e); }
+                        } catch(e) {}
                         window.showToast('toast_published');
                     }
 
                     window.closeModal('add-modal'); const form = document.getElementById('add-form'); if(form) form.reset(); window.resetPhotoUpload(); window.editingItemId = null;
                 } catch (err) { 
-                    console.error("Ошибка Firebase при сохранении:", err); window.showToast('', true, "Ошибка БД: " + err.message); 
+                    console.error("Ошибка Firebase при сохранении:", err); window.showToast('', true, "Ошибка: " + err.message); 
                 } finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
             };
         } catch(e) { console.error("Firebase Init Error:", e); }
@@ -1517,11 +1581,6 @@
             const serbiaHour = parseInt(serbiaTimeStr, 10);
             if (serbiaHour >= 19 || serbiaHour < 7) { document.documentElement.classList.add('dark'); } else { document.documentElement.classList.remove('dark'); }
         } catch (e) { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.classList.add('dark'); } }
-
-        setTimeout(() => {
-            const isDark = document.documentElement.classList.contains('dark');
-            [document.getElementById('theme-icon'), document.getElementById('theme-icon-mob')].forEach(icon => { if(icon) { if(isDark) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } else { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); } } });
-        }, 100);
 
         window.changeLang('ru');
     </script>
