@@ -51,6 +51,7 @@
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 antialiased">
 
+    <!-- Navbar -->
     <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4 lg:gap-8 flex-1">
@@ -95,6 +96,7 @@
         </div>
     </nav>
 
+    <!-- Filter Panel -->
     <div id="filter-panel" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 absolute w-full z-40 shadow-xl overflow-hidden">
         <div class="container mx-auto px-4 py-8 relative">
             <button onclick="window.toggleFilters()" class="absolute top-4 right-4 z-10 text-gray-400 hover:text-red-600 transition text-2xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-gray-600 shadow-sm"><i class="fa-solid fa-xmark"></i></button>
@@ -143,6 +145,7 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <main class="container mx-auto px-4 py-12">
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-6">
             <div>
@@ -167,6 +170,7 @@
             </div>
         </div>
 
+        <!-- Блок Категорий -->
         <div class="mb-10 overflow-x-auto custom-scrollbar pb-3">
             <div class="flex items-center gap-3 w-max">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn px-5 py-2.5 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md whitespace-nowrap" data-t="cat_all">Все категории</button>
@@ -183,10 +187,12 @@
             </div>
         </div>
 
+        <!-- VIP SECTION (Top 10) -->
         <div id="vip-section" class="mb-12 hidden">
             <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"></div>
         </div>
 
+        <!-- Promo Banner -->
         <div class="mb-12 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
             <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
                 <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
@@ -198,6 +204,7 @@
             <button onclick="window.topUpWallet()" class="relative z-10 bg-white text-red-600 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:scale-105 transition shrink-0" data-t="btn_promo">Пополнить кошелек</button>
         </div>
 
+        <!-- REGULAR FEED SECTION -->
         <div id="fresh-section">
             <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-12">
                 <div id="loading-placeholder" class="item-card bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center h-[300px] col-span-full">
@@ -213,6 +220,7 @@
             </div>
         </div>
 
+        <!-- CTA Section -->
         <div class="mt-12 bg-gray-900 dark:bg-black rounded-[2.5rem] p-10 md:p-20 text-center text-white overflow-hidden relative shadow-2xl border dark:border-gray-800">
             <div class="relative z-10">
                 <h2 class="text-5xl md:text-7xl font-display font-black mb-6 tracking-tighter uppercase italic" data-t="cta_title">Ненужное — это клад.</h2>
@@ -227,6 +235,8 @@
         </div>
     </main>
 
+    <!-- Modals -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-gray-900 lg:hidden flex flex-col">
         <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
             <span class="text-2xl font-display font-black text-gray-900 dark:text-white tracking-tighter italic">SVALKA</span>
@@ -259,6 +269,7 @@
         </div>
     </div>
 
+    <!-- Auth Modal -->
     <div id="auth-modal" class="modal-overlay fixed inset-0 z-[80] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden relative border dark:border-gray-800">
             <button onclick="window.closeModal('auth-modal')" class="absolute top-5 right-5 z-20 text-gray-400 dark:text-gray-500 hover:text-red-600 transition text-xl w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-gray-700"><i class="fa-solid fa-xmark"></i></button>
@@ -278,11 +289,13 @@
                         <div>
                             <label class="block text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2" data-t="auth_avatar">Аватар</label>
                             <div class="grid grid-cols-5 gap-2 sm:gap-3">
+                                <!-- Males -->
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/micah/svg?seed=Felix" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jack" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jude" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Leo" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Oliver" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
+                                <!-- Females -->
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Aneka" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Jocelyn" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
                                 <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="peer hidden"><img src="https://api.dicebear.com/9.x/micah/svg?seed=Sophia" class="w-full aspect-square rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 transition-all hover:scale-105" alt="Avatar"></label>
@@ -311,6 +324,7 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
     <div id="profile-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-4xl h-[85vh] rounded-[2.5rem] shadow-2xl overflow-hidden relative border dark:border-gray-800 flex flex-col">
             <div class="p-6 md:p-10 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 relative">
@@ -373,6 +387,7 @@
         </div>
     </div>
 
+    <!-- Item Details Modal -->
     <div id="item-modal" class="modal-overlay fixed inset-0 z-[70] bg-gray-900/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="modal-content bg-white dark:bg-gray-900 w-full max-w-5xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row relative border dark:border-gray-800">
             <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-gray-800/90 backdrop-blur text-gray-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition shadow-sm border dark:border-gray-700"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -977,7 +992,6 @@
                     if (dataUrl.startsWith('http')) {
                         imgUrlsToSave.push(dataUrl); 
                     } else {
-                        // Переводим base64 в blob для загрузки в Supabase
                         const res = await fetch(dataUrl);
                         const blob = await res.blob();
                         const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
