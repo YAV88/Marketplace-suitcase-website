@@ -14,7 +14,33 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap');
         
-        body { transition: background-color 0.3s, color 0.3s; }
+        /* Тематический фон - сетка / миллиметровка */
+        body { 
+            transition: background-color 0.3s, color 0.3s; 
+            background-color: #f8fafc;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .dark body { 
+            background-color: #0f172a; 
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        /* Декоративные водяные знаки для тематики маркетплейса */
+        @media (min-width: 1280px) {
+            body::before, body::after {
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                position: fixed;
+                font-size: 14rem;
+                color: rgba(0, 0, 0, 0.02);
+                z-index: -1;
+                pointer-events: none;
+            }
+            body::before { content: '\f466'; left: -2%; top: 25%; transform: rotate(-15deg); } /* Коробка */
+            body::after { content: '\f02b'; right: -2%; bottom: 15%; transform: rotate(15deg); } /* Тег/Бирка */
+            .dark body::before, .dark body::after { color: rgba(255, 255, 255, 0.01); }
+        }
 
         .item-card { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease; border-radius: 1.5rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
         .item-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: #ef4444; }
@@ -130,6 +156,7 @@
         </div>
 
         <div class="mb-10">
+            <!-- Исправлено: flex-wrap позволяет категориям переноситься на новую строку на мобильных телефонах -->
             <div class="flex flex-wrap items-center gap-3">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-sm bg-gray-900 text-white dark:bg-white dark:text-gray-900" data-t="cat_all">Все категории</button>
                 <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-fire mr-2"></i><span data-t="nav_urgent">Срочно</span></button>
@@ -142,6 +169,18 @@
                 <button data-cat="Спорт" onclick="window.filterByCategory('Спорт')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 border rounded-xl font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-basketball mr-2"></i> <span data-t="cat_sports">Спорт</span></button>
                 <button data-cat="Жилье / Соседи" onclick="window.filterByCategory('Жилье / Соседи')" class="cat-btn px-5 py-2.5 bg-white dark:bg-gray-800 border rounded-xl font-bold text-xs uppercase tracking-widest"><i class="fa-solid fa-key mr-2"></i> <span data-t="cat_housing">Жилье</span></button>
             </div>
+        </div>
+
+        <!-- Рекламный промо-блок -->
+        <div class="mb-12 bg-gradient-to-br from-red-600 to-orange-500 rounded-[2rem] p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden">
+            <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
+                <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
+                    <span class="bg-white/20 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md">SVALKA PRO</span>
+                </div>
+                <h3 class="text-3xl md:text-4xl font-display font-black mb-2" data-t="promo_title">Продавайте в 5 раз быстрее!</h3>
+                <p class="text-red-100 font-medium max-w-lg" data-t="promo_subtitle">Выделите свое объявление яркой рамкой или поднимите в ТОП на главную.</p>
+            </div>
+            <button onclick="window.checkAuthAndOpenAddModal()" class="relative z-10 bg-white text-red-600 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-lg hover:scale-105 transition shrink-0">Выделить объявление</button>
         </div>
 
         <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12 min-h-[400px]">
@@ -168,6 +207,7 @@
                     <div>
                         <label class="text-[10px] font-black uppercase text-gray-400 mb-1" data-t="auth_avatar">Выберите аватар</label>
                         <div class="grid grid-cols-5 gap-3 mt-2">
+                            <!-- Исправлено: 10 аватарок роботов -->
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
@@ -307,7 +347,7 @@
         window.i18n = {
             ru: {
                 nav_urgent: "Срочно", btn_add: "+ Пристроить добро", auth_login_btn: "Войти", search_placeholder: "Поиск вещей...",
-                main_title: "Находки", main_subtitle: "Самые свежие и актуальные объявления", promo_title: "Продавайте быстрее!", promo_subtitle: "Выделите свое объявление.",
+                main_title: "Находки", main_subtitle: "Самые свежие и актуальные объявления", promo_title: "Продавайте быстрее!", promo_subtitle: "Выделите свое объявление яркой рамкой.",
                 btn_promo: "Пополнить кошелек", sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие",
                 cat_all: "Все", cat_furniture: "Мебель", cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Для дома", cat_kids: "Детское", cat_auto: "Авто/Мото", cat_sports: "Спорт", cat_housing: "Жилье",
                 city_bg: "Белград", city_ns: "Нови-Сад", city_nis: "Ниш", city_sub: "Суботица", city_krag: "Крагуевац",
@@ -515,13 +555,19 @@
                 if (error) throw error;
                 if (data) {
                     const mapped = data.map(i => ({
-                        id: i.id, title: i.title, description: i.description, price: i.price, currency: i.currency,
-                        city: i.city, imageUrl: i.image_url, images: i.images, authorName: i.author_name,
-                        authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.is_highlighted, category: i.category
+                        id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
+                        city: i.city || 'Сербия', imageUrl: i.image_url, images: i.images, authorName: i.author_name || 'Продавец',
+                        authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.is_highlighted, category: i.category || 'Все'
                     }));
                     window.renderDynamicItems(mapped);
+                } else {
+                    document.getElementById('loading-placeholder').style.display = 'none';
                 }
-            } catch(e) { console.error("Ошибка загрузки:", e); }
+            } catch(e) { 
+                console.error("Ошибка загрузки:", e); 
+                const loader = document.getElementById('loading-placeholder');
+                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest">Ошибка загрузки. Проверьте подключение.</p>`;
+            }
         };
 
         window.renderDynamicItems = (items) => {
