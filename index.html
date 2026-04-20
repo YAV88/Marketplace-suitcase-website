@@ -28,6 +28,9 @@
             transition: background-color 0.3s, color 0.3s; 
             background-color: #f5f5f4; 
             background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .dark body { 
             background-color: #1c1917; 
@@ -84,6 +87,8 @@
         #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
         #filter-panel-wrapper.active { grid-template-rows: 1fr; }
         #filter-panel { overflow: hidden; }
+        
+        main { flex: 1; }
     </style>
 </head>
 <body class="text-stone-800 dark:text-stone-200 antialiased">
@@ -134,7 +139,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
             <div class="flex items-center gap-1 pt-1">
@@ -269,7 +274,7 @@
                 <i class="fa-solid fa-gem text-amber-500"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-800 dark:text-stone-200">Срочно и Важно</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4"></div>
+            <div id="vip-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4"></div>
         </div>
 
         <div>
@@ -277,7 +282,7 @@
                 <i class="fa-regular fa-clock text-stone-400"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-500">Свежие объявления</h4>
             </div>
-            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 min-h-[400px]">
+            <div id="main-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 min-h-[400px]">
                 <div id="loading-placeholder" class="col-span-full text-center py-20 text-stone-400">
                     <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
                     <p class="font-black uppercase text-[9px] tracking-widest">Загрузка...</p>
@@ -339,7 +344,7 @@
         </div>
     </div>
 
-    <!-- Add Item Modal -->
+    <!-- Add Item Modal (with Gemini AI) -->
     <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition"><i class="fa-solid fa-xmark"></i></button>
@@ -381,8 +386,8 @@
                     <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold outline-none text-sm focus:border-brand-600" required>
                     <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none focus:border-brand-600"><option>RSD</option><option>EUR</option></select>
                 </div>
-                
-                <!-- АССИСТЕНТ GEMINI -->
+
+                <!-- Gemini AI Button -->
                 <div class="relative flex flex-col">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[9px] font-black uppercase text-stone-400" data-t="add_desc_label">Описание</span>
@@ -396,6 +401,67 @@
         </div>
     </div>
 
+    <!-- Item Details Modal -->
+    <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
+            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <div class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center">
+                <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">
+            </div>
+            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
+                <div class="flex items-center gap-2 mb-2">
+                    <span id="modal-category-text" class="text-[8px] font-black text-white bg-brand-600 px-2 py-1 rounded uppercase tracking-widest">Категория</span>
+                    <span id="modal-city-text" class="text-[9px] font-black text-stone-500 uppercase tracking-widest italic"><i class="fa-solid fa-location-dot"></i> БЕЛГРАД</span>
+                </div>
+                <h2 id="modal-title" class="text-xl md:text-2xl font-display font-black mb-1 leading-tight text-stone-900 dark:text-white">Название...</h2>
+                <div id="modal-price" class="text-2xl md:text-3xl price-text text-brand-600 italic mb-4">0 RSD</div>
+                <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-xs leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
+                
+                <div id="modal-owner-controls" class="hidden gap-2 mb-6 border-t dark:border-stone-800 pt-4">
+                    <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-stone-200 transition shadow-sm"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять (1 шт.)</button>
+                    <button onclick="window.openModal('crypto-modal')" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-black uppercase text-[9px] hover:opacity-90 transition shadow-sm"><i class="fa-solid fa-gem mr-1"></i> Купить PRO</button>
+                </div>
+
+                <div class="mt-auto flex items-center gap-3 p-3 border dark:border-stone-700 rounded-xl shadow-sm mb-4 bg-stone-50 dark:bg-stone-800/50">
+                    <div id="modal-author-avatar" class="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-lg"><i class="fa-solid fa-user"></i></div>
+                    <div><div id="modal-author" class="font-black text-xs text-stone-900 dark:text-white">Пользователь</div><div class="text-[8px] text-stone-500 uppercase font-black tracking-widest"><span data-t="profile_new_user">Продавец SVALKA</span></div></div>
+                </div>
+                <button onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-md hover:bg-brand-700 transition text-[10px]"><span data-t="modal_contact">Написать продавцу</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЧАТ МОДАЛ -->
+    <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
+            <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center text-stone-500"><i class="fa-solid fa-user"></i></div>
+                    <div>
+                        <div class="font-black text-sm text-stone-900 dark:text-white" id="chat-author-name">Продавец</div>
+                        <div class="text-[10px] text-brand-600 font-bold line-clamp-1" id="chat-item-title">Товар</div>
+                    </div>
+                </div>
+                <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-xl w-8 h-8"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar" id="chat-messages">
+                <div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div>
+                <div class="flex items-end gap-2 max-w-[85%]">
+                    <div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">
+                        Здравствуйте! Вещь еще актуальна?
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
+                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-center gap-2 bg-white dark:bg-stone-900 p-1.5 rounded-full border border-stone-200 dark:border-stone-700">
+                    <input type="text" id="chat-input-field" placeholder="Написать сообщение..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm font-medium text-stone-900 dark:text-white">
+                    <button type="submit" class="w-10 h-10 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md"><i class="fa-solid fa-paper-plane text-xs -ml-0.5"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
     <div id="auth-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 relative border dark:border-stone-800">
             <button onclick="window.closeModal('auth-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -414,11 +480,6 @@
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Optimus" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Optimus" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=GLaDOS" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=GLaDOS" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
-                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Terminator" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Terminator" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
-                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=C3PO" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=C3PO" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
-                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Dalek" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Dalek" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
-                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=T800" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=T800" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
-                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Megatron" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Megatron" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                         </div>
                     </div>
                 </div>
@@ -454,29 +515,30 @@
                     </div>
                 </div>
             </div>
-            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+            <div class="flex border-b dark:border-stone-800 px-8">
+                <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-5 px-6 font-black text-xs uppercase border-b-2 border-brand-600 text-brand-600 transition" data-t="profile_tab_items">Мои вещи (0)</button>
+                <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-5 px-6 font-black text-xs uppercase border-b-2 border-transparent hover:text-brand-600 transition ml-4" data-t="profile_tab_saved">Заначка (0)</button>
+            </div>
+            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3" style="display: none;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-black uppercase text-xs">
                 <i class="fa-solid fa-box-open text-3xl mb-2 opacity-20"></i> <span data-t="empty_title">Пусто</span>
             </div>
         </div>
     </div>
 
-    <!-- Lightbox -->
-    <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
-        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain">
-    </div>
-
-    <div id="toast" class="fixed bottom-10 left-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999]"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400"></i><span id="toast-msg">Готово!</span></div>
-
-    <!-- Скрипты -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-        
-        const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
+    <!-- Item Details Modal -->
+    <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
+            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center relative group">
+                <img id="modal-img" src="" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+            </div>
+            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
+                <div class="flex items-center gap-2 mb-2">
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const apiKey = ""; // Gemini API Key will be injected
+        const apiKey = ""; // Gemini API Key Will Be Automatically Provided by Environment
 
         window.currentUser = null; 
         window.loadedItems = []; 
@@ -491,7 +553,9 @@
 
         window.currentAppLang = 'ru';
         window.activeModalItemId = null; 
+        window.userFavorites = new Set(); // Добавлено хранилище избранного
 
+        // СЛОВАРИ
         window.i18n = {
             ru: {
                 nav_urgent: "Срочно", btn_add: "+ Пристроить добро", auth_login_btn: "Войти", search_placeholder: "Поиск сокровищ...",
@@ -504,7 +568,7 @@
                 btn_edit: "Редактировать", btn_sold: "Продано", profile_new_user: "Продавец SVALKA", modal_contact: "Написать продавцу",
                 add_title: "Пристроить добро", add_photos_label: "Нажмите, чтобы добавить фото", add_name: "Название", add_price: "Цена", add_desc: "Описание", btn_publish: "Опубликовать",
                 toast_success: "Успешно!", toast_error_login: "Ошибка входа", toast_logout: "Вы вышли", toast_auth_required: "Войдите в аккаунт!", filter_reset: "Сбросить", filter_apply: "Применить",
-                add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ"
+                add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ", foot_policy: "Политика", foot_rules: "Правила", foot_support: "Поддержка", seo_text: "SVALKA — это удобный маркетплейс для поиска и продажи вещей в Сербии. Дарите вещам вторую жизнь.", foot_copy: "© 2026 SVALKA. ALL RIGHTS RESERVED."
             },
             rs: {
                 nav_urgent: "Hitno", btn_add: "+ Dodaj oglas", auth_login_btn: "Prijava", search_placeholder: "Pretraga...",
@@ -517,7 +581,7 @@
                 btn_edit: "Uredi", btn_sold: "Prodato", profile_new_user: "Prodavac SVALKA", modal_contact: "Pošalji poruku",
                 add_title: "Dodaj oglas", add_photos_label: "Kliknite da dodate sliku", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi",
                 toast_success: "Uspešno!", toast_error_login: "Greška pri prijavi", toast_logout: "Odjavljeni ste", toast_auth_required: "Molimo vas da se prijavite!", filter_reset: "Poništi", filter_apply: "Primeni",
-                add_desc_label: "Opis", btn_ai_desc: "Napiši za mene"
+                add_desc_label: "Opis", btn_ai_desc: "Napiši za mene", foot_policy: "Politika", foot_rules: "Pravila", foot_support: "Podrška", seo_text: "SVALKA je praktično tržište za pretragu i prodaju stvari u Srbiji. Dajte stvarima drugi život.", foot_copy: "© 2026 SVALKA. ALL RIGHTS RESERVED."
             },
             en: {
                 nav_urgent: "Urgent", btn_add: "+ Add Listing", auth_login_btn: "Log In", search_placeholder: "Search items...",
@@ -530,7 +594,7 @@
                 btn_edit: "Edit", btn_sold: "Sold", profile_new_user: "SVALKA Seller", modal_contact: "Contact Seller",
                 add_title: "Add Listing", add_photos_label: "Click to add photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish",
                 toast_success: "Success!", toast_error_login: "Login error", toast_logout: "Logged out", toast_auth_required: "Please log in!", filter_reset: "Reset", filter_apply: "Apply",
-                add_desc_label: "Description", btn_ai_desc: "Write it for me"
+                add_desc_label: "Description", btn_ai_desc: "Write it for me", foot_policy: "Policy", foot_rules: "Rules", foot_support: "Support", seo_text: "SVALKA is a convenient marketplace for finding and selling items in Serbia. Give items a second life.", foot_copy: "© 2026 SVALKA. ALL RIGHTS RESERVED."
             }
         };
 
@@ -559,6 +623,29 @@
         window.showToast = (msg, err=false) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = msg; document.getElementById('toast-icon').className = err ? "fa-solid fa-circle-exclamation text-red-500" : "fa-solid fa-circle-check text-brand-400"; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 4000); };
         window.toggleMobileMenu = () => { const m = document.getElementById('mobile-menu'); m.classList.toggle('translate-x-full'); };
         
+        window.toggleFavorite = async (btn, event, itemId) => {
+            event.stopPropagation();
+            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
+            if (!itemId) return;
+
+            const isLiked = window.userFavorites.has(itemId);
+            const icon = btn.querySelector('i');
+
+            try {
+                if (isLiked) {
+                    await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
+                    window.userFavorites.delete(itemId);
+                    icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
+                } else {
+                    await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
+                    window.userFavorites.add(itemId);
+                    icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
+                }
+                if(window.renderProfileTabs) window.renderProfileTabs();
+                if(window.loadedItems) window.renderDynamicItems(window.loadedItems); // Обновляем иконки в ленте
+            } catch(e) { console.error(e); }
+        };
+
         window.toggleFilters = () => { 
             const wrapper = document.getElementById('filter-panel-wrapper'); 
             if(wrapper) wrapper.classList.toggle('active'); 
@@ -687,6 +774,7 @@
             }, 4000);
         };
 
+        // БЕЗОПАСНАЯ АВТОРИЗАЦИЯ
         window.handleAuthChange = async (session) => {
             try {
                 window.currentUser = session?.user || null;
@@ -728,8 +816,15 @@
                     if(nb) nb.innerText = window.currentUserData.walletBalance + ' шт.';
                     if(window.currentUserData.isPro) document.getElementById('profile-pro-badge')?.classList.remove('hidden');
                     
-                    if (window.renderProfileTabs) window.renderProfileTabs();
-                } else {
+                    try {
+                        const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                        window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
+                    } catch(e) { console.warn("Favorites fetch error", e); }
+
+                } catch(e) { console.error("Profile fetch error:", e); }
+                
+                if (window.renderProfileTabs) window.renderProfileTabs();
+            } else {
                     if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
                     if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
                     if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
@@ -786,31 +881,29 @@
 
         // БЕЗОПАСНЫЙ ВЫХОД
         window.logout = async () => { 
-            try { 
-                await supabase.auth.signOut(); 
-            } catch(e) { console.warn(e); }
+            try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
             
-            // 100% безопасная очистка локального кэша Supabase
-            try {
-                const keysToRemove = [];
-                for(let i=0; i<localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if(key && key.startsWith('sb-')) keysToRemove.push(key);
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                sessionStorage.clear();
-            } catch(e) { console.warn("Cache clean error", e); }
-
+            // Надежная очистка кэша
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('sb-')) localStorage.removeItem(key);
+            });
+            sessionStorage.clear();
             window.currentUser = null;
-            window.location.href = '/'; 
+            window.closeModal('profile-modal'); 
+            window.location.reload(); 
         };
 
         window.switchProfileTab = tab => { 
             window.currentProfileTab = tab; 
             const t1 = document.getElementById('tab-my-items');
+            const t2 = document.getElementById('tab-my-saved');
             if (t1) {
                 if (tab === 'items') t1.classList.add('active', 'border-brand-600', 'text-brand-600');
                 else t1.classList.remove('active', 'border-brand-600', 'text-brand-600');
+            }
+            if (t2) {
+                if (tab === 'saved') t2.classList.add('active', 'border-brand-600', 'text-brand-600');
+                else t2.classList.remove('active', 'border-brand-600', 'text-brand-600');
             }
             window.renderProfileTabs(); 
         };
@@ -822,24 +915,19 @@
             if(!grid || !empty) return;
 
             const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.id);
-            const tabBtn = document.getElementById('tab-my-items');
-            if (tabBtn) tabBtn.innerHTML = `<span data-t="profile_tab_items">Мои вещи</span> (${myItems.length})`;
+            const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
 
-            if(myItems.length > 0) {
+            const tab1 = document.getElementById('tab-my-items');
+            if (tab1) tab1.innerHTML = `<span data-t="profile_tab_items">${window.i18n[window.currentAppLang]['profile_tab_items'] || 'Мои вещи'}</span> (${myItems.length})`;
+            
+            const tab2 = document.getElementById('tab-my-saved');
+            if (tab2) tab2.innerHTML = `<span data-t="profile_tab_saved">${window.i18n[window.currentAppLang]['profile_tab_saved'] || 'Заначка'}</span> (${savedItems.length})`;
+
+            const itemsToShow = window.currentProfileTab === 'items' ? myItems : savedItems;
+
+            if(itemsToShow.length > 0) {
                 grid.style.display = 'grid'; empty.style.display = 'none';
-                grid.innerHTML = myItems.map(i => {
-                    const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || '');
-                    return `
-                    <div class="item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col" onclick="window.openItemDetails('${i.id}')">
-                        <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden">
-                            <img src="${imageUrl}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="p-2 flex flex-col flex-1 justify-between">
-                            <h4 class="font-bold text-[10px] text-stone-900 dark:text-white line-clamp-1 leading-tight">${i.title || 'Без названия'}</h4>
-                            <div class="text-brand-600 font-black text-xs italic mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
-                        </div>
-                    </div>
-                `}).join('');
+                grid.innerHTML = itemsToShow.map(i => createCardHtml(i, i.isHighlighted)).join('');
             } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
         };
 
@@ -875,10 +963,8 @@
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
                 const loader = document.getElementById('loading-placeholder');
-                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs">Ошибка загрузки.</p>`;
-            } finally {
-                const loader = document.getElementById('loading-placeholder');
-                if (loader) loader.style.display = 'none';
+                // Если база упала, показываем четкую ошибку
+                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs"><i class="fa-solid fa-triangle-exclamation"></i> Ошибка базы данных</p>`;
             }
         };
 
@@ -890,7 +976,8 @@
                     const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
                     const searchQ = (window.searchQuery || '').toLowerCase();
                     const titleStr = (i.title || '').toLowerCase();
-                    const matchSearch = titleStr.includes(searchQ);
+                    const descStr = (i.description || '').toLowerCase();
+                    const matchSearch = titleStr.includes(searchQ) || descStr.includes(searchQ);
                     const matchUrgent = !window.showUrgentOnly || i.isHighlighted;
                     const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
                     
@@ -928,10 +1015,14 @@
                 }
                 
                 if(window.renderProfileTabs) window.renderProfileTabs();
+                
+                const loader = document.getElementById('loading-placeholder');
+                if(loader) loader.style.display = 'none';
+
             } catch(e) {
                 console.error("Ошибка рендера:", e);
                 const mainGrid = document.getElementById('main-items-grid');
-                if(mainGrid) mainGrid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-xs uppercase tracking-widest">Произошла ошибка при отображении товаров.</div>';
+                if(mainGrid) mainGrid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-xs uppercase tracking-widest">Произошла ошибка интерфейса.</div>';
             }
         };
 
@@ -943,20 +1034,25 @@
 
         function createCardHtml(i, isVIP) {
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative';
-            const imgHeight = 'h-28 sm:h-32';
+            const imgHeight = 'h-24 sm:h-28';
             const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
-            
+            const isLiked = window.userFavorites && window.userFavorites.has(i.id);
+            const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
+
             return `
             <div class="${cardClass}" onclick="window.openItemDetails('${i.id}')">
+                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm" onclick="window.toggleFavorite(this, event, '${i.id}')">
+                    <i class="fa-solid ${iconClass} text-[10px] drop-shadow-sm"></i>
+                </button>
                 <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" class="w-full h-full object-cover">
                     ${isVIP ? '<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">ТОП 💎</div>' : ''}
                 </div>
-                <div class="p-3 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-xs sm:text-sm mb-1 line-clamp-2 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text text-sm sm:text-base mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-[8px] uppercase font-black text-stone-400 flex justify-between items-center">
-                        <span class="truncate pr-2"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
+                <div class="p-2.5 flex-1 flex flex-col justify-between">
+                    <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-2 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[7px] sm:text-[8px] uppercase font-black text-stone-400 flex justify-between items-center">
+                        <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
                 </div>
@@ -969,8 +1065,18 @@
             
             window.activeModalItemId = item.id;
 
-            const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-            document.getElementById('modal-img').src = imageUrl;
+            const imgContainer = document.getElementById('modal-img-container');
+            if (Array.isArray(item.images) && item.images.length > 1) {
+                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="document.getElementById('modal-img').src='${src}'" class="w-12 h-12 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                imgContainer.innerHTML = `
+                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">
+                    <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
+                `;
+            } else {
+                const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">`;
+            }
+
             document.getElementById('modal-title').innerText = item.title || 'Без названия';
             document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
             document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
@@ -993,45 +1099,6 @@
             }
 
             window.openModal('item-modal');
-        };
-
-        window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.renderDynamicItems(window.loadedItems); };
-        
-        window.filterByCategory = cat => { 
-            window.currentCategory = cat; 
-            window.showUrgentOnly = false;
-            
-            const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
-
-            document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
-            });
-            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
-            
-            const catSelect = document.getElementById('filter-category');
-            if (catSelect) {
-                Array.from(catSelect.options).forEach(opt => {
-                    if(opt.value.startsWith(cat) || (cat === 'Все' && opt.value === 'Все')) catSelect.value = opt.value;
-                });
-            }
-
-            window.renderDynamicItems(window.loadedItems); 
-        };
-
-        window.toggleUrgentFilter = () => {
-            window.showUrgentOnly = !window.showUrgentOnly;
-            const btn = document.getElementById('btn-cat-urgent');
-            if (window.showUrgentOnly) {
-                btn.className = "cat-btn px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md";
-                window.currentCategory = 'Все';
-                document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
-                });
-            } else {
-                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
-            }
-            window.renderDynamicItems(window.loadedItems);
         };
 
         // GEMINI AI INTEGRATION
@@ -1083,7 +1150,7 @@
 Категория: ${categoryInput}
 Дополнительные заметки пользователя: ${currentDesc || 'Нет'}
 Язык: ${targetLang}
-Сделай описание дружелюбным, готовым к продаже. Не используй markdown-заголовки. Максимум 3 абзаца. Можно добавить пару эмодзи.`;
+Сделай описание дружелюбным, готовым к продаже. Максимум 3 абзаца. Можно добавить пару эмодзи.`;
 
             try {
                 const text = await callGeminiAPI(prompt);
@@ -1095,37 +1162,67 @@
                 }
             } catch (e) {
                 console.error(e);
-                window.showToast("Ошибка сервиса ИИ. Попробуйте позже.", true);
+                window.showToast("Ошибка ИИ. Попробуйте позже.", true);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         };
 
-        // NEW ITEM UPLOAD (Storage API Implementation)
+        // NEW ITEM UPLOAD (Safely using Blobs for Storage)
         window.checkAuthAndOpenAddModal = () => {
             if(!window.currentUser) { 
                 window.openModal('auth-modal'); 
-                window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Сначала войдите!", true); 
+                window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'], true); 
             } else { window.openModal('add-modal'); } 
         };
 
+        // Сжатие фото для предотвращения зависаний
         window.previewPhotos = async (e) => {
             const files = Array.from(e.target.files);
             const container = document.getElementById('photo-preview-list');
             for(let file of files) {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    window.tempPhotos.push(ev.target.result); // Base64 temporarily
-                    container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border dark:border-stone-700"><img src="${ev.target.result}" class="w-full h-full object-cover"></div>`;
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+                        let width = img.width; let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        window.tempPhotos.push(dataUrl); 
+                        container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border dark:border-stone-700"><img src="${dataUrl}" class="w-full h-full object-cover"></div>`;
+                    };
+                    img.src = ev.target.result;
                 };
                 reader.readAsDataURL(file);
             }
         };
 
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], {type: mimeString});
+        }
+
         window.submitNewItem = async () => {
             const btn = document.getElementById('add-submit-btn'); 
-            btn.disabled = true; btn.innerHTML = '<span data-t="btn_publish">ОБРАБОТКА...</span>';
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ОБРАБОТКА...';
             
             const isProUser = window.currentUserData?.isPro || false;
 
@@ -1139,23 +1236,19 @@
                 
                 const imgUrlsToSave = [];
                 
-                // РЕАЛЬНАЯ ЗАГРУЗКА В SUPABASE STORAGE (Для решения проблемы зависания БД)
+                // Безопасная загрузка в Storage (без fetch)
                 for (let i = 0; i < window.tempPhotos.length; i++) {
                     const dataUrl = window.tempPhotos[i];
                     if (dataUrl.startsWith('http')) {
                         imgUrlsToSave.push(dataUrl);
                     } else {
-                        // Конвертация Base64 обратно в Blob для отправки в Storage
-                        const res = await fetch(dataUrl);
-                        const blob = await res.blob();
-                        const fileExt = blob.type.split('/')[1] || 'jpg';
-                        const fileName = `${window.currentUser.id}_${Date.now()}_${i}.${fileExt}`;
+                        const blob = dataURItoBlob(dataUrl);
+                        const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
                         
-                        const { error: uploadError } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: blob.type });
+                        const { error: uploadError } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
                         if (uploadError) {
                             console.error("Ошибка загрузки фото в Storage:", uploadError);
-                            // Если не получилось загрузить, используем заглушку, но не ломаем базу огромным base64
-                            continue; 
+                            continue; // Пропускаем картинку, если хранилище закрыто, чтобы не сломать товар
                         }
                         
                         const { data: publicUrlData } = supabase.storage.from('item-images').getPublicUrl(fileName);
@@ -1170,6 +1263,7 @@
                     user_id: window.currentUser.id, 
                     author_name: meta.full_name || 'Пользователь',
                     author_avatar: meta.avatar_url || '',
+                    image_url: imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : '', // Дополнительная защита
                     images: imgUrlsToSave,
                     currency: document.getElementById('item-currency').value,
                     is_highlighted: isProUser
@@ -1186,9 +1280,9 @@
                 window.fetchItems();
             } catch(e) { 
                 console.error(e);
-                window.showToast(e.message || "Произошла ошибка", true); 
+                window.showToast(e.message || "Ошибка публикации", true); 
             }
-            finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">Опубликовать</span>`; }
+            finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">${window.i18n[window.currentAppLang]['btn_publish']}</span>`; }
         };
 
         // INITIALIZE
