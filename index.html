@@ -157,6 +157,9 @@
                 <a href="#" id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white hover:text-brand-600 transition flex items-center gap-3"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600"></i> <span data-t="auth_login_btn">Войти</span></a>
                 <a href="#" id="mob-nav-profile" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="hidden text-stone-900 dark:text-white hover:text-brand-600 transition flex items-center gap-3"><i class="fa-regular fa-user text-brand-600"></i> Профиль</a>
                 <a href="#" onclick="window.openShareModal(); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3"><i class="fa-solid fa-arrow-up-right-dots"></i> Бесплатные поднятия</a>
+                
+                <!-- Экстренный выход для защиты от зависаний -->
+                <a href="#" onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-4 text-sm"><i class="fa-solid fa-right-from-bracket"></i> Экстренный выход</a>
             </div>
             <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-brand-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg transition hover:bg-brand-700"><span data-t="btn_add">+ Пристроить добро</span></button>
             <div class="flex bg-stone-100 dark:bg-stone-800 rounded-xl p-1 mt-2">
@@ -282,11 +285,20 @@
                 <i class="fa-regular fa-clock text-stone-400"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-500">Свежие объявления</h4>
             </div>
-            <div id="main-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 min-h-[400px]">
-                <div id="loading-placeholder" class="col-span-full text-center py-20 text-stone-400">
-                    <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
-                    <p class="font-black uppercase text-[9px] tracking-widest">Загрузка...</p>
-                </div>
+            
+            <!-- Изолированный индикатор загрузки -->
+            <div id="loading-placeholder" class="w-full text-center py-20 text-stone-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p class="font-black uppercase text-[9px] tracking-widest">Загрузка...</p>
+            </div>
+
+            <!-- Изолированная сетка товаров -->
+            <div id="main-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 min-h-[400px] hidden"></div>
+            
+            <!-- Изолированный пустой стейт -->
+            <div id="empty-state" class="w-full text-center py-20 text-stone-400 hidden">
+                <i class="fa-solid fa-box-open text-4xl mb-3 opacity-30"></i>
+                <p class="font-black uppercase text-[10px] tracking-widest">Ничего не найдено</p>
             </div>
         </div>
     </main>
@@ -302,7 +314,6 @@
                 <h2 class="text-2xl font-display font-black italic uppercase text-stone-900 dark:text-white">Получить поднятия</h2>
                 <p class="text-[10px] text-stone-500 font-semibold mt-1 uppercase tracking-widest">Бесплатное продвижение</p>
             </div>
-            
             <div class="flex flex-col gap-3">
                 <div class="border border-stone-200 dark:border-stone-700 rounded-2xl p-4 bg-stone-50 dark:bg-stone-800/50">
                     <div class="font-black text-sm text-stone-900 dark:text-white mb-1">Поделись в Telegram</div>
@@ -321,30 +332,26 @@
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
             <i class="fa-brands fa-bitcoin text-amber-500 text-4xl mb-3"></i>
-            <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-1">SVALKA PRO</h2>
+            <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-1">SVAL PRO</h2>
             <p class="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-6">VIP статус на 30 дней</p>
-            
             <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-5 border border-stone-200 dark:border-stone-700 mb-6">
                 <div class="text-xs font-bold text-stone-600 dark:text-stone-300 mb-2">Отправьте ровно:</div>
                 <div class="text-2xl font-black text-stone-900 dark:text-white mb-4">5.00 USDT <span class="text-[10px] text-stone-400 align-middle">TRC20</span></div>
-                
                 <div class="w-32 h-32 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-sm relative overflow-hidden mb-4">
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ_MOCK_WALLET_ADDRESS_FOR_TRC20" class="w-full h-full">
                     <div id="qr-scanner" class="hidden qr-scan-line"></div>
                 </div>
-                
                 <div class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Адрес кошелька (TRC20)</div>
                 <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-lg border border-stone-200 dark:border-stone-700">
                     <input type="text" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-xs font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center">
                     <button class="text-stone-400 hover:text-brand-600" onclick="navigator.clipboard.writeText('TY1VxxxMOCKxxxWALLETxxxADDRESS'); window.showToast('Адрес скопирован!')"><i class="fa-regular fa-copy"></i></button>
                 </div>
             </div>
-            
             <button id="btn-crypto-paid" onclick="window.verifyCryptoPayment()" class="bg-brand-600 text-white w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg hover:bg-brand-700 transition">Я оплатил 5 USDT</button>
         </div>
     </div>
 
-    <!-- Add Item Modal (with Gemini AI) -->
+    <!-- Add Item Modal -->
     <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition"><i class="fa-solid fa-xmark"></i></button>
@@ -386,8 +393,7 @@
                     <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold outline-none text-sm focus:border-brand-600" required>
                     <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none focus:border-brand-600"><option>RSD</option><option>EUR</option></select>
                 </div>
-
-                <!-- Gemini AI Button -->
+                
                 <div class="relative flex flex-col">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[9px] font-black uppercase text-stone-400" data-t="add_desc_label">Описание</span>
@@ -405,8 +411,8 @@
     <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark text-sm"></i></button>
-            <div class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center">
-                <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">
+            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center relative group">
+                <img id="modal-img" src="" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
             </div>
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
                 <div class="flex items-center gap-2 mb-2">
@@ -480,6 +486,11 @@
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Optimus" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Optimus" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=GLaDOS" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=GLaDOS" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
+                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Terminator" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Terminator" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
+                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=C3PO" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=C3PO" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
+                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Dalek" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Dalek" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
+                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=T800" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=T800" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
+                            <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Megatron" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Megatron" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                         </div>
                     </div>
                 </div>
@@ -526,19 +537,68 @@
         </div>
     </div>
 
-    <!-- Item Details Modal -->
-    <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark text-sm"></i></button>
-            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center relative group">
-                <img id="modal-img" src="" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+    <!-- ПОДВАЛ (Footer) -->
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <div class="flex items-center gap-3 mb-6 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="relative w-8 h-8 flex items-center justify-center shrink-0 grayscale opacity-80">
+                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
+                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
+                        <i class="fa-solid fa-box-open text-brand-600 text-[10px] mt-0.5"></i>
+                    </div>
+                </div>
+                <span class="text-xl font-display font-black text-stone-900 dark:text-white tracking-tighter italic">SVALKA</span>
             </div>
-            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
-                <div class="flex items-center gap-2 mb-2">
+            <div class="flex flex-wrap justify-center gap-6 mb-6 text-stone-500 dark:text-stone-400 font-bold uppercase text-[10px] tracking-widest">
+                <a href="#" onclick="event.preventDefault(); window.openModal('policy-modal')" class="hover:text-brand-600 transition" data-t="foot_policy">Политика</a>
+                <a href="#" onclick="event.preventDefault(); window.openModal('rules-modal')" class="hover:text-brand-600 transition" data-t="foot_rules">Правила</a>
+                <a href="mailto:support@svalka.rs" class="hover:text-brand-600 transition" data-t="foot_support">Поддержка</a>
+            </div>
+            <div class="max-w-2xl text-center mb-6">
+                <p class="text-[10px] text-stone-400 dark:text-stone-500 leading-relaxed font-medium" data-t="seo_text">SVALKA — это удобный маркетплейс для поиска и продажи вещей в Сербии. Дарите вещам вторую жизнь.</p>
+            </div>
+            <p class="text-stone-400 dark:text-stone-600 text-[9px] font-black uppercase tracking-[0.3em] text-center" data-t="foot_copy">© 2026 SVALKA. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <!-- Технические модалки для Подвала -->
+    <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p>
+                <p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
+            </div>
+        </div>
+    </div>
+    <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>1. Запрещена продажа нелегальных предметов.</p>
+                <p>2. Запрещен спам (дублирование одинаковых объявлений).</p>
+                <p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
+        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain">
+    </div>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999]"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400"></i><span id="toast-msg">Готово!</span></div>
+
+    <!-- Скрипты -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+        
+        const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const apiKey = ""; // Gemini API Key Will Be Automatically Provided by Environment
+        const apiKey = ""; // Gemini API Key
 
         window.currentUser = null; 
         window.loadedItems = []; 
@@ -553,9 +613,8 @@
 
         window.currentAppLang = 'ru';
         window.activeModalItemId = null; 
-        window.userFavorites = new Set(); // Добавлено хранилище избранного
+        window.userFavorites = new Set(); 
 
-        // СЛОВАРИ
         window.i18n = {
             ru: {
                 nav_urgent: "Срочно", btn_add: "+ Пристроить добро", auth_login_btn: "Войти", search_placeholder: "Поиск сокровищ...",
@@ -564,7 +623,7 @@
                 cat_all: "Все", cat_furniture: "Мебель", cat_electronics: "Электроника", cat_clothes: "Одежда", cat_home: "Интерьер", cat_kids: "Детям", cat_auto: "Транспорт", cat_sports: "Спорт", cat_hobbies: "Хобби", cat_housing: "Жилье", cat_other: "Другое",
                 city_bg: "Белград", city_ns: "Нови-Сад", city_nis: "Ниш", city_sub: "Суботица", city_krag: "Крагуевац",
                 auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_name: "Имя", auth_avatar: "Выберите аватар", auth_pass: "Пароль",
-                profile_wallet: "Баланс", profile_logout: "Выйти", profile_tab_items: "Мои вещи", empty_title: "Здесь пока пусто",
+                profile_wallet: "Баланс", profile_logout: "Выйти", profile_tab_items: "Мои вещи", empty_title: "Здесь пока пусто", profile_tab_saved: "Заначка",
                 btn_edit: "Редактировать", btn_sold: "Продано", profile_new_user: "Продавец SVALKA", modal_contact: "Написать продавцу",
                 add_title: "Пристроить добро", add_photos_label: "Нажмите, чтобы добавить фото", add_name: "Название", add_price: "Цена", add_desc: "Описание", btn_publish: "Опубликовать",
                 toast_success: "Успешно!", toast_error_login: "Ошибка входа", toast_logout: "Вы вышли", toast_auth_required: "Войдите в аккаунт!", filter_reset: "Сбросить", filter_apply: "Применить",
@@ -577,7 +636,7 @@
                 cat_all: "Sve", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Enterijer", cat_kids: "Za decu", cat_auto: "Transport", cat_sports: "Sport", cat_hobbies: "Hobi", cat_housing: "Smeštaj", cat_other: "Ostalo",
                 city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac",
                 auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_name: "Ime", auth_avatar: "Izaberite avatar", auth_pass: "Lozinka",
-                profile_wallet: "Stanje", profile_logout: "Odjavi se", profile_tab_items: "Moji oglasi", empty_title: "Ovde je prazno",
+                profile_wallet: "Stanje", profile_logout: "Odjavi se", profile_tab_items: "Moji oglasi", empty_title: "Ovde je prazno", profile_tab_saved: "Sačuvano",
                 btn_edit: "Uredi", btn_sold: "Prodato", profile_new_user: "Prodavac SVALKA", modal_contact: "Pošalji poruku",
                 add_title: "Dodaj oglas", add_photos_label: "Kliknite da dodate sliku", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi",
                 toast_success: "Uspešno!", toast_error_login: "Greška pri prijavi", toast_logout: "Odjavljeni ste", toast_auth_required: "Molimo vas da se prijavite!", filter_reset: "Poništi", filter_apply: "Primeni",
@@ -590,7 +649,7 @@
                 cat_all: "All", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothes", cat_home: "Interior", cat_kids: "Kids", cat_auto: "Transport", cat_sports: "Sports", cat_hobbies: "Hobbies", cat_housing: "Housing", cat_other: "Other",
                 city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Nish", city_sub: "Subotica", city_krag: "Kragujevac",
                 auth_tab_login: "Log In", auth_tab_register: "Sign Up", auth_name: "Name", auth_avatar: "Choose Avatar", auth_pass: "Password",
-                profile_wallet: "Balance", profile_logout: "Log Out", profile_tab_items: "My Listings", empty_title: "Nothing here yet",
+                profile_wallet: "Balance", profile_logout: "Log Out", profile_tab_items: "My Listings", empty_title: "Nothing here yet", profile_tab_saved: "Saved",
                 btn_edit: "Edit", btn_sold: "Sold", profile_new_user: "SVALKA Seller", modal_contact: "Contact Seller",
                 add_title: "Add Listing", add_photos_label: "Click to add photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish",
                 toast_success: "Success!", toast_error_login: "Login error", toast_logout: "Logged out", toast_auth_required: "Please log in!", filter_reset: "Reset", filter_apply: "Apply",
@@ -615,7 +674,6 @@
             });
         };
 
-        // UI Helpers
         window.openModal = id => { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-open'); };
         window.closeModal = id => { document.getElementById(id).classList.remove('active'); if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); };
         window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); };
@@ -642,7 +700,7 @@
                     icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
-                if(window.loadedItems) window.renderDynamicItems(window.loadedItems); // Обновляем иконки в ленте
+                if(window.loadedItems) window.renderDynamicItems(window.loadedItems); 
             } catch(e) { console.error(e); }
         };
 
@@ -658,7 +716,6 @@
             window.filterPriceMax = document.getElementById('filter-price-max').value;
             window.showUrgentOnly = false;
             
-            // Сброс кнопок
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
             });
@@ -682,7 +739,6 @@
             window.applyFilters();
         };
 
-        // Чат
         window.openChatModal = () => {
             if(!window.currentUser) {
                 window.closeModal('item-modal');
@@ -715,7 +771,6 @@
             container.scrollTop = container.scrollHeight;
         };
 
-        // Поделиться = 1 поднятие
         window.openShareModal = () => {
             if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             window.openModal('share-modal');
@@ -774,7 +829,6 @@
             }, 4000);
         };
 
-        // БЕЗОПАСНАЯ АВТОРИЗАЦИЯ
         window.handleAuthChange = async (session) => {
             try {
                 window.currentUser = session?.user || null;
@@ -804,12 +858,19 @@
                     const pAvatar = document.getElementById('profile-avatar-container');
                     if(pAvatar && meta.avatar_url) pAvatar.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
 
-                    const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
+                    // ТАЙМАУТ ДЛЯ ПРОФИЛЯ, чтобы предотвратить зависание
+                    const profilePromise = supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
+                    const { data: profile, error } = await Promise.race([
+                        profilePromise,
+                        new Promise(res => setTimeout(() => res({ data: null }), 5000))
+                    ]);
+                    
                     if(profile) {
                         window.currentUserData = { walletBalance: profile.wallet_balance || 0, isPro: profile.is_pro || false };
                     } else {
                         window.currentUserData = { walletBalance: 0, isPro: false };
                     }
+                    
                     const pb = document.getElementById('profile-balance');
                     const nb = document.getElementById('nav-wallet-balance');
                     if(pb) pb.innerText = window.currentUserData.walletBalance;
@@ -817,14 +878,15 @@
                     if(window.currentUserData.isPro) document.getElementById('profile-pro-badge')?.classList.remove('hidden');
                     
                     try {
-                        const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                        const favPromise = supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                        const { data: favs } = await Promise.race([
+                            favPromise,
+                            new Promise(res => setTimeout(() => res({ data: null }), 5000))
+                        ]);
                         window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                     } catch(e) { console.warn("Favorites fetch error", e); }
 
-                } catch(e) { console.error("Profile fetch error:", e); }
-                
-                if (window.renderProfileTabs) window.renderProfileTabs();
-            } else {
+                } else {
                     if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
                     if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
                     if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
@@ -833,6 +895,8 @@
                     if(ui.mobLogin) ui.mobLogin.classList.remove('hidden');
                     if(ui.mobProfile) ui.mobProfile.classList.add('hidden');
                 }
+                
+                if (window.renderProfileTabs) window.renderProfileTabs();
             } catch(e) {
                 console.error("Critical auth error:", e);
             }
@@ -879,15 +943,20 @@
             }
         };
 
-        // БЕЗОПАСНЫЙ ВЫХОД
+        // НАДЕЖНЫЙ ВЫХОД
         window.logout = async () => { 
             try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
             
-            // Надежная очистка кэша
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('sb-')) localStorage.removeItem(key);
-            });
-            sessionStorage.clear();
+            try {
+                const keysToRemove = [];
+                for(let i=0; i<localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if(key && key.startsWith('sb-')) keysToRemove.push(key);
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                sessionStorage.clear();
+            } catch(e) { console.warn(e); }
+
             window.currentUser = null;
             window.closeModal('profile-modal'); 
             window.location.reload(); 
@@ -931,10 +1000,22 @@
             } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
         };
 
-        // БЕЗОПАСНАЯ ЗАГРУЗКА ИЗ SUPABASE
+        // БЕЗОПАСНАЯ ЗАГРУЗКА ИЗ SUPABASE С ТАЙМАУТОМ
         window.fetchItems = async () => {
+            const loader = document.getElementById('loading-placeholder');
+            const mainGrid = document.getElementById('main-items-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            if(loader) loader.style.display = 'block';
+            if(mainGrid) mainGrid.classList.add('hidden');
+            if(emptyState) emptyState.classList.add('hidden');
+
             try {
-                const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false });
+                const fetchPromise = supabase.from('items').select('*').order('created_at', { ascending: false }).limit(100);
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 10000));
+                
+                const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+                
                 if (error) throw error;
                 if (data) {
                     const mapped = data.map(i => {
@@ -962,9 +1043,7 @@
                 }
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
-                const loader = document.getElementById('loading-placeholder');
-                // Если база упала, показываем четкую ошибку
-                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs"><i class="fa-solid fa-triangle-exclamation"></i> Ошибка базы данных</p>`;
+                if (loader) loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-xs"><i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i><br>Ошибка БД.<br>${e.message === 'Timeout' ? 'Превышено время ожидания.' : 'Проверьте соединение.'}</div>`;
             }
         };
 
@@ -1008,10 +1087,26 @@
                 }
 
                 const mainGrid = document.getElementById('main-items-grid');
+                const emptyState = document.getElementById('empty-state');
+                
                 if (window.showUrgentOnly) {
-                    mainGrid.innerHTML = vipItems.length ? vipItems.map(i => createCardHtml(i, true)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
+                    if (vipItems.length) {
+                        mainGrid.innerHTML = vipItems.map(i => createCardHtml(i, true)).join('');
+                        mainGrid.classList.remove('hidden');
+                        emptyState.classList.add('hidden');
+                    } else {
+                        mainGrid.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                    }
                 } else {
-                    mainGrid.innerHTML = regularItems.length ? regularItems.map(i => createCardHtml(i, false)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
+                    if (regularItems.length) {
+                        mainGrid.innerHTML = regularItems.map(i => createCardHtml(i, false)).join('');
+                        mainGrid.classList.remove('hidden');
+                        emptyState.classList.add('hidden');
+                    } else {
+                        mainGrid.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                    }
                 }
                 
                 if(window.renderProfileTabs) window.renderProfileTabs();
@@ -1022,7 +1117,10 @@
             } catch(e) {
                 console.error("Ошибка рендера:", e);
                 const mainGrid = document.getElementById('main-items-grid');
-                if(mainGrid) mainGrid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-xs uppercase tracking-widest">Произошла ошибка интерфейса.</div>';
+                if(mainGrid) {
+                    mainGrid.classList.remove('hidden');
+                    mainGrid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-xs uppercase tracking-widest">Произошла ошибка интерфейса.</div>';
+                }
             }
         };
 
@@ -1069,12 +1167,12 @@
             if (Array.isArray(item.images) && item.images.length > 1) {
                 let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="document.getElementById('modal-img').src='${src}'" class="w-12 h-12 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                 imgContainer.innerHTML = `
-                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">
+                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
                     <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
                 `;
             } else {
                 const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">`;
+                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
             }
 
             document.getElementById('modal-title').innerText = item.title || 'Без названия';
@@ -1101,7 +1199,6 @@
             window.openModal('item-modal');
         };
 
-        // GEMINI AI INTEGRATION
         async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = {
@@ -1169,7 +1266,6 @@
             }
         };
 
-        // NEW ITEM UPLOAD (Safely using Blobs for Storage)
         window.checkAuthAndOpenAddModal = () => {
             if(!window.currentUser) { 
                 window.openModal('auth-modal'); 
@@ -1177,7 +1273,6 @@
             } else { window.openModal('add-modal'); } 
         };
 
-        // Сжатие фото для предотвращения зависаний
         window.previewPhotos = async (e) => {
             const files = Array.from(e.target.files);
             const container = document.getElementById('photo-preview-list');
@@ -1236,7 +1331,6 @@
                 
                 const imgUrlsToSave = [];
                 
-                // Безопасная загрузка в Storage (без fetch)
                 for (let i = 0; i < window.tempPhotos.length; i++) {
                     const dataUrl = window.tempPhotos[i];
                     if (dataUrl.startsWith('http')) {
@@ -1247,8 +1341,8 @@
                         
                         const { error: uploadError } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
                         if (uploadError) {
-                            console.error("Ошибка загрузки фото в Storage:", uploadError);
-                            continue; // Пропускаем картинку, если хранилище закрыто, чтобы не сломать товар
+                            console.error("Storage upload error:", uploadError);
+                            throw new Error("Загрузка фото запрещена. Настройте Policies (RLS) в Storage Supabase (INSERT)!");
                         }
                         
                         const { data: publicUrlData } = supabase.storage.from('item-images').getPublicUrl(fileName);
@@ -1263,7 +1357,7 @@
                     user_id: window.currentUser.id, 
                     author_name: meta.full_name || 'Пользователь',
                     author_avatar: meta.avatar_url || '',
-                    image_url: imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : '', // Дополнительная защита
+                    image_url: imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : '', 
                     images: imgUrlsToSave,
                     currency: document.getElementById('item-currency').value,
                     is_highlighted: isProUser
