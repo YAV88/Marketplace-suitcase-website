@@ -14,7 +14,7 @@
                 extend: { 
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Montserrat', 'sans-serif'] },
                     colors: {
-                        brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } // Мягкий Teal
+                        brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' }
                     }
                 } 
             } 
@@ -78,9 +78,12 @@
         .dark select optgroup { background: #134e4a; color: #ccfbf1; }
         .dark select option { background: #292524; color: #f5f5f4; }
         
-        /* QR Line */
         .qr-scan-line { position: absolute; width: 100%; height: 2px; background: #14b8a6; box-shadow: 0 0 10px #14b8a6; top: 0; left: 0; animation: scan 2s linear infinite; }
         @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* Filter Panel Animation */
+        #filter-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease; opacity: 0; }
+        #filter-panel.active { max-height: 500px; opacity: 1; overflow: visible; }
     </style>
 </head>
 <body class="text-stone-800 dark:text-stone-200 antialiased">
@@ -127,7 +130,6 @@
                 <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="hidden text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700"><i class="fa-regular fa-user"></i></button>
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-7 py-3 rounded-full font-black shadow-lg shadow-brand-600/30 uppercase text-[11px] tracking-widest transition"><span data-t="btn_add">+ Пристроить добро</span></button>
             </div>
-            <!-- Mobile Menu Button -->
             <button class="lg:hidden text-2xl ml-4 text-stone-600 dark:text-stone-300" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         </div>
     </nav>
@@ -159,7 +161,7 @@
 
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
         
-        <!-- БАННЕР С ПОДДЕРЖКОЙ (BETA / CRYPTO) -->
+        <!-- БАННЕР С ПОДДЕРЖКОЙ -->
         <div class="mb-10 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-xl relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
             <div class="relative z-10 text-center md:text-left mb-4 md:mb-0">
@@ -172,7 +174,7 @@
             <button onclick="window.openModal('crypto-modal')" class="relative z-10 bg-white text-brand-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 hover:scale-105 transition shrink-0 shadow-lg">Купить PRO</button>
         </div>
 
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-1">
                     <i class="fa-solid fa-box-open text-brand-500 text-2xl drop-shadow-sm"></i>
@@ -189,9 +191,61 @@
                     </select>
                     <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
                 </div>
+                <!-- КНОПКА ФИЛЬТРЫ -->
+                <button onclick="window.toggleFilters()" class="flex-1 lg:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-sliders"></i> Фильтры
+                </button>
             </div>
         </div>
 
+        <!-- ПАНЕЛЬ ФИЛЬТРОВ -->
+        <div id="filter-panel" class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-stone-400 mb-2">Категория</label>
+                    <select id="filter-category" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500">
+                        <option value="Все">Все категории</option>
+                        <optgroup label="Одежда и Обувь">
+                            <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option>
+                        </optgroup>
+                        <optgroup label="Электроника">
+                            <option value="Электроника - Телефоны">Телефоны</option><option value="Электроника - ПК">Ноутбуки / ПК</option><option value="Электроника - Бытовая">Бытовая техника</option>
+                        </optgroup>
+                        <optgroup label="Интерьер">
+                            <option value="Интерьер - Мебель">Мебель</option><option value="Интерьер - Декор">Декор</option>
+                        </optgroup>
+                        <optgroup label="Транспорт">
+                            <option value="Транспорт - Авто">Авто</option><option value="Транспорт - Вело">Велосипеды/Самокаты</option>
+                        </optgroup>
+                        <optgroup label="Другое">
+                            <option value="Детям - Игрушки">Игрушки</option><option value="Жилье - Аренда">Аренда жилья</option><option value="Хобби - Спорт">Спорт инвентарь</option><option value="Другое - Разное">Разное</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-stone-400 mb-2">Город</label>
+                    <select id="filter-city" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500">
+                        <option value="Все">Все города</option>
+                        <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
+                        <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
+                        <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-stone-400 mb-2">Цена (RSD)</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500">
+                        <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-stone-100 dark:border-stone-700">
+                <button onclick="window.resetFilters()" class="px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition">Сбросить</button>
+                <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-md hover:bg-brand-700 transition">Применить</button>
+            </div>
+        </div>
+
+        <!-- КНОПКИ БЫСТРОГО ДОСТУПА К КАТЕГОРИЯМ -->
         <div class="mb-8">
             <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600"><span data-t="cat_all">Все</span></button>
@@ -469,9 +523,14 @@
         window.currentUser = null; 
         window.loadedItems = []; 
         window.tempPhotos = []; 
+        
         window.currentCategory = 'Все'; 
         window.searchQuery = ''; 
         window.showUrgentOnly = false;
+        window.filterCity = 'Все';
+        window.filterPriceMin = '';
+        window.filterPriceMax = '';
+
         window.currentAppLang = 'ru';
         window.activeModalItemId = null; 
 
@@ -488,30 +547,6 @@
                 btn_edit: "Редактировать", btn_sold: "Продано", profile_new_user: "Продавец SVALKA", modal_contact: "Написать продавцу",
                 add_title: "Пристроить добро", add_photos_label: "Нажмите, чтобы добавить фото", add_name: "Название", add_price: "Цена", add_desc: "Описание", btn_publish: "Опубликовать",
                 toast_success: "Успешно!", toast_error_login: "Ошибка входа", toast_logout: "Вы вышли", toast_auth_required: "Войдите в аккаунт!"
-            },
-            rs: {
-                nav_urgent: "Hitno", btn_add: "+ Dodaj oglas", auth_login_btn: "Prijava", search_placeholder: "Pretraga...",
-                main_title: "Otkrića", main_subtitle: "Najnoviji oglasi", promo_title: "Podrži projekat!", promo_subtitle: "Sajt je u BETA testiranju. Uzmi VIP za donaciju u kriptu i prodaj 5x brže.",
-                sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje",
-                cat_all: "Sve", cat_furniture: "Nameštaj", cat_electronics: "Elektronika", cat_clothes: "Odeća", cat_home: "Enterijer", cat_kids: "Za decu", cat_auto: "Transport", cat_sports: "Sport", cat_hobbies: "Hobi", cat_housing: "Smeštaj", cat_other: "Ostalo",
-                city_bg: "Beograd", city_ns: "Novi Sad", city_nis: "Niš", city_sub: "Subotica", city_krag: "Kragujevac",
-                auth_tab_login: "Prijava", auth_tab_register: "Registracija", auth_name: "Ime", auth_avatar: "Izaberite avatar", auth_pass: "Lozinka",
-                profile_wallet: "Stanje", profile_logout: "Odjavi se", profile_tab_items: "Moji oglasi", empty_title: "Ovde je prazno",
-                btn_edit: "Uredi", btn_sold: "Prodato", profile_new_user: "Prodavac SVALKA", modal_contact: "Pošalji poruku",
-                add_title: "Dodaj oglas", add_photos_label: "Kliknite da dodate sliku", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi",
-                toast_success: "Uspešno!", toast_error_login: "Greška pri prijavi", toast_logout: "Odjavljeni ste", toast_auth_required: "Molimo vas da se prijavite!"
-            },
-            en: {
-                nav_urgent: "Urgent", btn_add: "+ Add Listing", auth_login_btn: "Log In", search_placeholder: "Search items...",
-                main_title: "Great Finds", main_subtitle: "Freshest listings in Serbia", promo_title: "Support us!", promo_subtitle: "Site is in BETA. Get VIP via crypto donation and sell 5x faster.",
-                sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive",
-                cat_all: "All", cat_furniture: "Furniture", cat_electronics: "Electronics", cat_clothes: "Clothes", cat_home: "Interior", cat_kids: "Kids", cat_auto: "Transport", cat_sports: "Sports", cat_hobbies: "Hobbies", cat_housing: "Housing", cat_other: "Other",
-                city_bg: "Belgrade", city_ns: "Novi Sad", city_nis: "Nish", city_sub: "Subotica", city_krag: "Kragujevac",
-                auth_tab_login: "Log In", auth_tab_register: "Sign Up", auth_name: "Name", auth_avatar: "Choose Avatar", auth_pass: "Password",
-                profile_wallet: "Balance", profile_logout: "Log Out", profile_tab_items: "My Listings", empty_title: "Nothing here yet",
-                btn_edit: "Edit", btn_sold: "Sold", profile_new_user: "SVALKA Seller", modal_contact: "Contact Seller",
-                add_title: "Add Listing", add_photos_label: "Click to add photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish",
-                toast_success: "Success!", toast_error_login: "Login error", toast_logout: "Logged out", toast_auth_required: "Please log in!"
             }
         };
 
@@ -527,7 +562,7 @@
                 if (window.i18n[lang] && window.i18n[lang][key]) {
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = window.i18n[lang][key];
                     else if (el.tagName === 'OPTION') el.innerText = window.i18n[lang][key];
-                    else el.innerHTML = window.i18n[lang][key]; // span injection
+                    else el.innerHTML = window.i18n[lang][key]; 
                 }
             });
         };
@@ -539,6 +574,43 @@
         window.openLightbox = src => { document.getElementById('lightbox-img').src = src; window.openModal('lightbox'); };
         window.showToast = (msg, err=false) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = msg; document.getElementById('toast-icon').className = err ? "fa-solid fa-circle-exclamation text-red-500" : "fa-solid fa-circle-check text-brand-400"; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 4000); };
         window.toggleMobileMenu = () => { const m = document.getElementById('mobile-menu'); m.classList.toggle('translate-x-full'); };
+        
+        window.toggleFilters = () => { 
+            const fp = document.getElementById('filter-panel'); 
+            if(fp) fp.classList.toggle('active'); 
+        };
+
+        window.applyFilters = () => {
+            window.currentCategory = document.getElementById('filter-category').value;
+            window.filterCity = document.getElementById('filter-city').value;
+            window.filterPriceMin = document.getElementById('filter-price-min').value;
+            window.filterPriceMax = document.getElementById('filter-price-max').value;
+            window.showUrgentOnly = false;
+            
+            // Сброс кнопок быстрого фильтра
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
+            });
+            const urgentBtn = document.getElementById('btn-cat-urgent');
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+            
+            // Если выбрано "Все", выделяем кнопку Все
+            if(window.currentCategory === 'Все' || window.currentCategory === '') {
+                const btnAll = document.querySelector('[data-cat="Все"]');
+                if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
+            }
+
+            window.renderDynamicItems(window.loadedItems);
+            window.toggleFilters(); // Закрываем панель
+        };
+
+        window.resetFilters = () => {
+            document.getElementById('filter-category').value = 'Все';
+            document.getElementById('filter-city').value = 'Все';
+            document.getElementById('filter-price-min').value = '';
+            document.getElementById('filter-price-max').value = '';
+            window.applyFilters();
+        };
 
         // ИНТЕРФЕЙС ЧАТА
         window.openChatModal = () => {
@@ -575,7 +647,7 @@
 
         // Задания (Поделиться = 1 поднятие)
         window.openShareModal = () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'], true); return; }
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             window.openModal('share-modal');
         };
 
@@ -706,7 +778,7 @@
                     if (error) throw error;
                 }
                 window.closeModal('auth-modal');
-                window.showToast(window.i18n[window.currentAppLang]['toast_success']);
+                window.showToast(window.i18n[window.currentAppLang]['toast_success'] || "Успешно!");
             } catch (e) { window.showToast(e.message, true); }
             finally { btn.disabled = false; btn.innerText = "Готово"; }
         };
@@ -719,12 +791,12 @@
             const tabR = document.getElementById('tab-register');
             if(mode === 'register') { 
                 fields.classList.replace('hidden', 'flex'); 
-                btn.innerHTML = `<span data-t="auth_tab_register">${window.i18n[window.currentAppLang]['auth_tab_register']}</span>`;
+                btn.innerHTML = `<span data-t="auth_tab_register">${window.i18n[window.currentAppLang]['auth_tab_register'] || 'Регистрация'}</span>`;
                 tabR.classList.add('text-brand-600', 'border-brand-600', 'border-b-2');
                 tabL.classList.remove('text-brand-600', 'border-brand-600', 'border-b-2');
             } else { 
                 fields.classList.replace('flex', 'hidden'); 
-                btn.innerHTML = `<span data-t="auth_tab_login">${window.i18n[window.currentAppLang]['auth_tab_login']}</span>`;
+                btn.innerHTML = `<span data-t="auth_tab_login">${window.i18n[window.currentAppLang]['auth_tab_login'] || 'Вход'}</span>`;
                 tabL.classList.add('text-brand-600', 'border-brand-600', 'border-b-2');
                 tabR.classList.remove('text-brand-600', 'border-brand-600', 'border-b-2');
             }
@@ -732,8 +804,12 @@
 
         window.logout = async () => { 
             try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
-            for (let key in localStorage) { if (key.startsWith('sb-')) localStorage.removeItem(key); }
+            // Безопасная очистка кэша
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('sb-')) localStorage.removeItem(key);
+            });
             sessionStorage.clear();
+            window.currentUser = null;
             window.closeModal('profile-modal'); 
             window.location.reload(); 
         };
@@ -756,23 +832,25 @@
 
             const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.id);
             const tabBtn = document.getElementById('tab-my-items');
-            if (tabBtn) tabBtn.innerHTML = `<span data-t="profile_tab_items">${window.i18n[window.currentAppLang]['profile_tab_items']}</span> (${myItems.length})`;
+            if (tabBtn) tabBtn.innerHTML = `<span data-t="profile_tab_items">Мои вещи</span> (${myItems.length})`;
 
             const itemsToShow = window.currentProfileTab === 'items' ? myItems : [];
 
             if(itemsToShow.length > 0) {
                 grid.style.display = 'grid'; empty.style.display = 'none';
-                grid.innerHTML = itemsToShow.map(i => `
+                grid.innerHTML = itemsToShow.map(i => {
+                    const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || '');
+                    return `
                     <div class="item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col" onclick="window.openItemDetails('${i.id}')">
-                        <div class="h-20 sm:h-24 bg-stone-100 dark:bg-stone-700 relative overflow-hidden">
-                            <img src="${(i.images && i.images.length > 0) ? i.images[0] : (i.imageUrl || '')}" class="w-full h-full object-cover">
+                        <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden">
+                            <img src="${imageUrl}" class="w-full h-full object-cover">
                         </div>
                         <div class="p-2 flex flex-col flex-1 justify-between">
                             <h4 class="font-bold text-[10px] text-stone-900 dark:text-white line-clamp-1 leading-tight">${i.title || 'Без названия'}</h4>
                             <div class="text-brand-600 font-black text-xs italic mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
         };
 
@@ -797,7 +875,8 @@
                                 authorAvatar: i.author_avatar, 
                                 userId: i.user_id, 
                                 isHighlighted: !!i.is_highlighted, 
-                                category: i.category || 'Другое'
+                                category: i.category || 'Другое',
+                                createdAt: i.created_at
                             };
                         } catch(err) { return null; }
                     }).filter(Boolean); 
@@ -815,59 +894,86 @@
         };
 
         window.renderDynamicItems = (items) => {
-            window.loadedItems = items;
-            
-            // Фильтрация
-            let filtered = items.filter(i => {
-                const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                const searchQ = (window.searchQuery || '').toLowerCase();
-                const titleStr = (i.title || '').toLowerCase();
-                const matchSearch = titleStr.includes(searchQ);
-                return matchCat && matchSearch;
-            });
+            try {
+                window.loadedItems = items;
+                
+                // Фильтрация
+                let filtered = items.filter(i => {
+                    const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
+                    const searchQ = (window.searchQuery || '').toLowerCase();
+                    const titleStr = (i.title || '').toLowerCase();
+                    const matchSearch = titleStr.includes(searchQ);
+                    const matchUrgent = !window.showUrgentOnly || i.isHighlighted;
+                    const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
+                    
+                    let matchPrice = true;
+                    const p = Number(i.price) || 0;
+                    if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
+                    if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
 
-            // РАЗДЕЛЯЕМ НА VIP И ОБЫЧНЫЕ
-            const vipItems = filtered.filter(i => i.isHighlighted).sort(() => 0.5 - Math.random()).slice(0, 10);
-            const vipIds = new Set(vipItems.map(v => v.id));
-            const regularItems = filtered.filter(i => !vipIds.has(i.id));
+                    return matchCat && matchSearch && matchUrgent && matchCity && matchPrice;
+                });
 
-            // Рендер VIP (Срочно)
-            const vipSection = document.getElementById('vip-section');
-            const vipGrid = document.getElementById('vip-items-grid');
-            if (vipItems.length > 0 && !window.showUrgentOnly) {
-                vipSection.classList.remove('hidden');
-                vipGrid.innerHTML = vipItems.map(i => createCardHtml(i, true)).join('');
-            } else {
-                vipSection.classList.add('hidden');
+                // Сортировка
+                const getMs = (t) => new Date(t).getTime();
+                if (window.currentSortMode === 'cheap') { filtered.sort((a, b) => Number(a.price) - Number(b.price)); } 
+                else if (window.currentSortMode === 'exp') { filtered.sort((a, b) => Number(b.price) - Number(a.price)); } 
+                else { filtered.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt)); }
+
+                // РАЗДЕЛЯЕМ НА VIP И ОБЫЧНЫЕ
+                const vipItems = filtered.filter(i => i.isHighlighted).sort(() => 0.5 - Math.random()).slice(0, 10);
+                const vipIds = new Set(vipItems.map(v => v.id));
+                const regularItems = filtered.filter(i => !vipIds.has(i.id));
+
+                // Рендер VIP (Срочно)
+                const vipSection = document.getElementById('vip-section');
+                const vipGrid = document.getElementById('vip-items-grid');
+                if (vipItems.length > 0 && !window.showUrgentOnly) {
+                    vipSection.classList.remove('hidden');
+                    vipGrid.innerHTML = vipItems.map(i => createCardHtml(i, true)).join('');
+                } else {
+                    vipSection.classList.add('hidden');
+                }
+
+                // Рендер Обычных
+                const mainGrid = document.getElementById('main-items-grid');
+                if (window.showUrgentOnly) {
+                    mainGrid.innerHTML = vipItems.length ? vipItems.map(i => createCardHtml(i, true)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
+                } else {
+                    mainGrid.innerHTML = regularItems.length ? regularItems.map(i => createCardHtml(i, false)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
+                }
+                
+                if(window.renderProfileTabs) window.renderProfileTabs();
+            } catch(e) {
+                console.error("Ошибка рендера:", e);
+                const mainGrid = document.getElementById('main-items-grid');
+                if(mainGrid) mainGrid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold text-xs uppercase tracking-widest">Произошла ошибка при отображении товаров.</div>';
             }
+        };
 
-            // Рендер Обычных
-            const mainGrid = document.getElementById('main-items-grid');
-            if (window.showUrgentOnly) {
-                mainGrid.innerHTML = vipItems.length ? vipItems.map(i => createCardHtml(i, true)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
-            } else {
-                mainGrid.innerHTML = regularItems.length ? regularItems.map(i => createCardHtml(i, false)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
-            }
-            
-            if(window.renderProfileTabs) window.renderProfileTabs();
+        window.handleSort = () => {
+            const el = document.getElementById('sort-select');
+            if(el) window.currentSortMode = el.value;
+            window.renderDynamicItems(window.loadedItems);
         };
 
         // Шаблон карточки
         function createCardHtml(i, isVIP) {
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative';
-            const imgHeight = 'h-20 sm:h-24';
+            const imgHeight = 'h-28 sm:h-32';
+            const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
             
             return `
             <div class="${cardClass}" onclick="window.openItemDetails('${i.id}')">
                 <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
-                    <img src="${(i.images && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80')}" class="w-full h-full object-cover">
+                    <img src="${imageUrl}" class="w-full h-full object-cover">
                     ${isVIP ? '<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">ТОП 💎</div>' : ''}
                 </div>
-                <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-[10px] sm:text-xs mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${i.title}</h4>
-                    <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price} ${i.currency}</div>
-                    <div class="mt-1 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[7px] sm:text-[8px] uppercase font-black text-stone-400 flex justify-between items-center">
-                        <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city}</span>
+                <div class="p-3 flex-1 flex flex-col justify-between">
+                    <h4 class="font-bold text-xs sm:text-sm mb-1 line-clamp-2 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text text-sm sm:text-base mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-[8px] uppercase font-black text-stone-400 flex justify-between items-center">
+                        <span class="truncate pr-2"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
                 </div>
@@ -880,7 +986,8 @@
             
             window.activeModalItemId = item.id;
 
-            document.getElementById('modal-img').src = (item.images && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+            const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+            document.getElementById('modal-img').src = imageUrl;
             document.getElementById('modal-title').innerText = item.title || 'Без названия';
             document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
             document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
@@ -912,13 +1019,22 @@
             window.showUrgentOnly = false;
             
             const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
 
             document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                b.className = "cat-btn px-4 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
+                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
             });
-            event.currentTarget.className = "cat-btn active px-4 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
+            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
             
+            // Синхронизируем панель фильтров
+            const catSelect = document.getElementById('filter-category');
+            if (catSelect) {
+                // Если это общая категория, пытаемся найти совпадение
+                Array.from(catSelect.options).forEach(opt => {
+                    if(opt.value.startsWith(cat) || (cat === 'Все' && opt.value === 'Все')) catSelect.value = opt.value;
+                });
+            }
+
             window.renderDynamicItems(window.loadedItems); 
         };
 
@@ -926,13 +1042,13 @@
             window.showUrgentOnly = !window.showUrgentOnly;
             const btn = document.getElementById('btn-cat-urgent');
             if (window.showUrgentOnly) {
-                btn.className = "cat-btn px-4 py-2.5 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md";
+                btn.className = "cat-btn px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md";
                 window.currentCategory = 'Все';
                 document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                    b.className = "cat-btn px-4 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
+                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
                 });
             } else {
-                btn.className = "cat-btn px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
             }
             window.renderDynamicItems(window.loadedItems);
         };
@@ -992,7 +1108,7 @@
                 document.getElementById('photo-preview-list').innerHTML = '';
                 window.fetchItems();
             } catch(e) { window.showToast(e.message, true); }
-            finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">${window.i18n[window.currentAppLang]['btn_publish']}</span>`; }
+            finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">Опубликовать</span>`; }
         };
 
         // INITIALIZE
