@@ -81,7 +81,6 @@
         .qr-scan-line { position: absolute; width: 100%; height: 2px; background: #14b8a6; box-shadow: 0 0 10px #14b8a6; top: 0; left: 0; animation: scan 2s linear infinite; }
         @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
-        /* Animation for Filter Panel */
         #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
         #filter-panel-wrapper.active { grid-template-rows: 1fr; }
         #filter-panel { overflow: hidden; }
@@ -135,7 +134,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
             <div class="flex items-center gap-1 pt-1">
@@ -165,7 +164,6 @@
 
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
         
-        <!-- БАННЕР С ПОДДЕРЖКОЙ -->
         <div class="mb-10 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-xl relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
             <div class="relative z-10 text-center md:text-left mb-4 md:mb-0">
@@ -195,14 +193,12 @@
                     </select>
                     <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
                 </div>
-                <!-- КНОПКА ФИЛЬТРЫ -->
                 <button onclick="window.toggleFilters()" class="flex-1 lg:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
                     <i class="fa-solid fa-sliders"></i> <span data-t="btn_filters">Фильтры</span>
                 </button>
             </div>
         </div>
 
-        <!-- ИСПРАВЛЕННАЯ ПАНЕЛЬ ФИЛЬТРОВ -->
         <div id="filter-panel-wrapper">
             <div id="filter-panel">
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
@@ -253,7 +249,6 @@
             </div>
         </div>
 
-        <!-- КНОПКИ БЫСТРОГО ДОСТУПА К КАТЕГОРИЯМ -->
         <div class="mb-8">
             <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600"><span data-t="cat_all">Все</span></button>
@@ -269,7 +264,6 @@
             </div>
         </div>
 
-        <!-- 1. VIP СЕКЦИЯ -->
         <div id="vip-section" class="mb-10 hidden">
             <div class="flex items-center gap-2 mb-4 pl-1">
                 <i class="fa-solid fa-gem text-amber-500"></i>
@@ -278,7 +272,6 @@
             <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4"></div>
         </div>
 
-        <!-- 2. ОБЫЧНАЯ ЛЕНТА -->
         <div>
             <div class="flex items-center gap-2 mb-4 pl-1">
                 <i class="fa-regular fa-clock text-stone-400"></i>
@@ -293,7 +286,7 @@
         </div>
     </main>
 
-    <!-- Modal: Share for Bumps (Репост) -->
+    <!-- Modal: Share for Bumps -->
     <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[90]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -388,73 +381,21 @@
                     <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold outline-none text-sm focus:border-brand-600" required>
                     <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none focus:border-brand-600"><option>RSD</option><option>EUR</option></select>
                 </div>
-                <textarea id="item-desc" placeholder="Расскажите о вещи..." rows="3" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-medium text-sm focus:border-brand-600 outline-none"></textarea>
+                
+                <!-- АССИСТЕНТ GEMINI -->
+                <div class="relative flex flex-col">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[9px] font-black uppercase text-stone-400" data-t="add_desc_label">Описание</span>
+                        <button type="button" id="btn-ai-desc" onclick="window.generateAIDescription()" class="text-[9px] font-black uppercase text-brand-600 bg-brand-50 border border-brand-200 hover:bg-brand-100 transition px-2 py-1 rounded flex items-center gap-1 shadow-sm dark:bg-stone-800 dark:border-stone-700 dark:hover:border-brand-500">✨ <span data-t="btn_ai_desc">Сгенерировать ИИ</span></button>
+                    </div>
+                    <textarea id="item-desc" placeholder="Расскажите о вещи..." data-t="add_desc" rows="3" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-medium text-sm focus:border-brand-600 outline-none"></textarea>
+                </div>
+
                 <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-brand-700 transition text-[10px]"><span data-t="btn_publish">Опубликовать</span></button>
             </form>
         </div>
     </div>
 
-    <!-- Item Details Modal -->
-    <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark text-sm"></i></button>
-            <div class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center">
-                <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in hover:scale-105 transition duration-500" onclick="window.openLightbox(this.src)">
-            </div>
-            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
-                <div class="flex items-center gap-2 mb-2">
-                    <span id="modal-category-text" class="text-[8px] font-black text-white bg-brand-600 px-2 py-1 rounded uppercase tracking-widest">Категория</span>
-                    <span id="modal-city-text" class="text-[9px] font-black text-stone-500 uppercase tracking-widest italic"><i class="fa-solid fa-location-dot"></i> БЕЛГРАД</span>
-                </div>
-                <h2 id="modal-title" class="text-xl md:text-2xl font-display font-black mb-1 leading-tight text-stone-900 dark:text-white">Название...</h2>
-                <div id="modal-price" class="text-2xl md:text-3xl price-text text-brand-600 italic mb-4">0 RSD</div>
-                <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-xs leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
-                
-                <div id="modal-owner-controls" class="hidden gap-2 mb-6 border-t dark:border-stone-800 pt-4">
-                    <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-stone-200 transition shadow-sm"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять (1 шт.)</button>
-                    <button onclick="window.openModal('crypto-modal')" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-black uppercase text-[9px] hover:opacity-90 transition shadow-sm"><i class="fa-solid fa-gem mr-1"></i> Купить PRO</button>
-                </div>
-
-                <div class="mt-auto flex items-center gap-3 p-3 border dark:border-stone-700 rounded-xl shadow-sm mb-4 bg-stone-50 dark:bg-stone-800/50">
-                    <div id="modal-author-avatar" class="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-lg"><i class="fa-solid fa-user"></i></div>
-                    <div><div id="modal-author" class="font-black text-xs text-stone-900 dark:text-white">Пользователь</div><div class="text-[8px] text-stone-500 uppercase font-black tracking-widest"><span data-t="profile_new_user">Продавец SVALKA</span></div></div>
-                </div>
-                <button onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-md hover:bg-brand-700 transition text-[10px]"><span data-t="modal_contact">Написать продавцу</span></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ЧАТ МОДАЛ -->
-    <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center text-stone-500"><i class="fa-solid fa-user"></i></div>
-                    <div>
-                        <div class="font-black text-sm text-stone-900 dark:text-white" id="chat-author-name">Продавец</div>
-                        <div class="text-[10px] text-brand-600 font-bold line-clamp-1" id="chat-item-title">Товар</div>
-                    </div>
-                </div>
-                <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-xl w-8 h-8"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar" id="chat-messages">
-                <div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div>
-                <div class="flex items-end gap-2 max-w-[85%]">
-                    <div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">
-                        Здравствуйте! Вещь еще актуальна?
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-center gap-2 bg-white dark:bg-stone-900 p-1.5 rounded-full border border-stone-200 dark:border-stone-700">
-                    <input type="text" id="chat-input-field" placeholder="Написать сообщение..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm font-medium text-stone-900 dark:text-white">
-                    <button type="submit" class="w-10 h-10 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md"><i class="fa-solid fa-paper-plane text-xs -ml-0.5"></i></button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Auth & Profile -->
     <div id="auth-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 relative border dark:border-stone-800">
             <button onclick="window.closeModal('auth-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -468,7 +409,6 @@
                     <div>
                         <label class="text-[9px] font-black uppercase text-stone-400 mb-1"><span data-t="auth_avatar">Аватар</span></label>
                         <div class="grid grid-cols-5 gap-2">
-                            <!-- 10 Robot Avatars -->
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="rounded-full bg-stone-100 dark:bg-stone-700 border-2 border-transparent peer-checked:border-brand-600 hover:scale-105 transition"></label>
@@ -489,6 +429,7 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[70]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[80vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -520,6 +461,7 @@
         </div>
     </div>
 
+    <!-- Lightbox -->
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
         <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain">
     </div>
@@ -533,6 +475,8 @@
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const apiKey = ""; // Gemini API Key will be injected
 
         window.currentUser = null; 
         window.loadedItems = []; 
@@ -548,7 +492,6 @@
         window.currentAppLang = 'ru';
         window.activeModalItemId = null; 
 
-        // СЛОВАРИ
         window.i18n = {
             ru: {
                 nav_urgent: "Срочно", btn_add: "+ Пристроить добро", auth_login_btn: "Войти", search_placeholder: "Поиск сокровищ...",
@@ -560,7 +503,8 @@
                 profile_wallet: "Баланс", profile_logout: "Выйти", profile_tab_items: "Мои вещи", empty_title: "Здесь пока пусто",
                 btn_edit: "Редактировать", btn_sold: "Продано", profile_new_user: "Продавец SVALKA", modal_contact: "Написать продавцу",
                 add_title: "Пристроить добро", add_photos_label: "Нажмите, чтобы добавить фото", add_name: "Название", add_price: "Цена", add_desc: "Описание", btn_publish: "Опубликовать",
-                toast_success: "Успешно!", toast_error_login: "Ошибка входа", toast_logout: "Вы вышли", toast_auth_required: "Войдите в аккаунт!", filter_reset: "Сбросить", filter_apply: "Применить"
+                toast_success: "Успешно!", toast_error_login: "Ошибка входа", toast_logout: "Вы вышли", toast_auth_required: "Войдите в аккаунт!", filter_reset: "Сбросить", filter_apply: "Применить",
+                add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ"
             },
             rs: {
                 nav_urgent: "Hitno", btn_add: "+ Dodaj oglas", auth_login_btn: "Prijava", search_placeholder: "Pretraga...",
@@ -572,7 +516,8 @@
                 profile_wallet: "Stanje", profile_logout: "Odjavi se", profile_tab_items: "Moji oglasi", empty_title: "Ovde je prazno",
                 btn_edit: "Uredi", btn_sold: "Prodato", profile_new_user: "Prodavac SVALKA", modal_contact: "Pošalji poruku",
                 add_title: "Dodaj oglas", add_photos_label: "Kliknite da dodate sliku", add_name: "Naziv", add_price: "Cena", add_desc: "Opis", btn_publish: "Objavi",
-                toast_success: "Uspešno!", toast_error_login: "Greška pri prijavi", toast_logout: "Odjavljeni ste", toast_auth_required: "Molimo vas da se prijavite!", filter_reset: "Poništi", filter_apply: "Primeni"
+                toast_success: "Uspešno!", toast_error_login: "Greška pri prijavi", toast_logout: "Odjavljeni ste", toast_auth_required: "Molimo vas da se prijavite!", filter_reset: "Poništi", filter_apply: "Primeni",
+                add_desc_label: "Opis", btn_ai_desc: "Napiši za mene"
             },
             en: {
                 nav_urgent: "Urgent", btn_add: "+ Add Listing", auth_login_btn: "Log In", search_placeholder: "Search items...",
@@ -584,7 +529,8 @@
                 profile_wallet: "Balance", profile_logout: "Log Out", profile_tab_items: "My Listings", empty_title: "Nothing here yet",
                 btn_edit: "Edit", btn_sold: "Sold", profile_new_user: "SVALKA Seller", modal_contact: "Contact Seller",
                 add_title: "Add Listing", add_photos_label: "Click to add photo", add_name: "Title", add_price: "Price", add_desc: "Description", btn_publish: "Publish",
-                toast_success: "Success!", toast_error_login: "Login error", toast_logout: "Logged out", toast_auth_required: "Please log in!", filter_reset: "Reset", filter_apply: "Apply"
+                toast_success: "Success!", toast_error_login: "Login error", toast_logout: "Logged out", toast_auth_required: "Please log in!", filter_reset: "Reset", filter_apply: "Apply",
+                add_desc_label: "Description", btn_ai_desc: "Write it for me"
             }
         };
 
@@ -600,10 +546,7 @@
                 if (window.i18n[lang] && window.i18n[lang][key]) {
                     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = window.i18n[lang][key];
                     else if (el.tagName === 'OPTION') el.innerText = window.i18n[lang][key];
-                    else {
-                        if(el.querySelector('i')) { el.innerHTML = el.querySelector('i').outerHTML + ' ' + window.i18n[lang][key]; }
-                        else { el.innerText = window.i18n[lang][key]; }
-                    }
+                    else el.innerHTML = window.i18n[lang][key]; 
                 }
             });
         };
@@ -628,21 +571,20 @@
             window.filterPriceMax = document.getElementById('filter-price-max').value;
             window.showUrgentOnly = false;
             
-            // Сброс кнопок быстрого фильтра
+            // Сброс кнопок
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
             });
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
             
-            // Если выбрано "Все", выделяем кнопку Все
             if(window.currentCategory === 'Все' || window.currentCategory === '') {
                 const btnAll = document.querySelector('[data-cat="Все"]');
                 if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
             }
 
             window.renderDynamicItems(window.loadedItems);
-            window.toggleFilters(); // Закрываем панель
+            window.toggleFilters(); 
         };
 
         window.resetFilters = () => {
@@ -653,7 +595,7 @@
             window.applyFilters();
         };
 
-        // ИНТЕРФЕЙС ЧАТА
+        // Чат
         window.openChatModal = () => {
             if(!window.currentUser) {
                 window.closeModal('item-modal');
@@ -686,7 +628,7 @@
             container.scrollTop = container.scrollHeight;
         };
 
-        // Задания (Поделиться = 1 поднятие)
+        // Поделиться = 1 поднятие
         window.openShareModal = () => {
             if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             window.openModal('share-modal');
@@ -694,7 +636,6 @@
 
         window.completeShareTask = (btn) => {
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ПРОВЕРКА...';
-            
             const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
             const url = encodeURIComponent("https://svalka.trade/?ref=" + window.currentUser.id);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
@@ -712,11 +653,9 @@
             }, 4000); 
         };
 
-        // Поднятие товара (-1 поднятие)
         window.bumpItem = async () => {
             if(!window.currentUser || !window.activeModalItemId) return;
             if(window.currentUserData.walletBalance < 1) { window.showToast("Нет поднятий. Получите бесплатно!", true); return; }
-            
             try {
                 await supabase.from('items').update({ created_at: new Date().toISOString() }).eq('id', window.activeModalItemId);
                 const newBal = window.currentUserData.walletBalance - 1;
@@ -726,7 +665,6 @@
             } catch(e) { window.showToast("Ошибка", true); }
         };
 
-        // Покупка PRO (Крипто-Оплата)
         window.verifyCryptoPayment = () => {
             const btn = document.getElementById('btn-crypto-paid');
             btn.disabled = true;
@@ -749,36 +687,35 @@
             }, 4000);
         };
 
-        // AUTH & PROFILE
         window.handleAuthChange = async (session) => {
-            window.currentUser = session?.user || null;
-            const ui = {
-                loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
-                wallet: document.getElementById('nav-wallet-block'), econ: document.getElementById('profile-economy-section'),
-                loginWrap: document.getElementById('profile-login-wrapper'),
-                mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile')
-            };
+            try {
+                window.currentUser = session?.user || null;
+                const ui = {
+                    loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
+                    wallet: document.getElementById('nav-wallet-block'), econ: document.getElementById('profile-economy-section'),
+                    loginWrap: document.getElementById('profile-login-wrapper'),
+                    mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile')
+                };
 
-            if (window.currentUser) {
-                if(ui.loginWrap) { ui.loginWrap.classList.add('hidden'); ui.loginWrap.classList.remove('block'); }
-                if(ui.loginBtn) ui.loginBtn.classList.add('hidden'); 
-                if(ui.profileBtn) ui.profileBtn.classList.remove('hidden');
-                if(ui.wallet) ui.wallet.classList.replace('hidden', 'flex'); 
-                if(ui.econ) ui.econ.classList.replace('hidden', 'flex');
-                if(ui.mobLogin) ui.mobLogin.classList.add('hidden');
-                if(ui.mobProfile) ui.mobProfile.classList.remove('hidden');
+                if (window.currentUser) {
+                    if(ui.loginWrap) { ui.loginWrap.classList.add('hidden'); ui.loginWrap.classList.remove('block'); }
+                    if(ui.loginBtn) ui.loginBtn.classList.add('hidden'); 
+                    if(ui.profileBtn) ui.profileBtn.classList.remove('hidden');
+                    if(ui.wallet) ui.wallet.classList.replace('hidden', 'flex'); 
+                    if(ui.econ) ui.econ.classList.replace('hidden', 'flex');
+                    if(ui.mobLogin) ui.mobLogin.classList.add('hidden');
+                    if(ui.mobProfile) ui.mobProfile.classList.remove('hidden');
 
-                const meta = window.currentUser.user_metadata || {};
-                const pName = document.getElementById('profile-name');
-                if(pName) pName.innerText = meta.full_name || "Пользователь";
-                
-                const pEmail = document.getElementById('profile-email');
-                if(pEmail) pEmail.innerText = window.currentUser.email || "";
-                
-                const pAvatar = document.getElementById('profile-avatar-container');
-                if(pAvatar && meta.avatar_url) pAvatar.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
+                    const meta = window.currentUser.user_metadata || {};
+                    const pName = document.getElementById('profile-name');
+                    if(pName) pName.innerText = meta.full_name || "Пользователь";
+                    
+                    const pEmail = document.getElementById('profile-email');
+                    if(pEmail) pEmail.innerText = window.currentUser.email || "";
+                    
+                    const pAvatar = document.getElementById('profile-avatar-container');
+                    if(pAvatar && meta.avatar_url) pAvatar.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
 
-                try {
                     const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
                     if(profile) {
                         window.currentUserData = { walletBalance: profile.wallet_balance || 0, isPro: profile.is_pro || false };
@@ -790,17 +727,19 @@
                     if(pb) pb.innerText = window.currentUserData.walletBalance;
                     if(nb) nb.innerText = window.currentUserData.walletBalance + ' шт.';
                     if(window.currentUserData.isPro) document.getElementById('profile-pro-badge')?.classList.remove('hidden');
-                } catch(e) { console.error("Profile fetch error:", e); }
-                
-                if (window.renderProfileTabs) window.renderProfileTabs();
-            } else {
-                if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
-                if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
-                if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
-                if(ui.wallet) ui.wallet.classList.replace('flex', 'hidden'); 
-                if(ui.econ) ui.econ.classList.replace('flex', 'hidden');
-                if(ui.mobLogin) ui.mobLogin.classList.remove('hidden');
-                if(ui.mobProfile) ui.mobProfile.classList.add('hidden');
+                    
+                    if (window.renderProfileTabs) window.renderProfileTabs();
+                } else {
+                    if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
+                    if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
+                    if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
+                    if(ui.wallet) ui.wallet.classList.replace('flex', 'hidden'); 
+                    if(ui.econ) ui.econ.classList.replace('flex', 'hidden');
+                    if(ui.mobLogin) ui.mobLogin.classList.remove('hidden');
+                    if(ui.mobProfile) ui.mobProfile.classList.add('hidden');
+                }
+            } catch(e) {
+                console.error("Critical auth error:", e);
             }
         };
 
@@ -845,16 +784,25 @@
             }
         };
 
+        // БЕЗОПАСНЫЙ ВЫХОД
         window.logout = async () => { 
-            try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
-            // Безопасная очистка кэша
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('sb-')) localStorage.removeItem(key);
-            });
-            sessionStorage.clear();
+            try { 
+                await supabase.auth.signOut(); 
+            } catch(e) { console.warn(e); }
+            
+            // 100% безопасная очистка локального кэша Supabase
+            try {
+                const keysToRemove = [];
+                for(let i=0; i<localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if(key && key.startsWith('sb-')) keysToRemove.push(key);
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                sessionStorage.clear();
+            } catch(e) { console.warn("Cache clean error", e); }
+
             window.currentUser = null;
-            window.closeModal('profile-modal'); 
-            window.location.reload(); 
+            window.location.href = '/'; 
         };
 
         window.switchProfileTab = tab => { 
@@ -877,11 +825,9 @@
             const tabBtn = document.getElementById('tab-my-items');
             if (tabBtn) tabBtn.innerHTML = `<span data-t="profile_tab_items">Мои вещи</span> (${myItems.length})`;
 
-            const itemsToShow = window.currentProfileTab === 'items' ? myItems : [];
-
-            if(itemsToShow.length > 0) {
+            if(myItems.length > 0) {
                 grid.style.display = 'grid'; empty.style.display = 'none';
-                grid.innerHTML = itemsToShow.map(i => {
+                grid.innerHTML = myItems.map(i => {
                     const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || '');
                     return `
                     <div class="item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col" onclick="window.openItemDetails('${i.id}')">
@@ -897,7 +843,7 @@
             } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
         };
 
-        // ITEMS & FILTERING
+        // БЕЗОПАСНАЯ ЗАГРУЗКА ИЗ SUPABASE
         window.fetchItems = async () => {
             try {
                 const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false });
@@ -929,7 +875,7 @@
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
                 const loader = document.getElementById('loading-placeholder');
-                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs">Ошибка загрузки. Обновите страницу.</p>`;
+                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs">Ошибка загрузки.</p>`;
             } finally {
                 const loader = document.getElementById('loading-placeholder');
                 if (loader) loader.style.display = 'none';
@@ -940,13 +886,11 @@
             try {
                 window.loadedItems = items;
                 
-                // Фильтрация
                 let filtered = items.filter(i => {
                     const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
                     const searchQ = (window.searchQuery || '').toLowerCase();
                     const titleStr = (i.title || '').toLowerCase();
-                    const descStr = (i.description || '').toLowerCase();
-                    const matchSearch = titleStr.includes(searchQ) || descStr.includes(searchQ);
+                    const matchSearch = titleStr.includes(searchQ);
                     const matchUrgent = !window.showUrgentOnly || i.isHighlighted;
                     const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
                     
@@ -958,18 +902,15 @@
                     return matchCat && matchSearch && matchUrgent && matchCity && matchPrice;
                 });
 
-                // Сортировка
                 const getMs = (t) => new Date(t).getTime();
                 if (window.currentSortMode === 'cheap') { filtered.sort((a, b) => Number(a.price) - Number(b.price)); } 
                 else if (window.currentSortMode === 'exp') { filtered.sort((a, b) => Number(b.price) - Number(a.price)); } 
                 else { filtered.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt)); }
 
-                // РАЗДЕЛЯЕМ НА VIP И ОБЫЧНЫЕ
                 const vipItems = filtered.filter(i => i.isHighlighted).sort(() => 0.5 - Math.random()).slice(0, 10);
                 const vipIds = new Set(vipItems.map(v => v.id));
                 const regularItems = filtered.filter(i => !vipIds.has(i.id));
 
-                // Рендер VIP (Срочно)
                 const vipSection = document.getElementById('vip-section');
                 const vipGrid = document.getElementById('vip-items-grid');
                 if (vipItems.length > 0 && !window.showUrgentOnly) {
@@ -979,7 +920,6 @@
                     vipSection.classList.add('hidden');
                 }
 
-                // Рендер Обычных
                 const mainGrid = document.getElementById('main-items-grid');
                 if (window.showUrgentOnly) {
                     mainGrid.innerHTML = vipItems.length ? vipItems.map(i => createCardHtml(i, true)).join('') : '<div class="col-span-full text-center text-stone-400 py-10 font-black uppercase tracking-widest text-xs">Ничего не найдено</div>';
@@ -1001,7 +941,6 @@
             window.renderDynamicItems(window.loadedItems);
         };
 
-        // Шаблон карточки
         function createCardHtml(i, isVIP) {
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative';
             const imgHeight = 'h-28 sm:h-32';
@@ -1070,7 +1009,6 @@
             });
             event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
             
-            // Синхронизируем панель фильтров
             const catSelect = document.getElementById('filter-category');
             if (catSelect) {
                 Array.from(catSelect.options).forEach(opt => {
@@ -1096,11 +1034,79 @@
             window.renderDynamicItems(window.loadedItems);
         };
 
-        // NEW ITEM UPLOAD
+        // GEMINI AI INTEGRATION
+        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "Ты — профессиональный копирайтер. Твоя задача — писать честные, привлекательные и продающие описания для б/у или новых вещей, которые пользователи хотят продать на барахолке." }] }
+            };
+
+            for (let i = 0; i <= retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (error) {
+                    if (i === retries) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        window.generateAIDescription = async () => {
+            const titleInput = document.getElementById('item-title').value;
+            const categoryInput = document.getElementById('item-category').value;
+            const currentDesc = document.getElementById('item-desc').value;
+            
+            if (!titleInput) {
+                window.showToast("Сначала укажите название вещи!", true);
+                return;
+            }
+
+            const btn = document.getElementById('btn-ai-desc');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Пишем...';
+            btn.disabled = true;
+
+            const langMap = { 'ru': 'Russian', 'rs': 'Serbian', 'en': 'English' };
+            const targetLang = langMap[window.currentAppLang] || 'Russian';
+
+            const prompt = `Напиши привлекательное описание для продажи товара.
+Название: ${titleInput}
+Категория: ${categoryInput}
+Дополнительные заметки пользователя: ${currentDesc || 'Нет'}
+Язык: ${targetLang}
+Сделай описание дружелюбным, готовым к продаже. Не используй markdown-заголовки. Максимум 3 абзаца. Можно добавить пару эмодзи.`;
+
+            try {
+                const text = await callGeminiAPI(prompt);
+                if (text) {
+                    document.getElementById('item-desc').value = text;
+                    window.showToast("✨ Описание сгенерировано!");
+                } else {
+                    window.showToast("Не удалось сгенерировать текст.", true);
+                }
+            } catch (e) {
+                console.error(e);
+                window.showToast("Ошибка сервиса ИИ. Попробуйте позже.", true);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // NEW ITEM UPLOAD (Storage API Implementation)
         window.checkAuthAndOpenAddModal = () => {
             if(!window.currentUser) { 
                 window.openModal('auth-modal'); 
-                window.showToast("Сначала войдите!", true); 
+                window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Сначала войдите!", true); 
             } else { window.openModal('add-modal'); } 
         };
 
@@ -1110,7 +1116,7 @@
             for(let file of files) {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    window.tempPhotos.push(ev.target.result);
+                    window.tempPhotos.push(ev.target.result); // Base64 temporarily
                     container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border dark:border-stone-700"><img src="${ev.target.result}" class="w-full h-full object-cover"></div>`;
                 };
                 reader.readAsDataURL(file);
@@ -1131,12 +1137,40 @@
                 const desc = document.getElementById('item-desc').value;
                 const meta = window.currentUser.user_metadata || {};
                 
+                const imgUrlsToSave = [];
+                
+                // РЕАЛЬНАЯ ЗАГРУЗКА В SUPABASE STORAGE (Для решения проблемы зависания БД)
+                for (let i = 0; i < window.tempPhotos.length; i++) {
+                    const dataUrl = window.tempPhotos[i];
+                    if (dataUrl.startsWith('http')) {
+                        imgUrlsToSave.push(dataUrl);
+                    } else {
+                        // Конвертация Base64 обратно в Blob для отправки в Storage
+                        const res = await fetch(dataUrl);
+                        const blob = await res.blob();
+                        const fileExt = blob.type.split('/')[1] || 'jpg';
+                        const fileName = `${window.currentUser.id}_${Date.now()}_${i}.${fileExt}`;
+                        
+                        const { error: uploadError } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: blob.type });
+                        if (uploadError) {
+                            console.error("Ошибка загрузки фото в Storage:", uploadError);
+                            // Если не получилось загрузить, используем заглушку, но не ломаем базу огромным base64
+                            continue; 
+                        }
+                        
+                        const { data: publicUrlData } = supabase.storage.from('item-images').getPublicUrl(fileName);
+                        if (publicUrlData && publicUrlData.publicUrl) {
+                            imgUrlsToSave.push(publicUrlData.publicUrl);
+                        }
+                    }
+                }
+
                 const newItem = {
                     title, category: cat, city, price: Number(price), description: desc,
                     user_id: window.currentUser.id, 
                     author_name: meta.full_name || 'Пользователь',
                     author_avatar: meta.avatar_url || '',
-                    images: window.tempPhotos.length ? [window.tempPhotos[0]] : [],
+                    images: imgUrlsToSave,
                     currency: document.getElementById('item-currency').value,
                     is_highlighted: isProUser
                 };
@@ -1150,7 +1184,10 @@
                 window.tempPhotos = [];
                 document.getElementById('photo-preview-list').innerHTML = '';
                 window.fetchItems();
-            } catch(e) { window.showToast(e.message, true); }
+            } catch(e) { 
+                console.error(e);
+                window.showToast(e.message || "Произошла ошибка", true); 
+            }
             finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">Опубликовать</span>`; }
         };
 
