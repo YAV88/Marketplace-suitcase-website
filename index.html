@@ -14,32 +14,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap');
         
-        /* Тематический фон - сетка / миллиметровка */
+        /* Тематический фон - Вайб барахолки (Винтажная текстура) */
         body { 
             transition: background-color 0.3s, color 0.3s; 
-            background-color: #f8fafc;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-color: #f4f1ea; /* Цвет мягкого крафта/винтажной бумаги */
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
         }
         .dark body { 
-            background-color: #0f172a; 
-            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-color: #121212; 
+            background-image: url("https://www.transparenttextures.com/patterns/black-paper.png"); 
         }
 
-        /* Декоративные водяные знаки для тематики маркетплейса */
+        /* Декоративные водяные знаки (барахолка) */
         @media (min-width: 1280px) {
             body::before, body::after {
                 font-family: 'Font Awesome 6 Free';
                 font-weight: 900;
                 position: fixed;
                 font-size: 14rem;
-                color: rgba(0, 0, 0, 0.02);
+                color: rgba(0, 0, 0, 0.025);
                 z-index: -1;
                 pointer-events: none;
             }
-            body::before { content: '\f466'; left: -2%; top: 25%; transform: rotate(-15deg); } /* Коробка */
-            body::after { content: '\f02b'; right: -2%; bottom: 15%; transform: rotate(15deg); } /* Тег/Бирка */
-            .dark body::before, .dark body::after { color: rgba(255, 255, 255, 0.01); }
+            body::before { content: '\f466'; left: -2%; top: 25%; transform: rotate(-15deg); } /* Коробка с вещами */
+            body::after { content: '\f0eb'; right: -2%; bottom: 15%; transform: rotate(15deg); } /* Старая лампа */
+            .dark body::before, .dark body::after { color: rgba(255, 255, 255, 0.015); }
         }
 
         .item-card { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease; border-radius: 1.5rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
@@ -69,7 +68,7 @@
         .dark .cat-btn.active { background-color: white; color: #111; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 antialiased">
+<body class="text-gray-900 dark:text-gray-100 antialiased">
 
     <nav class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -156,7 +155,6 @@
         </div>
 
         <div class="mb-10">
-            <!-- Исправлено: flex-wrap позволяет категориям переноситься на новую строку на мобильных телефонах -->
             <div class="flex flex-wrap items-center gap-3">
                 <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-sm bg-gray-900 text-white dark:bg-white dark:text-gray-900" data-t="cat_all">Все категории</button>
                 <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-fire mr-2"></i><span data-t="nav_urgent">Срочно</span></button>
@@ -186,7 +184,7 @@
         <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12 min-h-[400px]">
             <div id="loading-placeholder" class="col-span-full text-center py-20 text-gray-400">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
-                <p class="font-black uppercase text-[10px] tracking-widest">Загрузка...</p>
+                <p class="font-black uppercase text-[10px] tracking-widest mt-4">Загрузка...</p>
             </div>
         </div>
     </main>
@@ -207,7 +205,6 @@
                     <div>
                         <label class="text-[10px] font-black uppercase text-gray-400 mb-1" data-t="auth_avatar">Выберите аватар</label>
                         <div class="grid grid-cols-5 gap-3 mt-2">
-                            <!-- Исправлено: 10 аватарок роботов -->
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="peer hidden" checked><img src="https://api.dicebear.com/9.x/bottts/svg?seed=R2D2" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=WallE" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
                             <label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="peer hidden"><img src="https://api.dicebear.com/9.x/bottts/svg?seed=Bender" class="rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-transparent peer-checked:border-red-600 hover:scale-105 transition"></label>
@@ -248,7 +245,7 @@
                         <button onclick="window.logout()" class="bg-white dark:bg-gray-700 border px-6 py-3 rounded-xl font-black text-[10px] uppercase hover:text-red-600 transition shadow-sm" data-t="profile_logout">Выйти</button>
                     </div>
 
-                    <div id="profile-login-wrapper" class="block mt-2">
+                    <div id="profile-login-wrapper" class="hidden mt-2">
                         <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-red-600 text-white px-8 py-3 rounded-xl font-black text-[10px] uppercase shadow-lg" data-t="auth_login_btn">Войти в аккаунт</button>
                     </div>
                 </div>
@@ -415,18 +412,26 @@
         window.handleAuthChange = async (session) => {
             window.currentUser = session?.user || null;
             const ui = {
-                loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
-                wallet: document.getElementById('nav-wallet-block'), econ: document.getElementById('profile-economy-section'),
+                loginBtn: document.getElementById('nav-login-btn'),
+                profileBtn: document.getElementById('nav-profile-btn'),
+                wallet: document.getElementById('nav-wallet-block'),
+                econ: document.getElementById('profile-economy-section'),
                 loginWrap: document.getElementById('profile-login-wrapper'),
-                mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile')
+                mobLogin: document.getElementById('mob-nav-login'),
+                mobProfile: document.getElementById('mob-nav-profile')
             };
 
             if (window.currentUser) {
+                // Guaranteed hide login button
+                if(ui.loginWrap) {
+                    ui.loginWrap.classList.add('hidden');
+                    ui.loginWrap.classList.remove('block');
+                }
+                
                 if(ui.loginBtn) ui.loginBtn.classList.add('hidden'); 
                 if(ui.profileBtn) ui.profileBtn.classList.remove('hidden');
                 if(ui.wallet) ui.wallet.classList.replace('hidden', 'flex'); 
                 if(ui.econ) ui.econ.classList.replace('hidden', 'flex');
-                if(ui.loginWrap) ui.loginWrap.style.display = 'none';
                 if(ui.mobLogin) ui.mobLogin.classList.add('hidden');
                 if(ui.mobProfile) ui.mobProfile.classList.remove('hidden');
 
@@ -452,11 +457,16 @@
                 
                 if (window.renderProfileTabs) window.renderProfileTabs();
             } else {
+                // Show login button
+                if(ui.loginWrap) {
+                    ui.loginWrap.classList.remove('hidden');
+                    ui.loginWrap.classList.add('block');
+                }
+                
                 if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
                 if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
                 if(ui.wallet) ui.wallet.classList.replace('flex', 'hidden'); 
                 if(ui.econ) ui.econ.classList.replace('flex', 'hidden');
-                if(ui.loginWrap) ui.loginWrap.style.display = 'block';
                 if(ui.mobLogin) ui.mobLogin.classList.remove('hidden');
                 if(ui.mobProfile) ui.mobProfile.classList.add('hidden');
             }
@@ -554,11 +564,29 @@
                 const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 if (data) {
-                    const mapped = data.map(i => ({
-                        id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
-                        city: i.city || 'Сербия', imageUrl: i.image_url, images: i.images, authorName: i.author_name || 'Продавец',
-                        authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.is_highlighted, category: i.category || 'Все'
-                    }));
+                    // SAFE MAPPING to prevent crashes from bad data
+                    const mapped = data.map(i => {
+                        try {
+                            return {
+                                id: i.id, 
+                                title: i.title || 'Без названия', 
+                                description: i.description || '', 
+                                price: i.price || 0, 
+                                currency: i.currency || 'RSD',
+                                city: i.city || 'Сербия', 
+                                imageUrl: i.image_url, 
+                                images: Array.isArray(i.images) ? i.images : [], 
+                                authorName: i.author_name || 'Продавец',
+                                authorAvatar: i.author_avatar, 
+                                userId: i.user_id, 
+                                isHighlighted: !!i.is_highlighted, 
+                                category: i.category || 'Все'
+                            };
+                        } catch(err) {
+                            return null;
+                        }
+                    }).filter(Boolean); // Remove any null items
+                    
                     window.renderDynamicItems(mapped);
                 } else {
                     document.getElementById('loading-placeholder').style.display = 'none';
@@ -566,7 +594,7 @@
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
                 const loader = document.getElementById('loading-placeholder');
-                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest">Ошибка загрузки. Проверьте подключение.</p>`;
+                if (loader) loader.innerHTML = `<p class="text-red-500 font-bold uppercase tracking-widest text-xs">Ошибка загрузки. Проверьте базу данных.</p>`;
             }
         };
 
@@ -713,8 +741,13 @@
             finally { btn.disabled = false; btn.innerText = window.i18n[window.currentAppLang]['btn_publish']; }
         };
 
-        // Initialize
+        // INITIALIZE
+        // Guarantee we fetch session right away on boot
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            window.handleAuthChange(session);
+        });
         supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
+        
         window.fetchItems();
         window.changeLang('ru');
     </script>
