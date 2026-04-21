@@ -146,7 +146,7 @@
                         <i class="fa-regular fa-envelope"></i>
                         <span id="nav-chat-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
-                    <button onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 flex"><i class="fa-regular fa-user"></i></button>
+                    <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
                 </div>
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-7 py-3 rounded-full font-black shadow-lg shadow-brand-600/30 uppercase text-[11px] tracking-widest transition" data-t="btn_add">+ Пристроить добро</button>
             </div>
@@ -292,7 +292,7 @@
         <!-- КНОПКИ КАТЕГОРИЙ -->
         <div class="mb-8 flex flex-wrap items-center gap-2 sm:gap-2.5">
             <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600" data-t="cat_all_btn">Все</button>
-            <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition"><i class="fa-solid fa-fire mr-1"></i><span data-t="nav_urgent">Срочно</span></button>
+            <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition"><i class="fa-solid fa-fire mr-1"></i> <span data-t="nav_urgent">Срочно</span></button>
             <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition" data-t="cat_clothes">Одежда</button>
             <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition" data-t="cat_electronics">Электроника</button>
             <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> <span data-t="cat_consoles">Консоли</span></button>
@@ -305,16 +305,16 @@
             <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> <span data-t="cat_free">Даром</span></button>
         </div>
 
-        <!-- VIP СЕКЦИЯ -->
+        <!-- VIP ЛЕНТА -->
         <div id="vip-section" class="mb-10 hidden">
             <div class="flex items-center gap-2 mb-4 pl-1">
                 <i class="fa-solid fa-gem text-amber-500"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-800 dark:text-stone-200" data-t="nav_urgent">Срочно и Важно</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 items-start"></div>
+            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 items-start"></div>
         </div>
 
-        <!-- ОБЫЧНАЯ ЛЕНТА -->
+        <!-- ОСНОВНАЯ ЛЕНТА -->
         <div>
             <div class="flex items-center gap-2 mb-4 pl-1">
                 <i class="fa-regular fa-clock text-stone-400"></i>
@@ -326,7 +326,7 @@
                 <p class="font-black uppercase text-[9px] tracking-widest mt-2">Загрузка...</p>
             </div>
 
-            <div id="main-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 min-h-[400px] items-start hidden"></div>
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 min-h-[400px] items-start hidden"></div>
             
             <div class="flex justify-center mt-8 mb-4">
                 <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm" data-t="btn_load_more">Показать еще</button>
@@ -403,15 +403,18 @@
                 <div class="flex-1">
                     <div class="flex items-center gap-2">
                         <h2 id="profile-name" class="text-xl font-black text-stone-900 dark:text-white">Гость</h2>
-                        <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm">VIP</span>
+                        <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">VIP</span>
                     </div>
                     <p id="profile-email" class="text-[10px] text-stone-500 mb-2">Не авторизован</p>
                     
                     <div id="profile-economy-section" class="hidden gap-2">
                         <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-sm font-black text-sm">
-                            <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span> <span class="text-stone-900 dark:text-white">шт.</span>
+                            <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span> <span class="text-stone-900 dark:text-white ml-1">шт.</span>
                         </div>
                         <button onclick="window.logout()" class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg font-black text-[9px] uppercase text-stone-600 hover:text-red-500 transition shadow-sm" data-t="profile_logout">Выйти</button>
+                    </div>
+                    <div id="profile-login-wrapper" class="block">
+                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-5 py-2 rounded-lg font-black text-[9px] uppercase shadow-md"><span data-t="auth_login_btn">Войти</span></button>
                     </div>
                 </div>
             </div>
@@ -419,7 +422,7 @@
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-5 px-6 border-b-2 border-brand-600 text-brand-600 transition" data-t="profile_tab_items">Мои вещи</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-5 px-6 border-b-2 border-transparent text-stone-400 transition ml-4" data-t="profile_tab_saved">Заначка</button>
             </div>
-            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 items-start" style="display: none;"></div>
+            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 items-start" style="display: none;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-black uppercase text-xs">
                 <i class="fa-solid fa-box-open text-3xl mb-2 opacity-20"></i> <span data-t="empty_title">Пусто</span>
             </div>
@@ -430,12 +433,12 @@
     <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 uppercase italic text-stone-900 dark:text-white" data-t="add_title">Пристроить добро</h2>
+            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 uppercase italic text-stone-900 dark:text-white"><span data-t="add_title">Пристроить добро</span></h2>
             <form id="add-form" class="flex flex-col gap-4" onsubmit="event.preventDefault(); window.submitNewItem(event);">
                 <div class="flex gap-3 overflow-x-auto pb-1" id="photo-preview-list"></div>
                 <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-5 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
                     <i class="fa-solid fa-camera-retro text-2xl mb-1"></i>
-                    <span class="font-black text-[9px] uppercase" data-t="add_photos_label">Добавить фото</span>
+                    <span class="font-black text-[9px] uppercase"><span data-t="add_photos_label">Добавить фото</span></span>
                     <input type="file" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
                 </label>
                 <input type="text" id="item-title" placeholder="Название" data-t="add_name" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-sm outline-none" required>
@@ -480,14 +483,16 @@
                     <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-sm outline-none" required>
                     <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none"><option>RSD</option><option>EUR</option></select>
                 </div>
-                <div class="flex flex-col">
+                
+                <div class="relative flex flex-col">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[9px] font-black uppercase text-stone-400" data-t="add_desc_label">Описание</span>
                         <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-[9px] font-black uppercase text-brand-600 bg-brand-50 border border-brand-200 px-2 py-1 rounded hover:bg-brand-100 transition">✨ <span data-t="btn_ai_desc">Сгенерировать ИИ</span></button>
                     </div>
                     <textarea id="item-desc" placeholder="Описание..." data-t="add_desc" rows="3" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none"></textarea>
                 </div>
-                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest text-[10px]" data-t="btn_publish">Опубликовать</button>
+
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-brand-700 transition text-[10px]"><span data-t="btn_publish">Опубликовать</span></button>
             </form>
         </div>
     </div>
@@ -565,6 +570,10 @@
             <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-5 border border-stone-200 dark:border-stone-700 mb-6">
                 <div class="text-xs font-bold text-stone-600 dark:text-stone-300 mb-2">Отправьте ровно:</div>
                 <div class="text-2xl font-black text-stone-900 dark:text-white mb-4">5.00 USDT <span class="text-[10px] text-stone-400 align-middle">TRC20</span></div>
+                <div class="w-32 h-32 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-sm relative overflow-hidden mb-4">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ_MOCK_WALLET_ADDRESS_FOR_TRC20" class="w-full h-full">
+                    <div id="qr-scanner" class="hidden qr-scan-line"></div>
+                </div>
                 <div class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Адрес кошелька (TRC20)</div>
                 <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-lg border border-stone-200 dark:border-stone-700">
                     <input type="text" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-xs font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center">
@@ -598,7 +607,7 @@
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="policy_text">
                 <p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p>
                 <p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
             </div>
@@ -608,7 +617,7 @@
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="rules_text">
                 <p>1. Запрещена продажа нелегальных предметов.</p>
                 <p>2. Запрещен спам (дублирование одинаковых объявлений).</p>
                 <p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>
@@ -623,6 +632,8 @@
         <button id="lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:scale-110 transition z-50 hidden" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
         <button class="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition z-50" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
     </div>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999] transition-opacity opacity-0 pointer-events-none"><span id="toast-msg">Готово!</span></div>
 
     <!-- MAIN SCRIPT -->
     <script type="module">
@@ -665,7 +676,9 @@
                 auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_avatar: "Выберите аватар", auth_pass_hint: "Мин. 8 символов: буквы + цифры", auth_login_btn: "Войти", auth_forgot_pass: "Забыли пароль?",
                 profile_tab_items: "Мои вещи", profile_tab_saved: "Заначка", profile_logout: "Выйти", profile_new_user: "Продавец SVALKA",
                 add_title: "Пристроить добро", add_photos_label: "Добавить фото", add_name: "Название", add_price: "Цена", add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ", btn_publish: "Опубликовать",
-                modal_contact: "Написать продавцу", mob_messages: "Сообщения", mob_emergency_exit: "Экстренный выход", mob_free_bumps: "Бесплатные поднятия"
+                modal_contact: "Написать продавцу", mob_messages: "Сообщения", mob_emergency_exit: "Экстренный выход", mob_free_bumps: "Бесплатные поднятия",
+                policy_text: "<p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>",
+                rules_text: "<p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам (дублирование одинаковых объявлений).</p><p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>"
             },
             rs: {
                 search_placeholder: "Pretraga...", promo_title: "Podrži projekat!", promo_subtitle: "Sajt je u BETA verziji. Pozovi prijatelje i dobij 3 besplatna podizanja!",
@@ -677,7 +690,9 @@
                 auth_tab_login: "Ulaz", auth_tab_register: "Registracija", auth_avatar: "Izaberite avatar", auth_pass_hint: "Min. 8 karaktera: slova + brojevi", auth_login_btn: "Prijava", auth_forgot_pass: "Zaboravili ste lozinku?",
                 profile_tab_items: "Moji oglasi", profile_tab_saved: "Sačuvano", profile_logout: "Izlaz", profile_new_user: "Prodavac SVALKA",
                 add_title: "Dodaj oglas", add_photos_label: "Dodaj sliku", add_name: "Naziv", add_price: "Cena", add_desc_label: "Opis", btn_ai_desc: "Generiši AI", btn_publish: "Objavi",
-                modal_contact: "Kontakt", mob_messages: "Poruke", mob_emergency_exit: "Hitni izlaz", mob_free_bumps: "Besplatna podizanja"
+                modal_contact: "Kontakt", mob_messages: "Poruke", mob_emergency_exit: "Hitni izlaz", mob_free_bumps: "Besplatna podizanja",
+                policy_text: "<p>Koristimo kolačiće i čuvamo vaše podatke isključivo za pravilan rad SVALKA servisa. Vaše lozinke su bezbedno šifrovane.</p><p>Fotografije se otpremaju na naše zaštićene Supabase servere.</p>",
+                rules_text: "<p>1. Prodaja nelegalnih predmeta je zabranjena.</p><p>2. Spam (dupliranje istih oglasa) je zabranjen.</p><p>3. Sastajte se sa kupcima lično, čuvajte se prevaranata.</p>"
             },
             en: {
                 search_placeholder: "Search...", promo_title: "Support us!", promo_subtitle: "Site in BETA. Invite friends and get 3 free bumps!",
@@ -689,7 +704,9 @@
                 auth_tab_login: "Login", auth_tab_register: "Sign Up", auth_avatar: "Choose Avatar", auth_pass_hint: "Min. 8 chars: letters + numbers", auth_login_btn: "Log In", auth_forgot_pass: "Forgot password?",
                 profile_tab_items: "My Listings", profile_tab_saved: "Saved", profile_logout: "Log Out", profile_new_user: "SVALKA Seller",
                 add_title: "Add Listing", add_photos_label: "Add photos", add_name: "Title", add_price: "Price", add_desc_label: "Description", btn_ai_desc: "Generate AI", btn_publish: "Publish",
-                modal_contact: "Contact Seller", mob_messages: "Messages", mob_emergency_exit: "Emergency exit", mob_free_bumps: "Free bumps"
+                modal_contact: "Contact Seller", mob_messages: "Messages", mob_emergency_exit: "Emergency exit", mob_free_bumps: "Free bumps",
+                policy_text: "<p>We use cookies and store your data solely for the proper operation of the SVALKA service. Your passwords are securely encrypted.</p><p>Photos are uploaded to our secure Supabase servers.</p>",
+                rules_text: "<p>1. Sale of illegal items is prohibited.</p><p>2. Spam (duplicating the same listings) is prohibited.</p><p>3. Meet buyers in person, beware of scammers.</p>"
             }
         };
 
@@ -714,7 +731,16 @@
         window.toggleDarkMode = () => document.documentElement.classList.toggle('dark');
         window.toggleMobileMenu = () => document.getElementById('mobile-menu').classList.toggle('translate-x-full');
         window.toggleFilters = () => document.getElementById('filter-panel-wrapper').classList.toggle('active');
-        window.showToast = (msg, err=false) => { const t = document.getElementById('toast'); t.innerHTML = `<span>${msg}</span>`; t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 ${err?'bg-red-600':'bg-stone-900 dark:bg-white'} text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity opacity-100`; setTimeout(()=>t.classList.add('opacity-0'), 3000); };
+        
+        window.showToast = (msg, err=false) => { 
+            const t = document.getElementById('toast'); 
+            const tMsg = document.getElementById('toast-msg');
+            if (tMsg) tMsg.innerText = msg;
+            if (t) {
+                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 ${err?'bg-red-600':'bg-stone-900 dark:bg-white'} text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity opacity-100`; 
+                setTimeout(()=>t.classList.add('opacity-0'), 3000); 
+            }
+        };
 
         // Lightbox
         window.currentLightboxImages = [];
@@ -745,7 +771,7 @@
         // Favorites
         window.toggleFavorite = async (btn, event, itemId) => {
             event.stopPropagation();
-            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             if (!itemId) return;
             const isLiked = window.userFavorites.has(itemId);
             const icon = btn.querySelector('i');
@@ -760,6 +786,7 @@
                     icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
+                window.renderGrid();
             } catch(e) { console.error(e); }
         };
 
@@ -770,13 +797,15 @@
             const tabL = document.getElementById('tab-login');
             const tabR = document.getElementById('tab-register');
             if(mode === 'register') { 
-                fields.classList.replace('hidden', 'flex'); 
-                tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition";
-                tabL.className = "text-stone-400 pb-1 transition";
+                fields.classList.remove('hidden');
+                fields.classList.add('flex'); 
+                tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+                tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
             } else { 
-                fields.classList.replace('flex', 'hidden'); 
-                tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition";
-                tabR.className = "text-stone-400 pb-1 transition";
+                fields.classList.add('hidden');
+                fields.classList.remove('flex'); 
+                tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+                tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
             }
         };
 
@@ -785,7 +814,7 @@
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-password').value;
             const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
-            if (!passRegex.test(pass)) { window.showToast(window.i18n[window.currentAppLang]['auth_pass_error'] || "Пароль слишком простой", true); return; }
+            if (!passRegex.test(pass)) { window.showToast(window.i18n[window.currentAppLang]['auth_pass_error'] || "Слишком простой пароль", true); return; }
             btn.disabled = true; btn.innerText = "...";
             try {
                 if (window.authMode === 'login') {
@@ -808,7 +837,7 @@
             if(!email) { window.showToast("Введите Email!", true); return; }
             const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
             if(error) window.showToast(error.message, true);
-            else window.showToast("Ссылка отправлена на почту!");
+            else window.showToast(window.i18n[window.currentAppLang]['auth_reset_sent']);
         };
 
         window.logout = () => { 
@@ -850,11 +879,11 @@
                 b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
             });
             const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
             
             if(window.currentCategory === 'Все' || window.currentCategory === '') {
                 const btnAll = document.querySelector('[data-cat="Все"]');
-                if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
+                if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
             }
             window.renderDynamicItems(window.loadedItems);
             window.toggleFilters(); 
@@ -875,12 +904,12 @@
             window.displayedCount = 12; 
             
             const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
 
             document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
+                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition cursor-pointer";
             });
-            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600";
+            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
             
             const catSelect = document.getElementById('filter-category');
             if (catSelect) {
@@ -896,23 +925,21 @@
             window.displayedCount = 12; 
             const btn = document.getElementById('btn-cat-urgent');
             if (window.showUrgentOnly) {
-                btn.className = "cat-btn px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md";
+                btn.className = "cat-btn px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer";
                 window.currentCategory = 'Все';
                 document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition";
+                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition cursor-pointer";
                 });
             } else {
-                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition";
+                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
             }
             window.renderDynamicItems(window.loadedItems);
         };
 
         window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
-
         window.loadMoreItems = () => { window.displayedCount += 12; window.renderGrid(); };
 
-        // Core Functions
         function mapItemData(i) {
             try {
                 return {
@@ -1054,18 +1081,19 @@
 
             return `
             <div class="${cardClass}" onclick="window.openItemDetails('${i.id}')">
-                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110" onclick="window.toggleFavorite(this, event, '${i.id}')">
+                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
                     <i class="fa-solid ${iconClass} text-[10px] drop-shadow-sm"></i>
                 </button>
                 <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${isVIP ? '<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">ТОП 💎</div>' : ''}
                 </div>
-                <div class="p-2 flex flex-col">
+                <div class="p-2.5 flex-1 flex flex-col justify-between">
                     <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[9px] sm:text-[10px] uppercase font-black text-stone-400 flex justify-between items-center">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
+                        <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
                 </div>
             </div>`;
@@ -1109,7 +1137,7 @@
             if (isOwner) {
                 ctrl.classList.replace('hidden', 'flex');
                 const vipBtnText = document.getElementById('btn-owner-vip-text');
-                if(window.currentUserData && window.currentUserData.isPro) {
+                if(window.currentUserData && window.currentUserData.is_pro) {
                     vipBtnText.innerText = "В ТОП (Бесплатно PRO)";
                 } else {
                     vipBtnText.innerText = "Купить PRO";
@@ -1126,12 +1154,12 @@
             const t1 = document.getElementById('tab-my-items');
             const t2 = document.getElementById('tab-my-saved');
             if (t1) {
-                if (tab === 'items') t1.classList.add('active', 'border-brand-600', 'text-brand-600');
-                else t1.classList.remove('active', 'border-brand-600', 'text-brand-600');
+                if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); }
             }
             if (t2) {
-                if (tab === 'saved') t2.classList.add('active', 'border-brand-600', 'text-brand-600');
-                else t2.classList.remove('active', 'border-brand-600', 'text-brand-600');
+                if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); }
             }
             window.renderProfileTabs(); 
         };
@@ -1180,7 +1208,9 @@
                 document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-3"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Да, еще актуально! Отвечу подробнее чуть позже.</div></div>`);
                 container.scrollTop = container.scrollHeight;
                 window.showToast("Новое сообщение!");
-                document.getElementById('nav-chat-badge').classList.remove('hidden');
+                
+                const badge = document.getElementById('nav-chat-badge');
+                if(badge) badge.classList.remove('hidden');
             }, 2500);
         };
 
@@ -1199,8 +1229,8 @@
                 try {
                     await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
                     window.currentUserData.wallet_balance = newBal;
-                    document.getElementById('profile-balance').innerText = newBal;
-                    document.getElementById('nav-wallet-balance').innerText = newBal + ' шт.';
+                    const pb = document.getElementById('profile-balance'); const nb = document.getElementById('nav-wallet-balance');
+                    if(pb) pb.innerText = newBal; if(nb) nb.innerText = newBal + ' шт.';
                 } catch(e) { console.error(e); }
             }, 4000); 
         };
@@ -1241,7 +1271,8 @@
                 try {
                     await supabase.from('profiles').update({ is_pro: true }).eq('id', window.currentUser.id);
                     window.currentUserData.is_pro = true;
-                    document.getElementById('profile-pro-badge').classList.remove('hidden');
+                    const pb = document.getElementById('profile-pro-badge');
+                    if(pb) pb.classList.remove('hidden');
                     window.showToast("Транзакция найдена! PRO активирован.");
                     window.closeModal('crypto-modal');
                 } catch(e) { window.showToast("Ошибка сети", true); }
@@ -1249,7 +1280,67 @@
             }, 4000);
         };
 
-        // GEMINI
+        // AUTH & PROFILES FETCH
+        window.handleAuthChange = async (session) => {
+            try {
+                window.currentUser = session?.user || null;
+                const ui = {
+                    loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
+                    chatBtn: document.getElementById('nav-chat-btn'), wallet: document.getElementById('nav-wallet-block'), 
+                    econ: document.getElementById('profile-economy-section'), loginWrap: document.getElementById('profile-login-wrapper'),
+                    mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile'), mobChat: document.getElementById('mob-nav-chat')
+                };
+
+                if (window.currentUser) {
+                    // Мгновенное обновление кнопок
+                    if(ui.loginWrap) { ui.loginWrap.classList.add('hidden'); ui.loginWrap.classList.remove('block'); }
+                    if(ui.loginBtn) { ui.loginBtn.classList.add('hidden'); }
+                    if(ui.profileBtn) { ui.profileBtn.classList.remove('hidden'); ui.profileBtn.classList.add('flex'); }
+                    if(ui.chatBtn) { ui.chatBtn.classList.remove('hidden'); ui.chatBtn.classList.add('flex'); }
+                    if(ui.wallet) { ui.wallet.classList.remove('hidden'); ui.wallet.classList.add('flex'); }
+                    if(ui.econ) { ui.econ.classList.remove('hidden'); ui.econ.classList.add('flex'); }
+                    if(ui.mobLogin) { ui.mobLogin.classList.add('hidden'); ui.mobLogin.classList.remove('flex'); }
+                    if(ui.mobProfile) { ui.mobProfile.classList.remove('hidden'); ui.mobProfile.classList.add('flex'); }
+                    if(ui.mobChat) { ui.mobChat.classList.remove('hidden'); ui.mobChat.classList.add('flex'); }
+
+                    const meta = window.currentUser.user_metadata || {};
+                    document.getElementById('profile-name').innerText = meta.full_name || "Пользователь";
+                    document.getElementById('profile-email').innerText = window.currentUser.email || "";
+                    if(meta.avatar_url) document.getElementById('profile-avatar-container').innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
+
+                    // Фоновая загрузка баланса и избранного (без блокировки UI)
+                    try {
+                        const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
+                        window.currentUserData = profile || { wallet_balance: 0, is_pro: false };
+                        document.getElementById('profile-balance').innerText = window.currentUserData.wallet_balance || 0;
+                        document.getElementById('nav-wallet-balance').innerText = (window.currentUserData.wallet_balance || 0) + ' шт.';
+                        if(window.currentUserData.is_pro) document.getElementById('profile-pro-badge')?.classList.remove('hidden');
+                    } catch(e) { console.warn("Profile error", e); }
+                    
+                    try {
+                        const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                        window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
+                    } catch(e) { console.warn("Fav error", e); }
+
+                } else {
+                    if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
+                    if(ui.loginBtn) { ui.loginBtn.classList.remove('hidden'); }
+                    if(ui.profileBtn) { ui.profileBtn.classList.add('hidden'); ui.profileBtn.classList.remove('flex'); }
+                    if(ui.chatBtn) { ui.chatBtn.classList.add('hidden'); ui.chatBtn.classList.remove('flex'); }
+                    if(ui.wallet) { ui.wallet.classList.add('hidden'); ui.wallet.classList.remove('flex'); }
+                    if(ui.econ) { ui.econ.classList.add('hidden'); ui.econ.classList.remove('flex'); }
+                    if(ui.mobLogin) { ui.mobLogin.classList.remove('hidden'); ui.mobLogin.classList.add('flex'); }
+                    if(ui.mobProfile) { ui.mobProfile.classList.add('hidden'); ui.mobProfile.classList.remove('flex'); }
+                    if(ui.mobChat) { ui.mobChat.classList.add('hidden'); ui.mobChat.classList.remove('flex'); }
+                }
+                if (window.renderProfileTabs) window.renderProfileTabs();
+            } catch(e) { console.error("Auth error:", e); }
+        };
+
+        supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
+        supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
+        
+        // GEMINI API
         async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: "Ты — профессиональный копирайтер для барахолки. Пиши краткие и продающие описания." }] } };
@@ -1278,7 +1369,7 @@
 
         // NEW ITEM
         window.checkAuthAndOpenAddModal = () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); } 
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); } 
             else { window.openModal('add-modal'); } 
         };
 
@@ -1351,67 +1442,10 @@
                 window.tempPhotos = []; document.getElementById('photo-preview-list').innerHTML = '';
                 localStorage.removeItem('svalka_items_cache');
                 window.fetchItems(true);
-            } catch(e) { console.error(e); window.showToast("Ошибка публикации. Проверьте права Storage.", true); }
-            finally { btn.disabled = false; btn.innerHTML = `Опубликовать`; }
+            } catch(e) { console.error(e); window.showToast("Ошибка публикации. Проверьте Storage.", true); }
+            finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">${window.i18n[window.currentAppLang]['btn_publish'] || 'Опубликовать'}</span>`; }
         };
 
-        // INIT AUTH
-        window.handleAuthChange = async (session) => {
-            try {
-                window.currentUser = session?.user || null;
-                const ui = {
-                    loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
-                    chatBtn: document.getElementById('nav-chat-btn'), wallet: document.getElementById('nav-wallet-block'), 
-                    econ: document.getElementById('profile-economy-section'), loginWrap: document.getElementById('profile-login-wrapper'),
-                    mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile'), mobChat: document.getElementById('mob-nav-chat')
-                };
-
-                if (window.currentUser) {
-                    if(ui.loginWrap) { ui.loginWrap.classList.add('hidden'); ui.loginWrap.classList.remove('block'); }
-                    if(ui.loginBtn) ui.loginBtn.classList.add('hidden'); 
-                    if(ui.profileBtn) ui.profileBtn.classList.remove('hidden');
-                    if(ui.chatBtn) ui.chatBtn.classList.replace('hidden', 'flex');
-                    if(ui.wallet) ui.wallet.classList.replace('hidden', 'flex'); 
-                    if(ui.econ) ui.econ.classList.replace('hidden', 'flex');
-                    if(ui.mobLogin) ui.mobLogin.classList.add('hidden');
-                    if(ui.mobProfile) ui.mobProfile.classList.remove('hidden');
-                    if(ui.mobChat) ui.mobChat.classList.replace('hidden', 'flex');
-
-                    const meta = window.currentUser.user_metadata || {};
-                    document.getElementById('profile-name').innerText = meta.full_name || "Пользователь";
-                    document.getElementById('profile-email').innerText = window.currentUser.email || "";
-                    if(meta.avatar_url) document.getElementById('profile-avatar-container').innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
-
-                    const profilePromise = supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
-                    const { data: profile } = await Promise.race([ profilePromise, new Promise(res => setTimeout(() => res({ data: null }), 3000)) ]);
-                    
-                    window.currentUserData = profile || { wallet_balance: 0, is_pro: false };
-                    
-                    document.getElementById('profile-balance').innerText = window.currentUserData.wallet_balance || 0;
-                    document.getElementById('nav-wallet-balance').innerText = (window.currentUserData.wallet_balance || 0) + ' шт.';
-                    if(window.currentUserData.is_pro) document.getElementById('profile-pro-badge')?.classList.remove('hidden');
-                    
-                    try {
-                        const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
-                        window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
-                    } catch(e) {}
-                } else {
-                    if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
-                    if(ui.loginBtn) ui.loginBtn.classList.remove('hidden'); 
-                    if(ui.profileBtn) ui.profileBtn.classList.add('hidden');
-                    if(ui.chatBtn) ui.chatBtn.classList.replace('flex', 'hidden');
-                    if(ui.wallet) ui.wallet.classList.replace('flex', 'hidden'); 
-                    if(ui.econ) ui.econ.classList.replace('flex', 'hidden');
-                    if(ui.mobLogin) ui.mobLogin.classList.remove('hidden');
-                    if(ui.mobProfile) ui.mobProfile.classList.add('hidden');
-                    if(ui.mobChat) ui.mobChat.classList.replace('flex', 'hidden');
-                }
-                if (window.renderProfileTabs) window.renderProfileTabs();
-            } catch(e) { console.error(e); }
-        };
-
-        supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
-        supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
         window.fetchItems();
         window.changeLang('ru');
     </script>
