@@ -79,7 +79,7 @@
 </head>
 <body class="text-stone-800 dark:text-stone-200 antialiased relative">
 
-    <!-- Фоновые иконки (Уменьшены, их больше, нет гаечных ключей) -->
+    <!-- Фоновые иконки -->
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-[0.03] dark:opacity-5 text-brand-600 dark:text-white text-4xl md:text-6xl">
         <i class="fa-solid fa-box-open absolute top-[10%] left-[5%] -rotate-12"></i>
         <i class="fa-solid fa-shirt absolute top-[25%] right-[8%] rotate-12"></i>
@@ -155,7 +155,7 @@
             <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
                 <a href="#" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-user text-brand-600 w-6"></i> <span data-t="profile_tab_items">Профиль</span></a>
                 <a href="#" onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> <span id="mob-chat-text" data-t="mob_messages">Сообщения</span></a>
-                <a href="#" onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-6 text-base"><i class="fa-solid fa-right-from-bracket w-6"></i> <span data-t="mob_emergency_exit">Экстренный выход</span></a>
+                <a href="#" onclick="window.openShareModal(); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3"><i class="fa-solid fa-arrow-up-right-dots"></i> <span data-t="mob_free_bumps">Бесплатные поднятия</span></a>
             </div>
 
             <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-base shadow-lg transition hover:bg-brand-700 cursor-pointer" data-t="btn_add">+ Пристроить добро</button>
@@ -179,7 +179,7 @@
                     <p class="text-brand-50 text-sm font-medium" data-t="promo_subtitle">Получи VIP-статус за донат в крипте и продавай вещи быстрее.</p>
                 </div>
             </div>
-            <button class="bg-white text-brand-600 px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-stone-50 transition shadow-sm whitespace-nowrap w-full sm:w-auto">Купить PRO</button>
+            <button class="bg-white text-brand-600 px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-stone-50 transition shadow-sm whitespace-nowrap w-full sm:w-auto" data-t="btn_buy_pro">Купить PRO</button>
         </div>
 
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
@@ -191,7 +191,7 @@
                 <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base" data-t="main_subtitle">Самые свежие объявления Сербии</p>
             </div>
             
-            <!-- Поиск, Сортировка и Фильтры (Оптимизировано для мобильных) -->
+            <!-- Поиск, Сортировка и Фильтры -->
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-2.5 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
                     <i class="fa-solid fa-magnifying-glass text-stone-400 text-sm"></i>
@@ -357,8 +357,7 @@
             <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="text-2xl font-display font-black mb-4 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
             <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="policy_text">
-                <p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p>
-                <p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
+                <p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
             </div>
         </div>
     </div>
@@ -368,9 +367,7 @@
             <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="text-2xl font-display font-black mb-4 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
             <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="rules_text">
-                <p>1. Запрещена продажа нелегальных предметов.</p>
-                <p>2. Запрещен спам (дублирование одинаковых объявлений).</p>
-                <p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>
+                <p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>
             </div>
         </div>
     </div>
@@ -499,12 +496,17 @@
                     </div>
                     <p id="profile-email" class="text-xs text-stone-500 mb-2">Не авторизован</p>
                     
-                    <div id="profile-economy-section" class="hidden gap-2">
-                        <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-sm font-black text-sm">
-                            <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span> <span class="text-stone-900 dark:text-white ml-1">шт.</span>
+                    <div id="profile-economy-section" class="hidden flex-col gap-1.5 mt-2 w-full">
+                        <div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest" data-t="profile_bumps">Мои поднятия:</div>
+                        <div class="flex flex-wrap items-center gap-2 w-full">
+                            <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm font-black text-sm shrink-0">
+                                <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span>
+                            </div>
+                            <button onclick="window.closeModal('profile-modal'); window.openShareModal();" class="bg-brand-50 dark:bg-brand-900/20 text-brand-600 border border-brand-200 dark:border-brand-800/50 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-brand-100 transition shadow-sm cursor-pointer" data-t="btn_get_bumps">+ Получить</button>
+                            <button onclick="window.logout()" class="ml-auto bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 px-4 py-2 rounded-xl font-bold text-[10px] uppercase hover:bg-red-100 transition shadow-sm cursor-pointer" data-t="profile_logout">Выйти</button>
                         </div>
-                        <button onclick="window.logout()" class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg font-bold text-xs text-stone-600 hover:text-red-500 transition shadow-sm cursor-pointer" data-t="profile_logout">Выйти</button>
                     </div>
+                    
                     <div id="profile-login-wrapper" class="block">
                         <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-md cursor-pointer" data-t="auth_login_btn">Войти</button>
                     </div>
@@ -525,7 +527,7 @@
     <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 italic text-stone-900 dark:text-white" data-t="add_title">Пристроить добро</h2>
+            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 uppercase italic text-stone-900 dark:text-white" data-t="add_title">Пристроить добро</h2>
             <form id="add-form" class="flex flex-col gap-4" onsubmit="event.preventDefault(); window.submitNewItem();">
                 <div class="flex gap-3 overflow-x-auto pb-1" id="photo-preview-list"></div>
                 <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-6 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
@@ -615,8 +617,8 @@
                 
                 <div id="modal-owner-controls" class="hidden flex-col gap-3 mb-6 border-t dark:border-stone-800 pt-5">
                     <div class="flex gap-2">
-                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять (1 шт.)</button>
-                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-xs hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">В ТОП (Бесплатно PRO)</span></button>
+                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> <span id="btn-bump-text" data-t="btn_bump">Поднять</span></button>
+                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-xs hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text" data-t="btn_buy_pro">Купить PRO</span></button>
                     </div>
                     <!-- Блок для удаления и изменения цены -->
                     <div id="modal-owner-edit-controls" class="flex gap-2 mt-1"></div>
@@ -659,6 +661,7 @@
         window.filterCurrency = 'Все'; 
 
         window.currentAppLang = 'ru';
+        window.currentProfileTab = 'items';
         window.activeModalItemId = null; 
         window.userFavorites = new Set(); 
         
@@ -677,14 +680,15 @@
                 nav_urgent: "Срочно", btn_load_more: "Показать еще", empty_title: "Ничего не найдено", main_subtitle_2: "Свежие объявления",
                 foot_policy: "Политика конфиденциальности", foot_rules: "Правила сайта", foot_support: "Служба поддержки", foot_copy: "© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.",
                 auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_avatar: "Выберите аватар", auth_pass_hint: "Мин. 8 символов: буквы + цифры", auth_login_btn: "Войти", auth_forgot_pass: "Забыли пароль?",
-                profile_tab_items: "Мои вещи", profile_tab_saved: "Заначка", profile_logout: "Выйти", profile_new_user: "Продавец SVALKA",
+                profile_tab_items: "Мои вещи", profile_tab_saved: "Заначка", profile_logout: "Выйти", profile_new_user: "Продавец SVALKA", profile_bumps: "Мои поднятия:", btn_get_bumps: "+ Получить",
                 add_title: "Пристроить добро", add_photos_label: "Добавить фото", add_name: "Название", add_price: "Цена", add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ", btn_publish: "Опубликовать",
                 modal_contact: "Написать продавцу", mob_messages: "Сообщения", mob_emergency_exit: "Экстренный выход", mob_free_bumps: "Бесплатные поднятия",
                 policy_text: "<p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>",
                 rules_text: "<p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>",
                 auth_pass_error: "Пароль должен быть от 8 символов и содержать буквы и цифры.", auth_reset_sent: "Ссылка для сброса отправлена на почту!",
                 add_phone: "Телефон (необязательно)", btn_mark_reserved: "В резерв", btn_mark_sold: "Продано", btn_mark_active: "Активировать", status_reserved: "В РЕЗЕРВЕ", status_sold: "ПРОДАНО",
-                btn_share_main: "Поделиться", btn_delete: "Удалить", btn_edit_price: "Изм. цену", prompt_new_price: "Введите новую цену:", confirm_delete: "Удалить это объявление навсегда?"
+                btn_share_main: "Поделиться", btn_delete: "Удалить", btn_edit_price: "Изм. цену", prompt_new_price: "Введите новую цену:", confirm_delete: "Удалить это объявление навсегда?",
+                btn_bump: "Поднять", btn_buy_pro: "Купить PRO", btn_to_top: "В ТОП (Бесплатно)"
             },
             rs: {
                 search_placeholder: "Pretraga...", promo_title: "Podrži projekat!", promo_subtitle: "Uzmi VIP za kripto donaciju i prodaj brže.",
@@ -695,14 +699,15 @@
                 nav_urgent: "Hitno", btn_load_more: "Prikaži još", empty_title: "Ovde je prazno", main_subtitle_2: "Sveži oglasi",
                 foot_policy: "Politika privatnosti", foot_rules: "Pravila sajta", foot_support: "Podrška korisnicima", foot_copy: "© 2026 SVALKA. SVA PRAVA ZADRŽANA.",
                 auth_tab_login: "Ulaz", auth_tab_register: "Registracija", auth_avatar: "Izaberite avatar", auth_pass_hint: "Min. 8 karaktera: slova + brojevi", auth_login_btn: "Prijava", auth_forgot_pass: "Zaboravili ste lozinku?",
-                profile_tab_items: "Moji oglasi", profile_tab_saved: "Sačuvano", profile_logout: "Izlaz", profile_new_user: "Prodavac SVALKA",
+                profile_tab_items: "Moji oglasi", profile_tab_saved: "Sačuvano", profile_logout: "Izlaz", profile_new_user: "Prodavac SVALKA", profile_bumps: "Moja podizanja:", btn_get_bumps: "+ Dobiti",
                 add_title: "Dodaj oglas", add_photos_label: "Dodaj sliku", add_name: "Naziv", add_price: "Cena", add_desc_label: "Opis", btn_ai_desc: "Generiši AI", btn_publish: "Objavi",
                 modal_contact: "Kontakt", mob_messages: "Poruke", mob_emergency_exit: "Hitni izlaz", mob_free_bumps: "Besplatna podizanja",
                 policy_text: "<p>Vaše lozinke su bezbedno šifrovane.</p><p>Fotografije se otpremaju na naše zaštićene servere.</p>",
                 rules_text: "<p>1. Prodaja nelegalnih predmeta je zabranjena.</p><p>2. Spam je zabranjen.</p><p>3. Sastajte se sa kupcima lično.</p>",
                 auth_pass_error: "Lozinka mora imati najmanje 8 karaktera i sadržati slova i brojeve.", auth_reset_sent: "Link je poslat na vašu e-poštu!",
                 add_phone: "Telefon (opciono)", btn_mark_reserved: "Rezerviši", btn_mark_sold: "Prodato", btn_mark_active: "Aktiviraj", status_reserved: "REZERVISANO", status_sold: "PRODATO",
-                btn_share_main: "Podeli", btn_delete: "Izbriši", btn_edit_price: "Izmeni cenu", prompt_new_price: "Unesite novu cenu:", confirm_delete: "Trajno izbrisati oglas?"
+                btn_share_main: "Podeli", btn_delete: "Izbriši", btn_edit_price: "Izmeni cenu", prompt_new_price: "Unesite novu cenu:", confirm_delete: "Trajno izbrisati oglas?",
+                btn_bump: "Podigni", btn_buy_pro: "Kupi PRO", btn_to_top: "U TOP (Besplatno)"
             },
             en: {
                 search_placeholder: "Search...", promo_title: "Support us!", promo_subtitle: "Get VIP via crypto donation to sell faster.",
@@ -713,14 +718,15 @@
                 nav_urgent: "Urgent", btn_load_more: "Load more", empty_title: "Nothing found", main_subtitle_2: "Fresh listings",
                 foot_policy: "Privacy Policy", foot_rules: "Terms of Use", foot_support: "Customer Support", foot_copy: "© 2026 SVALKA. ALL RIGHTS RESERVED.",
                 auth_tab_login: "Login", auth_tab_register: "Sign Up", auth_avatar: "Choose Avatar", auth_pass_hint: "Min. 8 chars: letters + numbers", auth_login_btn: "Log In", auth_forgot_pass: "Forgot password?",
-                profile_tab_items: "My Listings", profile_tab_saved: "Saved", profile_logout: "Log Out", profile_new_user: "SVALKA Seller",
+                profile_tab_items: "My Listings", profile_tab_saved: "Saved", profile_logout: "Log Out", profile_new_user: "SVALKA Seller", profile_bumps: "My bumps:", btn_get_bumps: "+ Get",
                 add_title: "Add Listing", add_photos_label: "Add photos", add_name: "Title", add_price: "Price", add_desc_label: "Description", btn_ai_desc: "Generate AI", btn_publish: "Publish",
                 modal_contact: "Contact Seller", mob_messages: "Messages", mob_emergency_exit: "Emergency exit", mob_free_bumps: "Free bumps",
                 policy_text: "<p>Your passwords are securely encrypted.</p><p>Photos are uploaded to our secure servers.</p>",
                 rules_text: "<p>1. Sale of illegal items is prohibited.</p><p>2. Spam is prohibited.</p><p>3. Meet buyers in person.</p>",
                 auth_pass_error: "Password must be at least 8 characters long and contain both letters and numbers.", auth_reset_sent: "Reset link sent!",
                 add_phone: "Phone (optional)", btn_mark_reserved: "Reserve", btn_mark_sold: "Mark Sold", btn_mark_active: "Activate", status_reserved: "RESERVED", status_sold: "SOLD",
-                btn_share_main: "Share", btn_delete: "Delete", btn_edit_price: "Edit price", prompt_new_price: "Enter new price:", confirm_delete: "Permanently delete this listing?"
+                btn_share_main: "Share", btn_delete: "Delete", btn_edit_price: "Edit price", prompt_new_price: "Enter new price:", confirm_delete: "Permanently delete this listing?",
+                btn_bump: "Bump", btn_buy_pro: "Buy PRO", btn_to_top: "To TOP (Free)"
             }
         };
 
@@ -754,17 +760,8 @@
             const tMsg = document.getElementById('toast-msg');
             if (tMsg) tMsg.innerText = msg;
             if (t) {
-                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-xs shadow-2xl z-[9999] transition-opacity duration-300 pointer-events-none flex items-center gap-2 ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
+                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity duration-300 pointer-events-none flex items-center gap-2 ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
                 setTimeout(()=>t.classList.replace('opacity-100', 'opacity-0'), 3000); 
-            }
-        };
-
-        // UI TOGGLE HELPER
-        const toggleUI = (id, show, displayClass = 'flex') => {
-            const el = document.getElementById(id);
-            if(el) {
-                if(show) { el.classList.remove('hidden'); el.classList.add(displayClass); }
-                else { el.classList.add('hidden'); el.classList.remove(displayClass); }
             }
         };
 
@@ -855,7 +852,7 @@
             } catch (e) { window.showToast(e.message, true); }
             finally { 
                 btn.disabled = false; 
-                btn.innerHTML = `<span data-t="auth_login_btn">${window.i18n[window.currentAppLang][window.authMode === 'login' ? 'auth_login_btn' : 'auth_tab_register']}</span>`; 
+                btn.innerHTML = window.i18n[window.currentAppLang][window.authMode === 'login' ? 'auth_login_btn' : 'auth_tab_register']; 
             }
         };
 
@@ -903,14 +900,14 @@
             window.displayedCount = 12; 
             
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer";
+                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition cursor-pointer";
             });
             const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 cursor-pointer";
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
             
             if(window.currentCategory === 'Все' || window.currentCategory === '') {
                 const btnAll = document.querySelector('[data-cat="Все"]');
-                if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
+                if(btnAll) btnAll.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
             }
 
             window.renderDynamicItems(window.loadedItems);
@@ -932,12 +929,12 @@
             window.displayedCount = 12; 
             
             const urgentBtn = document.getElementById('btn-cat-urgent');
-            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 cursor-pointer";
+            if(urgentBtn) urgentBtn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
 
             document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer";
+                b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition cursor-pointer";
             });
-            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
+            event.currentTarget.className = "cat-btn active px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
             
             const catSelect = document.getElementById('filter-category');
             if (catSelect) {
@@ -953,30 +950,16 @@
             window.displayedCount = 12; 
             const btn = document.getElementById('btn-cat-urgent');
             if (window.showUrgentOnly) {
-                btn.className = "cat-btn px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer";
+                btn.className = "cat-btn px-4 py-2 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer";
                 window.currentCategory = 'Все';
                 document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer";
+                    b.className = "cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest transition cursor-pointer";
                 });
             } else {
-                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 cursor-pointer";
+                btn.className = "cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:scale-105 transition cursor-pointer";
             }
             window.renderDynamicItems(window.loadedItems);
         };
-
-        function createPromoBannerHtml() {
-            return `
-            <div class="col-span-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-5 sm:p-6 text-white flex flex-col md:flex-row items-center justify-between shadow-md cursor-pointer hover:shadow-lg transition my-2" onclick="window.openShareModal()">
-                <div class="flex items-center gap-4 text-center md:text-left mb-4 md:mb-0">
-                    <div class="w-12 h-12 bg-white/20 rounded-full items-center justify-center text-2xl shrink-0 hidden sm:flex"><i class="fa-solid fa-gift"></i></div>
-                    <div>
-                        <h3 class="text-lg sm:text-xl font-black mb-1">${window.i18n[window.currentAppLang]['promo_title_2'] || 'Бесплатные поднятия'}</h3>
-                        <p class="text-amber-50 text-sm">${window.i18n[window.currentAppLang]['promo_subtitle_2'] || 'Приглашай друзей в любой соцсети и получай +3 бесплатных поднятия!'}</p>
-                    </div>
-                </div>
-                <button class="bg-white text-amber-600 px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-stone-50 transition shadow-sm whitespace-nowrap w-full md:w-auto">${window.i18n[window.currentAppLang]['btn_share_main'] || 'Поделиться'}</button>
-            </div>`;
-        }
 
         window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
@@ -1109,16 +1092,7 @@
                 }
             } else {
                 if (paginatedRegular.length) {
-                    let htmlStr = '';
-                    paginatedRegular.forEach((item, index) => {
-                        if (index === 6) htmlStr += createPromoBannerHtml();
-                        htmlStr += createCardHtml(item, false);
-                    });
-                    if (paginatedRegular.length > 0 && paginatedRegular.length <= 6 && regularItems.length > 6 === false) {
-                        htmlStr += createPromoBannerHtml();
-                    }
-
-                    mainGrid.innerHTML = htmlStr;
+                    mainGrid.innerHTML = paginatedRegular.map(i => createCardHtml(i, false)).join('');
                     mainGrid.classList.remove('hidden');
                     if(emptyState) emptyState.classList.add('hidden');
                     if(loadMoreBtn) loadMoreBtn.classList.toggle('hidden', window.displayedCount >= regularItems.length);
@@ -1140,9 +1114,11 @@
             let statusBadge = '';
             let opacityClass = '';
             if (i.status === 'reserved') {
-                statusBadge = `<div class="absolute bottom-1.5 left-1.5 bg-orange-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest z-10">${window.i18n[window.currentAppLang]['status_reserved'] || 'В РЕЗЕРВЕ'}</div>`;
+                const resText = window.i18n[window.currentAppLang]['status_reserved'] || 'В РЕЗЕРВЕ';
+                statusBadge = `<div class="absolute bottom-1.5 left-1.5 bg-orange-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest z-10 w-max">${resText}</div>`;
             } else if (i.status === 'sold') {
-                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[10px] font-black px-3 py-1 rounded shadow-lg tracking-widest rotate-[-15deg]">${window.i18n[window.currentAppLang]['status_sold'] || 'ПРОДАНО'}</span></div>`;
+                const sldText = window.i18n[window.currentAppLang]['status_sold'] || 'ПРОДАНО';
+                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[10px] font-black px-3 py-1 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${sldText}</span></div>`;
                 opacityClass = 'opacity-70 grayscale-[0.5]';
             }
 
@@ -1153,15 +1129,15 @@
                 </button>
                 <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
-                    ${isVIP ? '<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest z-10">ТОП 💎</div>' : ''}
+                    ${isVIP ? `<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest z-10 w-max">ТОП 💎</div>` : ''}
                     ${statusBadge}
                 </div>
                 <div class="p-2.5 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-sm mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text text-base sm:text-lg mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-xs font-bold text-stone-500 flex justify-between items-center">
-                        <span class="truncate pr-1"><i class="fa-solid fa-location-dot text-stone-400"></i> ${i.city || 'Сербия'}</span>
-                        <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
+                    <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[9px] sm:text-[10px] uppercase font-black text-stone-400 flex justify-between items-center">
+                        <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
+                        <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
                 </div>
             </div>`;
@@ -1203,10 +1179,10 @@
             const statusBadgeEl = document.getElementById('modal-status-badge');
             if (item.status === 'reserved') {
                 statusBadgeEl.innerText = window.i18n[window.currentAppLang]['status_reserved'] || 'В РЕЗЕРВЕ';
-                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
             } else if (item.status === 'sold') {
                 statusBadgeEl.innerText = window.i18n[window.currentAppLang]['status_sold'] || 'ПРОДАНО';
-                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
             } else {
                 statusBadgeEl.className = 'hidden';
             }
@@ -1235,10 +1211,12 @@
                 
                 const vipBtnText = document.getElementById('btn-owner-vip-text');
                 if(window.currentUserData && window.currentUserData.is_pro) {
-                    vipBtnText.innerText = "В ТОП (Бесплатно PRO)";
+                    vipBtnText.innerText = window.i18n[window.currentAppLang]['btn_to_top'] || "В ТОП (Бесплатно)";
                 } else {
-                    vipBtnText.innerText = "Купить PRO";
+                    vipBtnText.innerText = window.i18n[window.currentAppLang]['btn_buy_pro'] || "Купить PRO";
                 }
+                
+                document.getElementById('btn-bump-text').innerText = window.i18n[window.currentAppLang]['btn_bump'] || 'Поднять';
 
                 statusControls.innerHTML = '';
                 if (item.status !== 'sold') {
@@ -1353,7 +1331,7 @@
             if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
             document.getElementById('chat-author-name').innerText = document.getElementById('modal-author').innerText;
-            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
             window.openModal('chat-modal');
         };
 
@@ -1593,7 +1571,7 @@
                     phone: document.getElementById('item-phone').value || '', status: 'active'
                 };
                 const { error } = await supabase.from('items').insert([newItem]);
-                if(error) throw error;
+                if(error) throw new Error(error.message); // Explicitly throw the exact error to show it in UI
                 
                 window.showToast("Опубликовано!");
                 window.closeModal('add-modal');
@@ -1601,7 +1579,10 @@
                 window.tempPhotos = []; document.getElementById('photo-preview-list').innerHTML = '';
                 localStorage.removeItem('svalka_items_cache');
                 window.fetchItems(true);
-            } catch(e) { console.error(e); window.showToast("Ошибка публикации. Проверьте Storage.", true); }
+            } catch(e) { 
+                console.error(e); 
+                window.showToast(`Ошибка: ${e.message}`, true); 
+            }
             finally { btn.disabled = false; btn.innerHTML = `<span data-t="btn_publish">${window.i18n[window.currentAppLang]['btn_publish'] || 'Опубликовать'}</span>`; }
         };
 
