@@ -277,7 +277,7 @@
                 <i class="fa-solid fa-gem text-amber-500"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-800 dark:text-stone-200">Срочно и Важно</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4"></div>
+            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 items-start"></div>
         </div>
 
         <div>
@@ -285,15 +285,12 @@
                 <i class="fa-regular fa-clock text-stone-400"></i>
                 <h4 class="font-black text-sm uppercase tracking-widest text-stone-500">Свежие объявления</h4>
             </div>
-            
-            <!-- Изолированный индикатор загрузки -->
-            <div id="loading-placeholder" class="w-full text-center py-20 text-stone-400">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
-                <p class="font-black uppercase text-[9px] tracking-widest">Загрузка...</p>
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 min-h-[400px] items-start hidden">
+                <div id="loading-placeholder" class="col-span-full text-center py-20 text-stone-400">
+                    <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                    <p class="font-black uppercase text-[9px] tracking-widest">Загрузка...</p>
+                </div>
             </div>
-
-            <!-- Изолированная сетка товаров -->
-            <div id="main-items-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 min-h-[400px] hidden"></div>
             
             <!-- Изолированный пустой стейт -->
             <div id="empty-state" class="w-full text-center py-20 text-stone-400 hidden">
@@ -302,6 +299,53 @@
             </div>
         </div>
     </main>
+
+    <!-- ПОДВАЛ (Footer) -->
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto z-10">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <div class="flex items-center gap-3 mb-6 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="relative w-8 h-8 flex items-center justify-center shrink-0 grayscale opacity-80">
+                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
+                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
+                        <i class="fa-solid fa-box-open text-brand-600 text-[10px] mt-0.5"></i>
+                    </div>
+                </div>
+                <span class="text-xl font-display font-black text-stone-900 dark:text-white tracking-tighter italic">SVALKA</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 mb-6 text-stone-500 dark:text-stone-400 font-bold uppercase text-[10px] tracking-widest">
+                <a href="#" onclick="event.preventDefault(); window.openModal('policy-modal')" class="hover:text-brand-600 transition" data-t="foot_policy">Политика</a>
+                <a href="#" onclick="event.preventDefault(); window.openModal('rules-modal')" class="hover:text-brand-600 transition" data-t="foot_rules">Правила</a>
+                <a href="mailto:support@svalka.rs" class="hover:text-brand-600 transition" data-t="foot_support">Поддержка</a>
+            </div>
+            <div class="max-w-2xl text-center mb-6">
+                <p class="text-[10px] text-stone-400 dark:text-stone-500 leading-relaxed font-medium" data-t="seo_text">SVALKA — это удобный маркетплейс для поиска и продажи вещей в Сербии. Дарите вещам вторую жизнь.</p>
+            </div>
+            <p class="text-stone-400 dark:text-stone-600 text-[9px] font-black uppercase tracking-[0.3em] text-center" data-t="foot_copy">© 2026 SVALKA. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <!-- Технические модалки для Подвала -->
+    <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p>
+                <p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
+            </div>
+        </div>
+    </div>
+    <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
+            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>1. Запрещена продажа нелегальных предметов.</p>
+                <p>2. Запрещен спам (дублирование одинаковых объявлений).</p>
+                <p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Share for Bumps -->
     <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[90]">
@@ -530,62 +574,18 @@
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-5 px-6 font-black text-xs uppercase border-b-2 border-brand-600 text-brand-600 transition" data-t="profile_tab_items">Мои вещи (0)</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-5 px-6 font-black text-xs uppercase border-b-2 border-transparent hover:text-brand-600 transition ml-4" data-t="profile_tab_saved">Заначка (0)</button>
             </div>
-            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3" style="display: none;"></div>
+            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 items-start" style="display: none;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-black uppercase text-xs">
                 <i class="fa-solid fa-box-open text-3xl mb-2 opacity-20"></i> <span data-t="empty_title">Пусто</span>
             </div>
         </div>
     </div>
 
-    <!-- ПОДВАЛ (Footer) -->
-    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto">
-        <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex items-center gap-3 mb-6 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <div class="relative w-8 h-8 flex items-center justify-center shrink-0 grayscale opacity-80">
-                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
-                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
-                        <i class="fa-solid fa-box-open text-brand-600 text-[10px] mt-0.5"></i>
-                    </div>
-                </div>
-                <span class="text-xl font-display font-black text-stone-900 dark:text-white tracking-tighter italic">SVALKA</span>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 mb-6 text-stone-500 dark:text-stone-400 font-bold uppercase text-[10px] tracking-widest">
-                <a href="#" onclick="event.preventDefault(); window.openModal('policy-modal')" class="hover:text-brand-600 transition" data-t="foot_policy">Политика</a>
-                <a href="#" onclick="event.preventDefault(); window.openModal('rules-modal')" class="hover:text-brand-600 transition" data-t="foot_rules">Правила</a>
-                <a href="mailto:support@svalka.rs" class="hover:text-brand-600 transition" data-t="foot_support">Поддержка</a>
-            </div>
-            <div class="max-w-2xl text-center mb-6">
-                <p class="text-[10px] text-stone-400 dark:text-stone-500 leading-relaxed font-medium" data-t="seo_text">SVALKA — это удобный маркетплейс для поиска и продажи вещей в Сербии. Дарите вещам вторую жизнь.</p>
-            </div>
-            <p class="text-stone-400 dark:text-stone-600 text-[9px] font-black uppercase tracking-[0.3em] text-center" data-t="foot_copy">© 2026 SVALKA. ALL RIGHTS RESERVED.</p>
-        </div>
-    </footer>
-
-    <!-- Технические модалки для Подвала -->
-    <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
-                <p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p>
-                <p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
-            </div>
-        </div>
-    </div>
-    <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black uppercase italic mb-4 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
-                <p>1. Запрещена продажа нелегальных предметов.</p>
-                <p>2. Запрещен спам (дублирование одинаковых объявлений).</p>
-                <p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>
-            </div>
-        </div>
-    </div>
-
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
-        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain">
+        <button id="lightbox-prev" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:scale-110 transition z-50 hidden" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain" onclick="event.stopPropagation()">
+        <button id="lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:scale-110 transition z-50 hidden" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition z-50" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div id="toast" class="fixed bottom-10 left-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999]"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400"></i><span id="toast-msg">Готово!</span></div>
@@ -674,10 +674,56 @@
             });
         };
 
+        // UI Helpers
         window.openModal = id => { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-open'); };
         window.closeModal = id => { document.getElementById(id).classList.remove('active'); if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); };
         window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); };
-        window.openLightbox = src => { document.getElementById('lightbox-img').src = src; window.openModal('lightbox'); };
+        
+        window.currentLightboxImages = [];
+        window.currentLightboxIndex = 0;
+
+        window.openLightbox = (src) => {
+            if (window.activeModalItemId) {
+                const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+                if (item && Array.isArray(item.images) && item.images.length > 0) {
+                    window.currentLightboxImages = item.images;
+                } else {
+                    window.currentLightboxImages = [src];
+                }
+            } else {
+                window.currentLightboxImages = [src];
+            }
+            
+            const currentMainSrc = document.getElementById('modal-img').src;
+            window.currentLightboxIndex = window.currentLightboxImages.findIndex(img => currentMainSrc.includes(img));
+            if(window.currentLightboxIndex === -1) window.currentLightboxIndex = 0;
+
+            window.updateLightboxImage();
+            window.openModal('lightbox');
+        };
+
+        window.updateLightboxImage = () => {
+            const img = document.getElementById('lightbox-img');
+            if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
+            
+            const prev = document.getElementById('lightbox-prev');
+            const next = document.getElementById('lightbox-next');
+            if(prev) prev.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
+            if(next) next.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
+        };
+
+        window.lightboxNext = (e) => {
+            if(e) e.stopPropagation();
+            window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length;
+            window.updateLightboxImage();
+        };
+
+        window.lightboxPrev = (e) => {
+            if(e) e.stopPropagation();
+            window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length;
+            window.updateLightboxImage();
+        };
+
         window.showToast = (msg, err=false) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = msg; document.getElementById('toast-icon').className = err ? "fa-solid fa-circle-exclamation text-red-500" : "fa-solid fa-circle-check text-brand-400"; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 4000); };
         window.toggleMobileMenu = () => { const m = document.getElementById('mobile-menu'); m.classList.toggle('translate-x-full'); };
         
@@ -996,7 +1042,19 @@
 
             if(itemsToShow.length > 0) {
                 grid.style.display = 'grid'; empty.style.display = 'none';
-                grid.innerHTML = itemsToShow.map(i => createCardHtml(i, i.isHighlighted)).join('');
+                grid.innerHTML = itemsToShow.map(i => {
+                    const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || '');
+                    return `
+                    <div class="item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col" onclick="window.openItemDetails('${i.id}')">
+                        <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden">
+                            <img src="${imageUrl}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-2 flex flex-col">
+                            <h4 class="font-bold text-[10px] text-stone-900 dark:text-white line-clamp-1 leading-tight">${i.title || 'Без названия'}</h4>
+                            <div class="text-brand-600 font-black text-xs italic mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                        </div>
+                    </div>
+                `}).join('');
             } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
         };
 
@@ -1139,15 +1197,15 @@
 
             return `
             <div class="${cardClass}" onclick="window.openItemDetails('${i.id}')">
-                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm" onclick="window.toggleFavorite(this, event, '${i.id}')">
+                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110" onclick="window.toggleFavorite(this, event, '${i.id}')">
                     <i class="fa-solid ${iconClass} text-[10px] drop-shadow-sm"></i>
                 </button>
                 <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" class="w-full h-full object-cover">
                     ${isVIP ? '<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">ТОП 💎</div>' : ''}
                 </div>
-                <div class="p-2.5 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-2 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
+                <div class="p-2 flex flex-col">
+                    <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[7px] sm:text-[8px] uppercase font-black text-stone-400 flex justify-between items-center">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
@@ -1165,14 +1223,14 @@
 
             const imgContainer = document.getElementById('modal-img-container');
             if (Array.isArray(item.images) && item.images.length > 1) {
-                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="document.getElementById('modal-img').src='${src}'" class="w-12 h-12 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-12 h-12 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                 imgContainer.innerHTML = `
-                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')">
                     <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
                 `;
             } else {
                 const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
+                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
             }
 
             document.getElementById('modal-title').innerText = item.title || 'Без названия';
