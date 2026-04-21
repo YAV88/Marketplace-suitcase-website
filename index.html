@@ -31,25 +31,11 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            position: relative;
         }
         .dark body { 
             background-color: #1c1917; 
             background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png"); 
-        }
-
-        @media (min-width: 1536px) {
-            body::before, body::after {
-                font-family: 'Font Awesome 6 Free';
-                font-weight: 900;
-                position: fixed;
-                font-size: 14rem;
-                color: rgba(13, 148, 136, 0.03);
-                z-index: -1;
-                pointer-events: none;
-            }
-            body::before { content: '\f466'; left: 2%; top: 20%; transform: rotate(-15deg); }
-            body::after { content: '\f0ad'; right: 2%; bottom: 15%; transform: rotate(20deg); }
-            .dark body::before, .dark body::after { color: rgba(255, 255, 255, 0.015); }
         }
 
         /* Ультра-компактные карточки */
@@ -74,8 +60,6 @@
         body.modal-open { overflow: hidden; }
 
         .price-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-style: italic; }
-        #toast { transition: opacity 0.3s, transform 0.3s; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 9999; }
-        #toast.show { opacity: 1; transform: translate(-50%, 0); }
         
         /* Правильные курсоры */
         button, a, select, .cursor-pointer { cursor: pointer !important; }
@@ -87,9 +71,6 @@
         .dark select optgroup { background: #134e4a; color: #ccfbf1; }
         .dark select option { background: #292524; color: #f5f5f4; }
         
-        .qr-scan-line { position: absolute; width: 100%; height: 2px; background: #14b8a6; box-shadow: 0 0 10px #14b8a6; top: 0; left: 0; animation: scan 2s linear infinite; }
-        @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-
         #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
         #filter-panel-wrapper.active { grid-template-rows: 1fr; }
         #filter-panel { overflow: hidden; }
@@ -97,7 +78,17 @@
         main { flex: 1; }
     </style>
 </head>
-<body class="text-stone-800 dark:text-stone-200 antialiased">
+<body class="text-stone-800 dark:text-stone-200 antialiased relative">
+
+    <!-- Фоновые иконки -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-[0.03] dark:opacity-5 text-brand-600 dark:text-white text-6xl md:text-8xl">
+        <i class="fa-solid fa-box-open absolute top-[10%] left-[5%] -rotate-12"></i>
+        <i class="fa-solid fa-shirt absolute top-[25%] right-[8%] rotate-12"></i>
+        <i class="fa-solid fa-couch absolute bottom-[20%] left-[10%] rotate-6"></i>
+        <i class="fa-solid fa-gamepad absolute bottom-[15%] right-[5%] -rotate-6"></i>
+        <i class="fa-solid fa-bicycle absolute top-[50%] right-[3%] -rotate-12"></i>
+        <i class="fa-solid fa-box absolute top-[60%] left-[3%] rotate-12"></i>
+    </div>
 
     <!-- НАВИГАЦИЯ -->
     <nav class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
@@ -114,11 +105,6 @@
                         <span class="text-2xl font-display font-black tracking-tighter italic text-stone-900 dark:text-white">SVALKA</span>
                         <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
                     </div>
-                </div>
-                
-                <div class="hidden md:flex items-center bg-stone-100 dark:bg-stone-800 rounded-2xl px-4 py-2.5 flex-1 max-w-md border border-transparent focus-within:border-brand-500 transition-all ml-4">
-                    <i class="fa-solid fa-magnifying-glass text-stone-400 text-xs"></i>
-                    <input type="text" id="search-input" oninput="window.handleSearch(event)" placeholder="Поиск сокровищ..." data-t="search_placeholder" class="bg-transparent border-none outline-none ml-3 w-full text-sm font-semibold text-stone-800 dark:text-stone-200">
                 </div>
 
                 <div class="hidden sm:flex items-center gap-4 ml-auto">
@@ -137,18 +123,14 @@
             </div>
 
             <div class="hidden lg:flex items-center gap-4 ml-6 pl-6 border-l border-stone-200 dark:border-stone-800">
-                <div id="nav-wallet-block" class="hidden items-center gap-2 mr-2 bg-brand-50 dark:bg-brand-900/20 px-3 py-1.5 rounded-xl border border-brand-200 dark:border-brand-800/50 cursor-pointer" onclick="window.openShareModal()" title="Получить поднятия">
-                    <i class="fa-solid fa-arrow-up-right-dots text-brand-600"></i><span id="nav-wallet-balance" class="font-bold text-sm text-brand-700 dark:text-brand-400">0 шт.</span>
-                </div>
-                
                 <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer" data-t="auth_login_btn">Войти</button>
                 
                 <div id="nav-user-controls" class="hidden items-center gap-3">
-                    <button id="nav-chat-btn" onclick="window.openChatListModal()" class="relative text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
+                    <button onclick="window.openChatListModal()" class="relative text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
                         <i class="fa-regular fa-envelope"></i>
                         <span id="nav-chat-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
-                    <button id="nav-profile-btn" onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
+                    <button onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
                 </div>
                 
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-7 py-3 rounded-full font-black shadow-lg shadow-brand-600/30 uppercase text-[11px] tracking-widest transition cursor-pointer" data-t="btn_add">+ Пристроить добро</button>
@@ -168,13 +150,16 @@
         </div>
         <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto font-black text-xl uppercase tracking-wider">
             <a href="#" id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600"></i> <span data-t="auth_login_btn">Войти</span></a>
-            <a href="#" id="mob-nav-profile" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="hidden text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-user text-brand-600"></i> <span data-t="profile_tab_items">Профиль</span></a>
-            <a href="#" id="mob-nav-chat" onclick="window.openChatListModal(); window.toggleMobileMenu();" class="hidden text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-envelope text-brand-600"></i> <span id="mob-chat-text" data-t="mob_messages">Сообщения</span></a>
-            <a href="#" onclick="window.openShareModal(); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3"><i class="fa-solid fa-arrow-up-right-dots"></i> <span data-t="mob_free_bumps">Бесплатные поднятия</span></a>
             
-            <a href="#" id="mob-nav-exit" onclick="window.logout();" class="hidden text-red-500 hover:text-red-400 transition items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-4 text-sm"><i class="fa-solid fa-right-from-bracket"></i> <span data-t="mob_emergency_exit">Экстренный выход</span></a>
-            
+            <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
+                <a href="#" onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-user text-brand-600"></i> <span data-t="profile_tab_items">Профиль</span></a>
+                <a href="#" onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3"><i class="fa-regular fa-envelope text-brand-600"></i> <span id="mob-chat-text" data-t="mob_messages">Сообщения</span></a>
+                <a href="#" onclick="window.openShareModal(); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3"><i class="fa-solid fa-arrow-up-right-dots"></i> <span data-t="mob_free_bumps">Бесплатные поднятия</span></a>
+                <a href="#" onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-4 text-sm"><i class="fa-solid fa-right-from-bracket"></i> <span data-t="mob_emergency_exit">Экстренный выход</span></a>
+            </div>
+
             <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-brand-600 text-white w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg transition hover:bg-brand-700 cursor-pointer" data-t="btn_add">+ Пристроить добро</button>
+            
             <div class="flex bg-stone-100 dark:bg-stone-800 rounded-xl p-1 mt-2">
                 <button onclick="window.changeLang('ru'); window.toggleMobileMenu();" class="flex-1 py-4 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-stone-700 transition cursor-pointer">RU</button>
                 <button onclick="window.changeLang('rs'); window.toggleMobileMenu();" class="flex-1 py-4 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-stone-700 transition cursor-pointer">SRB</button>
@@ -185,17 +170,29 @@
 
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
         
-        <!-- БАННЕР -->
-        <div class="mb-10 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-xl relative overflow-hidden">
-            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-            <div class="relative z-10 text-center md:text-left mb-4 md:mb-0">
-                <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
-                    <span class="bg-white/20 backdrop-blur text-white border border-white/30 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
+        <!-- БАННЕРЫ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+            <!-- PRO Banner -->
+            <div class="bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 md:p-8 text-white flex flex-col items-start justify-between shadow-xl relative overflow-hidden cursor-pointer" onclick="window.openModal('crypto-modal')">
+                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div class="relative z-10 w-full">
+                    <span class="bg-white/20 backdrop-blur text-white border border-white/30 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm mb-3 inline-block">SVALKA PRO</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-black mb-2" data-t="promo_title">Поддержи проект!</h3>
+                    <p class="text-brand-50 font-medium text-xs mb-5" data-t="promo_subtitle">Получи VIP-статус за донат в крипте и продавай вещи в 5 раз быстрее.</p>
+                    <button class="bg-white text-brand-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 transition shadow-lg cursor-pointer">Купить PRO</button>
                 </div>
-                <h3 class="text-2xl md:text-3xl font-display font-black mb-1" data-t="promo_title">Поддержи проект!</h3>
-                <p class="text-brand-50 font-medium max-w-lg text-xs" data-t="promo_subtitle">Сайт в BETA-тестировании. Получи VIP-статус за донат в крипте и продавай вещи в 5 раз быстрее. Приглашай друзей и получай 3 бесплатных поднятия!</p>
             </div>
-            <button onclick="window.openModal('crypto-modal')" class="relative z-10 bg-white text-brand-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 hover:scale-105 transition shrink-0 shadow-lg cursor-pointer">Купить PRO</button>
+
+            <!-- Share Banner -->
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 md:p-8 text-white flex flex-col items-start justify-between shadow-xl relative overflow-hidden cursor-pointer" onclick="window.openShareModal()">
+                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div class="relative z-10 w-full">
+                    <span class="bg-white/20 backdrop-blur text-white border border-white/30 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm mb-3 inline-block" data-t="promo_bonus">БОНУСЫ</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-black mb-2" data-t="promo_title_2">Бесплатные поднятия</h3>
+                    <p class="text-amber-50 font-medium text-xs mb-5" data-t="promo_subtitle_2">Приглашай друзей в любой соцсети и получай +3 бесплатных поднятия!</p>
+                    <button class="bg-white text-amber-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 transition shadow-lg cursor-pointer" data-t="btn_share_main">Поделиться</button>
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
@@ -206,18 +203,26 @@
                 </div>
                 <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base" data-t="main_subtitle">Самые свежие объявления Сербии</p>
             </div>
-            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                <div class="relative flex-1 lg:flex-none">
-                    <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-5 pr-10 py-2.5 font-bold text-sm text-stone-700 dark:text-stone-200 shadow-sm outline-none cursor-pointer">
-                        <option value="new" data-t="sort_new">Сначала новые</option>
-                        <option value="cheap" data-t="sort_cheap">Сначала дешевые</option>
-                        <option value="exp" data-t="sort_exp">Сначала дорогие</option>
-                    </select>
-                    <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
+            
+            <!-- Строка поиска, Сортировка и Фильтры -->
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-2.5 shadow-sm transition-all flex items-center min-w-[250px]">
+                    <i class="fa-solid fa-magnifying-glass text-stone-400 text-xs"></i>
+                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск сокровищ..." data-t="search_placeholder" class="bg-transparent border-none outline-none ml-3 w-full text-sm font-bold text-stone-800 dark:text-stone-200 cursor-text">
                 </div>
-                <button onclick="window.toggleFilters()" class="flex-1 lg:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                    <i class="fa-solid fa-sliders"></i> <span data-t="btn_filters">Фильтры</span>
-                </button>
+                <div class="flex w-full sm:w-auto gap-3">
+                    <div class="relative flex-1 sm:flex-none">
+                        <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-5 pr-10 py-2.5 font-bold text-sm text-stone-700 dark:text-stone-200 shadow-sm outline-none cursor-pointer">
+                            <option value="new" data-t="sort_new">Сначала новые</option>
+                            <option value="cheap" data-t="sort_cheap">Сначала дешевые</option>
+                            <option value="exp" data-t="sort_exp">Сначала дорогие</option>
+                        </select>
+                        <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
+                    </div>
+                    <button onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-sliders"></i> <span data-t="btn_filters">Фильтры</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -271,8 +276,8 @@
                         <div>
                             <label class="block text-[10px] font-black uppercase text-stone-400 mb-2" data-t="filter_price">Цена</label>
                             <div class="flex gap-2">
-                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white">
-                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white">
+                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
+                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
                                 <select id="filter-currency" class="w-24 bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
                                     <option value="Все">Все</option><option value="RSD">RSD</option><option value="EUR">EUR</option>
                                 </select>
@@ -338,7 +343,7 @@
     </main>
 
     <!-- ПОДВАЛ -->
-    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto z-10">
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
             <div class="flex items-center gap-3 mb-6 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                 <div class="relative w-8 h-8 flex items-center justify-center shrink-0 grayscale opacity-80">
@@ -404,10 +409,6 @@
             <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-5 border border-stone-200 dark:border-stone-700 mb-6">
                 <div class="text-xs font-bold text-stone-600 dark:text-stone-300 mb-2">Отправьте ровно:</div>
                 <div class="text-2xl font-black text-stone-900 dark:text-white mb-4">5.00 USDT <span class="text-[10px] text-stone-400 align-middle">TRC20</span></div>
-                <div class="w-32 h-32 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-sm relative overflow-hidden mb-4">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ_MOCK_WALLET_ADDRESS_FOR_TRC20" class="w-full h-full">
-                    <div id="qr-scanner" class="hidden qr-scan-line"></div>
-                </div>
                 <div class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Адрес кошелька (TRC20)</div>
                 <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-lg border border-stone-200 dark:border-stone-700">
                     <input type="text" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-xs font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center cursor-text caret-brand-600">
@@ -418,21 +419,20 @@
         </div>
     </div>
 
-    <!-- Share Modal -->
+    <!-- Share Modal (Бонусы) -->
     <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[90]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 mb-3"><i class="fa-solid fa-arrow-up-right-dots text-2xl"></i></div>
-            <h2 class="text-2xl font-display font-black italic uppercase text-stone-900 dark:text-white">Получить поднятия</h2>
-            <p class="text-[10px] text-stone-500 font-semibold mt-1 uppercase tracking-widest mb-6">Бесплатное продвижение</p>
-            <div class="border border-stone-200 dark:border-stone-700 rounded-2xl p-4 bg-stone-50 dark:bg-stone-800/50">
-                <div class="font-black text-sm text-stone-900 dark:text-white mb-1">Поделись в Telegram</div>
-                <div class="text-[10px] text-stone-500 font-bold mb-3 leading-tight">Расскажи о SVALKA друзьям. После проверки мы начислим поднятия.</div>
-                <div class="flex justify-between items-center">
-                    <span class="text-brand-600 font-black text-xs uppercase"><i class="fa-solid fa-gift mr-1"></i> +3 Поднятия</span>
-                    <button id="btn-share-task" onclick="window.completeShareTask(this)" class="bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 hover:text-white transition shadow-sm cursor-pointer">Поделиться</button>
-                </div>
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-3"><i class="fa-solid fa-gift text-2xl"></i></div>
+            <h2 class="text-2xl font-display font-black italic uppercase text-stone-900 dark:text-white" data-t="promo_title_2">Бесплатные поднятия</h2>
+            <p class="text-[10px] text-stone-500 font-semibold mt-1 uppercase tracking-widest mb-6">Выбери способ поделиться</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="window.completeShareTask('telegram')" class="bg-[#0088cc] text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-telegram text-base mb-1 block"></i> Telegram</button>
+                <button onclick="window.completeShareTask('whatsapp')" class="bg-[#25D366] text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-whatsapp text-base mb-1 block"></i> WhatsApp</button>
+                <button onclick="window.completeShareTask('viber')" class="bg-[#7360f2] text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-viber text-base mb-1 block"></i> Viber</button>
+                <button onclick="window.completeShareTask('facebook')" class="bg-[#1877F2] text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-facebook text-base mb-1 block"></i> Facebook</button>
             </div>
+            <p class="text-[9px] text-stone-400 font-bold uppercase mt-6 tracking-widest">Мы начислим +3 поднятия после проверки!</p>
         </div>
     </div>
 
@@ -474,7 +474,7 @@
                 <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer" data-t="auth_tab_login">Вход</button>
                 <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer" data-t="auth_tab_register">Регистрация</button>
             </div>
-            <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="event.preventDefault(); window.submitAuth(event);">
+            <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="event.preventDefault(); window.submitAuth();">
                 <div id="auth-name-field" class="hidden flex-col gap-3">
                     <input type="text" id="auth-name" placeholder="Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                     <div>
@@ -495,6 +495,38 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[70]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[80vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800">
+            <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="p-6 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex items-center gap-4">
+                <div id="profile-avatar-container" class="w-16 h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-2 border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden"><i class="fa-solid fa-user"></i></div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                        <h2 id="profile-name" class="text-xl font-black text-stone-900 dark:text-white">Гость</h2>
+                        <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest">VIP</span>
+                    </div>
+                    <p id="profile-email" class="text-[10px] text-stone-500 mb-2">Не авторизован</p>
+                    
+                    <div id="profile-economy-section" class="hidden gap-2">
+                        <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-sm font-black text-sm">
+                            <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span> <span class="text-stone-900 dark:text-white ml-1">шт.</span>
+                        </div>
+                        <button onclick="window.logout()" class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-1.5 rounded-lg font-black text-[9px] uppercase text-stone-600 hover:text-red-500 transition shadow-sm cursor-pointer" data-t="profile_logout">Выйти</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex border-b dark:border-stone-800 px-8 font-black text-xs uppercase">
+                <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-5 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer" data-t="profile_tab_items">Мои вещи</button>
+                <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-5 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer" data-t="profile_tab_saved">Заначка</button>
+            </div>
+            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 items-start" style="display: none;"></div>
+            <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-black uppercase text-xs">
+                <i class="fa-solid fa-box-open text-3xl mb-2 opacity-20"></i> <span data-t="empty_title">Пусто</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Item Details Modal -->
     <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
@@ -511,7 +543,7 @@
                 <h2 id="modal-title" class="text-xl md:text-2xl font-display font-black mb-1 leading-tight text-stone-900 dark:text-white">Название...</h2>
                 <div id="modal-price" class="text-2xl md:text-3xl price-text text-brand-600 italic mb-2">0 RSD</div>
                 <div id="modal-phone-container" class="hidden items-center gap-2 text-sm font-bold text-stone-700 dark:text-stone-300 mb-4">
-                    <i class="fa-solid fa-phone text-brand-500"></i> <a href="" id="modal-phone" class="hover:text-brand-600 transition"></a>
+                    <i class="fa-solid fa-phone text-brand-500"></i> <a href="" id="modal-phone" class="hover:text-brand-600 transition cursor-pointer"></a>
                 </div>
                 <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-xs leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
                 
@@ -520,6 +552,9 @@
                         <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять (1 шт.)</button>
                         <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-black uppercase text-[9px] hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">В ТОП (Бесплатно PRO)</span></button>
                     </div>
+                    <!-- Блок для удаления и изменения цены -->
+                    <div id="modal-owner-edit-controls" class="flex gap-2 mt-1"></div>
+                    <!-- Блок для изменения статуса (Продано/Резерв) -->
                     <div id="modal-owner-status-controls" class="flex gap-2 mt-1"></div>
                 </div>
 
@@ -532,6 +567,82 @@
                 </div>
                 <button id="btn-contact-seller" onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-md hover:bg-brand-700 transition text-[10px] cursor-pointer" data-t="modal_contact">Написать продавцу</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 uppercase italic text-stone-900 dark:text-white" data-t="add_title">Пристроить добро</h2>
+            <form id="add-form" class="flex flex-col gap-4" onsubmit="event.preventDefault(); window.submitNewItem();">
+                <div class="flex gap-3 overflow-x-auto pb-1" id="photo-preview-list"></div>
+                <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-5 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
+                    <i class="fa-solid fa-camera-retro text-2xl mb-1"></i>
+                    <span class="font-black text-[9px] uppercase" data-t="add_photos_label">Добавить фото</span>
+                    <input type="file" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
+                </label>
+                <input type="text" id="item-title" placeholder="Название" data-t="add_name" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                
+                <!-- Категория и Город -->
+                <div class="grid grid-cols-2 gap-3">
+                    <select id="item-category" required class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none cursor-pointer text-stone-900 dark:text-white">
+                        <option value="" disabled selected>Категория...</option>
+                        <optgroup label="Одежда и Обувь">
+                            <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Аксессуары">Аксессуары</option>
+                        </optgroup>
+                        <optgroup label="Электроника">
+                            <option value="Электроника - Телефоны">Телефоны</option><option value="Электроника - ПК">Ноутбуки / ПК</option><option value="Электроника - Консоли">Консоли и Игры</option><option value="Электроника - Аудио">Аудио/Видео</option><option value="Электроника - Бытовая">Бытовая техника</option>
+                        </optgroup>
+                        <optgroup label="Интерьер">
+                            <option value="Интерьер - Мебель">Мебель</option><option value="Интерьер - Декор">Декор</option><option value="Интерьер - Ремонт">Ремонт и Стройка</option><option value="Интерьер - Сад">Сад и Огород</option>
+                        </optgroup>
+                        <optgroup label="Транспорт">
+                            <option value="Транспорт - Авто">Авто</option><option value="Транспорт - Мото">Мото</option><option value="Транспорт - Вело">Велосипеды/Самокаты</option><option value="Транспорт - Запчасти">Запчасти</option>
+                        </optgroup>
+                        <optgroup label="Услуги и Работа">
+                            <option value="Услуги - Ремонт">Ремонт техники</option><option value="Услуги - Красота">Красота и Здоровье</option><option value="Услуги - Репетиторы">Репетиторы</option><option value="Работа - Вакансии">Вакансии</option>
+                        </optgroup>
+                        <optgroup label="Хобби и Отдых">
+                            <option value="Хобби - Спорт">Спорт инвентарь</option><option value="Хобби - Книги">Книги</option><option value="Хобби - Музыка">Музыка</option><option value="Хобби - Коллекции">Коллекционирование</option>
+                        </optgroup>
+                        <optgroup label="Животные">
+                            <option value="Животные - Собаки">Собаки</option><option value="Животные - Кошки">Кошки</option><option value="Животные - Товары">Зоотовары</option>
+                        </optgroup>
+                        <optgroup label="Недвижимость">
+                            <option value="Жилье - Аренда">Аренда жилья</option><option value="Жилье - Покупка">Покупка</option><option value="Жилье - Коммерция">Коммерческая</option>
+                        </optgroup>
+                        <optgroup label="Другое">
+                            <option value="Детям - Игрушки">Игрушки</option><option value="Детям - Коляски">Коляски</option><option value="Другое - Разное">Разное</option><option value="Другое - Бесплатно">Отдам даром</option>
+                        </optgroup>
+                    </select>
+                    <select id="item-city" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none cursor-pointer text-stone-900 dark:text-white">
+                        <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
+                        <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
+                        <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
+                    </select>
+                </div>
+                
+                <!-- Цена и Валюта -->
+                <div class="flex gap-3">
+                    <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold outline-none text-sm cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
+                </div>
+
+                <!-- Телефон -->
+                <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" data-t="add_phone" class="w-full bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-bold text-xs outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                
+                <!-- Описание и ИИ -->
+                <div class="relative flex flex-col">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[9px] font-black uppercase text-stone-400" data-t="add_desc_label">Описание</span>
+                        <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-[9px] font-black uppercase text-brand-600 bg-brand-50 border border-brand-200 px-2 py-1 rounded hover:bg-brand-100 transition cursor-pointer">✨ <span data-t="btn_ai_desc">Сгенерировать ИИ</span></button>
+                    </div>
+                    <textarea id="item-desc" placeholder="Описание..." data-t="add_desc" rows="3" class="bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
+                </div>
+
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-brand-700 transition text-[10px] cursor-pointer" data-t="btn_publish">Опубликовать</button>
+            </form>
         </div>
     </div>
 
@@ -568,7 +679,8 @@
         // Полный словарь i18n
         window.i18n = {
             ru: {
-                search_placeholder: "Поиск сокровищ...", promo_title: "Поддержи проект!", promo_subtitle: "Сайт в BETA-тестировании. Получи VIP-статус за донат в крипте и продавай вещи в 5 раз быстрее. Приглашай друзей и получай 3 бесплатных поднятия!",
+                search_placeholder: "Поиск сокровищ...", promo_title: "Поддержи проект!", promo_subtitle: "Сайт в BETA-тестировании. Получи VIP-статус за донат в крипте и продавай вещи в 5 раз быстрее.",
+                promo_title_2: "Бесплатные поднятия", promo_subtitle_2: "Приглашай друзей в любой соцсети и получай +3 бесплатных поднятия!", promo_bonus: "Бонусы",
                 main_title: "Находки", main_subtitle: "Самые свежие объявления Сербии", sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие", btn_filters: "Фильтры",
                 cat_all: "Все", cat_clothes: "Одежда", cat_electronics: "Электроника", cat_consoles: "Консоли", cat_services: "Услуги", cat_home: "Интерьер", cat_auto: "Транспорт", cat_hobbies: "Хобби", cat_kids: "Детям", cat_housing: "Жилье", cat_free: "Даром",
                 filter_cat: "Категория", filter_city: "Город", filter_price: "Цена", city_all: "Все города", filter_reset: "Сбросить", filter_apply: "Применить",
@@ -578,13 +690,15 @@
                 profile_tab_items: "Мои вещи", profile_tab_saved: "Заначка", profile_logout: "Выйти", profile_new_user: "Продавец SVALKA",
                 add_title: "Пристроить добро", add_photos_label: "Добавить фото", add_name: "Название", add_price: "Цена", add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ", btn_publish: "Опубликовать",
                 modal_contact: "Написать продавцу", mob_messages: "Сообщения", mob_emergency_exit: "Экстренный выход", mob_free_bumps: "Бесплатные поднятия",
-                policy_text: "<p>Мы используем файлы cookie и сохраняем ваши данные исключительно для корректной работы сервиса SVALKA. Ваши пароли надежно зашифрованы.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>",
-                rules_text: "<p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам (дублирование одинаковых объявлений).</p><p>3. Встречайтесь с покупателями лично, остерегайтесь мошенников.</p>",
+                policy_text: "<p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>",
+                rules_text: "<p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>",
                 auth_pass_error: "Пароль должен быть от 8 символов и содержать буквы и цифры.", auth_reset_sent: "Ссылка для сброса отправлена на почту!",
-                add_phone: "Телефон (необязательно)", btn_mark_reserved: "В резерв", btn_mark_sold: "Продано", btn_mark_active: "Активировать", status_reserved: "В РЕЗЕРВЕ", status_sold: "ПРОДАНО"
+                add_phone: "Телефон (необязательно)", btn_mark_reserved: "В резерв", btn_mark_sold: "Продано", btn_mark_active: "Активировать", status_reserved: "В РЕЗЕРВЕ", status_sold: "ПРОДАНО",
+                btn_share_main: "Поделиться", btn_delete: "Удалить", btn_edit_price: "Изм. цену", prompt_new_price: "Введите новую цену:", confirm_delete: "Вы уверены, что хотите удалить это объявление навсегда?"
             },
             rs: {
-                search_placeholder: "Pretraga...", promo_title: "Podrži projekat!", promo_subtitle: "Sajt je u BETA verziji. Pozovi prijatelje i dobij 3 besplatna podizanja!",
+                search_placeholder: "Pretraga...", promo_title: "Podrži projekat!", promo_subtitle: "Uzmi VIP za kripto donaciju i prodaj brže.",
+                promo_title_2: "Besplatna podizanja", promo_subtitle_2: "Pozovi prijatelje i dobij +3 besplatna podizanja!", promo_bonus: "Bonusi",
                 main_title: "Otkrića", main_subtitle: "Najnoviji oglasi u Srbiji", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", btn_filters: "Filteri",
                 cat_all: "Sve", cat_clothes: "Odeća", cat_electronics: "Elektronika", cat_consoles: "Konzole", cat_services: "Usluge", cat_home: "Enterijer", cat_auto: "Transport", cat_hobbies: "Hobi", cat_kids: "Za decu", cat_housing: "Smeštaj", cat_free: "Besplatno",
                 filter_cat: "Kategorija", filter_city: "Grad", filter_price: "Cena", city_all: "Svi gradovi", filter_reset: "Poništi", filter_apply: "Primeni",
@@ -594,13 +708,15 @@
                 profile_tab_items: "Moji oglasi", profile_tab_saved: "Sačuvano", profile_logout: "Izlaz", profile_new_user: "Prodavac SVALKA",
                 add_title: "Dodaj oglas", add_photos_label: "Dodaj sliku", add_name: "Naziv", add_price: "Cena", add_desc_label: "Opis", btn_ai_desc: "Generiši AI", btn_publish: "Objavi",
                 modal_contact: "Kontakt", mob_messages: "Poruke", mob_emergency_exit: "Hitni izlaz", mob_free_bumps: "Besplatna podizanja",
-                policy_text: "<p>Koristimo kolačiće i čuvamo vaše podatke isključivo za pravilan rad SVALKA servisa. Vaše lozinke su bezbedno šifrovane.</p><p>Fotografije se otpremaju na naše zaštićene Supabase servere.</p>",
-                rules_text: "<p>1. Prodaja nelegalnih predmeta je zabranjena.</p><p>2. Spam (dupliranje istih oglasa) je zabranjen.</p><p>3. Sastajte se sa kupcima lično, čuvajte se prevaranata.</p>",
-                auth_pass_error: "Lozinka mora imati najmanje 8 karaktera i sadržati slova i brojeve.", auth_reset_sent: "Link za resetovanje je poslat na vašu e-poštu!",
-                add_phone: "Telefon (opciono)", btn_mark_reserved: "Rezerviši", btn_mark_sold: "Prodato", btn_mark_active: "Aktiviraj", status_reserved: "REZERVISANO", status_sold: "PRODATO"
+                policy_text: "<p>Vaše lozinke su bezbedno šifrovane.</p><p>Fotografije se otpremaju na naše zaštićene servere.</p>",
+                rules_text: "<p>1. Prodaja nelegalnih predmeta je zabranjena.</p><p>2. Spam je zabranjen.</p><p>3. Sastajte se sa kupcima lično.</p>",
+                auth_pass_error: "Lozinka mora imati najmanje 8 karaktera i sadržati slova i brojeve.", auth_reset_sent: "Link je poslat na vašu e-poštu!",
+                add_phone: "Telefon (opciono)", btn_mark_reserved: "Rezerviši", btn_mark_sold: "Prodato", btn_mark_active: "Aktiviraj", status_reserved: "REZERVISANO", status_sold: "PRODATO",
+                btn_share_main: "Podeli", btn_delete: "Izbriši", btn_edit_price: "Izmeni cenu", prompt_new_price: "Unesite novu cenu:", confirm_delete: "Da li ste sigurni da želite da trajno izbrišete ovaj oglas?"
             },
             en: {
-                search_placeholder: "Search...", promo_title: "Support us!", promo_subtitle: "Site in BETA. Invite friends and get 3 free bumps!",
+                search_placeholder: "Search...", promo_title: "Support us!", promo_subtitle: "Get VIP via crypto donation to sell faster.",
+                promo_title_2: "Free Bumps", promo_subtitle_2: "Invite friends and get +3 free bumps!", promo_bonus: "Bonuses",
                 main_title: "Great Finds", main_subtitle: "Fresh listings in Serbia", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", btn_filters: "Filters",
                 cat_all: "All", cat_clothes: "Clothes", cat_electronics: "Electronics", cat_consoles: "Consoles", cat_services: "Services", cat_home: "Interior", cat_auto: "Transport", cat_hobbies: "Hobbies", cat_kids: "Kids", cat_housing: "Housing", cat_free: "Free",
                 filter_cat: "Category", filter_city: "City", filter_price: "Price", city_all: "All cities", filter_reset: "Reset", filter_apply: "Apply",
@@ -610,10 +726,11 @@
                 profile_tab_items: "My Listings", profile_tab_saved: "Saved", profile_logout: "Log Out", profile_new_user: "SVALKA Seller",
                 add_title: "Add Listing", add_photos_label: "Add photos", add_name: "Title", add_price: "Price", add_desc_label: "Description", btn_ai_desc: "Generate AI", btn_publish: "Publish",
                 modal_contact: "Contact Seller", mob_messages: "Messages", mob_emergency_exit: "Emergency exit", mob_free_bumps: "Free bumps",
-                policy_text: "<p>We use cookies and store your data solely for the proper operation of the SVALKA service. Your passwords are securely encrypted.</p><p>Photos are uploaded to our secure Supabase servers.</p>",
-                rules_text: "<p>1. Sale of illegal items is prohibited.</p><p>2. Spam (duplicating the same listings) is prohibited.</p><p>3. Meet buyers in person, beware of scammers.</p>",
-                auth_pass_error: "Password must be at least 8 characters long and contain both letters and numbers.", auth_reset_sent: "Reset link sent to your email!",
-                add_phone: "Phone (optional)", btn_mark_reserved: "Reserve", btn_mark_sold: "Mark Sold", btn_mark_active: "Activate", status_reserved: "RESERVED", status_sold: "SOLD"
+                policy_text: "<p>Your passwords are securely encrypted.</p><p>Photos are uploaded to our secure servers.</p>",
+                rules_text: "<p>1. Sale of illegal items is prohibited.</p><p>2. Spam is prohibited.</p><p>3. Meet buyers in person.</p>",
+                auth_pass_error: "Password must be at least 8 characters long and contain both letters and numbers.", auth_reset_sent: "Reset link sent!",
+                add_phone: "Phone (optional)", btn_mark_reserved: "Reserve", btn_mark_sold: "Mark Sold", btn_mark_active: "Activate", status_reserved: "RESERVED", status_sold: "SOLD",
+                btn_share_main: "Share", btn_delete: "Delete", btn_edit_price: "Edit price", prompt_new_price: "Enter new price:", confirm_delete: "Are you sure you want to permanently delete this listing?"
             }
         };
 
@@ -635,6 +752,7 @@
             if (window.loadedItems && window.loadedItems.length > 0) window.renderGrid();
         };
 
+        // UI HELPERS
         window.openModal = id => { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-open'); };
         window.closeModal = id => { document.getElementById(id).classList.remove('active'); if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); };
         window.toggleDarkMode = () => document.documentElement.classList.toggle('dark');
@@ -648,6 +766,15 @@
             if (t) {
                 t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity duration-300 pointer-events-none flex items-center gap-2 ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
                 setTimeout(()=>t.classList.replace('opacity-100', 'opacity-0'), 3000); 
+            }
+        };
+
+        // UI TOGGLE HELPER (Safe toggling)
+        const toggleUI = (id, show, displayClass = 'flex') => {
+            const el = document.getElementById(id);
+            if(el) {
+                if(show) { el.classList.remove('hidden'); el.classList.add(displayClass); }
+                else { el.classList.add('hidden'); el.classList.remove(displayClass); }
             }
         };
 
@@ -706,15 +833,13 @@
             const tabL = document.getElementById('tab-login');
             const tabR = document.getElementById('tab-register');
             if(mode === 'register') { 
-                fields.classList.remove('hidden');
-                fields.classList.add('flex'); 
-                tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-                tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
+                if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
+                if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+                if(tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
             } else { 
-                fields.classList.add('hidden');
-                fields.classList.remove('flex'); 
-                tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-                tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
+                if(fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
+                if(tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+                if(tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
             }
         };
 
@@ -893,7 +1018,7 @@
 
             try {
                 const fetchPromise = supabase.from('items').select('*').order('created_at', { ascending: false }).limit(200);
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Таймаут: сервер не отвечает (20 сек). Возможно, в базе есть тяжелые фото.")), 20000));
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Таймаут сервера (20 сек).")), 20000));
                 const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
                 
                 if (error) throw error;
@@ -908,8 +1033,7 @@
                 if (window.loadedItems.length === 0 && loader) {
                     loader.innerHTML = `
                     <div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>
-                        Ошибка Базы Данных<br>
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка Базы Данных<br>
                         <span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span>
                     </div>`;
                 }
@@ -1089,9 +1213,11 @@
             const isOwner = window.currentUser && window.currentUser.id === item.userId;
             const ctrl = document.getElementById('modal-owner-controls');
             const contactBtn = document.getElementById('btn-contact-seller');
+            const statusControls = document.getElementById('modal-owner-status-controls');
+            const editControls = document.getElementById('modal-owner-edit-controls');
 
             if (isOwner) {
-                contactBtn.classList.add('hidden'); // Нельзя писать самому себе
+                contactBtn.classList.add('hidden'); // Скрываем чат от себя
                 ctrl.classList.replace('hidden', 'flex');
                 
                 const vipBtnText = document.getElementById('btn-owner-vip-text');
@@ -1101,7 +1227,7 @@
                     vipBtnText.innerText = "Купить PRO";
                 }
 
-                const statusControls = document.getElementById('modal-owner-status-controls');
+                // Кнопки статуса
                 statusControls.innerHTML = '';
                 if (item.status !== 'sold') {
                     const isRes = item.status === 'reserved';
@@ -1115,6 +1241,14 @@
                     const activeText = window.i18n[window.currentAppLang]['btn_mark_active'] || "Активировать";
                     statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> ${activeText}</button>`;
                 }
+
+                // Кнопки Удалить / Изменить цену
+                editControls.innerHTML = '';
+                const btnEdit = window.i18n[window.currentAppLang]['btn_edit_price'] || "Изм. цену";
+                const btnDel = window.i18n[window.currentAppLang]['btn_delete'] || "Удалить";
+                editControls.innerHTML += `<button onclick="window.editItemPrice('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> ${btnEdit}</button>`;
+                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-black uppercase text-[9px] hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> ${btnDel}</button>`;
+
             } else {
                 contactBtn.classList.remove('hidden');
                 ctrl.classList.replace('flex', 'hidden');
@@ -1133,6 +1267,36 @@
                 window.openItemDetails(window.activeModalItemId); 
                 window.fetchItems(true); 
             } catch(e) { window.showToast("Ошибка", true); }
+        };
+
+        window.deleteItem = async (id) => {
+            if (!window.currentUser) return;
+            const confirmMsg = window.i18n[window.currentAppLang]['confirm_delete'] || "Удалить?";
+            if (confirm(confirmMsg)) {
+                try {
+                    await supabase.from('items').delete().eq('id', id);
+                    window.showToast("Удалено!");
+                    window.closeModal('item-modal');
+                    window.fetchItems(true);
+                } catch(e) { window.showToast("Ошибка удаления", true); }
+            }
+        };
+
+        window.editItemPrice = async (id) => {
+            if (!window.currentUser) return;
+            const item = window.loadedItems.find(i => i.id === id);
+            if (!item) return;
+            const promptMsg = window.i18n[window.currentAppLang]['prompt_new_price'] || "Новая цена:";
+            const newPrice = prompt(promptMsg, item.price);
+            if (newPrice !== null && newPrice !== "" && !isNaN(newPrice)) {
+                try {
+                    await supabase.from('items').update({ price: Number(newPrice) }).eq('id', id);
+                    item.price = Number(newPrice);
+                    window.showToast("Цена обновлена!");
+                    window.openItemDetails(id);
+                    window.fetchItems(true);
+                } catch(e) { window.showToast("Ошибка", true); }
+            }
         };
 
         window.switchProfileTab = tab => { 
@@ -1182,6 +1346,14 @@
             window.openModal('chat-modal');
         };
 
+        window.openChatListModal = () => {
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
+            document.getElementById('chat-item-title').innerText = "Все сообщения";
+            document.getElementById('chat-author-name').innerText = "Список чатов";
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-10">У вас пока нет активных диалогов</div>`;
+            window.openModal('chat-modal');
+        }
+
         window.sendChatMessage = () => {
             const input = document.getElementById('chat-input-field');
             if(!input.value.trim()) return;
@@ -1205,11 +1377,19 @@
             window.openModal('share-modal');
         };
 
-        window.completeShareTask = (btn) => {
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ПРОВЕРКА...';
-            window.open(`https://t.me/share/url?url=${encodeURIComponent("https://svalka.rs")}&text=${encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!")}`, '_blank');
+        window.completeShareTask = (network) => {
+            const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
+            const url = encodeURIComponent(`https://svalka.rs/?ref=${window.currentUser?.id || 'guest'}`);
+            
+            let shareUrl = '';
+            if (network === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+            else if (network === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+            else if (network === 'viber') shareUrl = `viber://forward?text=${text}%20${url}`;
+            else if (network === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            
+            if(shareUrl) window.open(shareUrl, '_blank');
+            
             setTimeout(async () => {
-                btn.innerText = "ГОТОВО!"; btn.classList.add('bg-brand-600', 'text-white');
                 window.showToast("+3 Поднятия получено!");
                 const newBal = (window.currentUserData?.wallet_balance || 0) + 3;
                 try {
@@ -1217,6 +1397,7 @@
                     window.currentUserData.wallet_balance = newBal;
                     const pb = document.getElementById('profile-balance'); const nb = document.getElementById('nav-wallet-balance');
                     if(pb) pb.innerText = newBal; if(nb) nb.innerText = newBal + ' шт.';
+                    window.closeModal('share-modal');
                 } catch(e) { console.error(e); }
             }, 4000); 
         };
@@ -1270,27 +1451,18 @@
         window.handleAuthChange = async (session) => {
             try {
                 window.currentUser = session?.user || null;
-                const ui = {
-                    loginBtn: document.getElementById('nav-login-btn'), profileBtn: document.getElementById('nav-profile-btn'),
-                    chatBtn: document.getElementById('nav-chat-btn'), wallet: document.getElementById('nav-wallet-block'), 
-                    userControls: document.getElementById('nav-user-controls'),
-                    econ: document.getElementById('profile-economy-section'), loginWrap: document.getElementById('profile-login-wrapper'),
-                    mobLogin: document.getElementById('mob-nav-login'), mobProfile: document.getElementById('mob-nav-profile'), mobChat: document.getElementById('mob-nav-chat'),
-                    mobExit: document.getElementById('mob-nav-exit')
-                };
+                
+                toggleUI('nav-login-btn', !window.currentUser, 'block');
+                toggleUI('nav-user-controls', !!window.currentUser, 'flex');
+                toggleUI('nav-wallet-block', !!window.currentUser, 'flex');
+                
+                toggleUI('mob-nav-login', !window.currentUser, 'flex');
+                toggleUI('mob-user-controls', !!window.currentUser, 'flex');
+                
+                toggleUI('profile-login-wrapper', !window.currentUser, 'block');
+                toggleUI('profile-economy-section', !!window.currentUser, 'flex');
 
                 if (window.currentUser) {
-                    if(ui.loginWrap) { ui.loginWrap.classList.add('hidden'); ui.loginWrap.classList.remove('block'); }
-                    if(ui.loginBtn) { ui.loginBtn.classList.add('hidden'); }
-                    if(ui.userControls) { ui.userControls.classList.remove('hidden'); ui.userControls.classList.add('flex'); }
-                    if(ui.wallet) { ui.wallet.classList.remove('hidden'); ui.wallet.classList.add('flex'); }
-                    if(ui.econ) { ui.econ.classList.remove('hidden'); ui.econ.classList.add('flex'); }
-                    
-                    if(ui.mobLogin) { ui.mobLogin.classList.add('hidden'); ui.mobLogin.classList.remove('flex'); }
-                    if(ui.mobProfile) { ui.mobProfile.classList.remove('hidden'); ui.mobProfile.classList.add('flex'); }
-                    if(ui.mobChat) { ui.mobChat.classList.remove('hidden'); ui.mobChat.classList.add('flex'); }
-                    if(ui.mobExit) { ui.mobExit.classList.remove('hidden'); ui.mobExit.classList.add('flex'); }
-
                     const meta = window.currentUser.user_metadata || {};
                     document.getElementById('profile-name').innerText = meta.full_name || "Пользователь";
                     document.getElementById('profile-email').innerText = window.currentUser.email || "";
@@ -1308,19 +1480,8 @@
                         const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
                         window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                     } catch(e) { console.warn("Fav error", e); }
-
-                } else {
-                    if(ui.loginWrap) { ui.loginWrap.classList.remove('hidden'); ui.loginWrap.classList.add('block'); }
-                    if(ui.loginBtn) { ui.loginBtn.classList.remove('hidden'); }
-                    if(ui.userControls) { ui.userControls.classList.add('hidden'); ui.userControls.classList.remove('flex'); }
-                    if(ui.wallet) { ui.wallet.classList.add('hidden'); ui.wallet.classList.remove('flex'); }
-                    if(ui.econ) { ui.econ.classList.add('hidden'); ui.econ.classList.remove('flex'); }
-                    
-                    if(ui.mobLogin) { ui.mobLogin.classList.remove('hidden'); ui.mobLogin.classList.add('flex'); }
-                    if(ui.mobProfile) { ui.mobProfile.classList.add('hidden'); ui.mobProfile.classList.remove('flex'); }
-                    if(ui.mobChat) { ui.mobChat.classList.add('hidden'); ui.mobChat.classList.remove('flex'); }
-                    if(ui.mobExit) { ui.mobExit.classList.add('hidden'); ui.mobExit.classList.remove('flex'); }
                 }
+                
                 if (window.renderProfileTabs) window.renderProfileTabs();
             } catch(e) { console.error("Auth error:", e); }
         };
