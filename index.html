@@ -24,6 +24,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&display=swap');
         
+        /* Исправление дерганья сайта при открытии модалок */
+        html { scrollbar-gutter: stable; }
+
         body { 
             transition: background-color 0.3s, color 0.3s; 
             background-color: #f5f5f4; 
@@ -87,7 +90,7 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <!-- HEADER / NAV -->
+    <!-- НАВИГАЦИЯ -->
     <nav class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4 lg:gap-8 flex-1">
@@ -136,7 +139,7 @@
         </div>
     </nav>
 
-    <!-- MOBILE MENU OVERLAY -->
+    <!-- MOBILE MENU -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
             <div class="flex items-center gap-1 pt-1">
@@ -268,19 +271,19 @@
         <div class="mb-8 flex flex-wrap items-center gap-2 sm:gap-2.5">
             <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer">Все</button>
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 cursor-pointer"><i class="fa-solid fa-fire mr-1"></i> Срочно</button>
-            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Одежда</button>
-            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Электроника</button>
-            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> Консоли</button>
-            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> Интерьер</button>
-            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> Транспорт</button>
-            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> Услуги</button>
-            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> Хобби</button>
-            <button data-cat="Детям" onclick="window.filterByCategory('Детям')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> Детям</button>
-            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> Жилье</button>
-            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-50 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> Даром</button>
+            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Одежда</button>
+            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Электроника</button>
+            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> Консоли</button>
+            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> Интерьер</button>
+            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> Транспорт</button>
+            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> Услуги</button>
+            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> Хобби</button>
+            <button data-cat="Детям" onclick="window.filterByCategory('Детям')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> Детям</button>
+            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> Жилье</button>
+            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> Даром</button>
         </div>
 
-        <!-- VIP ЛЕНТА (Срочно) -->
+        <!-- VIP ЛЕНТА -->
         <div id="vip-section" class="mb-10 hidden">
             <div class="flex items-center gap-2 mb-4 pl-1">
                 <i class="fa-solid fa-gem text-amber-500"></i>
@@ -312,6 +315,19 @@
                 <p class="font-bold text-sm">Ничего не найдено</p>
             </div>
         </div>
+        
+        <!-- РЕКЛАМНЫЙ БАННЕР ВНИЗУ -->
+        <div class="mt-12 mb-4 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between shadow-xl relative overflow-hidden cursor-pointer" onclick="window.openModal('crypto-modal')">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            <div class="relative z-10 text-center md:text-left mb-4 md:mb-0">
+                <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                    <span class="bg-white/20 backdrop-blur text-white border border-white/30 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
+                </div>
+                <h3 class="text-2xl font-display font-black mb-1">Продавай быстрее!</h3>
+                <p class="text-brand-50 font-medium max-w-md text-xs">Получи VIP-статус и твои вещи всегда будут на самом верху ленты.</p>
+            </div>
+            <button class="relative z-10 bg-white text-brand-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 transition shrink-0 shadow-lg cursor-pointer">Купить PRO</button>
+        </div>
     </main>
 
     <!-- ПОДВАЛ -->
@@ -335,8 +351,7 @@
         </div>
     </footer>
 
-    <!-- ВСЕ МОДАЛКИ (СТРОГО В ОДНОМ ЭКЗЕМПЛЯРЕ) -->
-    
+    <!-- ВСЕ МОДАЛКИ -->
     <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -375,9 +390,6 @@
             <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-5 border border-stone-200 dark:border-stone-700 mb-6">
                 <div class="text-sm font-bold text-stone-600 dark:text-stone-300 mb-2">Отправьте ровно:</div>
                 <div class="text-2xl font-black text-stone-900 dark:text-white mb-4">5.00 USDT <span class="text-xs text-stone-400 align-middle">TRC20</span></div>
-                <div class="w-32 h-32 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-sm relative overflow-hidden mb-4">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TXYZ_MOCK_WALLET_ADDRESS_FOR_TRC20" class="w-full h-full">
-                </div>
                 <div class="text-xs font-bold text-stone-400 mb-1">Адрес кошелька (TRC20)</div>
                 <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-lg border border-stone-200 dark:border-stone-700">
                     <input type="text" id="crypto-address" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-sm font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center cursor-text caret-brand-600">
@@ -463,7 +475,7 @@
                 </div>
                 <input type="email" id="auth-email" placeholder="Email" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 <div>
-                    <input type="password" id="auth-password" placeholder="Пароль" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm mb-1 outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    <input type="password" id="auth-password" placeholder="Пароль" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm mb-1 outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required minlength="8">
                     <p class="text-xs text-stone-400 font-medium leading-tight" id="auth-hint">Мин. 8 символов: буквы + цифры</p>
                 </div>
                 <div class="flex justify-between items-center mt-4">
@@ -474,50 +486,43 @@
         </div>
     </div>
 
-    <!-- Обновленный Профиль с Кнопкой Выхода -->
+    <!-- Обновленный Профиль -->
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[70]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[80vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="p-6 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div id="profile-avatar-container" class="w-16 h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-2 border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0"><i class="fa-solid fa-user"></i></div>
                 <div class="flex-1 w-full">
-                    <div class="flex justify-between items-start">
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-2">
-                                <h2 id="profile-name" class="text-xl md:text-2xl font-black text-stone-900 dark:text-white">Гость</h2>
-                                <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase">VIP</span>
-                            </div>
-                            <p id="profile-email" class="text-xs text-stone-500 mb-2">Не авторизован</p>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <h2 id="profile-name" class="text-xl md:text-2xl font-black text-stone-900 dark:text-white">Гость</h2>
+                            <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase">VIP</span>
                         </div>
-                        <button id="profile-logout-btn" onclick="window.logout()" class="hidden bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-100 transition shadow-sm cursor-pointer whitespace-nowrap">
-                            <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Выйти
-                        </button>
+                        <p id="profile-email" class="text-xs text-stone-500 mb-2">Не авторизован</p>
                     </div>
                     
                     <div id="profile-economy-section" class="hidden flex-col gap-1.5 mt-2 w-full">
                         <div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Мои поднятия:</div>
-                        <div class="flex flex-wrap items-center gap-2 w-full">
+                        <div class="flex flex-wrap items-center gap-2 w-full mt-1">
                             <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm font-black text-sm shrink-0">
                                 <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span>
                             </div>
                             <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-brand-50 dark:bg-brand-900/20 text-brand-600 border border-brand-200 dark:border-brand-800/50 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-brand-100 transition shadow-sm cursor-pointer">+ Получить</button>
+                            
+                            <!-- Кнопка Выхода перенесена сюда и стилизована -->
+                            <button id="profile-logout-btn" onclick="window.logout()" class="ml-auto bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-brand-600 hover:border-brand-300 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition shadow-sm cursor-pointer whitespace-nowrap">
+                                <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Выйти
+                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <div id="profile-share-banner" class="hidden mx-6 mt-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 text-white flex-col sm:flex-row items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition" onclick="window.closeModal('profile-modal'); window.openModal('share-modal');">
-                <div class="flex items-center gap-3 mb-3 sm:mb-0 w-full sm:w-auto">
-                    <div class="w-10 h-10 bg-white/20 rounded-full hidden sm:flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
-                    <div>
-                        <h4 class="font-black text-sm">Бесплатные поднятия</h4>
-                        <p class="text-amber-50 text-xs">Приглашай друзей и получай +3 поднятия!</p>
+                    
+                    <div id="profile-login-wrapper" class="block">
+                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-md cursor-pointer">Войти</button>
                     </div>
                 </div>
-                <button class="bg-white text-amber-600 px-5 py-2.5 rounded-lg font-bold text-xs whitespace-nowrap w-full sm:w-auto">Поделиться</button>
             </div>
 
-            <div class="flex border-b dark:border-stone-800 px-8 font-bold text-sm mt-4">
+            <div class="flex border-b dark:border-stone-800 px-8 font-bold text-sm mt-2">
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer">Заначка</button>
             </div>
@@ -599,9 +604,13 @@
         </div>
     </div>
 
+    <!-- Модалка с Карточкой Товара -->
     <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <!-- Кнопки управления (Закрыть и Избранное) -->
+            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition shadow-sm cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="absolute top-4 right-14 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-sm cursor-pointer"><i class="fa-solid fa-box-open text-sm"></i></button>
+
             <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center relative group">
                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
             </div>
@@ -661,7 +670,6 @@
         window.filterPriceMax = '';
         window.filterCurrency = 'Все'; 
 
-        window.currentAppLang = 'ru';
         window.currentProfileTab = 'items';
         window.activeModalItemId = null; 
         window.userFavorites = new Set(); 
@@ -670,6 +678,7 @@
         window.currentFilteredItems = [];
         window.authMode = 'login';
 
+        // PWA Initialization
         const initPWA = () => {
             const manifest = {
                 name: "SVALKA - Маркетплейс", short_name: "SVALKA", description: "Маркетплейс вещей в Сербии",
@@ -693,16 +702,6 @@
         };
         initPWA();
 
-        window.changeLang = function(lang) {
-            window.currentAppLang = lang;
-            const flags = { 'ru': 'https://flagcdn.com/w20/ru.png', 'rs': 'https://flagcdn.com/w20/rs.png', 'en': 'https://flagcdn.com/w20/gb.png' };
-            const names = { 'ru': 'РУС', 'rs': 'SRB', 'en': 'ENG' };
-            const flagEl = document.getElementById('current-lang-flag');
-            const textEl = document.getElementById('current-lang-text');
-            if (flagEl) flagEl.src = flags[lang] || flags['ru'];
-            if (textEl) textEl.innerText = names[lang] || 'РУС';
-        };
-
         window.openModal = id => { 
             const el = document.getElementById(id);
             if(el) { el.classList.add('active'); document.body.classList.add('modal-open'); }
@@ -723,11 +722,12 @@
             if(tMsg) tMsg.innerText = msg;
             if(tIco) tIco.className = `fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'}`;
             if (t) {
-                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2 z-[9999] transition-opacity duration-300 pointer-events-none ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
+                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999] transition-opacity duration-300 pointer-events-none ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
                 setTimeout(()=>t.classList.replace('opacity-100', 'opacity-0'), 3000); 
             }
         };
 
+        // Lightbox
         window.currentLightboxImages = [];
         window.currentLightboxIndex = 0;
         window.openLightbox = (src) => {
@@ -753,8 +753,9 @@
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
+        // Favorites
         window.toggleFavorite = async (btn, event, itemId) => {
-            event.stopPropagation();
+            if(event) event.stopPropagation();
             if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             if (!itemId) return;
             const isLiked = window.userFavorites.has(itemId);
@@ -763,17 +764,30 @@
                 if (isLiked) {
                     await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
                     window.userFavorites.delete(itemId);
-                    icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
+                    if(icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
                 } else {
                     await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
                     window.userFavorites.add(itemId);
-                    icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
+                    if(icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
                 window.renderGrid();
+                
+                // Update modal heart/box button if open
+                if(window.activeModalItemId === itemId) {
+                    const modalFavIcon = document.querySelector('#modal-fav-btn i');
+                    if(modalFavIcon) {
+                        modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                    }
+                }
             } catch(e) { console.error(e); }
         };
+        
+        window.toggleFavoriteModal = (event) => {
+            if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId);
+        }
 
+        // Auth
         window.setAuthMode = mode => {
             window.authMode = mode;
             const fields = document.getElementById('auth-name-field');
@@ -800,7 +814,7 @@
 
             if (window.authMode === 'register') {
                 const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
-                if (!passRegex.test(pass)) { window.showToast("Пароль должен быть от 8 символов и содержать буквы и цифры", true); return; }
+                if (!passRegex.test(pass)) { window.showToast("Пароль от 8 символов (буквы + цифры)", true); return; }
             }
             
             if(btn) { btn.disabled = true; btn.innerText = "..."; }
@@ -822,10 +836,7 @@
                 if(passEl) passEl.value = '';
             } catch (e) { window.showToast(e.message, true); }
             finally { 
-                if(btn) {
-                    btn.disabled = false; 
-                    btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; 
-                }
+                if(btn) { btn.disabled = false; btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; }
             }
         };
 
@@ -854,6 +865,7 @@
             window.location.reload(); 
         };
 
+        // Avatars init
         const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
         const grid = document.getElementById('avatar-grid');
         if(grid) {
@@ -863,6 +875,7 @@
             });
         }
 
+        // Filters
         window.applyFilters = () => {
             const elCat = document.getElementById('filter-category');
             const elCity = document.getElementById('filter-city');
@@ -969,54 +982,37 @@
             const mainGrid = document.getElementById('main-items-grid');
             const emptyState = document.getElementById('empty-state');
             
-            let hasValidCache = false;
-            if (!isBackground) {
-                const cachedData = localStorage.getItem('svalka_items_cache');
-                if (cachedData) {
-                    try {
-                        const parsed = JSON.parse(cachedData);
-                        if (Date.now() - parsed.timestamp < 10 * 60 * 1000) { 
-                            window.loadedItems = parsed.data;
-                            window.displayedCount = 12;
-                            window.renderDynamicItems(parsed.data);
-                            hasValidCache = true;
-                        }
-                    } catch(e) {}
-                }
-            }
-
-            if (!hasValidCache && window.loadedItems.length === 0) {
+            if (!isBackground && window.loadedItems.length === 0) {
                 if(loader) loader.style.display = 'block';
                 if(mainGrid) mainGrid.classList.add('hidden');
                 if(emptyState) emptyState.classList.add('hidden');
             }
 
             try {
-                // Без искусственных таймаутов, доверяем Supabase
+                // Без жестких таймаутов
                 const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false }).limit(200);
                 
                 if (error) throw error;
                 if (data) {
                     const mapped = data.map(mapItemData).filter(Boolean); 
-                    localStorage.setItem('svalka_items_cache', JSON.stringify({ timestamp: Date.now(), data: mapped }));
                     window.loadedItems = mapped;
-                    window.renderDynamicItems(mapped); // Всегда рендерим после загрузки
+                    if (!isBackground || window.displayedCount <= 12) window.renderDynamicItems(mapped);
                 }
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
                 let errMsg = e.message || 'Ошибка сети';
-                if (errMsg.includes('status')) errMsg = 'Внимание! Добавьте колонку status (text) в таблицу items Supabase!';
-                else if (errMsg.includes('phone')) errMsg = 'Внимание! Добавьте колонку phone (text) в таблицу items Supabase!';
+                if (errMsg.includes('status')) errMsg = 'Добавьте колонку status (text) в Supabase!';
+                else if (errMsg.includes('phone')) errMsg = 'Добавьте колонку phone (text) в Supabase!';
 
                 if (window.loadedItems.length === 0 && loader) {
                     loader.innerHTML = `
                     <div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка Базы Данных<br>
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br>
                         <span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${errMsg}</span>
                     </div>`;
                 }
             } finally {
-                if(loader && (hasValidCache || window.loadedItems.length > 0)) loader.style.display = 'none';
+                if(loader && window.loadedItems.length > 0) loader.style.display = 'none';
             }
         };
 
@@ -1187,6 +1183,12 @@
             
             const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
             document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
+            
+            // Обновляем иконку заначки внутри карточки
+            const modalFavIcon = document.querySelector('#modal-fav-btn i');
+            if(modalFavIcon) {
+                modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+            }
 
             const isOwner = window.currentUser && window.currentUser.id === item.userId;
             const ctrl = document.getElementById('modal-owner-controls');
@@ -1205,8 +1207,6 @@
                 } else {
                     vipBtnText.innerText = "Купить PRO";
                 }
-                
-                document.getElementById('btn-bump-text').innerText = 'Поднять';
 
                 statusControls.innerHTML = '';
                 if (item.status !== 'sold') {
@@ -1338,8 +1338,8 @@
                 container.scrollTop = container.scrollHeight;
                 window.showToast("Новое сообщение!");
                 
-                const badge = document.getElementById('nav-chat-badge');
-                if(badge) badge.classList.remove('hidden');
+                const badges = document.querySelectorAll('#nav-chat-badge');
+                badges.forEach(b => b.classList.remove('hidden'));
             }, 2500);
         };
 
@@ -1367,10 +1367,8 @@
                     await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
                     window.currentUserData.wallet_balance = newBal;
                     
-                    const pBalance = document.getElementById('profile-balance');
-                    if (pBalance) pBalance.innerText = newBal;
-                    const nWalletBal = document.getElementById('nav-wallet-balance');
-                    if (nWalletBal) nWalletBal.innerText = newBal + ' шт.';
+                    document.querySelectorAll('#profile-balance').forEach(el => el.innerText = newBal);
+                    document.querySelectorAll('#nav-wallet-balance').forEach(el => el.innerText = newBal + ' шт.');
                     
                     window.closeModal('share-modal');
                 } catch(e) { console.error(e); }
@@ -1406,22 +1404,24 @@
         };
 
         window.verifyCryptoPayment = () => {
-            const btn = document.getElementById('btn-crypto-paid');
-            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Проверка...'; }
+            document.querySelectorAll('#btn-crypto-paid').forEach(btn => {
+                btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Проверка...';
+            });
             
             setTimeout(async () => {
                 try {
                     await supabase.from('profiles').update({ is_pro: true }).eq('id', window.currentUser.id);
                     window.currentUserData.is_pro = true;
                     
-                    const proBadge = document.getElementById('profile-pro-badge');
-                    if(proBadge) proBadge.classList.remove('hidden');
+                    document.querySelectorAll('#profile-pro-badge').forEach(pb => pb.classList.remove('hidden'));
                     
                     window.showToast("Транзакция найдена! PRO активирован.");
                     window.closeModal('crypto-modal');
                 } catch(e) { window.showToast("Ошибка сети", true); }
                 finally { 
-                    if(btn) { btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; }
+                    document.querySelectorAll('#btn-crypto-paid').forEach(btn => {
+                        btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; 
+                    });
                 }
             }, 4000);
         };
@@ -1431,52 +1431,32 @@
             try {
                 window.currentUser = session?.user || null;
                 
-                const loginBtn = document.getElementById('nav-login-btn');
-                const userControls = document.getElementById('nav-user-controls');
-                const walletBlock = document.getElementById('nav-wallet-block');
-                const mobLogin = document.getElementById('mob-nav-login');
-                const mobUserControls = document.getElementById('mob-user-controls');
-                const profileLoginWrap = document.getElementById('profile-login-wrapper');
-                const profileEconSection = document.getElementById('profile-economy-section');
-                const profileShareBanner = document.getElementById('profile-share-banner');
-                const profileLogoutBtn = document.getElementById('profile-logout-btn');
+                const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
+                const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section, #nav-wallet-block');
                 
                 if (window.currentUser) {
-                    if(loginBtn) loginBtn.classList.add('hidden');
-                    if(userControls) { userControls.classList.remove('hidden'); userControls.classList.add('flex'); }
-                    if(walletBlock) { walletBlock.classList.remove('hidden'); walletBlock.classList.add('flex'); }
-                    
-                    if(mobLogin) { mobLogin.classList.add('hidden'); mobLogin.classList.remove('flex'); }
-                    if(mobUserControls) { mobUserControls.classList.remove('hidden'); mobUserControls.classList.add('flex'); }
-                    
-                    if(profileLoginWrap) { profileLoginWrap.classList.add('hidden'); profileLoginWrap.classList.remove('block'); }
-                    if(profileEconSection) { profileEconSection.classList.remove('hidden'); profileEconSection.classList.add('flex'); }
-                    if(profileShareBanner) { profileShareBanner.classList.remove('hidden'); profileShareBanner.classList.add('flex'); }
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.remove('hidden'); profileLogoutBtn.classList.add('block'); }
+                    loginBtns.forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
+                    userControls.forEach(el => { el.classList.remove('hidden'); el.classList.add('flex'); });
 
                     const meta = window.currentUser.user_metadata || {};
-                    const profileName = document.getElementById('profile-name');
-                    if(profileName) profileName.innerText = meta.full_name || "Пользователь";
+                    document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
+                    document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
                     
-                    const profileEmail = document.getElementById('profile-email');
-                    if(profileEmail) profileEmail.innerText = window.currentUser.email || "";
-                    
-                    const avatarContainer = document.getElementById('profile-avatar-container');
-                    if(avatarContainer && meta.avatar_url) avatarContainer.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
+                    if(meta.avatar_url) {
+                        document.querySelectorAll('#profile-avatar-container').forEach(el => {
+                            el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
+                        });
+                    }
 
                     try {
                         const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
                         window.currentUserData = profile || { wallet_balance: 0, is_pro: false };
                         
-                        const pBalance = document.getElementById('profile-balance');
-                        if (pBalance) pBalance.innerText = window.currentUserData.wallet_balance || 0;
-                        
-                        const navWalletBal = document.getElementById('nav-wallet-balance');
-                        if (navWalletBal) navWalletBal.innerText = (window.currentUserData.wallet_balance || 0) + ' шт.';
+                        document.querySelectorAll('#profile-balance').forEach(el => el.innerText = window.currentUserData.wallet_balance || 0);
+                        document.querySelectorAll('#nav-wallet-balance').forEach(el => el.innerText = (window.currentUserData.wallet_balance || 0) + ' шт.');
                         
                         if(window.currentUserData.is_pro) {
-                            const pProBadge = document.getElementById('profile-pro-badge');
-                            if(pProBadge) pProBadge.classList.remove('hidden');
+                            document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
                         }
                     } catch(e) { console.warn("Profile error", e); }
                     
@@ -1484,19 +1464,9 @@
                         const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
                         window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                     } catch(e) { console.warn("Fav error", e); }
-
                 } else {
-                    if(loginBtn) loginBtn.classList.remove('hidden');
-                    if(userControls) { userControls.classList.add('hidden'); userControls.classList.remove('flex'); }
-                    if(walletBlock) { walletBlock.classList.add('hidden'); walletBlock.classList.remove('flex'); }
-                    
-                    if(mobLogin) { mobLogin.classList.remove('hidden'); mobLogin.classList.add('flex'); }
-                    if(mobUserControls) { mobUserControls.classList.add('hidden'); mobUserControls.classList.remove('flex'); }
-                    
-                    if(profileLoginWrap) { profileLoginWrap.classList.remove('hidden'); profileLoginWrap.classList.add('block'); }
-                    if(profileEconSection) { profileEconSection.classList.add('hidden'); profileEconSection.classList.remove('flex'); }
-                    if(profileShareBanner) { profileShareBanner.classList.add('hidden'); profileShareBanner.classList.remove('flex'); }
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.add('hidden'); profileLogoutBtn.classList.remove('block'); }
+                    loginBtns.forEach(el => { el.classList.remove('hidden'); });
+                    userControls.forEach(el => { el.classList.add('hidden'); el.classList.remove('flex'); });
                 }
                 
                 if (window.renderProfileTabs) window.renderProfileTabs();
@@ -1520,22 +1490,28 @@
         }
 
         window.generateAIDescription = async () => {
-            const titleEl = document.getElementById('item-title');
-            if(!titleEl || !titleEl.value.trim()) { window.showToast("Укажите название!", true); return; }
+            let titleInput = '';
+            document.querySelectorAll('#item-title').forEach(el => { if(el.value) titleInput = el.value; });
             
-            const btn = document.getElementById('btn-ai-desc');
-            if(btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; btn.disabled = true; }
+            if (!titleInput) { window.showToast("Укажите название!", true); return; }
+            
+            document.querySelectorAll('#btn-ai-desc').forEach(btn => {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+                btn.disabled = true;
+            });
             
             try {
-                const text = await callGeminiAPI(`Напиши продающее описание для: ${titleEl.value.trim()}. Язык: Russian. Максимум 3 абзаца. Эмодзи.`);
+                const text = await callGeminiAPI(`Напиши продающее описание для: ${titleInput}. Язык: Russian. Максимум 3 абзаца. Эмодзи.`);
                 if (text) { 
-                    const descEl = document.getElementById('item-desc');
-                    if(descEl) descEl.value = text;
+                    document.querySelectorAll('#item-desc').forEach(el => el.value = text);
                     window.showToast("✨ Описание сгенерировано!"); 
                 }
             } catch (e) { window.showToast("Ошибка ИИ.", true); } 
             finally { 
-                if(btn) { btn.innerHTML = `✨ Сгенерировать ИИ`; btn.disabled = false; }
+                document.querySelectorAll('#btn-ai-desc').forEach(btn => {
+                    btn.innerHTML = `✨ Сгенерировать ИИ`;
+                    btn.disabled = false;
+                });
             }
         };
 
@@ -1546,29 +1522,29 @@
 
         window.previewPhotos = async (e) => {
             const files = Array.from(e.target.files);
-            const container = document.getElementById('photo-preview-list');
-            if(!container) return;
-            for(let file of files) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                        window.tempPhotos.push(dataUrl); 
-                        container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border"><img src="${dataUrl}" class="w-full h-full object-cover"></div>`;
+            document.querySelectorAll('#photo-preview-list').forEach(container => {
+                for(let file of files) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+                            let width = img.width; let height = img.height;
+                            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+                            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                            canvas.width = width; canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            window.tempPhotos.push(dataUrl); 
+                            container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border"><img src="${dataUrl}" class="w-full h-full object-cover"></div>`;
+                        };
+                        img.src = ev.target.result;
                     };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+                    reader.readAsDataURL(file);
+                }
+            });
         };
 
         function dataURItoBlob(dataURI) {
@@ -1582,21 +1558,23 @@
 
         window.submitNewItem = async (event) => {
             if(event) event.preventDefault();
-            const btn = document.getElementById('add-submit-btn'); 
-            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
+            let title = '', cat = '', city = '', price = 0, desc = '', currency = 'RSD', phone = '';
             
+            document.querySelectorAll('#item-title').forEach(el => { if(el.value) title = el.value.trim(); });
+            document.querySelectorAll('#item-category').forEach(el => { if(el.value) cat = el.value; });
+            document.querySelectorAll('#item-city').forEach(el => { if(el.value) city = el.value; });
+            document.querySelectorAll('#item-price').forEach(el => { if(el.value) price = Number(el.value) || 0; });
+            document.querySelectorAll('#item-desc').forEach(el => { if(el.value) desc = el.value.trim(); });
+            document.querySelectorAll('#item-currency').forEach(el => { if(el.value) currency = el.value; });
+            document.querySelectorAll('#item-phone').forEach(el => { if(el.value) phone = el.value.trim(); });
+
+            document.querySelectorAll('#add-submit-btn').forEach(btn => {
+                btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+            });
+
             try {
                 if(!window.currentUser) throw new Error("Войдите в аккаунт");
-                
-                const titleEl = document.getElementById('item-title');
-                const catEl = document.getElementById('item-category');
-                const cityEl = document.getElementById('item-city');
-                const priceEl = document.getElementById('item-price');
-                const descEl = document.getElementById('item-desc');
-                const currencyEl = document.getElementById('item-currency');
-                const phoneEl = document.getElementById('item-phone');
-                
-                if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
+                if(!title || !cat || price === 0) throw new Error("Заполните обязательные поля (Название, Категория, Цена)");
 
                 const imgUrlsToSave = [];
                 for (let i = 0; i < window.tempPhotos.length; i++) {
@@ -1613,42 +1591,40 @@
                 }
                 
                 const newItem = {
-                    title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
-                    price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
+                    title, category: cat, city: city || 'Белград', price, description: desc, user_id: window.currentUser.id, 
                     author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
                     author_avatar: window.currentUser.user_metadata?.avatar_url || '',
                     image_url: imgUrlsToSave.length > 0 ? imgUrlsToSave[0] : '', images: imgUrlsToSave,
-                    currency: currencyEl ? currencyEl.value : 'RSD', is_highlighted: window.currentUserData?.is_pro || false,
-                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '', status: 'active'
+                    currency, is_highlighted: window.currentUserData?.is_pro || false
                 };
 
-                let res = await supabase.from('items').insert([newItem]);
+                const itemWithExtras = { ...newItem, phone, status: 'active' };
                 
-                // Умный фоллбэк: если пользователь не добавил колонки status и phone в БД
-                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone'))) {
-                    console.warn("Фоллбэк: удаление новых колонок для совместимости со старой схемой БД");
-                    delete newItem.status;
-                    delete newItem.phone;
+                let res = await supabase.from('items').insert([itemWithExtras]);
+                
+                // Умный фоллбэк: если пользователь еще не добавил колонки status и phone в БД
+                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
+                    console.warn("Фоллбэк: сохранение без новых колонок для совместимости");
                     res = await supabase.from('items').insert([newItem]);
-                    window.showToast("ВНИМАНИЕ: Добавьте колонки status(text) и phone(text) в Supabase!", true);
+                    if(!res.error) window.showToast("Товар добавлен, но добавьте колонки status/phone в Supabase!", true);
                 }
 
                 if(res.error) throw new Error(res.error.message);
                 
                 window.showToast("Опубликовано!");
                 window.closeModal('add-modal');
-                const formEl = document.getElementById('add-form');
-                if(formEl) formEl.reset();
+                document.querySelectorAll('#add-form').forEach(f => f.reset());
                 window.tempPhotos = []; 
-                const photoList = document.getElementById('photo-preview-list');
-                if(photoList) photoList.innerHTML = '';
+                document.querySelectorAll('#photo-preview-list').forEach(l => l.innerHTML = '');
                 localStorage.removeItem('svalka_items_cache');
                 window.fetchItems(true);
             } catch(e) { 
-                console.error(e);
+                console.error(e); 
                 window.showToast(`Ошибка: ${e.message}`, true); 
             } finally { 
-                if(btn) { btn.disabled = false; btn.innerHTML = `Опубликовать`; }
+                document.querySelectorAll('#add-submit-btn').forEach(btn => {
+                    btn.disabled = false; btn.innerHTML = `Опубликовать`; 
+                });
             }
         };
 
