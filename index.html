@@ -749,20 +749,18 @@
         };
 
         // UI HELPERS
-        window.openModal = id => { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-open'); };
-        window.closeModal = id => { document.getElementById(id).classList.remove('active'); if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); };
+        window.openModal = id => { document.querySelectorAll(`#${id}`).forEach(el => el.classList.add('active')); document.body.classList.add('modal-open'); };
+        window.closeModal = id => { document.querySelectorAll(`#${id}`).forEach(el => el.classList.remove('active')); if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); };
         window.toggleDarkMode = () => document.documentElement.classList.toggle('dark');
         window.toggleMobileMenu = () => document.getElementById('mobile-menu').classList.toggle('translate-x-full');
         window.toggleFilters = () => document.getElementById('filter-panel-wrapper').classList.toggle('active');
         
         window.showToast = (msg, err=false) => { 
-            const t = document.getElementById('toast'); 
-            const tMsg = document.getElementById('toast-msg');
-            if (tMsg) tMsg.innerText = msg;
-            if (t) {
-                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity duration-300 pointer-events-none flex items-center gap-2 ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
+            document.querySelectorAll('#toast').forEach(t => {
+                t.innerHTML = `<i class="fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'}"></i> <span id="toast-msg">${msg}</span>`; 
+                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase shadow-2xl z-[9999] transition-opacity duration-300 flex items-center gap-2 ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
                 setTimeout(()=>t.classList.replace('opacity-100', 'opacity-0'), 3000); 
-            }
+            });
         };
 
         // Lightbox
@@ -816,48 +814,64 @@
         // Auth
         window.setAuthMode = mode => {
             window.authMode = mode;
-            const fields = document.getElementById('auth-name-field');
-            const tabL = document.getElementById('tab-login');
-            const tabR = document.getElementById('tab-register');
-            if(mode === 'register') { 
-                if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
-                if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-                if(tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
-            } else { 
-                if(fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
-                if(tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-                if(tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
-            }
+            document.querySelectorAll('#auth-name-field').forEach(fields => {
+                if(mode === 'register') { 
+                    fields.classList.remove('hidden');
+                    fields.classList.add('flex'); 
+                } else { 
+                    fields.classList.add('hidden');
+                    fields.classList.remove('flex'); 
+                }
+            });
+            document.querySelectorAll('#tab-login').forEach(tabL => {
+                tabL.className = mode === 'register' ? "text-stone-400 pb-1 transition cursor-pointer" : "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+            });
+            document.querySelectorAll('#tab-register').forEach(tabR => {
+                tabR.className = mode === 'register' ? "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer" : "text-stone-400 pb-1 transition cursor-pointer";
+            });
         };
 
         window.submitAuth = async (event) => {
-            const btn = document.getElementById('auth-submit-btn');
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
+            let email = '';
+            let pass = '';
+            let name = '';
+            let avatar = 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
+            
+            document.querySelectorAll('#auth-email').forEach(el => { if(el.value.trim()) email = el.value.trim(); });
+            document.querySelectorAll('#auth-password').forEach(el => { if(el.value.trim()) pass = el.value.trim(); });
+            document.querySelectorAll('#auth-name').forEach(el => { if(el.value.trim()) name = el.value.trim(); });
+            document.querySelectorAll('input[name="avatar"]:checked').forEach(el => { if(el.value) avatar = el.value; });
+
             const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
             if (!passRegex.test(pass)) { window.showToast(window.i18n[window.currentAppLang]['auth_pass_error'], true); return; }
-            btn.disabled = true; btn.innerText = "...";
+            
+            document.querySelectorAll('#auth-submit-btn').forEach(btn => {
+                btn.disabled = true; btn.innerText = "...";
+            });
+
             try {
                 if (window.authMode === 'login') {
                     const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
                     if (error) throw error;
                 } else {
-                    const name = document.getElementById('auth-name').value || 'User';
-                    const avatar = document.querySelector('input[name="avatar"]:checked')?.value || 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
-                    const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { full_name: name, avatar_url: avatar } } });
+                    const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { full_name: name || 'User', avatar_url: avatar } } });
                     if (error) throw error;
                 }
                 window.closeModal('auth-modal');
                 window.showToast("Успешно!");
+                document.querySelectorAll('#auth-email, #auth-password, #auth-name').forEach(el => el.value = '');
             } catch (e) { window.showToast(e.message, true); }
             finally { 
-                btn.disabled = false; 
-                btn.innerHTML = window.i18n[window.currentAppLang][window.authMode === 'login' ? 'auth_login_btn' : 'auth_tab_register']; 
+                document.querySelectorAll('#auth-submit-btn').forEach(btn => {
+                    btn.disabled = false; 
+                    btn.innerHTML = `<span data-t="auth_login_btn">${window.i18n[window.currentAppLang][window.authMode === 'login' ? 'auth_login_btn' : 'auth_tab_register']}</span>`; 
+                });
             }
         };
 
         window.forgotPassword = async () => {
-            const email = document.getElementById('auth-email').value;
+            let email = '';
+            document.querySelectorAll('#auth-email').forEach(el => { if(el.value.trim()) email = el.value.trim(); });
             if(!email) { window.showToast("Введите Email!", true); return; }
             const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
             if(error) window.showToast(error.message, true);
