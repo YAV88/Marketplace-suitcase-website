@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SVALKA — Маркетплейс вещей в Сербии</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
@@ -40,7 +40,7 @@
             background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
         }
 
-        .item-card { transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 0.75rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
+        .item-card { transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
         .item-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.12); border-color: #0d9488; }
         
         .vip-card {
@@ -89,7 +89,7 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <!-- НАВИГАЦИЯ -->
+    <!-- HEADER / NAV -->
     <nav class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4 lg:gap-8 flex-1">
@@ -102,38 +102,43 @@
                     </div>
                     <div class="flex items-center gap-1 pt-1">
                         <span class="text-2xl font-display font-black tracking-tighter italic text-stone-900 dark:text-white">SVALKA</span>
-                        <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
+                        <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
                     </div>
                 </div>
 
                 <div class="hidden sm:flex items-center gap-4 ml-auto">
-                    <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
+                    <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
                     <div class="relative group">
-                        <button class="flex items-center justify-center gap-2 px-3 py-1.5 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
-                            <img src="https://flagcdn.com/w20/ru.png" width="16" class="rounded-sm"><span>РУС</span>
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
+                            <img id="current-lang-flag" src="https://flagcdn.com/w20/ru.png" width="18" class="rounded-sm"><span id="current-lang-text">РУС</span><i class="fa-solid fa-chevron-down text-stone-400 text-xs ml-1"></i>
                         </button>
+                        <div class="absolute right-0 top-full mt-2 bg-white dark:bg-stone-900 border dark:border-stone-800 shadow-xl rounded-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 min-w-[140px]">
+                            <button onclick="window.changeLang('ru')" class="w-full flex items-center gap-3 px-5 py-3 hover:bg-brand-50 dark:hover:bg-stone-800 hover:text-brand-600 transition font-bold text-sm text-left cursor-pointer"><img src="https://flagcdn.com/w20/ru.png" width="18"> Русский</button>
+                            <button onclick="window.changeLang('rs')" class="w-full flex items-center gap-3 px-5 py-3 hover:bg-brand-50 dark:hover:bg-stone-800 hover:text-brand-600 transition font-bold text-sm text-left cursor-pointer"><img src="https://flagcdn.com/w20/rs.png" width="18"> Srpski</button>
+                            <button onclick="window.changeLang('en')" class="w-full flex items-center gap-3 px-5 py-3 hover:bg-brand-50 dark:hover:bg-stone-800 hover:text-brand-600 transition font-bold text-sm text-left cursor-pointer"><img src="https://flagcdn.com/w20/gb.png" width="18"> English</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="hidden lg:flex items-center gap-4 ml-6 pl-6 border-l border-stone-200 dark:border-stone-800">
-                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="px-5 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
+                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer" data-t="auth_login_btn">Войти</button>
                 
                 <div id="nav-user-controls" class="hidden items-center gap-3">
-                    <button onclick="window.openChatListModal()" class="relative text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
+                    <button onclick="window.openChatListModal()" class="relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
                         <i class="fa-regular fa-envelope"></i>
-                        <span id="nav-chat-badge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
+                        <span id="nav-chat-badge" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
-                    <button onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-lg w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
+                    <button onclick="window.openModal('profile-modal')" class="text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
                 </div>
                 
-                <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-600/30 text-sm transition cursor-pointer">+ Пристроить добро</button>
+                <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-7 py-3 rounded-full font-bold shadow-lg shadow-brand-600/30 text-sm transition cursor-pointer" data-t="btn_add">+ Пристроить добро</button>
             </div>
             <button class="lg:hidden text-2xl ml-4 text-stone-600 dark:text-stone-300 cursor-pointer" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         </div>
     </nav>
 
-    <!-- MOBILE MENU -->
+    <!-- MOBILE MENU OVERLAY -->
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
             <div class="flex items-center gap-1 pt-1">
@@ -143,59 +148,54 @@
             <button onclick="window.toggleMobileMenu()" class="text-3xl text-stone-400 hover:text-brand-600 p-2 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto font-bold text-lg">
-            <button id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
+            <button id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> <span data-t="auth_login_btn">Войти</span></button>
             
             <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
-                <button onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
-                <button onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
-                <button onclick="window.openModal('share-modal'); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-arrow-up-right-dots w-6"></i> Получить поднятия</button>
-                <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-6 text-base cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> Экстренный выход</button>
+                <button onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-user text-brand-600 w-6"></i> <span data-t="profile_tab_items">Профиль</span></button>
+                <button onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> <span data-t="mob_messages">Сообщения</span></button>
+                <button onclick="window.openModal('share-modal'); window.toggleMobileMenu();" class="text-brand-600 hover:text-brand-500 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-arrow-up-right-dots w-6"></i> <span data-t="mob_free_bumps">Бесплатные поднятия</span></button>
+                <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-6 text-base cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> <span data-t="mob_emergency_exit">Экстренный выход</span></button>
             </div>
 
-            <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-base shadow-lg transition hover:bg-brand-700 cursor-pointer">+ Пристроить добро</button>
+            <button onclick="window.checkAuthAndOpenAddModal(); window.toggleMobileMenu();" class="mt-auto bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-base shadow-lg transition hover:bg-brand-700 cursor-pointer" data-t="btn_add">+ Пристроить добро</button>
+            
+            <div class="flex bg-stone-100 dark:bg-stone-800 rounded-xl p-1 mt-2 text-sm font-bold">
+                <button onclick="window.changeLang('ru'); window.toggleMobileMenu();" class="flex-1 py-3 rounded-lg hover:bg-white dark:hover:bg-stone-700 transition cursor-pointer">RU</button>
+                <button onclick="window.changeLang('rs'); window.toggleMobileMenu();" class="flex-1 py-3 rounded-lg hover:bg-white dark:hover:bg-stone-700 transition cursor-pointer">SRB</button>
+                <button onclick="window.changeLang('en'); window.toggleMobileMenu();" class="flex-1 py-3 rounded-lg hover:bg-white dark:hover:bg-stone-700 transition cursor-pointer">EN</button>
+            </div>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
         
-        <!-- PRO BANNER -->
-        <div class="mb-8 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-xl p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md cursor-pointer hover:shadow-lg transition" onclick="window.openModal('crypto-modal')">
-            <div class="flex items-center gap-4 text-center sm:text-left mb-3 sm:mb-0 w-full sm:w-auto">
-                <span class="bg-white/20 backdrop-blur text-white px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest hidden md:inline-block shadow-sm">SVALKA PRO</span>
-                <div>
-                    <h3 class="text-base sm:text-lg font-black leading-tight">Поддержи проект!</h3>
-                    <p class="text-brand-50 text-sm font-medium">Получи VIP-статус за донат в крипте и продавай вещи быстрее.</p>
-                </div>
-            </div>
-            <button class="bg-white text-brand-600 px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-stone-50 transition shadow-sm whitespace-nowrap w-full sm:w-auto">Купить PRO</button>
-        </div>
-
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-1">
-                    <i class="fa-solid fa-box-open text-brand-500 text-3xl drop-shadow-sm"></i>
-                    <h3 class="text-3xl md:text-4xl font-display font-black text-stone-900 dark:text-white tracking-tight uppercase italic">Находки</h3>
+                    <i class="fa-solid fa-box-open text-brand-500 text-3xl md:text-4xl drop-shadow-sm"></i>
+                    <h3 class="text-3xl md:text-4xl font-display font-black text-stone-900 dark:text-white tracking-tight uppercase italic" data-t="main_title">Находки</h3>
                 </div>
-                <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base">Самые свежие объявления Сербии</p>
+                <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base" data-t="main_subtitle">Самые свежие объявления Сербии</p>
             </div>
             
+            <!-- Поиск, Сортировка и Фильтры -->
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-2.5 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
-                    <i class="fa-solid fa-magnifying-glass text-stone-400 text-sm"></i>
-                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск сокровищ..." class="bg-transparent border-none outline-none ml-3 w-full text-sm font-medium text-stone-800 dark:text-stone-200 cursor-text">
+                <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
+                    <i class="fa-solid fa-magnifying-glass text-stone-400 text-base"></i>
+                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск сокровищ..." data-t="search_placeholder" class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
                 </div>
                 <div class="flex w-full sm:w-auto gap-3">
                     <div class="relative flex-1 sm:flex-none">
-                        <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-4 pr-10 py-2.5 font-bold text-sm text-stone-700 dark:text-stone-200 shadow-sm outline-none cursor-pointer">
-                            <option value="new">Сначала новые</option>
-                            <option value="cheap">Сначала дешевые</option>
-                            <option value="exp">Сначала дорогие</option>
+                        <select id="sort-select" onchange="window.handleSort()" class="appearance-none w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-4 pr-10 py-3 font-bold text-sm text-stone-700 dark:text-stone-200 shadow-sm outline-none cursor-pointer">
+                            <option value="new" data-t="sort_new">Сначала новые</option>
+                            <option value="cheap" data-t="sort_cheap">Сначала дешевые</option>
+                            <option value="exp" data-t="sort_exp">Сначала дорогие</option>
                         </select>
-                        <i class="fa-solid fa-arrow-down-short-wide absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
+                        <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
                     </div>
-                    <button onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                        <i class="fa-solid fa-sliders"></i> Фильтры
+                    <button onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-sliders"></i> <span data-t="btn_filters">Фильтры</span>
                     </button>
                 </div>
             </div>
@@ -207,9 +207,9 @@
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-xs font-bold text-stone-500 mb-2">Категория</label>
-                            <select id="filter-category" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
-                                <option value="Все">Все категории</option>
+                            <label class="block text-xs font-bold text-stone-500 mb-2" data-t="filter_cat">Категория</label>
+                            <select id="filter-category" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
+                                <option value="Все" data-t="cat_all">Все категории</option>
                                 <optgroup label="Одежда и Обувь">
                                     <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Аксессуары">Аксессуары</option>
                                 </optgroup>
@@ -240,364 +240,391 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-stone-500 mb-2">Город</label>
-                            <select id="filter-city" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
-                                <option value="Все">Все города</option>
+                            <label class="block text-xs font-bold text-stone-500 mb-2" data-t="filter_city">Город</label>
+                            <select id="filter-city" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
+                                <option value="Все" data-t="city_all">Все города</option>
                                 <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
                                 <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
                                 <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-stone-500 mb-2">Цена</label>
+                            <label class="block text-xs font-bold text-stone-500 mb-2" data-t="filter_price">Цена</label>
                             <div class="flex gap-2">
-                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
-                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
-                                <select id="filter-currency" class="w-24 bg-stone-50 dark:bg-stone-900 p-3 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
+                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
+                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
+                                <select id="filter-currency" class="w-24 bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
                                     <option value="Все">Все</option><option value="RSD">RSD</option><option value="EUR">EUR</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-stone-100 dark:border-stone-700">
-                        <button onclick="window.resetFilters()" class="px-6 py-2.5 rounded-xl font-bold text-sm text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
+                    <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
+                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-sm text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer" data-t="filter_reset">Сбросить</button>
+                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer" data-t="filter_apply">Применить</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- КНОПКИ КАТЕГОРИЙ -->
-        <div class="mb-8 flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer">Все</button>
-            <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-4 py-2 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-xs sm:text-sm transition hover:scale-105 cursor-pointer"><i class="fa-solid fa-fire mr-1"></i> Срочно</button>
-            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Одежда</button>
-            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer">Электроника</button>
-            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> Консоли</button>
-            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> Интерьер</button>
-            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> Транспорт</button>
-            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> Услуги</button>
-            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> Хобби</button>
-            <button data-cat="Детям" onclick="window.filterByCategory('Детям')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> Детям</button>
-            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> Жилье</button>
-            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> Даром</button>
+        <div class="mb-8 flex flex-wrap items-center gap-2 sm:gap-3">
+            <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer" data-t="cat_all_btn">Все</button>
+            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer" data-t="cat_clothes">Одежда</button>
+            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer" data-t="cat_electronics">Электроника</button>
+            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> <span data-t="cat_consoles">Консоли</span></button>
+            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> <span data-t="cat_home">Интерьер</span></button>
+            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> <span data-t="cat_auto">Транспорт</span></button>
+            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> <span data-t="cat_services">Услуги</span></button>
+            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> <span data-t="cat_hobbies">Хобби</span></button>
+            <button data-cat="Детям" onclick="window.filterByCategory('Детям')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> <span data-t="cat_kids">Детям</span></button>
+            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> <span data-t="cat_housing">Жилье</span></button>
+            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> <span data-t="cat_free">Даром</span></button>
         </div>
 
+        <!-- VIP ЛЕНТА (ТОП Находки) -->
         <div id="vip-section" class="mb-10 hidden">
             <div class="flex items-center gap-2 mb-4 pl-1">
-                <i class="fa-solid fa-gem text-amber-500"></i>
-                <h4 class="font-black text-base text-stone-800 dark:text-stone-200">Срочно и Важно</h4>
+                <i class="fa-solid fa-crown text-amber-500 text-xl"></i>
+                <h4 class="font-black text-lg text-stone-800 dark:text-stone-200" data-t="nav_urgent">ТОП Находки</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 items-start"></div>
+            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-start"></div>
         </div>
 
+        <!-- БАННЕРЫ РЕКЛАМЫ (Показываются под ТОП-лентой) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 mt-6">
+            <div class="bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between shadow-xl relative overflow-hidden cursor-pointer hover:shadow-2xl transition" onclick="window.openModal('crypto-modal')">
+                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div class="relative z-10 w-full text-center sm:text-left">
+                    <span class="bg-white/20 backdrop-blur text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest hidden sm:inline-block shadow-sm mb-3">SVALKA PRO</span>
+                    <h3 class="text-xl sm:text-2xl font-display font-black mb-2 leading-tight" data-t="promo_title">Поддержи проект!</h3>
+                    <p class="text-brand-50 text-sm font-medium mb-5" data-t="promo_subtitle">Получи VIP-статус за донат в крипте и продавай вещи быстрее.</p>
+                    <button class="bg-white text-brand-600 px-6 py-3 rounded-xl font-bold text-sm hover:bg-stone-50 transition shadow-lg w-full sm:w-auto" data-t="btn_buy_pro">Купить PRO</button>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between shadow-xl relative overflow-hidden cursor-pointer hover:shadow-2xl transition" onclick="window.openModal('share-modal')">
+                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div class="relative z-10 w-full text-center sm:text-left">
+                    <span class="bg-white/20 backdrop-blur text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest hidden sm:inline-block shadow-sm mb-3" data-t="promo_bonus">БОНУСЫ</span>
+                    <h3 class="text-xl sm:text-2xl font-display font-black mb-2 leading-tight" data-t="promo_title_2">Бесплатные поднятия</h3>
+                    <p class="text-amber-50 text-sm font-medium mb-5" data-t="promo_subtitle_2">Приглашай друзей в любой соцсети и получай +3 поднятия!</p>
+                    <button class="bg-white text-amber-600 px-6 py-3 rounded-xl font-bold text-sm hover:bg-stone-50 transition shadow-lg w-full sm:w-auto" data-t="btn_share_main">Поделиться</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ОСНОВНАЯ ЛЕНТА -->
         <div>
             <div class="flex items-center gap-2 mb-4 pl-1">
-                <i class="fa-regular fa-clock text-stone-400"></i>
-                <h4 class="font-black text-base text-stone-500">Свежие объявления</h4>
+                <i class="fa-regular fa-clock text-stone-400 text-lg"></i>
+                <h4 class="font-black text-lg text-stone-500" data-t="main_subtitle_2">Свежие объявления</h4>
             </div>
             
             <div id="loading-placeholder" class="w-full text-center py-20 text-stone-400">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
-                <p class="font-bold text-xs mt-2">Загрузка...</p>
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
+                <p class="font-bold text-sm mt-2">Загрузка...</p>
             </div>
 
-            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 min-h-[400px] items-start hidden"></div>
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 min-h-[400px] items-start hidden"></div>
             
-            <div class="flex justify-center mt-8 mb-4">
-                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Показать еще</button>
+            <div class="flex justify-center mt-10 mb-6">
+                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer" data-t="btn_load_more">Показать еще</button>
             </div>
 
-            <div id="empty-state" class="w-full text-center py-20 text-stone-400 hidden">
-                <i class="fa-solid fa-box-open text-4xl mb-3 opacity-30"></i>
-                <p class="font-bold text-sm">Ничего не найдено</p>
+            <div id="empty-state" class="w-full text-center py-24 text-stone-400 hidden">
+                <i class="fa-solid fa-box-open text-5xl mb-4 opacity-30"></i>
+                <p class="font-bold text-base" data-t="empty_title">Ничего не найдено</p>
             </div>
         </div>
-        
     </main>
 
-    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-6 transition-colors duration-300 mt-auto z-10 relative">
+    <!-- ПОДВАЛ -->
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex items-center gap-3 mb-6 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <div class="relative w-8 h-8 flex items-center justify-center shrink-0 grayscale opacity-80">
+            <div class="flex items-center gap-3 mb-8 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="relative w-10 h-10 flex items-center justify-center shrink-0 grayscale opacity-80">
                     <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
                     <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
-                        <i class="fa-solid fa-box-open text-brand-600 text-[10px] mt-0.5"></i>
+                        <i class="fa-solid fa-box-open text-brand-600 text-sm mt-0.5"></i>
                     </div>
                 </div>
-                <span class="text-xl font-display font-black text-stone-900 dark:text-white tracking-tighter italic">SVALKA</span>
+                <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter italic">SVALKA</span>
             </div>
-            <div class="flex flex-wrap justify-center gap-6 mb-6 text-stone-500 dark:text-stone-400 font-medium text-xs">
-                <a href="#" onclick="event.preventDefault(); window.openModal('policy-modal')" class="hover:text-brand-600 transition cursor-pointer">Политика</a>
-                <a href="#" onclick="event.preventDefault(); window.openModal('rules-modal')" class="hover:text-brand-600 transition cursor-pointer">Правила</a>
-                <a href="mailto:support@svalka.rs" class="hover:text-brand-600 transition cursor-pointer">Поддержка</a>
+            <div class="flex flex-wrap justify-center gap-8 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
+                <a href="#" onclick="event.preventDefault(); window.openModal('policy-modal')" class="hover:text-brand-600 transition cursor-pointer" data-t="foot_policy">Политика</a>
+                <a href="#" onclick="event.preventDefault(); window.openModal('rules-modal')" class="hover:text-brand-600 transition cursor-pointer" data-t="foot_rules">Правила</a>
+                <a href="mailto:support@svalka.rs" class="hover:text-brand-600 transition cursor-pointer" data-t="foot_support">Поддержка</a>
             </div>
-            <p class="text-stone-400 dark:text-stone-600 text-[10px] font-bold text-center">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
+            <p class="text-stone-400 dark:text-stone-600 text-xs font-bold text-center" data-t="foot_copy">© 2026 SVALKA. ALL RIGHTS RESERVED.</p>
         </div>
     </footer>
 
-    <!-- ВСЕ МОДАЛКИ (СТРОГО В ОДНОМ ЭКЗЕМПЛЯРЕ) -->
+    <!-- ВСЕ МОДАЛКИ (Один экземпляр) -->
     
     <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black mb-4 text-stone-900 dark:text-white">Политика конфиденциальности</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white" data-t="foot_policy">Политика конфиденциальности</h2>
+            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="policy_text">
                 <p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
             </div>
         </div>
     </div>
 
     <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black mb-4 text-stone-900 dark:text-white">Правила сайта</h2>
-            <div class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed space-y-3 h-64 overflow-y-auto custom-scrollbar pr-2">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white" data-t="foot_rules">Правила сайта</h2>
+            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 h-64 overflow-y-auto custom-scrollbar pr-2" data-t="rules_text">
                 <p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>
             </div>
         </div>
     </div>
 
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
-        <button id="lightbox-prev" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
-        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain" onclick="event.stopPropagation()">
-        <button id="lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button id="lightbox-prev" class="absolute left-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-lg" onclick="event.stopPropagation()">
+        <button id="lightbox-next" class="absolute right-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
         <button class="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition z-50 cursor-pointer" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2 z-[9999] transition-opacity duration-300 opacity-0 pointer-events-none"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400"></i> <span id="toast-msg">Готово!</span></div>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 opacity-0 pointer-events-none"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400 text-lg"></i> <span id="toast-msg">Готово!</span></div>
 
     <div id="crypto-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[95]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
-            <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <i class="fa-brands fa-bitcoin text-amber-500 text-4xl mb-3"></i>
-            <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-1">SVALKA PRO</h2>
+            <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <i class="fa-brands fa-bitcoin text-amber-500 text-5xl mb-4"></i>
+            <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-2">SVALKA PRO</h2>
             <p class="text-sm font-bold text-stone-500 mb-6">VIP статус на 30 дней</p>
-            <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-5 border border-stone-200 dark:border-stone-700 mb-6">
+            <div class="bg-stone-50 dark:bg-stone-800 rounded-2xl p-6 border border-stone-200 dark:border-stone-700 mb-6">
                 <div class="text-sm font-bold text-stone-600 dark:text-stone-300 mb-2">Отправьте ровно:</div>
-                <div class="text-2xl font-black text-stone-900 dark:text-white mb-4">5.00 USDT <span class="text-xs text-stone-400 align-middle">TRC20</span></div>
-                <div class="text-xs font-bold text-stone-400 mb-1">Адрес кошелька (TRC20)</div>
-                <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-lg border border-stone-200 dark:border-stone-700">
+                <div class="text-3xl font-black text-stone-900 dark:text-white mb-5">5.00 <span class="text-base text-stone-400 align-middle">USDT TRC20</span></div>
+                <div class="text-xs font-bold text-stone-400 mb-2">Адрес кошелька:</div>
+                <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
                     <input type="text" id="crypto-address" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-sm font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center cursor-text caret-brand-600">
-                    <button class="text-stone-400 hover:text-brand-600 cursor-pointer" onclick="navigator.clipboard.writeText(document.getElementById('crypto-address').value); window.showToast('Адрес скопирован!')"><i class="fa-regular fa-copy"></i></button>
+                    <button class="text-stone-400 hover:text-brand-600 cursor-pointer p-2" onclick="navigator.clipboard.writeText(document.getElementById('crypto-address').value); window.showToast('Адрес скопирован!')"><i class="fa-regular fa-copy text-lg"></i></button>
                 </div>
             </div>
-            <button id="btn-crypto-paid" onclick="window.verifyCryptoPayment()" class="bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-sm shadow-lg hover:bg-brand-700 transition cursor-pointer">Я оплатил 5 USDT</button>
+            <button id="btn-crypto-paid" onclick="window.verifyCryptoPayment()" class="bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-base shadow-lg hover:bg-brand-700 transition cursor-pointer">Я оплатил 5 USDT</button>
         </div>
     </div>
 
     <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[90]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
-            <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-3"><i class="fa-solid fa-gift text-2xl"></i></div>
-            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Бесплатные поднятия</h2>
-            <p class="text-sm text-stone-500 font-semibold mt-1 mb-6">Выбери способ поделиться</p>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="window.completeShareTask('telegram')" class="bg-[#0088cc] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-telegram text-lg mb-1 block"></i> Telegram</button>
-                <button onclick="window.completeShareTask('whatsapp')" class="bg-[#25D366] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-whatsapp text-lg mb-1 block"></i> WhatsApp</button>
-                <button onclick="window.completeShareTask('viber')" class="bg-[#7360f2] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-viber text-lg mb-1 block"></i> Viber</button>
-                <button onclick="window.completeShareTask('facebook')" class="bg-[#1877F2] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-brands fa-facebook text-lg mb-1 block"></i> Facebook</button>
+            <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-4"><i class="fa-solid fa-gift text-3xl"></i></div>
+            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white" data-t="promo_title_2">Бесплатные поднятия</h2>
+            <p class="text-base text-stone-500 font-medium mt-2 mb-6">Выбери способ поделиться</p>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="window.completeShareTask('telegram')" class="bg-[#0088cc] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-telegram text-2xl mb-2 block"></i> Telegram</button>
+                <button onclick="window.completeShareTask('whatsapp')" class="bg-[#25D366] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-whatsapp text-2xl mb-2 block"></i> WhatsApp</button>
+                <button onclick="window.completeShareTask('viber')" class="bg-[#7360f2] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-viber text-2xl mb-2 block"></i> Viber</button>
+                <button onclick="window.completeShareTask('facebook')" class="bg-[#1877F2] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-facebook text-2xl mb-2 block"></i> Facebook</button>
             </div>
-            <p class="text-xs text-stone-400 font-bold mt-6">Мы начислим +3 поднятия после проверки!</p>
+            <p class="text-sm text-stone-400 font-bold mt-8 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700">Мы начислим +3 поднятия после проверки!</p>
         </div>
     </div>
 
+    <!-- Chat Lists -->
     <div id="chat-list-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
-                <div class="font-black text-sm text-stone-900 dark:text-white">Сообщения</div>
-                <button onclick="window.closeModal('chat-list-modal')" class="text-stone-400 hover:text-brand-600 transition text-xl w-8 h-8 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
+                <div class="font-black text-lg text-stone-900 dark:text-white" data-t="mob_messages">Сообщения</div>
+                <button onclick="window.closeModal('chat-list-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col items-center justify-center">
-                <i class="fa-regular fa-envelope-open text-4xl text-stone-300 mb-3"></i>
-                <div class="text-center text-sm font-bold text-stone-400">У вас пока нет активных диалогов</div>
+                <i class="fa-regular fa-envelope-open text-6xl text-stone-300 mb-4"></i>
+                <div class="text-center text-base font-bold text-stone-400">У вас пока нет активных диалогов</div>
             </div>
         </div>
     </div>
 
     <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
+            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center text-stone-500"><i class="fa-solid fa-user"></i></div>
+                    <div class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center text-stone-500 text-lg"><i class="fa-solid fa-user"></i></div>
                     <div>
-                        <div class="font-black text-sm text-stone-900 dark:text-white" id="chat-author-name">Продавец</div>
-                        <div class="text-xs text-brand-600 font-bold line-clamp-1" id="chat-item-title">Товар</div>
+                        <div class="font-black text-base text-stone-900 dark:text-white" id="chat-author-name">Продавец</div>
+                        <div class="text-sm text-brand-600 font-bold line-clamp-1" id="chat-item-title">Товар</div>
                     </div>
                 </div>
-                <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-xl w-8 h-8 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar" id="chat-messages">
                 <div class="text-center text-xs font-bold text-stone-400 my-2">Сегодня</div>
                 <div class="flex items-end gap-2 max-w-[85%]">
-                    <div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">
+                    <div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">
                         Здравствуйте! Вещь еще актуальна?
                     </div>
                 </div>
             </div>
             <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-center gap-2 bg-white dark:bg-stone-900 p-1.5 rounded-full border border-stone-200 dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="text" id="chat-input-field" placeholder="Написать сообщение..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm font-medium text-stone-900 dark:text-white cursor-text caret-brand-600">
-                    <button type="submit" class="w-10 h-10 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer"><i class="fa-solid fa-paper-plane text-xs -ml-0.5"></i></button>
+                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-full border border-stone-200 dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="text" id="chat-input-field" placeholder="Написать сообщение..." class="flex-1 bg-transparent border-none outline-none px-4 text-base font-medium text-stone-900 dark:text-white cursor-text caret-brand-600">
+                    <button type="submit" class="w-12 h-12 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer"><i class="fa-solid fa-paper-plane text-lg -ml-0.5"></i></button>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- Auth -->
     <div id="auth-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('auth-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="flex justify-center gap-6 mb-6 border-b dark:border-stone-800 pb-2 font-black text-base">
-                <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer">Вход</button>
-                <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer">Регистрация</button>
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('auth-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex justify-center gap-8 mb-8 border-b dark:border-stone-800 pb-3 font-black text-lg">
+                <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer" data-t="auth_tab_login">Вход</button>
+                <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer" data-t="auth_tab_register">Регистрация</button>
             </div>
-            <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="window.submitAuth(event);">
-                <div id="auth-name-field" class="hidden flex-col gap-3">
-                    <input type="text" id="auth-name" placeholder="Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
-                    <div>
-                        <label class="text-xs font-bold text-stone-500 mb-1 block">Аватар</label>
-                        <div class="grid grid-cols-5 gap-2" id="avatar-grid"></div>
+            <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
+                <div id="auth-name-field" class="hidden flex-col gap-4">
+                    <input type="text" id="auth-name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                        <label class="text-sm font-bold text-stone-500 mb-3 block" data-t="auth_avatar">Выберите аватар</label>
+                        <div class="grid grid-cols-5 gap-3" id="avatar-grid"></div>
                     </div>
                 </div>
-                <input type="email" id="auth-email" placeholder="Email" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                <input type="email" id="auth-email" placeholder="Email" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 <div>
-                    <input type="password" id="auth-password" placeholder="Пароль" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm mb-1 outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required minlength="8">
-                    <p class="text-xs text-stone-400 font-medium leading-tight" id="auth-hint">Мин. 8 символов: буквы + цифры</p>
+                    <input type="password" id="auth-password" placeholder="Пароль" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base mb-2 outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    <p class="text-xs text-stone-400 font-medium" id="auth-hint" data-t="auth_pass_hint">Мин. 8 символов: буквы + цифры</p>
                 </div>
                 <div class="flex justify-between items-center mt-4">
-                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-sm transition shadow-md cursor-pointer">Войти</button>
-                    <button type="button" onclick="window.forgotPassword()" class="text-sm font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer">Забыли пароль?</button>
+                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer" data-t="auth_login_btn">Войти</button>
+                    <button type="button" onclick="window.forgotPassword()" class="text-sm font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer" data-t="auth_forgot_pass">Забыли пароль?</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Обновленный Профиль -->
+    <!-- Profile Modal -->
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[70]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[80vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800">
-            <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="p-6 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div id="profile-avatar-container" class="w-16 h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-2 border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0"><i class="fa-solid fa-user"></i></div>
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800">
+            <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="p-6 md:p-8 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div id="profile-avatar-container" class="w-20 h-20 bg-stone-200 dark:bg-stone-700 rounded-full border-4 border-white dark:border-stone-800 shadow-md flex items-center justify-center text-3xl overflow-hidden shrink-0"><i class="fa-solid fa-user"></i></div>
                 <div class="flex-1 w-full">
                     <div class="flex justify-between items-start">
                         <div class="flex flex-col">
-                            <div class="flex items-center gap-2">
-                                <h2 id="profile-name" class="text-xl md:text-2xl font-black text-stone-900 dark:text-white">Гость</h2>
-                                <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase">VIP</span>
+                            <div class="flex items-center gap-3 mb-1">
+                                <h2 id="profile-name" class="text-2xl md:text-3xl font-black text-stone-900 dark:text-white">Гость</h2>
+                                <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">VIP</span>
                             </div>
-                            <p id="profile-email" class="text-xs text-stone-500 mb-2">Не авторизован</p>
+                            <p id="profile-email" class="text-sm text-stone-500 mb-3">Не авторизован</p>
                         </div>
-                        <button id="profile-logout-btn" onclick="window.logout()" class="hidden text-stone-400 hover:text-red-500 transition text-sm font-bold cursor-pointer whitespace-nowrap">
+                        <button id="profile-logout-btn" onclick="window.logout()" class="hidden bg-stone-200/50 dark:bg-stone-700/50 text-stone-600 dark:text-stone-300 hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/30 dark:hover:text-red-400 border border-transparent transition text-sm font-bold px-4 py-2 rounded-xl cursor-pointer whitespace-nowrap" data-t="profile_logout">
                             <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Выйти
                         </button>
                     </div>
                     
-                    <div id="profile-economy-section" class="hidden flex-col gap-1.5 mt-2 w-full">
-                        <div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Мои поднятия:</div>
-                        <div class="flex flex-wrap items-center gap-2 w-full">
-                            <div class="bg-white dark:bg-stone-800 border dark:border-stone-700 px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm font-black text-sm shrink-0">
-                                <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance" class="text-stone-900 dark:text-white">0</span>
+                    <div id="profile-economy-section" class="hidden flex-col gap-2 mt-2 w-full bg-white dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 shadow-sm">
+                        <div class="text-xs text-stone-500 font-bold uppercase tracking-widest" data-t="profile_bumps">Мои поднятия:</div>
+                        <div class="flex flex-wrap items-center gap-3 w-full">
+                            <div class="flex items-center gap-2 font-black text-xl text-stone-900 dark:text-white shrink-0">
+                                <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance">0</span>
                             </div>
-                            <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-brand-50 dark:bg-brand-900/20 text-brand-600 border border-brand-200 dark:border-brand-800/50 px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-brand-100 transition shadow-sm cursor-pointer">+ Получить</button>
+                            <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-brand-50 dark:bg-brand-900/20 text-brand-600 border border-brand-200 dark:border-brand-800/50 px-5 py-2 rounded-xl font-bold text-xs hover:bg-brand-100 transition shadow-sm cursor-pointer" data-t="btn_get_bumps">+ Получить</button>
                         </div>
                     </div>
                     
-                    <div id="profile-login-wrapper" class="block">
-                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-md cursor-pointer">Войти</button>
+                    <div id="profile-login-wrapper" class="block mt-2">
+                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer" data-t="auth_login_btn">Войти</button>
                     </div>
                 </div>
             </div>
             
-            <div id="profile-share-banner" class="hidden mx-6 mt-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 text-white flex-col sm:flex-row items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition" onclick="window.closeModal('profile-modal'); window.openModal('share-modal');">
-                <div class="flex items-center gap-3 mb-3 sm:mb-0 w-full sm:w-auto">
-                    <div class="w-10 h-10 bg-white/20 rounded-full hidden sm:flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
-                    <div>
-                        <h4 class="font-black text-sm">Бесплатные поднятия</h4>
-                        <p class="text-amber-50 text-xs">Приглашай друзей и получай +3 поднятия!</p>
-                    </div>
-                </div>
-                <button class="bg-white text-amber-600 px-5 py-2.5 rounded-lg font-bold text-xs whitespace-nowrap w-full sm:w-auto">Поделиться</button>
+            <div class="flex border-b dark:border-stone-800 px-8 font-black text-sm pt-2">
+                <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer" data-t="profile_tab_items">Мои вещи</button>
+                <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer" data-t="profile_tab_saved">Заначка</button>
             </div>
-
-            <div class="flex border-b dark:border-stone-800 px-8 font-bold text-sm mt-4">
-                <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
-                <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer">Заначка</button>
-            </div>
-            <div id="profile-items-grid" class="p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 items-start" style="display: none;"></div>
-            <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-bold text-sm">
-                <i class="fa-solid fa-box-open text-4xl mb-2 opacity-30"></i> <span>Пусто</span>
+            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 items-start" style="display: none;"></div>
+            <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-bold text-base">
+                <i class="fa-solid fa-box-open text-5xl mb-3 opacity-30"></i> <span data-t="empty_title">Пусто</span>
             </div>
         </div>
     </div>
 
     <!-- Add/Edit Item Modal -->
     <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[80]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
-            <button onclick="window.closeModal('add-modal')" class="absolute top-5 right-5 text-stone-400 text-xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title" class="text-2xl font-display font-black mb-6 uppercase italic text-stone-900 dark:text-white">Пристроить добро</h2>
-            <form id="add-form" class="flex flex-col gap-4" onsubmit="window.submitNewItem(event);">
-                <div class="flex gap-3 overflow-x-auto pb-1" id="photo-preview-list"></div>
-                <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-6 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
-                    <i class="fa-solid fa-camera-retro text-3xl mb-2"></i>
-                    <span class="font-bold text-sm">Добавить фото</span>
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-10 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 text-stone-400 text-2xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="add-modal-title" class="text-3xl font-display font-black mb-8 uppercase italic text-stone-900 dark:text-white" data-t="add_title">Пристроить добро</h2>
+            <form id="add-form" class="flex flex-col gap-5" onsubmit="window.submitNewItem(event);">
+                <div class="flex gap-3 overflow-x-auto pb-2" id="photo-preview-list"></div>
+                <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
+                    <i class="fa-solid fa-camera-retro text-4xl mb-3 text-stone-300 dark:text-stone-600"></i>
+                    <span class="font-bold text-base" data-t="add_photos_label">Добавить фото</span>
                     <input type="file" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
                 </label>
-                <input type="text" id="item-title" placeholder="Название" class="bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <select id="item-category" required class="bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-pointer text-stone-900 dark:text-white">
-                        <option value="" disabled selected>Категория...</option>
-                        <optgroup label="Одежда и Обувь">
-                            <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Аксессуары">Аксессуары</option>
-                        </optgroup>
-                        <optgroup label="Электроника">
-                            <option value="Электроника - Телефоны">Телефоны</option><option value="Электроника - ПК">Ноутбуки / ПК</option><option value="Электроника - Консоли">Консоли и Игры</option><option value="Электроника - Аудио">Аудио/Видео</option><option value="Электроника - Бытовая">Бытовая техника</option>
-                        </optgroup>
-                        <optgroup label="Интерьер">
-                            <option value="Интерьер - Мебель">Мебель</option><option value="Интерьер - Декор">Декор</option><option value="Интерьер - Ремонт">Ремонт и Стройка</option><option value="Интерьер - Сад">Сад и Огород</option>
-                        </optgroup>
-                        <optgroup label="Транспорт">
-                            <option value="Транспорт - Авто">Авто</option><option value="Транспорт - Мото">Мото</option><option value="Транспорт - Вело">Велосипеды/Самокаты</option><option value="Транспорт - Запчасти">Запчасти</option>
-                        </optgroup>
-                        <optgroup label="Услуги и Работа">
-                            <option value="Услуги - Ремонт">Ремонт техники</option><option value="Услуги - Красота">Красота и Здоровье</option><option value="Услуги - Репетиторы">Репетиторы</option><option value="Работа - Вакансии">Вакансии</option>
-                        </optgroup>
-                        <optgroup label="Хобби и Отдых">
-                            <option value="Хобби - Спорт">Спорт инвентарь</option><option value="Хобби - Книги">Книги</option><option value="Хобби - Музыка">Музыка</option><option value="Хобби - Коллекции">Коллекционирование</option>
-                        </optgroup>
-                        <optgroup label="Животные">
-                            <option value="Животные - Собаки">Собаки</option><option value="Животные - Кошки">Кошки</option><option value="Животные - Товары">Зоотовары</option>
-                        </optgroup>
-                        <optgroup label="Недвижимость">
-                            <option value="Жилье - Аренда">Аренда жилья</option><option value="Жилье - Покупка">Покупка</option><option value="Жилье - Коммерция">Коммерческая</option>
-                        </optgroup>
-                        <optgroup label="Другое">
-                            <option value="Детям - Игрушки">Игрушки</option><option value="Детям - Коляски">Коляски</option><option value="Другое - Разное">Разное</option><option value="Другое - Бесплатно">Отдам даром</option>
-                        </optgroup>
-                    </select>
-                    <select id="item-city" class="bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-pointer text-stone-900 dark:text-white">
-                        <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
-                        <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
-                        <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
-                    </select>
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="text" id="item-title" placeholder="Название" data-t="add_name" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 </div>
                 
-                <div class="flex gap-3">
-                    <input type="number" id="item-price" placeholder="Цена" class="flex-1 bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium outline-none text-sm cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
-                    <select id="item-currency" class="bg-stone-100 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-bold text-sm outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
-                </div>
-
-                <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
-                
-                <div class="relative flex flex-col">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="text-xs font-bold text-stone-500">Описание</span>
-                        <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-xs font-bold text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1 rounded hover:bg-brand-100 transition cursor-pointer">✨ Сгенерировать ИИ</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-category" required class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            <option value="" disabled selected>Категория...</option>
+                            <optgroup label="Одежда и Обувь">
+                                <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Аксессуары">Аксессуары</option>
+                            </optgroup>
+                            <optgroup label="Электроника">
+                                <option value="Электроника - Телефоны">Телефоны</option><option value="Электроника - ПК">Ноутбуки / ПК</option><option value="Электроника - Консоли">Консоли и Игры</option><option value="Электроника - Аудио">Аудио/Видео</option><option value="Электроника - Бытовая">Бытовая техника</option>
+                            </optgroup>
+                            <optgroup label="Интерьер">
+                                <option value="Интерьер - Мебель">Мебель</option><option value="Интерьер - Декор">Декор</option><option value="Интерьер - Ремонт">Ремонт и Стройка</option><option value="Интерьер - Сад">Сад и Огород</option>
+                            </optgroup>
+                            <optgroup label="Транспорт">
+                                <option value="Транспорт - Авто">Авто</option><option value="Транспорт - Мото">Мото</option><option value="Транспорт - Вело">Велосипеды/Самокаты</option><option value="Транспорт - Запчасти">Запчасти</option>
+                            </optgroup>
+                            <optgroup label="Услуги и Работа">
+                                <option value="Услуги - Ремонт">Ремонт техники</option><option value="Услуги - Красота">Красота и Здоровье</option><option value="Услуги - Репетиторы">Репетиторы</option><option value="Работа - Вакансии">Вакансии</option>
+                            </optgroup>
+                            <optgroup label="Хобби и Отдых">
+                                <option value="Хобби - Спорт">Спорт инвентарь</option><option value="Хобби - Книги">Книги</option><option value="Хобби - Музыка">Музыка</option><option value="Хобби - Коллекции">Коллекционирование</option>
+                            </optgroup>
+                            <optgroup label="Животные">
+                                <option value="Животные - Собаки">Собаки</option><option value="Животные - Кошки">Кошки</option><option value="Животные - Товары">Зоотовары</option>
+                            </optgroup>
+                            <optgroup label="Недвижимость">
+                                <option value="Жилье - Аренда">Аренда жилья</option><option value="Жилье - Покупка">Покупка</option><option value="Жилье - Коммерция">Коммерческая</option>
+                            </optgroup>
+                            <optgroup label="Другое">
+                                <option value="Детям - Игрушки">Игрушки</option><option value="Детям - Коляски">Коляски</option><option value="Другое - Разное">Разное</option><option value="Другое - Бесплатно">Отдам даром</option>
+                            </optgroup>
+                        </select>
                     </div>
-                    <textarea id="item-desc" placeholder="Описание..." rows="4" class="bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border dark:border-stone-700 font-medium text-sm outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-city" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
+                            <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
+                            <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <input type="number" id="item-price" placeholder="Цена" data-t="add_price" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    </div>
+                    <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
+                        <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
+                    </div>
                 </div>
 
-                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg hover:bg-brand-700 transition cursor-pointer mt-2">Опубликовать</button>
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" data-t="add_phone" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                </div>
+                
+                <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
+                    <div class="flex justify-between items-center mb-2 px-2 pt-1">
+                        <span class="text-sm font-bold text-stone-500" data-t="add_desc_label">Описание</span>
+                        <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-xs font-bold text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1.5 rounded hover:bg-brand-100 transition cursor-pointer shadow-sm">✨ <span data-t="btn_ai_desc">Сгенерировать ИИ</span></button>
+                    </div>
+                    <textarea id="item-desc" placeholder="Описание..." data-t="add_desc" rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
+                </div>
+
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 mt-2 rounded-xl font-bold text-base shadow-lg hover:bg-brand-700 transition cursor-pointer" data-t="btn_publish">Опубликовать</button>
             </form>
         </div>
     </div>
@@ -605,47 +632,47 @@
     <!-- Item Details Modal -->
     <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md z-[75]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-sm cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
-            <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="absolute top-4 right-14 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-sm cursor-pointer"><i class="fa-solid fa-box-open text-sm"></i></button>
+            <button onclick="window.closeModal('item-modal')" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="absolute top-4 right-16 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
 
-            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[250px] md:h-auto overflow-hidden flex items-center justify-center relative group">
+            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[300px] md:h-auto overflow-hidden flex items-center justify-center relative group">
                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
             </div>
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar text-left">
-                <div class="flex items-center gap-2 mb-3">
-                    <span id="modal-category-text" class="text-xs font-black text-white bg-brand-600 px-2.5 py-1 rounded">КАТЕГОРИЯ</span>
+                <div class="flex items-center gap-3 mb-3">
+                    <span id="modal-category-text" class="text-xs font-black text-white bg-brand-600 px-3 py-1 rounded">КАТЕГОРИЯ</span>
                     <span id="modal-city-text" class="text-xs font-bold text-stone-500"><i class="fa-solid fa-location-dot"></i> БЕЛГРАД</span>
                 </div>
-                <div id="modal-status-badge" class="hidden mb-3 inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start"></div>
+                <div id="modal-status-badge" class="hidden mb-3 inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start"></div>
                 <h2 id="modal-title" class="text-2xl md:text-3xl font-display font-black mb-2 leading-tight text-stone-900 dark:text-white">Название...</h2>
                 <div id="modal-price" class="text-3xl md:text-4xl price-text text-brand-600 italic mb-4">0 RSD</div>
-                <div id="modal-phone-container" class="hidden items-center gap-2 text-base font-bold text-stone-700 dark:text-stone-300 mb-5 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700 w-fit">
+                <div id="modal-phone-container" class="hidden items-center gap-3 text-lg font-bold text-stone-700 dark:text-stone-300 mb-5 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 w-fit">
                     <i class="fa-solid fa-phone text-brand-500"></i> <a href="" id="modal-phone" class="hover:text-brand-600 transition cursor-pointer"></a>
                 </div>
-                <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-sm leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
+                <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-base leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
                 
                 <div id="modal-owner-controls" class="hidden flex-col gap-3 mb-6 border-t dark:border-stone-800 pt-5">
                     <div class="flex gap-2">
-                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> <span id="btn-bump-text">Поднять</span></button>
-                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-xs hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">Купить PRO</span></button>
+                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> <span id="btn-bump-text" data-t="btn_bump">Поднять</span></button>
+                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text" data-t="btn_buy_pro">Купить PRO</span></button>
                     </div>
                     <div id="modal-owner-edit-controls" class="flex gap-2 mt-1"></div>
                     <div id="modal-owner-status-controls" class="flex gap-2 mt-1"></div>
                 </div>
 
-                <div class="mt-auto flex items-center gap-3 p-4 border dark:border-stone-700 rounded-xl shadow-sm mb-4 bg-stone-50 dark:bg-stone-800/50">
-                    <div id="modal-author-avatar" class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-xl"><i class="fa-solid fa-user"></i></div>
+                <div class="mt-auto flex items-center gap-4 p-4 border dark:border-stone-700 rounded-xl shadow-sm mb-4 bg-stone-50 dark:bg-stone-800/50">
+                    <div id="modal-author-avatar" class="w-14 h-14 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-2xl"><i class="fa-solid fa-user"></i></div>
                     <div>
-                        <div id="modal-author" class="font-black text-sm text-stone-900 dark:text-white">Пользователь</div>
-                        <div id="modal-author-sub" class="text-xs text-stone-500 font-bold">Продавец SVALKA</div>
+                        <div id="modal-author" class="font-black text-base text-stone-900 dark:text-white">Пользователь</div>
+                        <div id="modal-author-sub" class="text-xs text-stone-500 font-bold"><span data-t="profile_new_user">Продавец SVALKA</span></div>
                     </div>
                 </div>
-                <button id="btn-contact-seller" onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer">Написать продавцу</button>
+                <button id="btn-contact-seller" onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer" data-t="modal_contact">Написать продавцу</button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN SCRIPT -->
+    <!-- MAIN SCRIPT (Единственный экземпляр логики) -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
         
@@ -667,19 +694,20 @@
         window.filterPriceMax = '';
         window.filterCurrency = 'Все'; 
 
+        window.currentAppLang = 'ru';
         window.currentProfileTab = 'items';
         window.activeModalItemId = null; 
-        window.editingItemId = null; // Для режима редактирования
+        window.editingItemId = null; 
         window.userFavorites = new Set(); 
         
         window.displayedCount = 12; 
         window.currentFilteredItems = [];
         window.authMode = 'login';
 
-        // PWA Initialization
+        // PWA Setup (Только один раз)
         const initPWA = () => {
             const manifest = {
-                name: "SVALKA - Маркетплейс", short_name: "SVALKA", description: "Маркетплейс вещей в Сербии",
+                name: "SVALKA", short_name: "SVALKA", description: "Маркетплейс в Сербии",
                 start_url: "/", display: "standalone", background_color: "#f5f5f4", theme_color: "#14b8a6",
                 icons: [{ src: "https://api.dicebear.com/9.x/shapes/svg?seed=svalka&backgroundColor=14b8a6", sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
             };
@@ -717,13 +745,84 @@
             localStorage.setItem('theme-override', 'true');
         };
 
+        // Полный словарь i18n
+        window.i18n = {
+            ru: {
+                search_placeholder: "Поиск сокровищ...", promo_title: "Поддержи проект!", promo_subtitle: "Получи VIP-статус за донат в крипте и продавай вещи быстрее.",
+                promo_title_2: "Бесплатные поднятия", promo_subtitle_2: "Приглашай друзей в любой соцсети и получай +3 бесплатных поднятия!", promo_bonus: "Бонусы",
+                main_title: "Находки", main_subtitle: "Самые свежие объявления Сербии", sort_new: "Сначала новые", sort_cheap: "Сначала дешевые", sort_exp: "Сначала дорогие", btn_filters: "Фильтры",
+                cat_all: "Все", cat_clothes: "Одежда", cat_electronics: "Электроника", cat_consoles: "Консоли", cat_services: "Услуги", cat_home: "Интерьер", cat_auto: "Транспорт", cat_hobbies: "Хобби", cat_kids: "Детям", cat_housing: "Жилье", cat_free: "Даром",
+                filter_cat: "Категория", filter_city: "Город", filter_price: "Цена", city_all: "Все города", filter_reset: "Сбросить", filter_apply: "Применить",
+                nav_urgent: "Срочно", btn_load_more: "Показать еще", empty_title: "Ничего не найдено", main_subtitle_2: "Свежие объявления",
+                foot_policy: "Политика конфиденциальности", foot_rules: "Правила сайта", foot_support: "Служба поддержки", foot_copy: "© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.",
+                auth_tab_login: "Вход", auth_tab_register: "Регистрация", auth_avatar: "Выберите аватар", auth_pass_hint: "Мин. 8 символов: буквы + цифры", auth_login_btn: "Войти", auth_forgot_pass: "Забыли пароль?",
+                profile_tab_items: "Мои вещи", profile_tab_saved: "Заначка", profile_logout: "Выйти", profile_new_user: "Продавец SVALKA", profile_bumps: "Мои поднятия:", btn_get_bumps: "+ Получить",
+                add_title: "Пристроить добро", add_photos_label: "Добавить фото", add_name: "Название", add_price: "Цена", add_desc_label: "Описание", btn_ai_desc: "Сгенерировать ИИ", btn_publish: "Опубликовать",
+                modal_contact: "Написать продавцу", mob_messages: "Сообщения", mob_emergency_exit: "Экстренный выход", mob_free_bumps: "Бесплатные поднятия",
+                policy_text: "<p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>",
+                rules_text: "<p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>",
+                auth_pass_error: "Пароль должен быть от 8 символов и содержать буквы и цифры.", auth_reset_sent: "Ссылка для сброса отправлена на почту!",
+                add_phone: "Телефон (необязательно)", btn_mark_reserved: "В резерв", btn_mark_sold: "Продано", btn_mark_active: "Активировать", status_reserved: "В РЕЗЕРВЕ", status_sold: "ПРОДАНО",
+                btn_share_main: "Поделиться", btn_delete: "Удалить", btn_edit_price: "Редактировать", prompt_new_price: "Введите новую цену:", confirm_delete: "Удалить это объявление навсегда?",
+                btn_bump: "Поднять", btn_buy_pro: "Купить PRO", btn_to_top: "В ТОП (Бесплатно)", cat_all_btn: "Все"
+            },
+            rs: {
+                search_placeholder: "Pretraga...", promo_title: "Podrži projekat!", promo_subtitle: "Uzmi VIP za kripto donaciju i prodaj brže.",
+                promo_title_2: "Besplatna podizanja", promo_subtitle_2: "Pozovi prijatelje i dobij +3 besplatna podizanja!", promo_bonus: "Bonusi",
+                main_title: "Otkrića", main_subtitle: "Najnoviji oglasi u Srbiji", sort_new: "Prvo najnovije", sort_cheap: "Prvo najjeftinije", sort_exp: "Prvo najskuplje", btn_filters: "Filteri",
+                cat_all: "Sve", cat_clothes: "Odeća", cat_electronics: "Elektronika", cat_consoles: "Konzole", cat_services: "Usluge", cat_home: "Enterijer", cat_auto: "Transport", cat_hobbies: "Hobi", cat_kids: "Za decu", cat_housing: "Smeštaj", cat_free: "Besplatno",
+                filter_cat: "Kategorija", filter_city: "Grad", filter_price: "Cena", city_all: "Svi gradovi", filter_reset: "Poništi", filter_apply: "Primeni",
+                nav_urgent: "Hitno", btn_load_more: "Prikaži još", empty_title: "Ovde je prazno", main_subtitle_2: "Sveži oglasi",
+                foot_policy: "Politika privatnosti", foot_rules: "Pravila sajta", foot_support: "Podrška korisnicima", foot_copy: "© 2026 SVALKA. SVA PRAVA ZADRŽANA.",
+                auth_tab_login: "Ulaz", auth_tab_register: "Registracija", auth_avatar: "Izaberite avatar", auth_pass_hint: "Min. 8 karaktera: slova + brojevi", auth_login_btn: "Prijava", auth_forgot_pass: "Zaboravili ste lozinku?",
+                profile_tab_items: "Moji oglasi", profile_tab_saved: "Sačuvano", profile_logout: "Izlaz", profile_new_user: "Prodavac SVALKA", profile_bumps: "Moja podizanja:", btn_get_bumps: "+ Dobiti",
+                add_title: "Dodaj oglas", add_photos_label: "Dodaj sliku", add_name: "Naziv", add_price: "Cena", add_desc_label: "Opis", btn_ai_desc: "Generiši AI", btn_publish: "Objavi",
+                modal_contact: "Kontakt", mob_messages: "Poruke", mob_emergency_exit: "Hitni izlaz", mob_free_bumps: "Besplatna podizanja",
+                policy_text: "<p>Vaše lozinke su bezbedno šifrovane.</p><p>Fotografije se otpremaju na naše zaštićene servere.</p>",
+                rules_text: "<p>1. Prodaja nelegalnih predmeta je zabranjena.</p><p>2. Spam je zabranjen.</p><p>3. Sastajte se sa kupcima lično.</p>",
+                auth_pass_error: "Lozinka mora imati najmanje 8 karaktera i sadržati slova i brojeve.", auth_reset_sent: "Link je poslat na vašu e-poštu!",
+                add_phone: "Telefon (opciono)", btn_mark_reserved: "Rezerviši", btn_mark_sold: "Prodato", btn_mark_active: "Aktiviraj", status_reserved: "REZERVISANO", status_sold: "PRODATO",
+                btn_share_main: "Podeli", btn_delete: "Izbriši", btn_edit_price: "Uredi", prompt_new_price: "Unesite novu cenu:", confirm_delete: "Trajno izbrisati oglas?",
+                btn_bump: "Podigni", btn_buy_pro: "Kupi PRO", btn_to_top: "U TOP (Besplatno)", cat_all_btn: "Sve"
+            },
+            en: {
+                search_placeholder: "Search...", promo_title: "Support us!", promo_subtitle: "Get VIP via crypto donation to sell faster.",
+                promo_title_2: "Free Bumps", promo_subtitle_2: "Invite friends and get +3 free bumps!", promo_bonus: "Bonuses",
+                main_title: "Great Finds", main_subtitle: "Fresh listings in Serbia", sort_new: "Newest first", sort_cheap: "Cheapest first", sort_exp: "Most expensive", btn_filters: "Filters",
+                cat_all: "All", cat_clothes: "Clothes", cat_electronics: "Electronics", cat_consoles: "Consoles", cat_services: "Services", cat_home: "Interior", cat_auto: "Transport", cat_hobbies: "Hobbies", cat_kids: "Kids", cat_housing: "Housing", cat_free: "Free",
+                filter_cat: "Category", filter_city: "City", filter_price: "Price", city_all: "All cities", filter_reset: "Reset", filter_apply: "Apply",
+                nav_urgent: "Urgent", btn_load_more: "Load more", empty_title: "Nothing found", main_subtitle_2: "Fresh listings",
+                foot_policy: "Privacy Policy", foot_rules: "Terms of Use", foot_support: "Customer Support", foot_copy: "© 2026 SVALKA. ALL RIGHTS RESERVED.",
+                auth_tab_login: "Login", auth_tab_register: "Sign Up", auth_avatar: "Choose Avatar", auth_pass_hint: "Min. 8 chars: letters + numbers", auth_login_btn: "Log In", auth_forgot_pass: "Forgot password?",
+                profile_tab_items: "My Listings", profile_tab_saved: "Saved", profile_logout: "Log Out", profile_new_user: "SVALKA Seller", profile_bumps: "My bumps:", btn_get_bumps: "+ Get",
+                add_title: "Add Listing", add_photos_label: "Add photos", add_name: "Title", add_price: "Price", add_desc_label: "Description", btn_ai_desc: "Generate AI", btn_publish: "Publish",
+                modal_contact: "Contact Seller", mob_messages: "Messages", mob_emergency_exit: "Emergency exit", mob_free_bumps: "Free bumps",
+                policy_text: "<p>Your passwords are securely encrypted.</p><p>Photos are uploaded to our secure servers.</p>",
+                rules_text: "<p>1. Sale of illegal items is prohibited.</p><p>2. Spam is prohibited.</p><p>3. Meet buyers in person.</p>",
+                auth_pass_error: "Password must be at least 8 characters long and contain both letters and numbers.", auth_reset_sent: "Reset link sent!",
+                add_phone: "Phone (optional)", btn_mark_reserved: "Reserve", btn_mark_sold: "Mark Sold", btn_mark_active: "Activate", status_reserved: "RESERVED", status_sold: "SOLD",
+                btn_share_main: "Share", btn_delete: "Delete", btn_edit_price: "Edit", prompt_new_price: "Enter new price:", confirm_delete: "Permanently delete this listing?",
+                btn_bump: "Bump", btn_buy_pro: "Buy PRO", btn_to_top: "To TOP (Free)", cat_all_btn: "All"
+            }
+        };
+
         window.changeLang = function(lang) {
+            window.currentAppLang = lang;
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (window.i18n[lang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = window.i18n[lang][key];
+                    else if (el.tagName === 'OPTION') el.innerText = window.i18n[lang][key];
+                    else el.innerHTML = window.i18n[lang][key]; 
+                }
+            });
             const flags = { 'ru': 'https://flagcdn.com/w20/ru.png', 'rs': 'https://flagcdn.com/w20/rs.png', 'en': 'https://flagcdn.com/w20/gb.png' };
             const names = { 'ru': 'РУС', 'rs': 'SRB', 'en': 'ENG' };
             const flagEl = document.getElementById('current-lang-flag');
             const textEl = document.getElementById('current-lang-text');
             if (flagEl) flagEl.src = flags[lang] || flags['ru'];
             if (textEl) textEl.innerText = names[lang] || 'РУС';
+            if (window.loadedItems && window.loadedItems.length > 0) window.renderGrid();
         };
 
         window.openModal = id => { 
@@ -738,8 +837,8 @@
             
             if (id === 'add-modal') {
                 window.editingItemId = null;
-                document.getElementById('add-modal-title').innerText = "Пристроить добро";
-                document.getElementById('add-submit-btn').innerText = "Опубликовать";
+                document.getElementById('add-modal-title').innerText = window.i18n[window.currentAppLang]['add_title'] || "Пристроить добро";
+                document.getElementById('add-submit-btn').innerText = window.i18n[window.currentAppLang]['btn_publish'] || "Опубликовать";
                 const formEl = document.getElementById('add-form');
                 if(formEl) formEl.reset();
                 window.tempPhotos = []; 
@@ -757,16 +856,14 @@
             const tMsg = document.getElementById('toast-msg');
             const tIco = document.getElementById('toast-icon');
             if(tMsg) tMsg.innerText = msg;
-            if(tIco) tIco.className = `fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'}`;
+            if(tIco) tIco.className = `fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'} text-lg`;
             if (t) {
-                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 z-[9999] transition-opacity duration-300 pointer-events-none ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
+                t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 pointer-events-none ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
                 setTimeout(()=>t.classList.replace('opacity-100', 'opacity-0'), 3000); 
             }
         };
 
         // Lightbox
-        window.currentLightboxImages = [];
-        window.currentLightboxIndex = 0;
         window.openLightbox = (src) => {
             if (window.activeModalItemId) {
                 const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
@@ -790,10 +887,9 @@
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
-        // Favorites
         window.toggleFavorite = async (btn, event, itemId) => {
             if(event) event.stopPropagation();
-            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             if (!itemId) return;
             const isLiked = window.userFavorites.has(itemId);
             const icon = btn.querySelector('i');
@@ -848,7 +944,7 @@
 
             if (window.authMode === 'register') {
                 const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
-                if (!passRegex.test(pass)) { window.showToast("Пароль от 8 символов (буквы + цифры)", true); return; }
+                if (!passRegex.test(pass)) { window.showToast(window.i18n[window.currentAppLang]['auth_pass_error'], true); return; }
             }
             
             if(btn) { btn.disabled = true; btn.innerText = "..."; }
@@ -870,7 +966,10 @@
                 if(passEl) passEl.value = '';
             } catch (e) { window.showToast(e.message, true); }
             finally { 
-                if(btn) { btn.disabled = false; btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; }
+                if(btn) {
+                    btn.disabled = false; 
+                    btn.innerHTML = window.i18n[window.currentAppLang][window.authMode === 'login' ? 'auth_login_btn' : 'auth_tab_register']; 
+                }
             }
         };
 
@@ -880,7 +979,7 @@
             if(!email) { window.showToast("Введите Email!", true); return; }
             const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
             if(error) window.showToast(error.message, true);
-            else window.showToast("Ссылка отправлена на почту!");
+            else window.showToast(window.i18n[window.currentAppLang]['auth_reset_sent']);
         };
 
         window.logout = () => { 
@@ -1011,28 +1110,13 @@
             } catch(err) { return null; }
         }
 
+        // FETCH ITEMS
         window.fetchItems = async (isBackground = false) => {
             const loader = document.getElementById('loading-placeholder');
             const mainGrid = document.getElementById('main-items-grid');
             const emptyState = document.getElementById('empty-state');
             
-            let hasValidCache = false;
-            if (!isBackground) {
-                const cachedData = localStorage.getItem('svalka_items_cache');
-                if (cachedData) {
-                    try {
-                        const parsed = JSON.parse(cachedData);
-                        if (Date.now() - parsed.timestamp < 10 * 60 * 1000) { 
-                            window.loadedItems = parsed.data;
-                            window.displayedCount = 12;
-                            window.renderDynamicItems(parsed.data);
-                            hasValidCache = true;
-                        }
-                    } catch(e) {}
-                }
-            }
-
-            if (!hasValidCache && window.loadedItems.length === 0) {
+            if (!isBackground && window.loadedItems.length === 0) {
                 if(loader) loader.style.display = 'block';
                 if(mainGrid) mainGrid.classList.add('hidden');
                 if(emptyState) emptyState.classList.add('hidden');
@@ -1043,14 +1127,14 @@
                 if (error) throw error;
                 if (data) {
                     const mapped = data.map(mapItemData).filter(Boolean); 
-                    localStorage.setItem('svalka_items_cache', JSON.stringify({ timestamp: Date.now(), data: mapped }));
                     window.loadedItems = mapped;
-                    if (!isBackground || window.displayedCount <= 12) window.renderDynamicItems(mapped);
+                    window.renderDynamicItems(mapped);
+                    if(window.currentUser) window.renderProfileTabs();
                 }
             } catch(e) { 
                 console.error("Ошибка загрузки:", e); 
                 let errMsg = e.message || 'Ошибка сети';
-                if (errMsg.includes('status') || errMsg.includes('phone')) errMsg = 'ВНИМАНИЕ! Добавьте колонки status и phone (тип text) в Supabase!';
+                if (errMsg.includes('status') || errMsg.includes('phone')) errMsg = 'Добавьте колонки status и phone (тип text) в Supabase!';
 
                 if (window.loadedItems.length === 0 && loader) {
                     loader.innerHTML = `
@@ -1060,7 +1144,7 @@
                     </div>`;
                 }
             } finally {
-                if(loader) loader.style.display = 'none'; // ГАРАНТИРОВАННО СКРЫВАЕМ ЛОАДЕР
+                if(loader && window.loadedItems.length > 0) loader.style.display = 'none';
             }
         };
 
@@ -1137,7 +1221,6 @@
                     if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
                 }
             }
-            if(window.renderProfileTabs) window.renderProfileTabs();
         };
 
         function createCardHtml(i, isVIP) {
@@ -1149,9 +1232,11 @@
             let statusBadge = '';
             let opacityClass = '';
             if (i.status === 'reserved') {
-                statusBadge = `<div class="absolute bottom-1.5 left-1.5 bg-orange-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`;
+                const textRes = window.i18n[window.currentAppLang]['status_reserved'] || 'В РЕЗЕРВЕ';
+                statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">${textRes}</div>`;
             } else if (i.status === 'sold') {
-                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[10px] font-black px-3 py-1 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`;
+                const textSold = window.i18n[window.currentAppLang]['status_sold'] || 'ПРОДАНО';
+                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${textSold}</span></div>`;
                 opacityClass = 'opacity-70 grayscale-[0.5]';
             }
 
@@ -1159,17 +1244,17 @@
 
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
-                <button type="button" class="absolute top-1.5 right-1.5 z-20 w-7 h-7 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
-                    <i class="fa-solid ${iconClass} text-[10px] drop-shadow-sm"></i>
+                <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
+                    <i class="fa-solid ${iconClass} text-xs drop-shadow-sm"></i>
                 </button>
-                <div class="h-24 sm:h-28 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+                <div class="h-32 sm:h-36 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                 </div>
-                <div class="p-2.5 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-[10px] sm:text-[11px] mb-0.5 line-clamp-1 leading-tight text-stone-900 dark:text-white">${vipCrown}${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text text-xs sm:text-sm mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="mt-1.5 pt-1.5 border-t border-stone-100 dark:border-stone-700 text-[9px] sm:text-[10px] uppercase font-black text-stone-400 flex justify-between items-center">
+                <div class="p-3 flex-1 flex flex-col justify-between">
+                    <h4 class="font-bold text-xs sm:text-sm mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white">${vipCrown}${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text text-sm sm:text-base mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-[10px] sm:text-xs uppercase font-black text-stone-400 flex justify-between items-center">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
@@ -1184,18 +1269,18 @@
 
             const imgContainer = document.getElementById('modal-img-container');
             if (Array.isArray(item.images) && item.images.length > 1) {
-                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-12 h-12 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                 imgContainer.innerHTML = `
                     <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')">
-                    <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
+                    <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
                 `;
             } else {
                 const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                 imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
             }
 
-            const topBadge = item.isHighlighted ? `<span class="text-amber-500 ml-2" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-            document.getElementById('modal-title').innerHTML = `${item.title || 'Без названия'} ${topBadge}`;
+            const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-2" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
+            document.getElementById('modal-title').innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
             
             document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
             
@@ -1212,11 +1297,11 @@
 
             const statusBadgeEl = document.getElementById('modal-status-badge');
             if (item.status === 'reserved') {
-                statusBadgeEl.innerText = 'В РЕЗЕРВЕ';
-                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
+                statusBadgeEl.innerText = window.i18n[window.currentAppLang]['status_reserved'] || 'В РЕЗЕРВЕ';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
             } else if (item.status === 'sold') {
-                statusBadgeEl.innerText = 'ПРОДАНО';
-                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
+                statusBadgeEl.innerText = window.i18n[window.currentAppLang]['status_sold'] || 'ПРОДАНО';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
             } else {
                 statusBadgeEl.className = 'hidden';
             }
@@ -1230,7 +1315,7 @@
             document.getElementById('modal-author').innerText = item.authorName || "Пользователь";
             document.getElementById('modal-author-avatar').innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
             
-            const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
+            const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
             document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
             
             const modalFavIcon = document.querySelector('#modal-fav-btn i');
@@ -1251,23 +1336,32 @@
                 
                 const vipBtnText = document.getElementById('btn-owner-vip-text');
                 if(window.currentUserData && window.currentUserData.is_pro) {
-                    vipBtnText.innerText = "В ТОП (Бесплатно PRO)";
+                    vipBtnText.innerText = window.i18n[window.currentAppLang]['btn_to_top'] || "В ТОП (Бесплатно)";
                 } else {
-                    vipBtnText.innerText = "Купить PRO";
+                    vipBtnText.innerText = window.i18n[window.currentAppLang]['btn_buy_pro'] || "Купить PRO";
                 }
+                
+                document.getElementById('btn-bump-text').innerText = window.i18n[window.currentAppLang]['btn_bump'] || 'Поднять';
 
                 statusControls.innerHTML = '';
                 if (item.status !== 'sold') {
                     const isRes = item.status === 'reserved';
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                    const activeText = window.i18n[window.currentAppLang]['btn_mark_active'] || "Активировать";
+                    const resText = window.i18n[window.currentAppLang]['btn_mark_reserved'] || "В резерв";
+                    const soldText = window.i18n[window.currentAppLang]['btn_mark_sold'] || "Продано";
+
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? activeText : resText}</button>`;
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> ${soldText}</button>`;
                 } else {
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                    const activeText = window.i18n[window.currentAppLang]['btn_mark_active'] || "Активировать";
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> ${activeText}</button>`;
                 }
 
                 editControls.innerHTML = '';
-                editControls.innerHTML += `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>`;
-                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-xs hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                const btnEdit = window.i18n[window.currentAppLang]['btn_edit_price'] || "Редактировать";
+                const btnDel = window.i18n[window.currentAppLang]['btn_delete'] || "Удалить";
+                editControls.innerHTML += `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> ${btnEdit}</button>`;
+                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-xs hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> ${btnDel}</button>`;
 
             } else {
                 contactBtn.classList.remove('hidden');
@@ -1292,7 +1386,8 @@
 
         window.deleteItem = async (id) => {
             if (!window.currentUser) return;
-            if (confirm("Удалить это объявление навсегда?")) {
+            const confirmMsg = window.i18n[window.currentAppLang]['confirm_delete'] || "Удалить?";
+            if (confirm(confirmMsg)) {
                 try {
                     await supabase.from('items').delete().eq('id', id);
                     window.showToast("Удалено!");
@@ -1355,10 +1450,10 @@
             const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
 
             const tab1 = document.getElementById('tab-my-items');
-            if (tab1) tab1.innerHTML = `Мои вещи (${myItems.length})`;
+            if (tab1) tab1.innerHTML = `<span data-t="profile_tab_items">${window.i18n[window.currentAppLang]['profile_tab_items'] || 'Мои вещи'}</span> (${myItems.length})`;
             
             const tab2 = document.getElementById('tab-my-saved');
-            if (tab2) tab2.innerHTML = `Заначка (${savedItems.length})`;
+            if (tab2) tab2.innerHTML = `<span data-t="profile_tab_saved">${window.i18n[window.currentAppLang]['profile_tab_saved'] || 'Заначка'}</span> (${savedItems.length})`;
 
             const itemsToShow = window.currentProfileTab === 'items' ? myItems : savedItems;
 
@@ -1370,15 +1465,15 @@
 
         // Actions
         window.openChatModal = () => {
-            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
             document.getElementById('chat-author-name').innerText = document.getElementById('modal-author').innerText;
-            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
             window.openModal('chat-modal');
         };
 
         window.openChatListModal = () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             document.getElementById('chat-item-title').innerText = "Все сообщения";
             document.getElementById('chat-author-name').innerText = "Список чатов";
             document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 mt-10">У вас пока нет активных диалогов</div>`;
@@ -1394,7 +1489,7 @@
             container.scrollTop = container.scrollHeight;
             
             setTimeout(() => {
-                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-3"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Да, еще актуально! Отвечу подробнее чуть позже.</div></div>`);
+                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-3"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Да, еще актуально! Отвечу подробнее чуть позже.</div></div>`);
                 container.scrollTop = container.scrollHeight;
                 window.showToast("Новое сообщение!");
                 
@@ -1404,7 +1499,7 @@
         };
 
         window.openShareModal = () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); return; }
             window.openModal('share-modal');
         };
 
@@ -1534,85 +1629,10 @@
         supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
         supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
         
-        // GEMINI API
-        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: "Ты — профессиональный копирайтер для барахолки. Пиши краткие и продающие описания." }] } };
-            for (let i = 0; i <= retries; i++) {
-                try {
-                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (e) { if (i === retries) throw e; await new Promise(res => setTimeout(res, delay)); delay *= 2; }
-            }
-        }
-
-        window.generateAIDescription = async () => {
-            let titleInput = '';
-            document.querySelectorAll('#item-title').forEach(el => { if(el.value) titleInput = el.value; });
-            
-            if (!titleInput) { window.showToast("Укажите название!", true); return; }
-            
-            document.querySelectorAll('#btn-ai-desc').forEach(btn => {
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
-                btn.disabled = true;
-            });
-            
-            try {
-                const text = await callGeminiAPI(`Напиши продающее описание для: ${titleInput}. Язык: Russian. Максимум 3 абзаца. Эмодзи.`);
-                if (text) { 
-                    document.querySelectorAll('#item-desc').forEach(el => el.value = text);
-                    window.showToast("✨ Описание сгенерировано!"); 
-                }
-            } catch (e) { window.showToast("Ошибка ИИ.", true); } 
-            finally { 
-                document.querySelectorAll('#btn-ai-desc').forEach(btn => {
-                    btn.innerHTML = `✨ Сгенерировать ИИ`;
-                    btn.disabled = false;
-                });
-            }
-        };
-
         window.checkAuthAndOpenAddModal = () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); } 
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast(window.i18n[window.currentAppLang]['toast_auth_required'] || "Войдите в аккаунт", true); } 
             else { window.openModal('add-modal'); } 
         };
-
-        window.previewPhotos = async (e) => {
-            const files = Array.from(e.target.files);
-            document.querySelectorAll('#photo-preview-list').forEach(container => {
-                for(let file of files) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-                            let width = img.width; let height = img.height;
-                            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                            canvas.width = width; canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                            window.tempPhotos.push(dataUrl); 
-                            container.innerHTML += `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border"><img src="${dataUrl}" class="w-full h-full object-cover"></div>`;
-                        };
-                        img.src = ev.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        };
-
-        function dataURItoBlob(dataURI) {
-            const byteString = atob(dataURI.split(',')[1]);
-            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-            return new Blob([ab], {type: mimeString});
-        }
 
         window.submitNewItem = async (event) => {
             if(event) event.preventDefault();
@@ -1692,11 +1712,12 @@
                 let errMsg = e.message;
                 window.showToast(`Ошибка: ${errMsg}`, true); 
             } finally { 
-                if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить изменения` : `Опубликовать`; }
+                if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить` : `<span data-t="btn_publish">${window.i18n[window.currentAppLang]['btn_publish'] || 'Опубликовать'}</span>`; }
             }
         };
 
         window.fetchItems();
+        window.changeLang('ru');
     </script>
 </body>
 </html>
