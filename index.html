@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- ========================================== -->
+    <!--                1. HEAD & CONFIG            -->
+    <!-- ========================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SVALKA — Маркетплейс вещей в Сербии</title>
@@ -29,7 +32,8 @@
 
         .bg-pattern { position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png"); }
 
-        .item-card { transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
+        /* Строго одинаковый размер карточек */
+        .item-card { height: 100%; display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
         .item-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.12); border-color: #0d9488; }
         
         .vip-card { border: 2px solid #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.15); background: linear-gradient(180deg, rgba(254, 252, 232, 1) 0%, #ffffff 100%); }
@@ -61,6 +65,9 @@
 </head>
 <body class="text-stone-800 dark:text-stone-200 antialiased relative">
     
+    <!-- ========================================== -->
+    <!--             2. BACKGROUND & NAV            -->
+    <!-- ========================================== -->
     <div class="bg-pattern"></div>
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-[0.03] dark:opacity-5 text-brand-600 dark:text-white text-4xl md:text-6xl">
         <i class="fa-solid fa-box-open absolute top-[10%] left-[5%] -rotate-12"></i>
@@ -73,7 +80,7 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <!-- НАВИГАЦИЯ -->
+    <!-- HEADER / NAV -->
     <nav class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4 lg:gap-8 flex-1">
@@ -140,7 +147,9 @@
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- ========================================== -->
+    <!--             3. MAIN LAYOUT (FEED)          -->
+    <!-- ========================================== -->
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
         
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
@@ -156,7 +165,7 @@
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
                     <i class="fa-solid fa-magnifying-glass text-stone-400 text-base"></i>
-                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск сокровищ..." class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
+                    <input type="text" id="main-search-input" onkeydown="if(event.key === 'Enter') window.handleSearch(event)" placeholder="Поиск (нажмите Enter)..." class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
                 </div>
                 <div class="flex w-full sm:w-auto gap-3">
                     <div class="relative flex-1 sm:flex-none">
@@ -233,8 +242,8 @@
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
-                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
+                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-sm text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
+                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
                     </div>
                 </div>
             </div>
@@ -242,18 +251,18 @@
 
         <!-- КНОПКИ КАТЕГОРИЙ -->
         <div class="mb-8 flex flex-wrap items-center gap-2 sm:gap-3">
-            <button data-cat="Все" onclick="window.filterByCategory('Все')" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer">Все</button>
+            <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer">Все</button>
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer"><i class="fa-solid fa-crown mr-1"></i> VIP</button>
-            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer">Одежда</button>
-            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer">Электроника</button>
-            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> Консоли</button>
-            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> Интерьер</button>
-            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> Транспорт</button>
-            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> Услуги</button>
-            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> Хобби</button>
-            <button data-cat="Детям" onclick="window.filterByCategory('Детям')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> Детям</button>
-            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> Жилье</button>
-            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно')" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> Даром</button>
+            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer">Одежда</button>
+            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer">Электроника</button>
+            <button data-cat="Электроника - Консоли" onclick="window.filterByCategory('Электроника - Консоли', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gamepad mr-1 text-stone-400"></i> Консоли</button>
+            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-couch mr-1 text-stone-400"></i> Интерьер</button>
+            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-bicycle mr-1 text-stone-400"></i> Транспорт</button>
+            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-briefcase mr-1 text-stone-400"></i> Услуги</button>
+            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-palette mr-1 text-stone-400"></i> Хобби</button>
+            <button data-cat="Детям" onclick="window.filterByCategory('Детям', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-baby-carriage mr-1 text-stone-400"></i> Детям</button>
+            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-key mr-1 text-stone-400"></i> Жилье</button>
+            <button data-cat="Другое - Бесплатно" onclick="window.filterByCategory('Другое - Бесплатно', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer"><i class="fa-solid fa-gift mr-1 text-stone-400"></i> Даром</button>
         </div>
 
         <!-- VIP ЛЕНТА (ТОП Находки) -->
@@ -262,7 +271,7 @@
                 <i class="fa-solid fa-crown text-amber-500 text-2xl"></i>
                 <h4 class="font-black text-xl text-stone-800 dark:text-stone-200">ТОП Находки</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-start"></div>
+            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch"></div>
         </div>
 
         <!-- ТОНКИЙ БАННЕР PRO (Под VIP лентой) -->
@@ -283,13 +292,13 @@
             
             <div id="loading-placeholder" class="w-full text-center py-20 text-stone-400">
                 <i class="fa-solid fa-circle-notch fa-spin text-5xl mb-4"></i>
-                <p class="font-bold text-base mt-2">Загрузка...</p>
+                <p class="font-bold text-base mt-2">Поиск товаров...</p>
             </div>
 
-            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 min-h-[400px] items-start hidden"></div>
+            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch hidden"></div>
             
             <div class="flex justify-center mt-10 mb-6">
-                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-base hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Показать еще</button>
+                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Показать еще</button>
             </div>
 
             <div id="empty-state" class="w-full text-center py-24 text-stone-400 hidden">
@@ -359,7 +368,7 @@
 
     <!-- Monetization (Crypto & Share) -->
     <div id="crypto-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[95]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <i class="fa-brands fa-bitcoin text-amber-500 text-5xl mb-4"></i>
             <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-2">SVALKA PRO</h2>
@@ -369,11 +378,11 @@
                 <div class="text-3xl font-black text-stone-900 dark:text-white mb-5">5.00 <span class="text-base text-stone-400 align-middle">USDT TRC20</span></div>
                 <div class="text-xs font-bold text-stone-400 mb-2">Адрес кошелька:</div>
                 <div class="flex items-center gap-2 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <input type="text" id="crypto-address" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-sm font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center cursor-text caret-brand-600">
-                    <button class="text-stone-400 hover:text-brand-600 cursor-pointer p-2" onclick="navigator.clipboard.writeText(document.getElementById('crypto-address').value); window.showToast('Адрес скопирован!')"><i class="fa-regular fa-copy text-lg"></i></button>
+                    <input type="text" id="crypto-address" value="TY1VxxxMOCKxxxWALLETxxxADDRESS" readonly class="bg-transparent text-xs sm:text-sm font-mono text-stone-600 dark:text-stone-400 w-full outline-none text-center cursor-text caret-brand-600">
+                    <button class="text-stone-400 hover:text-brand-600 cursor-pointer p-2 shrink-0" onclick="navigator.clipboard.writeText(document.getElementById('crypto-address').value); window.showToast('Адрес скопирован!')"><i class="fa-regular fa-copy text-lg"></i></button>
                 </div>
             </div>
-            <button id="btn-crypto-paid" onclick="window.verifyCryptoPayment()" class="bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-base shadow-lg hover:bg-brand-700 transition cursor-pointer">Я оплатил 5 USDT</button>
+            <button id="btn-crypto-paid" onclick="window.verifyCryptoPayment()" class="bg-brand-600 text-white w-full py-4 rounded-xl font-bold text-sm shadow-lg hover:bg-brand-700 transition cursor-pointer">Я оплатил 5 USDT</button>
         </div>
     </div>
 
@@ -458,8 +467,8 @@
                     <p class="text-sm text-stone-400 font-medium" id="auth-hint">Мин. 8 символов: буквы + цифры</p>
                 </div>
                 <div class="flex justify-between items-center mt-4">
-                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer">Войти</button>
-                    <button type="button" onclick="window.forgotPassword()" class="text-base font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer">Забыли пароль?</button>
+                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-sm transition shadow-md cursor-pointer">Войти</button>
+                    <button type="button" onclick="window.forgotPassword()" class="text-sm font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer">Забыли пароль?</button>
                 </div>
             </form>
         </div>
@@ -482,43 +491,34 @@
                         </div>
                     </div>
                     
-                    <div id="profile-economy-section" class="hidden flex-col gap-2 mt-2 w-full bg-white dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 shadow-sm">
-                        <div class="flex justify-between items-center w-full">
-                            <div class="text-xs text-stone-500 font-bold uppercase tracking-widest">Мои поднятия:</div>
-                            <button id="profile-logout-btn" onclick="window.logout()" class="text-stone-400 hover:text-red-500 transition text-xs font-bold cursor-pointer uppercase tracking-widest flex items-center gap-1.5">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти
-                            </button>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3 w-full mt-1">
-                            <div class="flex items-center gap-2 font-black text-2xl text-stone-900 dark:text-white shrink-0">
-                                <i class="fa-solid fa-arrow-up-right-dots text-brand-500"></i> <span id="profile-balance">0</span>
+                    <div id="profile-economy-section" class="hidden flex-row justify-between items-center w-full bg-stone-100 dark:bg-stone-800/80 p-3 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm mt-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-arrow-up-right-dots"></i>
                             </div>
-                            <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-brand-50 dark:bg-brand-900/20 text-brand-600 border border-brand-200 dark:border-brand-800/50 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-100 transition shadow-sm cursor-pointer">+ Получить</button>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest leading-none mb-1">Мои поднятия</span>
+                                <span class="font-black text-base text-stone-900 dark:text-white leading-none" id="profile-balance">0 шт.</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-white dark:bg-stone-700 text-brand-600 dark:text-brand-400 border border-stone-200 dark:border-stone-600 px-4 py-2.5 rounded-lg font-bold text-xs shadow-sm hover:border-brand-500 transition cursor-pointer">+ Получить</button>
+                            <button id="profile-logout-btn" onclick="window.logout()" class="bg-red-50 dark:bg-red-900/20 text-red-600 border border-red-100 dark:border-red-800/50 px-4 py-2.5 rounded-lg font-bold text-xs shadow-sm hover:bg-red-100 transition cursor-pointer" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button>
                         </div>
                     </div>
                     
                     <div id="profile-login-wrapper" class="block mt-2">
-                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md cursor-pointer">Войти</button>
+                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md cursor-pointer">Войти</button>
                     </div>
                 </div>
-            </div>
-            
-            <div id="profile-share-banner" class="hidden mx-6 mt-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 text-white flex-col sm:flex-row items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition" onclick="window.closeModal('profile-modal'); window.openModal('share-modal');">
-                <div class="flex items-center gap-3 mb-3 sm:mb-0 w-full sm:w-auto">
-                    <div class="w-10 h-10 bg-white/20 rounded-full hidden sm:flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
-                    <div>
-                        <h4 class="font-black text-sm">Бесплатные поднятия</h4>
-                        <p class="text-amber-50 text-xs">Приглашай друзей и получай +3 поднятия!</p>
-                    </div>
-                </div>
-                <button class="bg-white text-amber-600 px-5 py-2.5 rounded-lg font-bold text-xs whitespace-nowrap w-full sm:w-auto">Поделиться</button>
             </div>
 
             <div class="flex border-b dark:border-stone-800 px-8 font-black text-base pt-2">
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer">Заначка</button>
             </div>
-            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 items-start" style="display: none;"></div>
+            <!-- Сетка товаров в профиле теперь идеально совпадает с главной -->
+            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 items-stretch" style="display: none;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-bold text-lg">
                 <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
             </div>
@@ -600,12 +600,12 @@
                 <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
                     <div class="flex justify-between items-center mb-2 px-2 pt-1">
                         <span class="text-sm font-bold text-stone-500">Описание</span>
-                        <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-xs font-bold text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1.5 rounded hover:bg-brand-100 transition cursor-pointer shadow-sm">✨ Сгенерировать ИИ</button>
+                        <button type="button" onclick="window.generateAIDescription()" id="btn-ai-desc" class="text-sm font-bold text-brand-600 bg-brand-50 border border-brand-200 px-4 py-2 rounded hover:bg-brand-100 transition cursor-pointer shadow-sm">✨ Сгенерировать ИИ</button>
                     </div>
                     <textarea id="item-desc" placeholder="Описание..." rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
                 </div>
 
-                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-4 mt-2 rounded-xl font-bold text-sm shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
             </form>
         </div>
     </div>
@@ -648,7 +648,7 @@
                         <div id="modal-author-sub" class="text-sm text-stone-500 font-bold">Продавец SVALKA</div>
                     </div>
                 </div>
-                <button id="btn-contact-seller" onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-5 rounded-xl font-bold text-lg shadow-md hover:bg-brand-700 transition cursor-pointer">Написать продавцу</button>
+                <button id="btn-contact-seller" onclick="window.openChatModal()" class="w-full bg-brand-600 text-white py-4 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer">Написать продавцу</button>
             </div>
         </div>
     </div>
@@ -679,10 +679,9 @@
         window.editingItemId = null; 
         window.userFavorites = new Set(); 
         window.displayedCount = 12; 
-        window.currentFilteredItems = [];
         window.authMode = 'login';
 
-        // PWA & THEME
+        // === PWA & THEME ===
         const initPWA = () => {
             const manifest = {
                 name: "SVALKA", short_name: "SVALKA", description: "Маркетплейс в Сербии",
@@ -724,6 +723,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
+        // === UI HELPERS ===
         window.openModal = id => { 
             const el = document.getElementById(id);
             if(el) { el.classList.add('active'); document.body.classList.add('modal-open'); }
@@ -788,40 +788,7 @@
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
-        // Favorites
-        window.toggleFavorite = async (btn, event, itemId) => {
-            if(event) event.stopPropagation();
-            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            if (!itemId) return;
-            const isLiked = window.userFavorites.has(itemId);
-            const icon = btn.querySelector('i');
-            try {
-                if (isLiked) {
-                    await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
-                    window.userFavorites.delete(itemId);
-                    if(icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
-                } else {
-                    await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
-                    window.userFavorites.add(itemId);
-                    if(icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
-                }
-                if(window.renderProfileTabs) window.renderProfileTabs();
-                window.renderGrid();
-                
-                if(window.activeModalItemId === itemId) {
-                    const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                    if(modalFavIcon) {
-                        modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-                    }
-                }
-            } catch(e) { console.error(e); }
-        };
-        
-        window.toggleFavoriteModal = (event) => {
-            if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId);
-        }
-
-        // Auth
+        // === AUTH ===
         window.setAuthMode = mode => {
             window.authMode = mode;
             const fields = document.getElementById('auth-name-field');
@@ -888,21 +855,11 @@
 
         window.logout = () => { 
             supabase.auth.signOut().catch(e => console.warn(e));
-            try {
-                const keysToRemove = [];
-                for(let i=0; i<localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if(key && key.startsWith('sb-')) keysToRemove.push(key);
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                sessionStorage.clear();
-            } catch(e) {}
             window.currentUser = null;
             window.closeModal('profile-modal'); 
             window.location.reload(); 
         };
 
-        // Avatars init
         const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
         const grid = document.getElementById('avatar-grid');
         if(grid) {
@@ -912,7 +869,50 @@
             });
         }
 
-        // Filters
+        window.handleAuthChange = async (session) => {
+            try {
+                window.currentUser = session?.user || null;
+                
+                const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
+                const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
+                
+                if (window.currentUser) {
+                    loginBtns.forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
+                    userControls.forEach(el => { el.classList.remove('hidden'); el.classList.add('flex'); });
+
+                    const meta = window.currentUser.user_metadata || {};
+                    document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
+                    document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
+                    
+                    if(meta.avatar_url) {
+                        document.querySelectorAll('#profile-avatar-container').forEach(el => { el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`; });
+                    }
+
+                    try {
+                        const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
+                        window.currentUserData = profile || { wallet_balance: 0, is_pro: false };
+                        document.querySelectorAll('#profile-balance').forEach(el => el.innerText = window.currentUserData.wallet_balance || 0);
+                        if(window.currentUserData.is_pro) document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
+                    } catch(e) {}
+                    
+                    try {
+                        const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                        window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
+                    } catch(e) {}
+                } else {
+                    loginBtns.forEach(el => { el.classList.remove('hidden'); });
+                    userControls.forEach(el => { el.classList.add('hidden'); userControls.classList.remove('flex'); });
+                }
+                // Update profile tabs UI if logged in
+                if(window.currentUser && window.renderProfileTabs) window.renderProfileTabs();
+            } catch(e) { console.error("Auth error:", e); }
+        };
+
+        // Initialize Auth
+        supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
+        supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
+
+        // === FILTERS & SEARCH ===
         window.applyFilters = () => {
             const elCat = document.getElementById('filter-category');
             const elCity = document.getElementById('filter-city');
@@ -940,7 +940,7 @@
                 if(btnAll) btnAll.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer";
             }
 
-            window.renderDynamicItems(window.loadedItems);
+            window.fetchItems(); // <-- SERVER SIDE SEARCH trigger
             window.toggleFilters(); 
         };
 
@@ -959,7 +959,7 @@
             window.applyFilters();
         };
 
-        window.filterByCategory = cat => { 
+        window.filterByCategory = (cat, event) => { 
             window.currentCategory = cat; 
             window.showUrgentOnly = false;
             window.displayedCount = 12; 
@@ -980,7 +980,7 @@
                     if(opt.value.startsWith(cat) || (cat === 'Все' && opt.value === 'Все')) catSelect.value = opt.value;
                 });
             }
-            window.renderDynamicItems(window.loadedItems); 
+            window.fetchItems(); 
         };
 
         window.toggleUrgentFilter = () => {
@@ -996,12 +996,12 @@
             } else {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer";
             }
-            window.renderDynamicItems(window.loadedItems);
+            window.fetchItems();
         };
 
-        window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
-        window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.renderDynamicItems(window.loadedItems); };
-        window.loadMoreItems = () => { window.displayedCount += 12; window.renderGrid(); };
+        window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.displayedCount = 12; window.fetchItems(); };
+        window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
+        window.loadMoreItems = () => { window.displayedCount += 12; window.fetchItems(true); };
 
         function mapItemData(i) {
             try {
@@ -1014,208 +1014,109 @@
             } catch(err) { return null; }
         }
 
-        // FETCH ITEMS
-        window.fetchItems = async (isBackground = false) => {
+        // === SERVER-SIDE FETCH ITEMS ===
+        window.fetchItems = async (isLoadMore = false) => {
             const loader = document.getElementById('loading-placeholder');
-            const mainGrid = document.getElementById('main-items-grid');
-            const emptyState = document.getElementById('empty-state');
-            
-            if (!isBackground && window.loadedItems.length === 0) {
-                if(loader) loader.style.display = 'block';
-                if(mainGrid) mainGrid.classList.add('hidden');
-                if(emptyState) emptyState.classList.add('hidden');
-            }
-
-            try {
-                const { data, error } = await supabase.from('items').select('*').order('created_at', { ascending: false }).limit(200);
-                if (error) throw error;
-                if (data) {
-                    const mapped = data.map(mapItemData).filter(Boolean); 
-                    localStorage.setItem('svalka_items_cache', JSON.stringify({ timestamp: Date.now(), data: mapped }));
-                    window.loadedItems = mapped;
-                    window.renderDynamicItems(mapped);
-                    if(window.currentUser) window.renderProfileTabs();
-                }
-            } catch(e) { 
-                console.error("Ошибка загрузки:", e); 
-                let errMsg = e.message || 'Ошибка сети';
-                if (errMsg.includes('status') || errMsg.includes('phone')) errMsg = 'Добавьте колонки status и phone (тип text) в Supabase!';
-
-                if (window.loadedItems.length === 0 && loader) {
-                    loader.style.display = 'block';
-                    loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${errMsg}</span></div>`;
-                }
-            } finally {
-                if(loader && window.loadedItems.length > 0) loader.style.display = 'none';
-            }
-        };
-
-        window.submitNewItem = async (event) => {
-            if(event) event.preventDefault();
-            const btn = document.getElementById('add-submit-btn'); 
-            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
-            
-            try {
-                if(!window.currentUser) throw new Error("Войдите в аккаунт");
-                
-                const titleEl = document.getElementById('item-title');
-                const catEl = document.getElementById('item-category');
-                const cityEl = document.getElementById('item-city');
-                const priceEl = document.getElementById('item-price');
-                const descEl = document.getElementById('item-desc');
-                const currencyEl = document.getElementById('item-currency');
-                const phoneEl = document.getElementById('item-phone');
-                
-                if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
-
-                let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
-                
-                function dataURItoBlob(dataURI) {
-                    const byteString = atob(dataURI.split(',')[1]);
-                    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
-                    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-                    return new Blob([ab], {type: mimeString});
-                }
-
-                if (window.tempPhotos.length > 0) {
-                    finalImages = [];
-                    for (let i = 0; i < window.tempPhotos.length; i++) {
-                        const dataUrl = window.tempPhotos[i];
-                        if (dataUrl.startsWith('http')) { finalImages.push(dataUrl); } 
-                        else {
-                            const blob = dataURItoBlob(dataUrl);
-                            const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
-                            const { error } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
-                            if (error) throw error;
-                            const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
-                            if (data && data.publicUrl) finalImages.push(data.publicUrl);
-                        }
-                    }
-                }
-                
-                const itemData = {
-                    title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
-                    price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
-                    author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
-                    author_avatar: window.currentUser.user_metadata?.avatar_url || '',
-                    image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
-                    currency: currencyEl ? currencyEl.value : 'RSD', 
-                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : ''
-                };
-
-                let res;
-                if (window.editingItemId) {
-                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-                } else {
-                    itemData.is_highlighted = window.currentUserData?.is_pro || false;
-                    itemData.status = 'active';
-                    res = await supabase.from('items').insert([itemData]);
-                }
-                
-                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
-                    console.warn("Фоллбэк: сохранение без новых колонок для совместимости");
-                    delete itemData.status;
-                    delete itemData.phone;
-                    if (window.editingItemId) {
-                        res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-                    } else {
-                        res = await supabase.from('items').insert([itemData]);
-                    }
-                    if(!res.error) window.showToast("Успешно, но добавьте колонки status/phone в Supabase!", true);
-                }
-
-                if(res.error) throw new Error(res.error.message);
-                
-                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
-                window.closeModal('add-modal');
-                localStorage.removeItem('svalka_items_cache');
-                window.fetchItems(true);
-            } catch(e) { 
-                console.error(e);
-                let errMsg = e.message;
-                window.showToast(`Ошибка: ${errMsg}`, true); 
-            } finally { 
-                if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить изменения` : `Опубликовать`; }
-            }
-        };
-
-        // === 6.5 RENDERING ENGINE ===
-        window.renderDynamicItems = (items) => {
-            try {
-                window.loadedItems = items;
-                window.currentFilteredItems = items.filter(i => {
-                    const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                    const searchQ = (window.searchQuery || '').toLowerCase();
-                    const titleStr = (i.title || '').toLowerCase();
-                    const matchSearch = titleStr.includes(searchQ);
-                    const matchUrgent = !window.showUrgentOnly || i.isHighlighted;
-                    const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
-                    
-                    let matchPrice = true;
-                    const p = Number(i.price) || 0;
-                    if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
-                    if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
-                    if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
-
-                    return matchCat && matchSearch && matchUrgent && matchCity && matchPrice;
-                });
-                window.renderGrid(); 
-            } catch(e) { console.error("Ошибка подготовки рендера:", e); }
-        };
-
-        window.renderGrid = () => {
             const mainGrid = document.getElementById('main-items-grid');
             const emptyState = document.getElementById('empty-state');
             const loadMoreBtn = document.getElementById('load-more-btn');
             const vipSection = document.getElementById('vip-section');
             const vipGrid = document.getElementById('vip-items-grid');
+            const proBanner = document.getElementById('pro-thin-banner');
             
-            if(!mainGrid) return;
-
-            const getMs = (t) => new Date(t).getTime();
-            if (window.currentSortMode === 'cheap') { window.currentFilteredItems.sort((a, b) => Number(a.price) - Number(b.price)); } 
-            else if (window.currentSortMode === 'exp') { window.currentFilteredItems.sort((a, b) => Number(b.price) - Number(a.price)); } 
-            else { window.currentFilteredItems.sort((a, b) => getMs(b.createdAt) - getMs(a.createdAt)); }
-
-            const vipItems = window.currentFilteredItems.filter(i => i.isHighlighted).sort(() => 0.5 - Math.random());
-            const vipIds = new Set(vipItems.map(v => v.id));
-            const regularItems = window.currentFilteredItems.filter(i => !vipIds.has(i.id));
-
-            if (vipItems.length > 0 && !window.showUrgentOnly) {
-                if(vipSection) vipSection.classList.remove('hidden');
-                if(vipGrid) vipGrid.innerHTML = vipItems.map(i => createCardHtml(i, true)).join('');
-            } else {
+            if (!isLoadMore) {
+                window.displayedCount = 12;
+                if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); }
+                if(vipGrid) vipGrid.innerHTML = '';
                 if(vipSection) vipSection.classList.add('hidden');
+                if(emptyState) emptyState.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                if(loader) loader.style.display = 'block';
             }
 
-            const paginatedRegular = regularItems.slice(0, window.displayedCount);
+            try {
+                // 1. Построение основного запроса (MAIN QUERY)
+                let q = supabase.from('items').select('*');
+                
+                if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
+                if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
+                if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
+                if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
+                if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
+                if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
+                
+                if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
 
-            if (window.showUrgentOnly) {
-                if (vipItems.length) {
-                    mainGrid.innerHTML = vipItems.map(i => createCardHtml(i, true)).join('');
-                    mainGrid.classList.remove('hidden');
-                    if(emptyState) emptyState.classList.add('hidden');
-                    if(loadMoreBtn) loadMoreBtn.classList.add('hidden'); 
+                if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
+                else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
+                else q = q.order('created_at', { ascending: false });
+
+                q = q.limit(window.displayedCount + 1); // +1 чтобы узнать, есть ли еще страницы
+
+                // 2. Запрос для VIP (Срочно) - берем всегда, если не включен фильтр "Срочно"
+                let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(20);
+                if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
+                if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
+
+                // Запускаем параллельно
+                const [res, vipRes] = await Promise.all([q, vq]);
+
+                if (res.error) throw res.error;
+
+                const items = (res.data || []).map(mapItemData).filter(Boolean);
+                const hasMore = items.length > window.displayedCount;
+                const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
+
+                // Сохраняем в кэш для модалок
+                if (!isLoadMore) window.loadedItems = itemsToDisplay;
+                else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
+
+                // Рендер VIP-секции
+                if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
+                    const vipMapped = vipRes.data.map(mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
+                    if (vipMapped.length > 0 && vipGrid && vipSection) {
+                        vipGrid.innerHTML = vipMapped.map(i => createCardHtml(i, true)).join('');
+                        vipSection.classList.remove('hidden');
+                        vipMapped.forEach(v => {
+                            if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v);
+                        });
+                    }
+                }
+
+                // Рендер основной ленты
+                if (itemsToDisplay.length > 0) {
+                    let html = '';
+                    itemsToDisplay.forEach(item => { html += createCardHtml(item, false); });
+                    
+                    if (!isLoadMore && mainGrid) mainGrid.innerHTML = html;
+                    else if (mainGrid) mainGrid.insertAdjacentHTML('beforeend', html);
+                    
+                    if(mainGrid) mainGrid.classList.remove('hidden');
+                    if(loadMoreBtn) {
+                        if (hasMore) loadMoreBtn.classList.remove('hidden');
+                        else loadMoreBtn.classList.add('hidden');
+                    }
+                    if(proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
                 } else {
-                    mainGrid.classList.add('hidden');
-                    if(emptyState) emptyState.classList.remove('hidden');
+                    if (!isLoadMore) {
+                        if(emptyState) emptyState.classList.remove('hidden');
+                        if(proBanner) proBanner.classList.add('hidden');
+                    }
                     if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
                 }
-            } else {
-                if (paginatedRegular.length) {
-                    mainGrid.innerHTML = paginatedRegular.map(i => createCardHtml(i, false)).join('');
-                    mainGrid.classList.remove('hidden');
-                    if(emptyState) emptyState.classList.add('hidden');
-                    if(loadMoreBtn) loadMoreBtn.classList.toggle('hidden', window.displayedCount >= regularItems.length);
-                } else {
-                    mainGrid.classList.add('hidden');
-                    if(emptyState) emptyState.classList.remove('hidden');
-                    if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+            } catch(e) { 
+                console.error("Ошибка БД:", e); 
+                let errMsg = e.message || 'Ошибка сети';
+                if (errMsg.includes('status') || errMsg.includes('phone') || errMsg.includes('42703')) {
+                    errMsg = 'Внимание! Для поиска требуются колонки status и phone в БД.';
                 }
+                if (window.loadedItems.length === 0 && loader) {
+                    loader.style.display = 'block';
+                    loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${errMsg}</span></div>`;
+                }
+            } finally {
+                if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none';
             }
-            if(window.renderProfileTabs) window.renderProfileTabs();
         };
 
         function createCardHtml(i, isVIP) {
@@ -1240,14 +1141,14 @@
                 <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
                     <i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i>
                 </button>
-                <div class="h-28 sm:h-32 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+                <div class="h-36 sm:h-40 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                 </div>
                 <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-xs sm:text-sm mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text text-sm sm:text-base mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-[10px] sm:text-xs uppercase font-black text-stone-400 flex justify-between items-center">
+                    <h4 class="font-bold text-sm sm:text-base mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text text-base sm:text-lg mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-xs font-bold text-stone-400 flex justify-between items-center">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
                     </div>
@@ -1329,7 +1230,7 @@
                 
                 const vipBtnText = document.getElementById('btn-owner-vip-text');
                 if(window.currentUserData && window.currentUserData.is_pro) {
-                    vipBtnText.innerText = "В ТОП (Бесплатно PRO)";
+                    vipBtnText.innerText = "В ТОП (Бесплатно)";
                 } else {
                     vipBtnText.innerText = "Купить PRO";
                 }
@@ -1337,15 +1238,15 @@
                 statusControls.innerHTML = '';
                 if (item.status !== 'sold') {
                     const isRes = item.status === 'reserved';
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
                 } else {
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
                 }
 
                 editControls.innerHTML = '';
-                editControls.innerHTML += `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>`;
-                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-xs hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                editControls.innerHTML += `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>`;
+                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
 
             } else {
                 contactBtn.classList.remove('hidden');
@@ -1356,6 +1257,10 @@
             window.openModal('item-modal');
         };
 
+        window.toggleFavoriteModal = (event) => {
+            if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId);
+        }
+
         window.changeItemStatus = async (newStatus) => {
             if (!window.currentUser || !window.activeModalItemId) return;
             try {
@@ -1364,7 +1269,7 @@
                 if (item) item.status = newStatus;
                 window.showToast("Статус обновлен!");
                 window.openItemDetails(window.activeModalItemId); 
-                window.fetchItems(true); 
+                window.fetchItems(false); 
             } catch(e) { window.showToast("Ошибка", true); }
         };
 
@@ -1375,7 +1280,7 @@
                     await supabase.from('items').delete().eq('id', id);
                     window.showToast("Удалено!");
                     window.closeModal('item-modal');
-                    window.fetchItems(true);
+                    window.fetchItems(false);
                 } catch(e) { window.showToast("Ошибка удаления", true); }
             }
         };
@@ -1408,6 +1313,92 @@
             window.openModal('add-modal');
         };
 
+        window.submitNewItem = async (event) => {
+            if(event) event.preventDefault();
+            const btn = document.getElementById('add-submit-btn'); 
+            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
+            
+            try {
+                if(!window.currentUser) throw new Error("Войдите в аккаунт");
+                
+                const titleEl = document.getElementById('item-title');
+                const catEl = document.getElementById('item-category');
+                const cityEl = document.getElementById('item-city');
+                const priceEl = document.getElementById('item-price');
+                const descEl = document.getElementById('item-desc');
+                const currencyEl = document.getElementById('item-currency');
+                const phoneEl = document.getElementById('item-phone');
+                
+                if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
+
+                let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
+                
+                function dataURItoBlob(dataURI) {
+                    const byteString = atob(dataURI.split(',')[1]);
+                    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                    return new Blob([ab], {type: mimeString});
+                }
+
+                if (window.tempPhotos.length > 0) {
+                    finalImages = [];
+                    for (let i = 0; i < window.tempPhotos.length; i++) {
+                        const dataUrl = window.tempPhotos[i];
+                        if (dataUrl.startsWith('http')) { finalImages.push(dataUrl); } 
+                        else {
+                            const blob = dataURItoBlob(dataUrl);
+                            const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
+                            const { error } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
+                            if (error) throw error;
+                            const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
+                            if (data && data.publicUrl) finalImages.push(data.publicUrl);
+                        }
+                    }
+                }
+                
+                const itemData = {
+                    title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
+                    price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
+                    author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
+                    author_avatar: window.currentUser.user_metadata?.avatar_url || '',
+                    image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
+                    currency: currencyEl ? currencyEl.value : 'RSD', 
+                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : ''
+                };
+
+                let res;
+                if (window.editingItemId) {
+                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
+                } else {
+                    itemData.is_highlighted = window.currentUserData?.is_pro || false;
+                    itemData.status = 'active';
+                    res = await supabase.from('items').insert([itemData]);
+                }
+                
+                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
+                    console.warn("Фоллбэк: сохранение без новых колонок");
+                    delete itemData.status;
+                    delete itemData.phone;
+                    if (window.editingItemId) res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
+                    else res = await supabase.from('items').insert([itemData]);
+                }
+
+                if(res.error) throw new Error(res.error.message);
+                
+                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
+                window.closeModal('add-modal');
+                window.fetchItems(false);
+            } catch(e) { 
+                console.error(e);
+                window.showToast(`Ошибка: ${e.message}`, true); 
+            } finally { 
+                if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить изменения` : `Опубликовать`; }
+            }
+        };
+
+        // === 6.6 PROFILE TABS (Server Fetch) ===
         window.switchProfileTab = tab => { 
             window.currentProfileTab = tab; 
             const t1 = document.getElementById('tab-my-items');
@@ -1423,27 +1414,43 @@
             window.renderProfileTabs(); 
         };
 
-        window.renderProfileTabs = () => {
-            if(!window.currentUser) return;
+        window.renderProfileTabs = async () => {
             const grid = document.getElementById('profile-items-grid');
             const empty = document.getElementById('profile-empty');
-            if(!grid || !empty) return;
+            if(!grid || !empty || !window.currentUser) return;
 
-            const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.id);
-            const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
+            grid.style.display = 'none';
+            empty.style.display = 'none';
 
-            const tab1 = document.getElementById('tab-my-items');
-            if (tab1) tab1.innerHTML = `Мои вещи (${myItems.length})`;
-            
-            const tab2 = document.getElementById('tab-my-saved');
-            if (tab2) tab2.innerHTML = `Заначка (${savedItems.length})`;
+            try {
+                let items = [];
+                if (window.currentProfileTab === 'items') {
+                    const { data } = await supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
+                    items = (data || []).map(mapItemData).filter(Boolean);
+                    const tab = document.getElementById('tab-my-items');
+                    if(tab) tab.innerText = `Мои вещи (${items.length})`;
+                } else {
+                    const favIds = Array.from(window.userFavorites);
+                    if (favIds.length > 0) {
+                        const { data } = await supabase.from('items').select('*').in('id', favIds).order('created_at', { ascending: false });
+                        items = (data || []).map(mapItemData).filter(Boolean);
+                    }
+                    const tab = document.getElementById('tab-my-saved');
+                    if(tab) tab.innerText = `Заначка (${items.length})`;
+                }
 
-            const itemsToShow = window.currentProfileTab === 'items' ? myItems : savedItems;
+                // Add items to cache for modal openings
+                items.forEach(v => {
+                    if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v);
+                });
 
-            if(itemsToShow.length > 0) {
-                grid.style.display = 'grid'; empty.style.display = 'none';
-                grid.innerHTML = itemsToShow.map(i => createCardHtml(i, i.isHighlighted)).join('');
-            } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
+                if(items.length > 0) {
+                    grid.style.display = 'grid';
+                    grid.innerHTML = items.map(i => createCardHtml(i, i.isHighlighted)).join('');
+                } else {
+                    empty.style.display = 'flex';
+                }
+            } catch(e) { console.error(e); }
         };
 
         // Actions
@@ -1451,7 +1458,7 @@
             if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
             document.getElementById('chat-author-name').innerText = document.getElementById('modal-author').innerText;
-            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
             window.openModal('chat-modal');
         };
 
@@ -1561,19 +1568,17 @@
             }, 4000);
         };
 
-        // AUTH INITIALIZATION
+        // === 6.7 AUTH INITIALIZATION ===
         window.handleAuthChange = async (session) => {
             try {
                 window.currentUser = session?.user || null;
                 
                 const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
                 const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
-                const profileLogoutBtn = document.getElementById('profile-logout-btn');
                 
                 if (window.currentUser) {
                     loginBtns.forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
                     userControls.forEach(el => { el.classList.remove('hidden'); el.classList.add('flex'); });
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.remove('hidden'); profileLogoutBtn.classList.add('flex'); }
 
                     const meta = window.currentUser.user_metadata || {};
                     document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
@@ -1597,7 +1602,6 @@
                 } else {
                     loginBtns.forEach(el => { el.classList.remove('hidden'); });
                     userControls.forEach(el => { el.classList.add('hidden'); userControls.classList.remove('flex'); });
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.add('hidden'); profileLogoutBtn.classList.remove('flex'); }
                 }
                 if (window.renderProfileTabs) window.renderProfileTabs();
             } catch(e) { console.error("Auth error:", e); }
@@ -1605,6 +1609,40 @@
 
         supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); window.fetchItems(); });
         supabase.auth.onAuthStateChange((_e, s) => window.handleAuthChange(s));
+        
+        // GEMINI API
+        async function callGeminiAPI(prompt, retries = 5, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: "Ты — профессиональный копирайтер для барахолки. Пиши краткие и продающие описания." }] } };
+            for (let i = 0; i <= retries; i++) {
+                try {
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (e) { if (i === retries) throw e; await new Promise(res => setTimeout(res, delay)); delay *= 2; }
+            }
+        }
+
+        window.generateAIDescription = async () => {
+            const titleEl = document.getElementById('item-title');
+            if(!titleEl || !titleEl.value.trim()) { window.showToast("Укажите название!", true); return; }
+            
+            const btn = document.getElementById('btn-ai-desc');
+            if(btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; btn.disabled = true; }
+            
+            try {
+                const text = await callGeminiAPI(`Напиши продающее описание для: ${titleEl.value.trim()}. Язык: Russian. Максимум 3 абзаца. Эмодзи.`);
+                if (text) { 
+                    const descEl = document.getElementById('item-desc');
+                    if(descEl) descEl.value = text;
+                    window.showToast("✨ Описание сгенерировано!"); 
+                }
+            } catch (e) { window.showToast("Ошибка ИИ.", true); } 
+            finally { 
+                if(btn) { btn.innerHTML = `✨ Сгенерировать ИИ`; btn.disabled = false; }
+            }
+        };
+
     </script>
 </body>
 </html>
