@@ -100,10 +100,10 @@
 
                 <div class="hidden sm:flex items-center gap-4 ml-auto">
                     <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
-                    <!-- Языки (визуальная заглушка, функционал перевода удален для легкости кода) -->
+                    <!-- Языки (визуальная заглушка) -->
                     <div class="relative group">
                         <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
-                            <img src="https://flagcdn.com/w20/ru.png" width="18" class="rounded-sm"><span>РУС</span><i class="fa-solid fa-chevron-down text-stone-400 text-xs ml-1"></i>
+                            <img id="current-lang-flag" src="https://flagcdn.com/w20/ru.png" width="18" class="rounded-sm"><span id="current-lang-text">РУС</span><i class="fa-solid fa-chevron-down text-stone-400 text-xs ml-1"></i>
                         </button>
                     </div>
                 </div>
@@ -357,7 +357,6 @@
         </div>
     </div>
 
-    <!-- Lightbox -->
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
         <button id="lightbox-prev" class="absolute left-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
         <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-lg" onclick="event.stopPropagation()">
@@ -370,7 +369,7 @@
 
     <!-- Monetization (Crypto & Share) -->
     <div id="crypto-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[95]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <i class="fa-brands fa-bitcoin text-amber-500 text-5xl mb-4"></i>
             <h2 class="text-2xl font-display font-black uppercase text-stone-900 dark:text-white mb-2">SVALKA PRO</h2>
@@ -496,7 +495,6 @@
                     <div id="profile-economy-section" class="hidden flex-col gap-2 mt-2 w-full bg-white dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 shadow-sm">
                         <div class="flex justify-between items-center w-full">
                             <div class="text-xs text-stone-500 font-bold uppercase tracking-widest">Мои поднятия:</div>
-                            <!-- Аккуратная кнопка Выхода, не пересекается с крестиком -->
                             <button id="profile-logout-btn" onclick="window.logout()" class="text-stone-400 hover:text-red-500 transition text-xs font-bold cursor-pointer uppercase tracking-widest flex items-center gap-1.5">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти
                             </button>
@@ -513,6 +511,17 @@
                         <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md cursor-pointer">Войти</button>
                     </div>
                 </div>
+            </div>
+            
+            <div id="profile-share-banner" class="hidden mx-6 mt-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 text-white flex-col sm:flex-row items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition" onclick="window.closeModal('profile-modal'); window.openModal('share-modal');">
+                <div class="flex items-center gap-3 mb-3 sm:mb-0 w-full sm:w-auto">
+                    <div class="w-10 h-10 bg-white/20 rounded-full hidden sm:flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
+                    <div>
+                        <h4 class="font-black text-sm">Бесплатные поднятия</h4>
+                        <p class="text-amber-50 text-xs">Приглашай друзей и получай +3 поднятия!</p>
+                    </div>
+                </div>
+                <button class="bg-white text-amber-600 px-5 py-2.5 rounded-lg font-bold text-xs whitespace-nowrap w-full sm:w-auto">Поделиться</button>
             </div>
 
             <div class="flex border-b dark:border-stone-800 px-8 font-black text-base pt-2">
@@ -1260,10 +1269,319 @@
             </div>`;
         }
 
-        // === 6.6 INIT ===
+        window.openItemDetails = (id) => {
+            const item = window.loadedItems.find(i => i.id === id);
+            if(!item) return;
+            window.activeModalItemId = item.id;
+
+            const imgContainer = document.getElementById('modal-img-container');
+            if (Array.isArray(item.images) && item.images.length > 1) {
+                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                imgContainer.innerHTML = `
+                    <img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')">
+                    <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>
+                `;
+            } else {
+                const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
+            }
+
+            const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
+            document.getElementById('modal-title').innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
+            
+            document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+            
+            const phoneContainer = document.getElementById('modal-phone-container');
+            if (item.phone) {
+                phoneContainer.classList.remove('hidden');
+                phoneContainer.classList.add('flex');
+                document.getElementById('modal-phone').innerText = item.phone;
+                document.getElementById('modal-phone').href = `tel:${item.phone}`;
+            } else {
+                phoneContainer.classList.add('hidden');
+                phoneContainer.classList.remove('flex');
+            }
+
+            const statusBadgeEl = document.getElementById('modal-status-badge');
+            if (item.status === 'reserved') {
+                statusBadgeEl.innerText = 'В РЕЗЕРВЕ';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
+            } else if (item.status === 'sold') {
+                statusBadgeEl.innerText = 'ПРОДАНО';
+                statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
+            } else {
+                statusBadgeEl.className = 'hidden';
+            }
+
+            document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
+            document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
+            
+            const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
+            document.getElementById('modal-category-text').innerText = catText.toUpperCase();
+
+            document.getElementById('modal-author').innerText = item.authorName || "Пользователь";
+            document.getElementById('modal-author-avatar').innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
+            
+            const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
+            document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
+            
+            const modalFavIcon = document.querySelector('#modal-fav-btn i');
+            if(modalFavIcon) {
+                modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+            }
+
+            const isOwner = window.currentUser && window.currentUser.id === item.userId;
+            const ctrl = document.getElementById('modal-owner-controls');
+            const contactBtn = document.getElementById('btn-contact-seller');
+            const statusControls = document.getElementById('modal-owner-status-controls');
+            const editControls = document.getElementById('modal-owner-edit-controls');
+
+            if (isOwner) {
+                contactBtn.classList.add('hidden');
+                ctrl.classList.remove('hidden');
+                ctrl.classList.add('flex');
+                
+                const vipBtnText = document.getElementById('btn-owner-vip-text');
+                if(window.currentUserData && window.currentUserData.is_pro) {
+                    vipBtnText.innerText = "В ТОП (Бесплатно PRO)";
+                } else {
+                    vipBtnText.innerText = "Купить PRO";
+                }
+                
+                document.getElementById('btn-bump-text').innerText = 'Поднять';
+
+                statusControls.innerHTML = '';
+                if (item.status !== 'sold') {
+                    const isRes = item.status === 'reserved';
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                } else {
+                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                }
+
+                editControls.innerHTML = '';
+                editControls.innerHTML += `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>`;
+                editControls.innerHTML += `<button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-xs hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+
+            } else {
+                contactBtn.classList.remove('hidden');
+                ctrl.classList.add('hidden');
+                ctrl.classList.remove('flex');
+            }
+
+            window.openModal('item-modal');
+        };
+
+        window.changeItemStatus = async (newStatus) => {
+            if (!window.currentUser || !window.activeModalItemId) return;
+            try {
+                await supabase.from('items').update({ status: newStatus }).eq('id', window.activeModalItemId);
+                const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+                if (item) item.status = newStatus;
+                window.showToast("Статус обновлен!");
+                window.openItemDetails(window.activeModalItemId); 
+                window.fetchItems(true); 
+            } catch(e) { window.showToast("Ошибка", true); }
+        };
+
+        window.deleteItem = async (id) => {
+            if (!window.currentUser) return;
+            if (confirm("Удалить это объявление навсегда?")) {
+                try {
+                    await supabase.from('items').delete().eq('id', id);
+                    window.showToast("Удалено!");
+                    window.closeModal('item-modal');
+                    window.fetchItems(true);
+                } catch(e) { window.showToast("Ошибка удаления", true); }
+            }
+        };
+
+        window.editItem = async (id) => {
+            if (!window.currentUser) return;
+            const item = window.loadedItems.find(i => i.id === id);
+            if (!item) return;
+            
+            window.editingItemId = id;
+            document.getElementById('item-title').value = item.title || '';
+            document.getElementById('item-category').value = item.category || '';
+            document.getElementById('item-city').value = item.city || '';
+            document.getElementById('item-price').value = item.price || '';
+            document.getElementById('item-desc').value = item.description || '';
+            document.getElementById('item-currency').value = item.currency || 'RSD';
+            document.getElementById('item-phone').value = item.phone || '';
+            
+            document.getElementById('add-modal-title').innerText = "Редактировать";
+            document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
+            
+            window.editExistingImages = item.images || [];
+            const list = document.getElementById('photo-preview-list');
+            if(list) {
+                list.innerHTML = window.editExistingImages.map(src => `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border"><img src="${src}" class="w-full h-full object-cover"></div>`).join('');
+            }
+            window.tempPhotos = [];
+
+            window.closeModal('item-modal');
+            window.openModal('add-modal');
+        };
+
+        window.switchProfileTab = tab => { 
+            window.currentProfileTab = tab; 
+            const t1 = document.getElementById('tab-my-items');
+            const t2 = document.getElementById('tab-my-saved');
+            if (t1) {
+                if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); }
+            }
+            if (t2) {
+                if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); }
+            }
+            window.renderProfileTabs(); 
+        };
+
+        window.renderProfileTabs = () => {
+            if(!window.currentUser) return;
+            const grid = document.getElementById('profile-items-grid');
+            const empty = document.getElementById('profile-empty');
+            if(!grid || !empty) return;
+
+            const myItems = window.loadedItems.filter(i => i.userId === window.currentUser.id);
+            const savedItems = window.loadedItems.filter(i => window.userFavorites && window.userFavorites.has(i.id));
+
+            const tab1 = document.getElementById('tab-my-items');
+            if (tab1) tab1.innerHTML = `Мои вещи (${myItems.length})`;
+            
+            const tab2 = document.getElementById('tab-my-saved');
+            if (tab2) tab2.innerHTML = `Заначка (${savedItems.length})`;
+
+            const itemsToShow = window.currentProfileTab === 'items' ? myItems : savedItems;
+
+            if(itemsToShow.length > 0) {
+                grid.style.display = 'grid'; empty.style.display = 'none';
+                grid.innerHTML = itemsToShow.map(i => createCardHtml(i, i.isHighlighted)).join('');
+            } else { grid.style.display = 'none'; empty.style.display = 'flex'; }
+        };
+
+        // Actions
+        window.openChatModal = () => {
+            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
+            document.getElementById('chat-author-name').innerText = document.getElementById('modal-author').innerText;
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-sm text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
+            window.openModal('chat-modal');
+        };
+
+        window.openChatListModal = () => {
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            document.getElementById('chat-item-title').innerText = "Все сообщения";
+            document.getElementById('chat-author-name').innerText = "Список чатов";
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 mt-10">У вас пока нет активных диалогов</div>`;
+            window.openModal('chat-modal');
+        }
+
+        window.sendChatMessage = () => {
+            const input = document.getElementById('chat-input-field');
+            if(!input.value.trim()) return;
+            document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end justify-end gap-2 w-full mt-2"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium">${input.value}</div></div>`);
+            input.value = '';
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+            
+            setTimeout(() => {
+                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-3"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">Да, еще актуально! Отвечу подробнее чуть позже.</div></div>`);
+                container.scrollTop = container.scrollHeight;
+                window.showToast("Новое сообщение!");
+                
+                const badges = document.querySelectorAll('#nav-chat-badge');
+                badges.forEach(b => b.classList.remove('hidden'));
+            }, 2500);
+        };
+
+        window.openShareModal = () => {
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            window.openModal('share-modal');
+        };
+
+        window.completeShareTask = (network) => {
+            const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
+            const url = encodeURIComponent(`https://svalka.rs/?ref=${window.currentUser?.id || 'guest'}`);
+            
+            let shareUrl = '';
+            if (network === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+            else if (network === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+            else if (network === 'viber') shareUrl = `viber://forward?text=${text}%20${url}`;
+            else if (network === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            
+            if(shareUrl) window.open(shareUrl, '_blank');
+            
+            setTimeout(async () => {
+                window.showToast("+3 Поднятия получено!");
+                const newBal = (window.currentUserData?.wallet_balance || 0) + 3;
+                try {
+                    await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
+                    window.currentUserData.wallet_balance = newBal;
+                    
+                    document.querySelectorAll('#profile-balance').forEach(el => el.innerText = newBal);
+                    document.querySelectorAll('#nav-wallet-balance').forEach(el => el.innerText = newBal + ' шт.');
+                    
+                    window.closeModal('share-modal');
+                } catch(e) { console.error(e); }
+            }, 4000); 
+        };
+
+        window.bumpItem = async () => {
+            if(!window.currentUser || !window.activeModalItemId) return;
+            if((window.currentUserData?.wallet_balance || 0) < 1) { window.showToast("Нет поднятий. Получите бесплатно!", true); return; }
+            try {
+                await supabase.from('items').update({ created_at: new Date().toISOString() }).eq('id', window.activeModalItemId);
+                const newBal = window.currentUserData.wallet_balance - 1;
+                await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
+                window.currentUserData.wallet_balance = newBal;
+                window.showToast("Объявление поднято в ленте!"); window.closeModal('item-modal'); 
+                window.fetchItems(true);
+            } catch(e) { window.showToast("Ошибка", true); }
+        };
+
+        window.highlightItem = async () => {
+            if(!window.currentUser || !window.activeModalItemId) return;
+            if(window.currentUserData && window.currentUserData.is_pro) {
+                try {
+                    await supabase.from('items').update({ is_highlighted: true }).eq('id', window.activeModalItemId);
+                    window.showToast("Объявление выделено в ТОП (PRO)!");
+                    window.closeModal('item-modal'); 
+                    window.fetchItems(true);
+                } catch(e) { window.showToast("Ошибка", true); }
+            } else {
+                window.closeModal('item-modal');
+                window.openModal('crypto-modal');
+            }
+        };
+
+        window.verifyCryptoPayment = () => {
+            const btn = document.getElementById('btn-crypto-paid');
+            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Проверка...'; }
+            
+            setTimeout(async () => {
+                try {
+                    await supabase.from('profiles').update({ is_pro: true }).eq('id', window.currentUser.id);
+                    window.currentUserData.is_pro = true;
+                    
+                    document.querySelectorAll('#profile-pro-badge').forEach(pb => pb.classList.remove('hidden'));
+                    
+                    window.showToast("Транзакция найдена! PRO активирован.");
+                    window.closeModal('crypto-modal');
+                } catch(e) { window.showToast("Ошибка сети", true); }
+                finally { 
+                    if(btn) { btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; }
+                }
+            }, 4000);
+        };
+
+        // AUTH INITIALIZATION
         window.handleAuthChange = async (session) => {
             try {
                 window.currentUser = session?.user || null;
+                
                 const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
                 const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
                 const profileLogoutBtn = document.getElementById('profile-logout-btn');
