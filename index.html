@@ -495,7 +495,7 @@
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer">Заначка</button>
             </div>
-            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch" style="display: none;"></div>
+            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 content-start items-start" style="display: none;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-bold text-lg">
                 <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
             </div>
@@ -717,6 +717,18 @@
                 if(photoList) photoList.innerHTML = '';
             }
         };
+
+        // ВОССТАНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ КНОПКИ "+ ПРИСТРОИТЬ ДОБРО"
+        window.checkAuthAndOpenAddModal = () => {
+            if (!window.currentUser) {
+                window.openModal('auth-modal');
+                window.showToast('Сначала войдите в аккаунт', true);
+            } else {
+                window.openModal('add-modal');
+            }
+        };
+
+        window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
 
         window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
         window.toggleFilters = () => { const el = document.getElementById('filter-panel-wrapper'); if(el) el.classList.toggle('active'); };
