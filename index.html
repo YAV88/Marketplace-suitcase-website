@@ -980,7 +980,7 @@
             } catch(err) { return null; }
         }
 
-        window.createCardHtml = function(i, isVIP) {
+        window.createCardHtml = function(i, isVIP, isProfile = false) {
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
             const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
             const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -997,21 +997,28 @@
 
             const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
 
+            // Умные динамические размеры: если это профиль, делаем картинки и текст меньше
+            const imgHeight = isProfile ? 'h-24 sm:h-32' : 'h-36 sm:h-40';
+            const pClass = isProfile ? 'p-2.5 sm:p-3' : 'p-3 sm:p-4';
+            const titleClass = isProfile ? 'text-[11px] sm:text-xs' : 'text-sm sm:text-base';
+            const priceClass = isProfile ? 'text-sm sm:text-base' : 'text-base sm:text-lg';
+            const metaClass = isProfile ? 'text-[9px] sm:text-[10px] mt-1 pt-1' : 'text-xs mt-2 pt-2';
+
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
                 <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
                     <i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i>
                 </button>
-                <div class="h-32 sm:h-40 bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+                <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                 </div>
-                <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold text-xs sm:text-sm mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text text-sm sm:text-base mt-1">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-700 text-[10px] sm:text-xs uppercase font-black text-stone-400 flex justify-between items-center">
+                <div class="${pClass} flex-1 flex flex-col justify-between">
+                    <h4 class="font-bold ${titleClass} mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="${metaClass} border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
-                        <span class="text-stone-800 dark:text-white shrink-0">&rarr;</span>
+                        <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
                     </div>
                 </div>
             </div>`;
