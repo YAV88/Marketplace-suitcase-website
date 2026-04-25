@@ -1476,6 +1476,106 @@
             } catch(e) { console.error(e); }
         };
 
+
+        // === ВЕРНУЛИ УДАЛЕННЫЕ КНОПКИ (ЧАТ, PRO, ПОДНЯТИЯ) ===
+        window.openChatModal = () => {
+            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
+            document.getElementById('chat-author-name').innerText = document.getElementById('modal-author').innerText;
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-2">Сегодня</div><div class="flex items-end gap-2 max-w-[85%]"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">Здравствуйте! Вещь еще актуальна?</div></div>`;
+            window.openModal('chat-modal');
+        };
+
+        window.openChatListModal = () => {
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            document.getElementById('chat-item-title').innerText = "Все сообщения";
+            document.getElementById('chat-author-name').innerText = "Список чатов";
+            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 mt-10">У вас пока нет активных диалогов</div>`;
+            window.openModal('chat-modal');
+        };
+
+        window.sendChatMessage = () => {
+            const input = document.getElementById('chat-input-field');
+            if(!input.value.trim()) return;
+            document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end justify-end gap-2 w-full mt-2"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium">${input.value}</div></div>`);
+            input.value = '';
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+            
+            setTimeout(() => {
+                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-3"><div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">Да, еще актуально! Отвечу подробнее чуть позже.</div></div>`);
+                container.scrollTop = container.scrollHeight;
+                window.showToast("Новое сообщение!");
+                const badges = document.querySelectorAll('#nav-chat-badge');
+                badges.forEach(b => b.classList.remove('hidden'));
+            }, 2500);
+        };
+
+        window.completeShareTask = (network) => {
+            const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
+            const url = encodeURIComponent(`https://svalka.rs/?ref=${window.currentUser?.id || 'guest'}`);
+            let shareUrl = '';
+            if (network === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+            else if (network === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+            else if (network === 'viber') shareUrl = `viber://forward?text=${text}%20${url}`;
+            else if (network === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            if(shareUrl) window.open(shareUrl, '_blank');
+            
+            setTimeout(async () => {
+                window.showToast("+3 Поднятия получено!");
+                const newBal = (window.currentUserData?.wallet_balance || 0) + 3;
+                try {
+                    await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
+                    window.currentUserData.wallet_balance = newBal;
+                    document.querySelectorAll('#profile-balance').forEach(el => el.innerText = newBal + ' шт.');
+                    window.closeModal('share-modal');
+                } catch(e) { console.error(e); }
+            }, 4000); 
+        };
+
+        window.bumpItem = async () => {
+            if(!window.currentUser || !window.activeModalItemId) return;
+            if((window.currentUserData?.wallet_balance || 0) < 1) { window.showToast("Нет поднятий. Получите бесплатно!", true); return; }
+            try {
+                await supabase.from('items').update({ created_at: new Date().toISOString() }).eq('id', window.activeModalItemId);
+                const newBal = window.currentUserData.wallet_balance - 1;
+                await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
+                window.currentUserData.wallet_balance = newBal;
+                window.showToast("Объявление поднято в ленте!"); window.closeModal('item-modal'); 
+                window.fetchItems(false);
+            } catch(e) { window.showToast("Ошибка", true); }
+        };
+
+        window.highlightItem = async () => {
+            if(!window.currentUser || !window.activeModalItemId) return;
+            if(window.currentUserData && window.currentUserData.is_pro) {
+                try {
+                    await supabase.from('items').update({ is_highlighted: true }).eq('id', window.activeModalItemId);
+                    window.showToast("Объявление выделено в ТОП (PRO)!");
+                    window.closeModal('item-modal'); 
+                    window.fetchItems(false);
+                } catch(e) { window.showToast("Ошибка", true); }
+            } else {
+                window.closeModal('item-modal');
+                window.openModal('crypto-modal');
+            }
+        };
+
+        window.verifyCryptoPayment = () => {
+            const btn = document.getElementById('btn-crypto-paid');
+            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Проверка...'; }
+            setTimeout(async () => {
+                try {
+                    await supabase.from('profiles').update({ is_pro: true }).eq('id', window.currentUser.id);
+                    window.currentUserData.is_pro = true;
+                    document.querySelectorAll('#profile-pro-badge').forEach(pb => pb.classList.remove('hidden'));
+                    window.showToast("Транзакция найдена! PRO активирован.");
+                    window.closeModal('crypto-modal');
+                } catch(e) { window.showToast("Ошибка сети", true); }
+                finally { if(btn) { btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; } }
+            }, 4000);
+        };
+
         
         window.handleAuthChange = async (session) => {
             try {
