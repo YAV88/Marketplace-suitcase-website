@@ -1459,7 +1459,7 @@
                     if(tab) tab.innerText = `Заначка (${items.length})`;
                 }
 
-                // Гарантированно сохраняем в память, чтобы карточки могли открываться
+                // Гарантированное сохранение в кэш для открытия модалок
                 items.forEach(v => {
                     const exists = window.loadedItems.findIndex(i => i.id === v.id);
                     if (exists === -1) window.loadedItems.push(v);
@@ -1468,13 +1468,15 @@
 
                 if(items.length > 0) {
                     grid.style.display = 'grid';
-                    grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
+                    // Передаем TRUE (3-й параметр), чтобы включить уменьшенный размер для профиля!
+                    grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted, true)).join('');
                 } else {
                     empty.style.display = 'flex';
                 }
             } catch(e) { console.error(e); }
         };
 
+        
         window.handleAuthChange = async (session) => {
             try {
                 if(!window.authInitialized) window.authInitialized = true;
