@@ -29,7 +29,7 @@
 
         .bg-pattern { position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png"); }
 
-        .item-card { height: 100%; display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
+        .item-card { display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 1rem; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
         .item-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.12); border-color: #0d9488; }
         
         .vip-card { border: 2px solid #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.15); background: linear-gradient(180deg, rgba(254, 252, 232, 1) 0%, #ffffff 100%); }
@@ -48,7 +48,6 @@
         input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea { cursor: text !important; caret-color: #0d9488; font-size: 16px !important; }
         input:focus, textarea:focus, select:focus { border-color: #0d9488 !important; outline: none; }
         
-        /* Кастомный стиль для всех выпадающих списков (Select) */
         select {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -655,7 +654,6 @@
         window.authMode = 'login';
         window.authInitialized = false;
 
-        // === PWA & THEME ===
         const initPWA = () => {
             const manifest = {
                 name: "SVALKA", short_name: "SVALKA", description: "Маркетплейс в Сербии",
@@ -697,7 +695,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // === UI HELPERS ===
         window.openModal = id => { 
             const el = document.getElementById(id);
             if(el) { el.classList.add('active'); document.body.classList.add('modal-open'); }
@@ -736,7 +733,6 @@
             }
         };
 
-        // Lightbox
         window.currentLightboxImages = [];
         window.currentLightboxIndex = 0;
         window.openLightbox = (src) => {
@@ -762,7 +758,6 @@
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
-        // Favorites
         window.toggleFavorite = async (btn, event, itemId) => {
             if(event) event.stopPropagation();
             if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
@@ -795,7 +790,6 @@
             if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId);
         }
 
-        // Auth
         window.setAuthMode = mode => {
             window.authMode = mode;
             const fields = document.getElementById('auth-name-field');
@@ -885,7 +879,6 @@
             });
         }
 
-        // Filters
         window.applyFilters = () => {
             const elCat = document.getElementById('filter-category');
             const elCity = document.getElementById('filter-city');
@@ -976,7 +969,7 @@
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
         window.loadMoreItems = () => { window.displayedCount += 12; window.fetchItems(true); };
 
-        function mapItemData(i) {
+        window.mapItemData = function(i) {
             try {
                 return {
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
@@ -987,7 +980,50 @@
             } catch(err) { return null; }
         }
 
-        // === SERVER-SIDE FETCH ITEMS ===
+        window.createCardHtml = function(i, isVIP, isProfile = false) {
+            const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative';
+            const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
+            const isLiked = window.userFavorites && window.userFavorites.has(i.id);
+            const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
+            
+            let statusBadge = '';
+            let opacityClass = '';
+            if (i.status === 'reserved') {
+                statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`;
+            } else if (i.status === 'sold') {
+                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`;
+                opacityClass = 'opacity-70 grayscale-[0.5]';
+            }
+
+            const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
+
+            // Динамические размеры
+            const imgHeight = isProfile ? 'h-24 sm:h-32' : 'h-36 sm:h-40';
+            const pClass = isProfile ? 'p-2.5 sm:p-3' : 'p-3 sm:p-4';
+            const titleClass = isProfile ? 'text-[11px] sm:text-xs' : 'text-sm sm:text-base';
+            const priceClass = isProfile ? 'text-sm sm:text-base' : 'text-base sm:text-lg';
+            const metaClass = isProfile ? 'text-[9px] sm:text-[10px] mt-1 pt-1' : 'text-xs mt-2 pt-2';
+
+            return `
+            <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
+                <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
+                    <i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i>
+                </button>
+                <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+                    <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                    ${statusBadge}
+                </div>
+                <div class="${pClass} flex-1 flex flex-col justify-between">
+                    <h4 class="font-bold ${titleClass} mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
+                    <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="${metaClass} border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center">
+                        <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
+                        <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+
         window.fetchItems = async (isLoadMore = false) => {
             const loader = document.getElementById('loading-placeholder');
             const mainGrid = document.getElementById('main-items-grid');
@@ -1008,32 +1044,66 @@
             }
 
             try {
-                let q = supabase.from('items').select('*');
-                
-                if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
-                if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
-                if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
-                if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
-                if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
-                if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
-                
-                if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
+                let res, vipRes = { data: [] };
+                let fallbackMode = false;
 
-                if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
-                else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
-                else q = q.order('created_at', { ascending: false });
+                try {
+                    let q = supabase.from('items').select('*');
+                    if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
+                    if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
+                    if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
+                    if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
+                    if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
+                    if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
+                    if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
 
-                q = q.limit(window.displayedCount + 1);
+                    if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
+                    else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
+                    else q = q.order('created_at', { ascending: false });
 
-                let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(6);
-                if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
-                if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
+                    q = q.limit(window.displayedCount + 1);
 
-                const [res, vipRes] = await Promise.all([q, vq]);
+                    let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(6);
+                    if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
+                    if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
 
-                if (res.error) throw res.error;
+                    const results = await Promise.all([q, vq]);
+                    if (results[0].error) throw results[0].error;
+                    res = results[0];
+                    vipRes = results[1];
+                } catch (err) {
+                    // Fallback если БД еще не обновлена колонками status / phone
+                    if (err.code === '42703' || (err.message && err.message.includes('column'))) {
+                        fallbackMode = true;
+                        res = await supabase.from('items').select('*').order('created_at', { ascending: false });
+                        if (res.error) throw res.error;
+                    } else throw err; 
+                }
 
-                const items = (res.data || []).map(mapItemData).filter(Boolean);
+                if (fallbackMode && res.data) {
+                    let filtered = res.data.filter(i => {
+                        const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
+                        const searchQ = (window.searchQuery || '').toLowerCase();
+                        const titleStr = (i.title || '').toLowerCase();
+                        const matchSearch = titleStr.includes(searchQ);
+                        const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
+                        const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
+                        let matchPrice = true;
+                        const p = Number(i.price) || 0;
+                        if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
+                        if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
+                        if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
+                        return matchCat && matchSearch && matchUrgent && matchCity && matchPrice;
+                    });
+                    
+                    if (window.currentSortMode === 'cheap') filtered.sort((a, b) => Number(a.price) - Number(b.price));
+                    else if (window.currentSortMode === 'exp') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+                    
+                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);
+                    res.data = filtered.slice(0, window.displayedCount + 1);
+                }
+
+                const items = (res.data || []).map(window.mapItemData).filter(Boolean);
                 const hasMore = items.length > window.displayedCount;
                 const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
 
@@ -1041,7 +1111,7 @@
                 else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
 
                 if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                    const vipMapped = vipRes.data.map(mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
+                    const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
                     if (vipMapped.length > 0 && vipGrid && vipSection) {
                         vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
                         vipSection.classList.remove('hidden');
@@ -1166,8 +1236,7 @@
                 
                 window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
                 window.closeModal('add-modal');
-                localStorage.removeItem('svalka_items_cache');
-                window.fetchItems(true);
+                window.fetchItems(false);
             } catch(e) { 
                 console.error(e);
                 let errMsg = e.message;
@@ -1216,14 +1285,14 @@
                 let items = [];
                 if (window.currentProfileTab === 'items') {
                     const { data } = await supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
-                    items = (data || []).map(mapItemData).filter(Boolean);
+                    items = (data || []).map(window.mapItemData).filter(Boolean);
                     const tab = document.getElementById('tab-my-items');
                     if(tab) tab.innerText = `Мои вещи (${items.length})`;
                 } else {
                     const favIds = Array.from(window.userFavorites);
                     if (favIds.length > 0) {
                         const { data } = await supabase.from('items').select('*').in('id', favIds).order('created_at', { ascending: false });
-                        items = (data || []).map(mapItemData).filter(Boolean);
+                        items = (data || []).map(window.mapItemData).filter(Boolean);
                     }
                     const tab = document.getElementById('tab-my-saved');
                     if(tab) tab.innerText = `Заначка (${items.length})`;
@@ -1235,7 +1304,6 @@
 
                 if(items.length > 0) {
                     grid.style.display = 'grid';
-                    // ИСПОЛЬЗУЕТСЯ ТРЕТИЙ ПАРАМЕТР (isProfile = true) ДЛЯ УМЕНЬШЕНИЯ КАРТОЧЕК
                     grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted, true)).join('');
                 } else {
                     empty.style.display = 'flex';
