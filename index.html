@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SVALKA — Маркетплейс вещей в Сербии</title>
+    <meta name="description" content="SVALKA — первый удобный маркетплейс для поиска и продажи вещей в Сербии.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" id="og-title" content="SVALKA — Маркетплейс вещей в Сербии">
+    <meta property="og:description" id="og-desc" content="Отличные находки и быстрые продажи в Белграде, Нови-Саде и по всей Сербии.">
+    <meta property="og:image" id="og-image" content="https://images.unsplash.com/photo-1555529771-835f59bfc50c?auto=format&fit=crop&w=1200&q=80">
+    <meta name="twitter:card" content="summary_large_image">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -659,6 +665,15 @@
         window.authMode = 'login';
         window.authInitialized = false;
 
+        // Обновление SEO и вкладок браузера
+        window.updateSEO = (title, desc, img) => {
+            document.title = title ? `${title} | SVALKA` : 'SVALKA — Маркетплейс вещей в Сербии';
+            const setMeta = (id, content) => { const el = document.getElementById(id); if (el && content) el.content = content; };
+            setMeta('og-title', title || 'SVALKA — Маркетплейс вещей в Сербии');
+            setMeta('og-desc', desc || 'Отличные находки и быстрые продажи в Белграде, Нови-Саде и по всей Сербии.');
+            setMeta('og-image', img || 'https://images.unsplash.com/photo-1555529771-835f59bfc50c?auto=format&fit=crop&w=1200&q=80');
+        };
+
         const initPWA = () => {
             const manifest = {
                 name: "SVALKA", short_name: "SVALKA", description: "Маркетплейс в Сербии",
@@ -712,7 +727,10 @@
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
             
             // Очищаем URL при закрытии карточки товара
-            if (id === 'item-modal') history.pushState(null, '', window.location.pathname);
+            if (id === 'item-modal') {
+                history.pushState(null, '', window.location.pathname);
+                window.updateSEO(); // Возвращаем SEO главной страницы
+            }
             
             if (id === 'add-modal') {
                 window.editingItemId = null;
@@ -1111,6 +1129,10 @@
             
             const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
             document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
+            
+            // Динамически меняем Title и SEO для текущего товара
+            const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+            window.updateSEO(item.title, item.description, coverImg);
             
             const modalFavIcon = document.querySelector('#modal-fav-btn i');
             if(modalFavIcon) {
