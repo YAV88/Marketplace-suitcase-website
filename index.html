@@ -691,8 +691,9 @@
         };
 
         window.goHome = () => {
-            window.resetFilters();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Ждем 300мс пока скролл плавно едет наверх, затем перерисовываем товары
+            setTimeout(() => window.resetFilters(), 300);
         };
 
         window.openModal = id => { 
@@ -1209,12 +1210,14 @@
             
             if (!isLoadMore) {
                 window.displayedCount = 12;
-                if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); }
-                if(vipGrid) vipGrid.innerHTML = '';
-                if(vipSection) vipSection.classList.add('hidden');
+                // Вместо удаления товаров, просто делаем их полупрозрачными
+                if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
+                if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
                 if(emptyState) emptyState.classList.add('hidden');
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-                if(loader) loader.style.display = 'block';
+                
+                // Показываем лоадер только если сетка вообще пустая (самая первая загрузка)
+                if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
 
                 const feedTitle = document.getElementById('main-feed-title');
                 const feedIcon = document.getElementById('main-feed-icon');
@@ -1301,22 +1304,27 @@
                 if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
                     const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
                     if (vipMapped.length > 0 && vipGrid && vipSection) {
+                        vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto'; // Возвращаем видимость
                         vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
                         vipSection.classList.remove('hidden');
                         vipMapped.forEach(v => {
                             if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v);
                         });
                     }
+                } else if (!isLoadMore && vipSection) {
+                    vipSection.classList.add('hidden');
                 }
 
                 if (itemsToDisplay.length > 0) {
                     let html = '';
                     itemsToDisplay.forEach(item => { html += window.createCardHtml(item, false); });
                     
-                    if (!isLoadMore && mainGrid) mainGrid.innerHTML = html;
-                    else if (mainGrid) mainGrid.insertAdjacentHTML('beforeend', html);
-                    
-                    if(mainGrid) mainGrid.classList.remove('hidden');
+                    if(mainGrid) {
+                        mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; // Возвращаем видимость
+                        if (!isLoadMore) mainGrid.innerHTML = html;
+                        else mainGrid.insertAdjacentHTML('beforeend', html);
+                        mainGrid.classList.remove('hidden');
+                    }
                     if(loadMoreBtn) {
                         if (hasMore) loadMoreBtn.classList.remove('hidden');
                         else loadMoreBtn.classList.add('hidden');
@@ -1324,6 +1332,7 @@
                     if(proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
                 } else {
                     if (!isLoadMore) {
+                        if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
                         if(emptyState) emptyState.classList.remove('hidden');
                         if(proBanner) proBanner.classList.add('hidden');
                     }
