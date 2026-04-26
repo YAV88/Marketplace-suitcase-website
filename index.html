@@ -711,6 +711,9 @@
             if(el) { el.classList.remove('active'); }
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
             
+            // Очищаем URL при закрытии карточки товара
+            if (id === 'item-modal') history.pushState(null, '', window.location.pathname);
+            
             if (id === 'add-modal') {
                 window.editingItemId = null;
                 document.getElementById('add-modal-title').innerText = "Пристроить добро";
@@ -1574,6 +1577,8 @@
                 contactBtn.classList.remove('hidden'); ctrl.classList.add('hidden'); ctrl.classList.remove('flex');
             }
             window.openModal('item-modal');
+            // Прописываем ID товара в адресную строку браузера
+            history.pushState({ modal: true }, '', '?item=' + id);
         };
 
         window.changeItemStatus = async (newStatus) => {
@@ -1803,6 +1808,22 @@
 
         // INIT LOAD
         window.fetchItems();
+
+        // === DEEP LINKING (РОУТИНГ) ===
+        // 1. Проверяем URL при загрузке страницы
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemIdFromUrl = urlParams.get('item');
+        if (itemIdFromUrl) {
+            window.openItemDetails(itemIdFromUrl);
+        }
+
+        // 2. Корректно обрабатываем кнопку "Назад" в браузере
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            const item = params.get('item');
+            if (item) window.openItemDetails(item);
+            else window.closeModal('item-modal');
+        });
 
     </script>
 </body>
