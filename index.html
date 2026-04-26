@@ -122,7 +122,10 @@
                 
                 <button onclick="window.checkAuthAndOpenAddModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-7 py-3 rounded-full font-bold shadow-lg shadow-brand-600/30 text-sm transition cursor-pointer">+ Пристроить добро</button>
             </div>
-            <button class="lg:hidden text-2xl ml-4 text-stone-600 dark:text-stone-300 cursor-pointer" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+            <div class="flex items-center gap-2 sm:gap-3 lg:hidden ml-4">
+                <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i class="fa-solid fa-moon text-lg"></i></button>
+                <button class="text-2xl text-stone-600 dark:text-stone-300 cursor-pointer w-10 h-10 flex items-center justify-center" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+            </div>
         </div>
     </nav>
 
@@ -244,7 +247,7 @@
             </div>
         </div>
 
-        <div class="mb-8 flex overflow-x-auto items-center gap-2 sm:gap-3 pb-2 snap-x" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-3 pb-2 md:pb-0 snap-x md:snap-none" style="scrollbar-width: none; -ms-overflow-style: none;">
             <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все</button>
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> VIP</button>
             <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Одежда</button>
