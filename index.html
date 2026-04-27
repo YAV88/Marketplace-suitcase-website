@@ -33,6 +33,11 @@
     
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&display=swap');
         
+        /* === ПРИНУДИТЕЛЬНАЯ ФИКСАЦИЯ ШРИФТОВ НА ВСЕМ САЙТЕ === */
+        body, button, input, select, textarea { font-family: 'Inter', sans-serif !important; }
+        h1, h2, h3, h4, h5, h6, .font-display, .price-text { font-family: 'Montserrat', sans-serif !important; }
+        /* ======================================================= */
+        
         html { scrollbar-gutter: stable; }
         body { transition: background-color 0.3s, color 0.3s; background-color: #f5f5f4; display: flex; flex-direction: column; min-height: 100vh; }
         .dark body { background-color: #1c1917; }
@@ -639,13 +644,13 @@
                 </div>
                 <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
                 
-                <div id="modal-owner-controls" class="hidden flex-col gap-3 mb-6 border-t dark:border-stone-800 pt-5">
+                <div id="modal-owner-controls" class="hidden flex-col gap-2 mb-6 border-t dark:border-stone-800 pt-4">
                     <div class="flex gap-2">
-                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять</button>
-                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">Купить PRO</span></button>
+                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять</button>
+                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-2 rounded-lg font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">Купить PRO</span></button>
                     </div>
-                    <div id="modal-owner-edit-controls" class="flex gap-2 mt-1"></div>
-                    <div id="modal-owner-status-controls" class="flex gap-2 mt-1"></div>
+                    <div id="modal-owner-edit-controls" class="flex gap-2"></div>
+                    <div id="modal-owner-status-controls" class="flex gap-2"></div>
                 </div>
 
                 <div class="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
@@ -1213,24 +1218,30 @@
                 const editControls = document.getElementById('modal-owner-edit-controls');
 
                 if (isOwner) {
-                    contactBtn.classList.add('hidden'); ctrl.classList.remove('hidden'); ctrl.classList.add('flex');
+                    if(contactBtn) contactBtn.classList.add('hidden'); 
+                    if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
                     
                     const vipBtnText = document.getElementById('btn-owner-vip-text');
-                    vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
-                    
-                    statusControls.innerHTML = '';
-                    if (item.status !== 'sold') {
-                        const isRes = item.status === 'reserved';
-                        statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                        statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
-                    } else {
-                        statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
+
+                    if(statusControls) {
+                        statusControls.innerHTML = '';
+                        if (item.status !== 'sold') {
+                            const isRes = item.status === 'reserved';
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                        } else {
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                        }
                     }
 
-                    editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>
-                                              <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                    if(editControls) {
+                        editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Изменить</button>
+                                                  <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                    }
                 } else {
-                    contactBtn.classList.remove('hidden'); ctrl.classList.add('hidden'); ctrl.classList.remove('flex');
+                    if(contactBtn) contactBtn.classList.remove('hidden'); 
+                    if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
                 }
                 
                 window.openModal('item-modal');
