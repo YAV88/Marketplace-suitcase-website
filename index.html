@@ -1290,7 +1290,7 @@
                     let q = supabase.from('items').select('*');
                     if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
-                    if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
+                    if (window.searchQuery) q = q.textSearch('fts', window.searchQuery, { type: 'websearch' });
                     if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
                     if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
                     if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
