@@ -1731,7 +1731,7 @@
 
         window.completeShareTask = (network) => {
             const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
-            const url = encodeURIComponent(`https://svalka.rs/?ref=${window.currentUser?.id || 'guest'}`);
+            const url = encodeURIComponent(`https://svalka.trade/?ref=${window.currentUser?.id || 'guest'}`);
             let shareUrl = '';
             if (network === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
             else if (network === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
