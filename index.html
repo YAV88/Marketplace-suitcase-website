@@ -30,12 +30,12 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
     
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
         
-        /* === ПРИНУДИТЕЛЬНАЯ ФИКСАЦИЯ ШРИФТОВ === */
-        body, button, input, select, textarea { font-family: 'Roboto', sans-serif !important; }
-        h1, h2, h3, h4, h5, h6, .font-display, .price-text { font-family: 'Roboto', sans-serif !important; }
-        /* ======================================= */
+    /* === ПРИНУДИТЕЛЬНАЯ ФИКСАЦИЯ ШРИФТОВ === */
+    body, button, input, select, textarea, span, p, div { font-family: 'Inter', sans-serif !important; }
+    h1, h2, h3, h4, h5, h6, .font-display, .price-text, #modal-price { font-family: 'Syne', sans-serif !important; font-weight: 800 !important; }
+    /* ======================================= */
         
         .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
         
@@ -650,7 +650,7 @@
                         <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border border-stone-200 dark:border-stone-700 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up text-brand-600"></i> Поднять</button>
                         <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-gem"></i> <span id="btn-owner-vip-text">PRO</span></button>
                     </div>
-                    <div id="modal-owner-action-controls" class="flex gap-2 items-center"></div>
+                    <div id="modal-owner-action-controls" class="flex gap-2 mt-1"></div>
                 </div>
 
                 <div class="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
@@ -1135,131 +1135,63 @@
             try {
                 let item = window.loadedItems.find(i => i.id === id);
                 if (!item) {
-                    try {
-                        const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
-                        if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
-                    } catch(e) { console.error(e); }
+                    const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
+                    if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
                 }
-
                 if(!item) return;
+                
                 window.activeModalItemId = item.id;
 
+                // Картинки и тексты
                 const imgContainer = document.getElementById('modal-img-container');
                 if (Array.isArray(item.images) && item.images.length > 1) {
                     let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                     imgContainer.innerHTML = `<img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')"><div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>`;
                 } else {
-                    const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                    imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
+                    imgContainer.innerHTML = `<img id="modal-img" src="${item.image_url || ''}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.image_url || ''}')">`;
                 }
 
-                const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-                document.getElementById('modal-title').innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
-                document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
-                
-                const phoneContainer = document.getElementById('modal-phone-container');
-                if (item.phone) {
-                    phoneContainer.classList.remove('hidden'); phoneContainer.classList.add('flex');
-                    document.getElementById('modal-phone').innerText = item.phone; document.getElementById('modal-phone').href = `tel:${item.phone}`;
-                } else {
-                    phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex');
-                }
-
-                const statusBadgeEl = document.getElementById('modal-status-badge');
-                if (item.status === 'reserved') {
-                    statusBadgeEl.innerText = 'В РЕЗЕРВЕ'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
-                } else if (item.status === 'sold') {
-                    statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
-                } else { statusBadgeEl.className = 'hidden'; }
-
-                const addrCont = document.getElementById('modal-address-container');
-                if (item.category && item.category.includes('Жилье') && item.coords && item.coords[0] !== 0) {
-                    addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
-                    document.getElementById('modal-address').innerText = item.address || item.city;
-                    setTimeout(() => {
-                        try {
-                            if(!window.viewMapObj) {
-                                window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
-                                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
-                                window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
-                            } else {
-                                window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
-                                window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
-                            }
-                            window.viewMapObj.invalidateSize();
-                        } catch(mapErr) { console.warn("Карта не загрузилась:", mapErr); }
-                    }, 150);
-                } else {
-                    addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
-                }
-                
+                document.getElementById('modal-title').innerText = item.title;
+                document.getElementById('modal-price').innerText = `${item.price} ${item.currency}`;
                 document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
-                document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
+                document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${item.city.toUpperCase()}`;
                 
-                const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
-                document.getElementById('modal-category-text').innerText = catText.toUpperCase();
-
-                document.getElementById('modal-author').innerText = item.authorName || "Пользователь";
-                document.getElementById('modal-author-avatar').innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
-                
-                const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
-                document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
-                
-                const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                window.updateSEO(item.title, item.description, coverImg);
-                
-                const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                if(modalFavIcon && window.userFavorites) {
-                    modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-                }
-
+                // Управление кнопками владельца
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
                 const contactBtn = document.getElementById('btn-contact-seller');
                 const actionControls = document.getElementById('modal-owner-action-controls');
 
                 if (isOwner) {
-                    if(contactBtn) contactBtn.classList.add('hidden'); 
-                    if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
+                    contactBtn.classList.add('hidden');
+                    ctrl.classList.remove('hidden'); ctrl.classList.add('flex');
                     
-                    const vipBtnText = document.getElementById('btn-owner-vip-text');
-                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП" : "Купить PRO";
-
                     if(actionControls) {
                         let html = '';
+                        // Редактировать (Иконка)
+                        html += `<button onclick="window.editItem('${item.id}')" title="Изменить" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 border border-stone-200 dark:border-stone-700 h-10 rounded-xl flex items-center justify-center hover:bg-brand-50 transition"><i class="fa-solid fa-pen"></i></button>`;
                         
-                        // 1. Изменить (Иконка)
-                        html += `<button onclick="window.editItem('${item.id}')" title="Изменить" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 hover:border-brand-300 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen"></i></button>`;
-                        
-                        // 2. Статусы (Резерв / Возврат)
+                        // Статус Продано/Резерв
                         if (item.status === 'sold') {
-                            html += `<button onclick="window.changeItemStatus('active')" class="flex-[3] bg-stone-100 dark:bg-stone-800 text-brand-600 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
+                            html += `<button onclick="window.changeItemStatus('active')" class="flex-[3] bg-stone-100 text-brand-600 border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid fa-rotate-left"></i> Вернуть</button>`;
                         } else {
                             const isRes = item.status === 'reserved';
-                            if (isRes) {
-                                html += `<button onclick="window.changeItemStatus('active')" class="flex-[2] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-unlock"></i> Снять резерв</button>`;
-                            } else {
-                                html += `<button onclick="window.changeItemStatus('reserved')" title="В резерв" class="flex-[2] bg-stone-100 dark:bg-stone-800 text-orange-500 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-clock"></i> В резерв</button>`;
-                            }
-                            // Кнопка Продано (Иконка)
-                            html += `<button onclick="window.changeItemStatus('sold')" title="Продано" class="flex-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800/50 h-11 rounded-xl flex items-center justify-center hover:bg-green-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check"></i></button>`;
+                            html += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-[2] bg-stone-100 ${isRes ? 'text-stone-600' : 'text-orange-500'} border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять' : 'Резерв'}</button>`;
+                            html += `<button onclick="window.changeItemStatus('sold')" title="Продано" class="flex-1 bg-green-50 text-green-600 border border-green-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-check"></i></button>`;
                         }
 
-                        // 3. Удалить (Иконка)
-                        html += `<button onclick="window.deleteItem('${item.id}')" title="Удалить" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 border border-red-200 dark:border-red-800/50 h-11 rounded-xl flex items-center justify-center hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash"></i></button>`;
-                        
+                        // Удалить (Иконка)
+                        html += `<button onclick="window.deleteItem('${item.id}')" title="Удалить" class="flex-1 bg-red-50 text-red-500 border border-red-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-trash"></i></button>`;
                         actionControls.innerHTML = html;
                     }
                 } else {
-                    if(contactBtn) contactBtn.classList.remove('hidden'); 
-                    if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
+                    contactBtn.classList.remove('hidden');
+                    ctrl.classList.add('hidden'); ctrl.classList.remove('flex');
                 }
-                
+
                 window.openModal('item-modal');
                 history.pushState({ modal: true }, '', '?item=' + id);
-            } catch (err) {
-                console.error("КРИТИЧЕСКАЯ ОШИБКА ОТКРЫТИЯ:", err);
-            }
+            } catch (err) { console.error(err); }
         };
         
         window.changeItemStatus = async (newStatus) => {
