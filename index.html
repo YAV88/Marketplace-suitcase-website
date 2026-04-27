@@ -1377,7 +1377,8 @@
 
                 if (itemsToDisplay.length > 0) {
                     let html = '';
-                    itemsToDisplay.forEach(item => { html += window.createCardHtml(item, false); });
+                    // Передаем реальный статус товара item.isHighlighted вместо жесткого false
+                    itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
                     
                     if(mainGrid) {
                         mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; // Возвращаем видимость
