@@ -644,13 +644,12 @@
                 </div>
                 <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed font-medium whitespace-pre-wrap mb-6">Описание отсутствует.</p>
                 
-                <div id="modal-owner-controls" class="hidden flex-col gap-2 mb-6 border-t dark:border-stone-800 pt-4">
+                <div id="modal-owner-controls" class="hidden flex-col gap-2 mb-4 border-t dark:border-stone-800 pt-4">
                     <div class="flex gap-2">
-                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-arrow-up mr-1 text-brand-600"></i> Поднять</button>
-                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-2 rounded-lg font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer"><i class="fa-solid fa-gem mr-1"></i> <span id="btn-owner-vip-text">Купить PRO</span></button>
+                        <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border border-stone-200 dark:border-stone-700 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up text-brand-600"></i> Поднять</button>
+                        <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-gem"></i> <span id="btn-owner-vip-text">PRO</span></button>
                     </div>
-                    <div id="modal-owner-edit-controls" class="flex gap-2"></div>
-                    <div id="modal-owner-status-controls" class="flex gap-2"></div>
+                    <div id="modal-owner-action-controls" class="flex gap-2 items-center"></div>
                 </div>
 
                 <div class="mt-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
@@ -1217,23 +1216,47 @@
                 const statusControls = document.getElementById('modal-owner-status-controls');
                 const editControls = document.getElementById('modal-owner-edit-controls');
 
+                const isOwner = window.currentUser && window.currentUser.id === item.userId;
+                const ctrl = document.getElementById('modal-owner-controls');
+                const contactBtn = document.getElementById('btn-contact-seller');
+                const actionControls = document.getElementById('modal-owner-action-controls');
+
                 if (isOwner) {
                     if(contactBtn) contactBtn.classList.add('hidden'); 
                     if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
                     
                     const vipBtnText = document.getElementById('btn-owner-vip-text');
-                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
+                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП" : "Купить PRO";
 
-                    if(statusControls) {
-                        statusControls.innerHTML = '';
-                        if (item.status !== 'sold') {
-                            const isRes = item.status === 'reserved';
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                    if(actionControls) {
+                        let html = '';
+                        
+                        // 1. Изменить (Иконка)
+                        html += `<button onclick="window.editItem('${item.id}')" title="Изменить" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 hover:border-brand-300 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen"></i></button>`;
+                        
+                        // 2. Статусы (Резерв / Возврат)
+                        if (item.status === 'sold') {
+                            html += `<button onclick="window.changeItemStatus('active')" class="flex-[3] bg-stone-100 dark:bg-stone-800 text-brand-600 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
                         } else {
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                            const isRes = item.status === 'reserved';
+                            if (isRes) {
+                                html += `<button onclick="window.changeItemStatus('active')" class="flex-[2] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-unlock"></i> Снять резерв</button>`;
+                            } else {
+                                html += `<button onclick="window.changeItemStatus('reserved')" title="В резерв" class="flex-[2] bg-stone-100 dark:bg-stone-800 text-orange-500 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center hover:bg-stone-200 transition shadow-sm cursor-pointer gap-2"><i class="fa-solid fa-clock"></i> В резерв</button>`;
+                            }
+                            // Кнопка Продано (Иконка)
+                            html += `<button onclick="window.changeItemStatus('sold')" title="Продано" class="flex-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800/50 h-11 rounded-xl flex items-center justify-center hover:bg-green-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check"></i></button>`;
                         }
+
+                        // 3. Удалить (Иконка)
+                        html += `<button onclick="window.deleteItem('${item.id}')" title="Удалить" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 border border-red-200 dark:border-red-800/50 h-11 rounded-xl flex items-center justify-center hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash"></i></button>`;
+                        
+                        actionControls.innerHTML = html;
                     }
+                } else {
+                    if(contactBtn) contactBtn.classList.remove('hidden'); 
+                    if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
+                }
 
                     if(editControls) {
                         editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Изменить</button>
