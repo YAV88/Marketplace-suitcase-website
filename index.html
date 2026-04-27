@@ -1208,13 +1208,9 @@
                 window.updateSEO(item.title, item.description, coverImg);
                 
                 const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                if(modalFavIcon) modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-
-                const isOwner = window.currentUser && window.currentUser.id === item.userId;
-                const ctrl = document.getElementById('modal-owner-controls');
-                const contactBtn = document.getElementById('btn-contact-seller');
-                const statusControls = document.getElementById('modal-owner-status-controls');
-                const editControls = document.getElementById('modal-owner-edit-controls');
+                if(modalFavIcon && window.userFavorites) {
+                    modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                }
 
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
@@ -1257,24 +1253,14 @@
                     if(contactBtn) contactBtn.classList.remove('hidden'); 
                     if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
                 }
-
-                    if(editControls) {
-                        editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-2 rounded-lg font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Изменить</button>
-                                                  <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
-                    }
-                } else {
-                    if(contactBtn) contactBtn.classList.remove('hidden'); 
-                    if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
-                }
                 
                 window.openModal('item-modal');
                 history.pushState({ modal: true }, '', '?item=' + id);
             } catch (err) {
-                console.error("Ошибка открытия карточки:", err);
-                window.showToast("Не удалось открыть объявление", true);
+                console.error("КРИТИЧЕСКАЯ ОШИБКА ОТКРЫТИЯ:", err);
             }
         };
-
+        
         window.changeItemStatus = async (newStatus) => {
             if (!window.currentUser || !window.activeModalItemId) return;
             try {
