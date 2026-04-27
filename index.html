@@ -34,15 +34,20 @@
         #main-items-grid.compact-mode { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.5rem !important; }
         @media (min-width: 768px) { #main-items-grid.compact-mode { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 1rem !important; } }
         
-        /* Ужимаем элементы внутри карточки */
-        #main-items-grid.compact-mode .rounded-2xl { border-radius: 0.75rem !important; }
-        #main-items-grid.compact-mode img { height: 110px !important; object-fit: cover !important; }
-        #main-items-grid.compact-mode .p-3, #main-items-grid.compact-mode .p-4 { padding: 0.5rem !important; }
+        /* 1. Сжимаем сам блок с картинкой (убираем пустую дыру снизу) */
+        #main-items-grid.compact-mode .item-card > div:nth-child(2) { height: 110px !important; }
         
-        /* Текст в одну строку и скрытие лишнего */
-        #main-items-grid.compact-mode h3 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
+        /* 2. Уменьшаем отступы вокруг текста */
+        #main-items-grid.compact-mode .item-card > div:nth-child(3) { padding: 0.5rem !important; }
+        
+        /* 3. Прячем ТОЛЬКО полосу с городом (иконка избранного теперь не пропадет!) */
+        #main-items-grid.compact-mode .border-t.text-xs { display: none !important; }
+        
+        /* 4. Заголовок товара (h4) делаем мелким и в одну строку */
+        #main-items-grid.compact-mode h4 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
+        
+        /* 5. Настраиваем размер цены */
         #main-items-grid.compact-mode .price-text { font-size: 0.85rem !important; margin-bottom: 0 !important; }
-        #main-items-grid.compact-mode .text-xs, #main-items-grid.compact-mode .text-sm:not(.price-text) { display: none !important; }
         /* ================================ */
         
         /* 1. ЗАГРУЗКА ШРИФТОВ */
