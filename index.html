@@ -1028,7 +1028,20 @@
             window.applyFilters();
         };
 
-        window.filterByCategory = (cat, event) => { 
+        // Карта подкатегорий для динамической отрисовки
+        window.subcategoriesMap = {
+            'Одежда': [{val: 'Женская'}, {val: 'Мужская'}, {val: 'Детская'}, {val: 'Обувь'}, {val: 'Аксессуары'}],
+            'Электроника': [{val: 'Телефоны'}, {val: 'ПК', label: 'Ноутбуки / ПК'}, {val: 'Консоли'}, {val: 'Аудио', label: 'Аудио/Видео'}, {val: 'Бытовая', label: 'Бытовая техника'}],
+            'Интерьер': [{val: 'Мебель'}, {val: 'Декор'}, {val: 'Ремонт'}, {val: 'Сад', label: 'Сад и Огород'}],
+            'Транспорт': [{val: 'Авто'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Запчасти'}],
+            'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Красота'}, {val: 'Репетиторы'}, {val: 'Вакансии', prefix: 'Работа'}],
+            'Хобби': [{val: 'Спорт'}, {val: 'Книги'}, {val: 'Музыка'}, {val: 'Коллекции', label: 'Коллекционирование'}],
+            'Животные': [{val: 'Собаки'}, {val: 'Кошки'}, {val: 'Товары', label: 'Зоотовары'}],
+            'Жилье': [{val: 'Аренда'}, {val: 'Покупка'}, {val: 'Коммерция', label: 'Коммерческая'}],
+            'Другое': [{val: 'Игрушки', prefix: 'Детям'}, {val: 'Коляски', prefix: 'Детям'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}]
+        };
+
+        window.filterByCategory = (cat, event, isSubCat = false) => { 
             window.currentCategory = cat; 
             window.showUrgentOnly = false;
             window.displayedCount = 12; 
@@ -1036,13 +1049,45 @@
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
 
-            document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
-            });
-            if (event && event.currentTarget) {
-                event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+            // Если кликнули по Главной категории
+            if (!isSubCat) {
+                document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
+                    b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                });
+                if (event && event.currentTarget) {
+                    event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                }
+                
+                // Отрисовка подкатегорий
+                const subContainer = document.getElementById('sub-cats-container');
+                if (cat !== 'Все' && window.subcategoriesMap[cat]) {
+                    let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все в «${cat}»</button>`;
+                    
+                    window.subcategoriesMap[cat].forEach(sub => {
+                        const prefix = sub.prefix || cat;
+                        const fullCat = `${prefix} - ${sub.val}`;
+                        const label = sub.label || sub.val;
+                        subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">${label}</button>`;
+                    });
+                    subContainer.innerHTML = subHtml;
+                    subContainer.classList.remove('hidden');
+                } else {
+                    if(subContainer) {
+                        subContainer.innerHTML = '';
+                        subContainer.classList.add('hidden');
+                    }
+                }
+            } else {
+                // Если кликнули по Подкатегории — выделяем её
+                document.querySelectorAll('#sub-cats-container .sub-cat-btn').forEach(b => {
+                    b.className = "sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                });
+                if (event && event.currentTarget) {
+                    event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                }
             }
             
+            // Синхронизация с боковым фильтром
             const catSelect = document.getElementById('filter-category');
             if (catSelect) {
                 Array.from(catSelect.options).forEach(opt => {
@@ -1056,12 +1101,14 @@
             window.showUrgentOnly = !window.showUrgentOnly;
             window.displayedCount = 12; 
             const btn = document.getElementById('btn-cat-urgent');
+            const subContainer = document.getElementById('sub-cats-container');
             if (window.showUrgentOnly) {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 window.currentCategory = 'Все';
-                document.querySelectorAll('.cat-btn:not(#btn-cat-urgent)').forEach(b => {
+                document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
+                if(subContainer) subContainer.classList.add('hidden');
             } else {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
             }
