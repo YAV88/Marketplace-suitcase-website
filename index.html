@@ -2006,16 +2006,27 @@
             const list = document.getElementById('custom-cat-list');
             if(!list || !window.subcategoriesMap) return;
             
-            let html = `<button onclick="window.selectCustomCat('Все', 'Все категории', event)" type="button" class="w-full text-left px-4 py-3 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 font-black text-brand-600 dark:text-brand-400 transition cursor-pointer border border-transparent hover:border-brand-100 dark:hover:border-brand-800/50">Все категории</button>`;
+            // Главная кнопка "Все категории"
+            let html = `<button onclick="window.selectCustomCat('Все', 'Все категории', event)" type="button" class="w-full text-left px-4 py-3.5 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 font-black text-base text-brand-600 dark:text-brand-400 transition cursor-pointer border border-transparent hover:border-brand-100 dark:hover:border-brand-800/50 mb-2 shadow-sm">Все категории</button>`;
             
-            // Генерируем красивый список на основе нашей карты подкатегорий
+            // Генерируем красивый список
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-                html += `<div class="px-4 py-2 mt-2 text-[10px] font-black text-stone-400 uppercase tracking-widest">${mainCat}</div>`;
+                
+                // 1. ГЛАВНАЯ КАТЕГОРИЯ (Крупная, жирная, с разделителем)
+                html += `<div class="px-4 py-2 mt-4 mb-2 text-lg font-black text-stone-900 dark:text-white uppercase tracking-tight border-b border-stone-100 dark:border-stone-700/50">
+                            ${mainCat}
+                         </div>`;
+                
+                // 2. ПОДКАТЕГОРИИ (С аккуратным маркером-точкой)
                 subs.forEach(sub => {
                     const prefix = sub.prefix || mainCat;
                     const val = `${prefix} - ${sub.val}`;
                     const label = sub.label || sub.val;
-                    html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-700 font-medium text-stone-700 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-600">${label}</button>`;
+                    
+                    html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 font-medium text-base text-stone-600 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-700 flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 shrink-0"></span>
+                                ${label}
+                             </button>`;
                 });
             }
             list.innerHTML = html;
