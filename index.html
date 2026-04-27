@@ -25,8 +25,12 @@
             } 
         }
     </script>
-    
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
+    
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&display=swap');
         
         html { scrollbar-gutter: stable; }
@@ -539,7 +543,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-category" required class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             <option value="" disabled selected>Категория...</option>
                             <optgroup label="Одежда и Обувь">
                                 <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Детская">Детская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Аксессуары">Аксессуары</option>
@@ -588,6 +592,13 @@
                     </div>
                 </div>
 
+                <div id="re-fields" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-location-dot"></i> Точный адрес и локация</div>
+                    <input type="text" id="item-address" placeholder="Улица и номер дома (например: Knez Mihailova 1)..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white">
+                    <div id="add-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden"></div>
+                    <p class="text-xs text-stone-400 font-bold">Перетащите маркер или кликните по карте, чтобы указать дом</p>
+                </div>
+                
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
                     <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                 </div>
@@ -1030,13 +1041,42 @@
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
         window.loadMoreItems = () => { window.displayedCount += 12; window.fetchItems(true); };
 
+        window.itemCoords = [44.8125, 20.4612]; // Центр Белграда по умолчанию
+        window.handleCategoryChange = (e) => {
+            const val = e.target ? e.target.value : e;
+            const reFields = document.getElementById('re-fields');
+            if (val && val.includes('Жилье')) {
+                reFields.classList.remove('hidden'); reFields.classList.add('flex');
+                setTimeout(() => {
+                    if(!window.addMapObj) {
+                        window.addMapObj = L.map('add-map').setView(window.itemCoords, 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.addMapObj);
+                        window.addMarkerObj = L.marker(window.itemCoords, {draggable: true}).addTo(window.addMapObj);
+                        window.addMarkerObj.on('dragend', function(){
+                            const pos = window.addMarkerObj.getLatLng(); window.itemCoords = [pos.lat, pos.lng];
+                        });
+                        window.addMapObj.on('click', function(event) {
+                            window.itemCoords = [event.latlng.lat, event.latlng.lng];
+                            window.addMarkerObj.setLatLng(window.itemCoords);
+                        });
+                    } else {
+                        window.addMarkerObj.setLatLng(window.itemCoords); window.addMapObj.setView(window.itemCoords, 13);
+                    }
+                    window.addMapObj.invalidateSize();
+                }, 150);
+            } else {
+                reFields.classList.add('hidden'); reFields.classList.remove('flex'); window.itemCoords = [0, 0];
+            }
+        };
+        
         window.mapItemData = function(i) {
             try {
                 return {
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
-                    status: i.status || 'active', phone: i.phone || ''
+                    status: i.status || 'active', phone: i.phone || '',
+                    address: i.address || '', coords: Array.isArray(i.coords) ? i.coords : [0,0] // <-- ДОБАВЛЕНО
                 };
             } catch(err) { return null; }
         }
@@ -1237,6 +1277,10 @@
             document.getElementById('item-desc').value = item.description || '';
             document.getElementById('item-currency').value = item.currency || 'RSD';
             document.getElementById('item-phone').value = item.phone || '';
+
+            document.getElementById('item-address').value = item.address || '';
+            window.itemCoords = item.coords && item.coords[0] !== 0 ? item.coords : [44.8125, 20.4612];
+            window.handleCategoryChange(item.category); // Инициируем показ карты, если это Жилье
             
             document.getElementById('add-modal-title').innerText = "Редактировать";
             document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
@@ -1451,13 +1495,19 @@
                 }
                 
                 const itemData = {
+                    
+                    const addressEl = document.getElementById('item-address'); // Найти элемент
+                
+                const itemData = {
                     title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
                     price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
                     author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
                     author_avatar: window.currentUser.user_metadata?.avatar_url || '',
                     image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
                     currency: currencyEl ? currencyEl.value : 'RSD', 
-                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : ''
+                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
+                    address: addressEl ? addressEl.value.trim() : '', // <-- ДОБАВЛЕНО
+                    coords: window.itemCoords                         // <-- ДОБАВЛЕНО
                 };
 
                 let res;
@@ -1579,6 +1629,25 @@
                 statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
             } else { statusBadgeEl.className = 'hidden'; }
 
+            const addrCont = document.getElementById('modal-address-container');
+            if (item.category && item.category.includes('Жилье') && item.coords && item.coords[0] !== 0) {
+                addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
+                document.getElementById('modal-address').innerText = item.address || item.city;
+                setTimeout(() => {
+                    if(!window.viewMapObj) {
+                        window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
+                        window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
+                    } else {
+                        window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
+                        window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
+                    }
+                    window.viewMapObj.invalidateSize();
+                }, 150);
+            } else {
+                addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
+            }
+            
             document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
             document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
             
