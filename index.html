@@ -510,7 +510,7 @@
                 <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-4 px-6 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
                 <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-4 px-6 border-b-2 border-transparent text-stone-400 transition ml-4 cursor-pointer">Заначка</button>
             </div>
-            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch" style="display: none; align-content: start;"></div>
+            <div id="profile-items-grid" class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch auto-rows-max" style="display: none; align-content: start;"></div>
             <div id="profile-empty" class="flex-1 flex flex-col items-center justify-center text-stone-400 font-bold text-lg">
                 <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
             </div>
@@ -1054,11 +1054,11 @@
 
             const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
 
-            // Упрощенные размеры: профиль чуть компактнее, но пропорции сохранены
-            const imgHeight = isProfile ? 'h-28 sm:h-32' : 'h-36 sm:h-40';
-            const pClass = isProfile ? 'p-3' : 'p-3 sm:p-4';
-            const titleClass = isProfile ? 'text-xs sm:text-sm' : 'text-sm sm:text-base';
-            const priceClass = isProfile ? 'text-sm sm:text-base' : 'text-base sm:text-lg';
+            // Единый стандартный размер для всех карточек
+            const imgHeight = 'h-36 sm:h-40';
+            const pClass = 'p-3 sm:p-4';
+            const titleClass = 'text-sm sm:text-base';
+            const priceClass = 'text-base sm:text-lg';
 
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
