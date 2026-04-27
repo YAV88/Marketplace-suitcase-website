@@ -1587,110 +1587,156 @@
         };
 
         window.openItemDetails = async (id) => {
-            let item = window.loadedItems.find(i => i.id === id);
-            
-            // Бронебойный фоллбэк: если товара нет в памяти - качаем из БД
-            if (!item) {
-                try {
-                    const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
-                    if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
-                } catch(e) { console.error(e); }
-            }
-
-            if(!item) return;
-            window.activeModalItemId = item.id;
-
-            const imgContainer = document.getElementById('modal-img-container');
-            if (Array.isArray(item.images) && item.images.length > 1) {
-                let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
-                imgContainer.innerHTML = `<img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')"><div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>`;
-            } else {
-                const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
-            }
-
-            const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-            document.getElementById('modal-title').innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
-            document.getElementById('modal-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
-            
-            const phoneContainer = document.getElementById('modal-phone-container');
-            if (item.phone) {
-                phoneContainer.classList.remove('hidden'); phoneContainer.classList.add('flex');
-                document.getElementById('modal-phone').innerText = item.phone; document.getElementById('modal-phone').href = `tel:${item.phone}`;
-            } else {
-                phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex');
-            }
-
-            const statusBadgeEl = document.getElementById('modal-status-badge');
-            if (item.status === 'reserved') {
-                statusBadgeEl.innerText = 'В РЕЗЕРВЕ'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
-            } else if (item.status === 'sold') {
-                statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
-            } else { statusBadgeEl.className = 'hidden'; }
-
-            const addrCont = document.getElementById('modal-address-container');
-            if (item.category && item.category.includes('Жилье') && item.coords && item.coords[0] !== 0) {
-                addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
-                document.getElementById('modal-address').innerText = item.address || item.city;
-                setTimeout(() => {
-                    if(!window.viewMapObj) {
-                        window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
-                        window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
-                    } else {
-                        window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
-                        window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
-                    }
-                    window.viewMapObj.invalidateSize();
-                }, 150);
-            } else {
-                addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
-            }
-            
-            document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
-            document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
-            
-            const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
-            document.getElementById('modal-category-text').innerText = catText.toUpperCase();
-
-            document.getElementById('modal-author').innerText = item.authorName || "Пользователь";
-            document.getElementById('modal-author-avatar').innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
-            
-            const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
-            document.getElementById('modal-author-sub').innerHTML = authorBadgeHtml;
-            
-            const modalFavIcon = document.querySelector('#modal-fav-btn i');
-            if(modalFavIcon) modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-
-            const isOwner = window.currentUser && window.currentUser.id === item.userId;
-            const ctrl = document.getElementById('modal-owner-controls');
-            const contactBtn = document.getElementById('btn-contact-seller');
-            const statusControls = document.getElementById('modal-owner-status-controls');
-            const editControls = document.getElementById('modal-owner-edit-controls');
-
-            if (isOwner) {
-                contactBtn.classList.add('hidden'); ctrl.classList.remove('hidden'); ctrl.classList.add('flex');
+            try {
+                let item = window.loadedItems.find(i => i.id === id);
                 
-                const vipBtnText = document.getElementById('btn-owner-vip-text');
-                vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
-                
-                statusControls.innerHTML = '';
-                if (item.status !== 'sold') {
-                    const isRes = item.status === 'reserved';
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
-                } else {
-                    statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                // Бронебойный фоллбэк: если товара нет в памяти - качаем из БД
+                if (!item) {
+                    try {
+                        const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
+                        if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
+                    } catch(e) { console.error(e); }
                 }
 
-                editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>
-                                          <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
-            } else {
-                contactBtn.classList.remove('hidden'); ctrl.classList.add('hidden'); ctrl.classList.remove('flex');
+                if(!item) {
+                    window.showToast("Товар не найден", true);
+                    return;
+                }
+                
+                window.activeModalItemId = item.id;
+
+                const imgContainer = document.getElementById('modal-img-container');
+                if (imgContainer) {
+                    if (Array.isArray(item.images) && item.images.length > 1) {
+                        let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                        imgContainer.innerHTML = `<img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')"><div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>`;
+                    } else {
+                        const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                        imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
+                    }
+                }
+
+                const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
+                const titleEl = document.getElementById('modal-title');
+                if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
+                
+                const priceEl = document.getElementById('modal-price');
+                if(priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+                
+                const phoneContainer = document.getElementById('modal-phone-container');
+                if (phoneContainer) {
+                    if (item.phone) {
+                        phoneContainer.classList.remove('hidden'); phoneContainer.classList.add('flex');
+                        const phoneEl = document.getElementById('modal-phone');
+                        if(phoneEl) { phoneEl.innerText = item.phone; phoneEl.href = `tel:${item.phone}`; }
+                    } else {
+                        phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex');
+                    }
+                }
+
+                const statusBadgeEl = document.getElementById('modal-status-badge');
+                if (statusBadgeEl) {
+                    if (item.status === 'reserved') {
+                        statusBadgeEl.innerText = 'В РЕЗЕРВЕ'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
+                    } else if (item.status === 'sold') {
+                        statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
+                    } else { statusBadgeEl.className = 'hidden'; }
+                }
+
+                const addrCont = document.getElementById('modal-address-container');
+                if (addrCont) {
+                    if (item.category && item.category.includes('Жилье') && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
+                        addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
+                        const modalAddrEl = document.getElementById('modal-address');
+                        if(modalAddrEl) modalAddrEl.innerText = item.address || item.city || '';
+                        setTimeout(() => {
+                            try {
+                                if(!window.viewMapObj) {
+                                    window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
+                                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
+                                    window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
+                                } else {
+                                    window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
+                                    window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
+                                }
+                                window.viewMapObj.invalidateSize();
+                            } catch(mapErr) { console.warn("Карта не загрузилась:", mapErr); }
+                        }, 150);
+                    } else {
+                        addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
+                    }
+                }
+                
+                const descEl = document.getElementById('modal-desc');
+                if(descEl) descEl.innerText = item.description || "Описание отсутствует.";
+                
+                const cityTextEl = document.getElementById('modal-city-text');
+                if(cityTextEl) cityTextEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
+                
+                const catTextEl = document.getElementById('modal-category-text');
+                if(catTextEl) {
+                    const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
+                    catTextEl.innerText = catText.toUpperCase();
+                }
+
+                const authorEl = document.getElementById('modal-author');
+                if(authorEl) authorEl.innerText = item.authorName || "Пользователь";
+                
+                const avatarEl = document.getElementById('modal-author-avatar');
+                if(avatarEl) avatarEl.innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
+                
+                const authorSubEl = document.getElementById('modal-author-sub');
+                if(authorSubEl) {
+                    const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
+                    authorSubEl.innerHTML = authorBadgeHtml;
+                }
+                
+                const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                window.updateSEO(item.title, item.description, coverImg);
+                
+                const modalFavIcon = document.querySelector('#modal-fav-btn i');
+                if(modalFavIcon && window.userFavorites) {
+                    modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                }
+
+                const isOwner = window.currentUser && window.currentUser.id === item.userId;
+                const ctrl = document.getElementById('modal-owner-controls');
+                const contactBtn = document.getElementById('btn-contact-seller');
+                const statusControls = document.getElementById('modal-owner-status-controls');
+                const editControls = document.getElementById('modal-owner-edit-controls');
+
+                if (isOwner) {
+                    if(contactBtn) contactBtn.classList.add('hidden'); 
+                    if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
+                    
+                    const vipBtnText = document.getElementById('btn-owner-vip-text');
+                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
+
+                    if(statusControls) {
+                        statusControls.innerHTML = '';
+                        if (item.status !== 'sold') {
+                            const isRes = item.status === 'reserved';
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                        } else {
+                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                        }
+                    }
+
+                    if(editControls) {
+                        editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>
+                                                  <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                    }
+                } else {
+                    if(contactBtn) contactBtn.classList.remove('hidden'); 
+                    if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
+                }
+                
+                window.openModal('item-modal');
+                history.pushState({ modal: true }, '', '?item=' + id);
+            } catch (err) {
+                console.error("КРИТИЧЕСКАЯ ОШИБКА ОТКРЫТИЯ:", err);
             }
-            window.openModal('item-modal');
-            // Прописываем ID товара в адресную строку браузера
-            history.pushState({ modal: true }, '', '?item=' + id);
         };
 
         window.changeItemStatus = async (newStatus) => {
