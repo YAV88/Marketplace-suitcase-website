@@ -29,7 +29,22 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-    
+
+        /* === СТИЛИ КОМПАКТНОЙ СЕТКИ === */
+        #main-items-grid.compact-mode { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.5rem !important; }
+        @media (min-width: 768px) { #main-items-grid.compact-mode { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+        
+        /* Ужимаем элементы внутри карточки */
+        #main-items-grid.compact-mode .rounded-2xl { border-radius: 0.75rem !important; }
+        #main-items-grid.compact-mode img { height: 110px !important; object-fit: cover !important; }
+        #main-items-grid.compact-mode .p-3, #main-items-grid.compact-mode .p-4 { padding: 0.5rem !important; }
+        
+        /* Текст в одну строку и скрытие лишнего */
+        #main-items-grid.compact-mode h3 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
+        #main-items-grid.compact-mode .price-text { font-size: 0.85rem !important; margin-bottom: 0 !important; }
+        #main-items-grid.compact-mode .text-xs, #main-items-grid.compact-mode .text-sm:not(.price-text) { display: none !important; }
+        /* ================================ */
+        
         /* 1. ЗАГРУЗКА ШРИФТОВ */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tektur:wght@600;800&display=swap');
         
@@ -296,9 +311,16 @@
         </div>
 
         <div>
-            <div class="flex items-center gap-3 mb-4 pl-1">
-                <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
-                <h4 id="main-feed-title" class="font-black text-xl text-stone-500">Свежие объявления</h4>
+            <div class="flex justify-between items-center mb-4 pl-1">
+                <div class="flex items-center gap-3">
+                    <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
+                    <h4 id="main-feed-title" class="font-black text-xl text-stone-500">Свежие объявления</h4>
+                </div>
+                
+                <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-lg border border-stone-200 dark:border-stone-700 shrink-0">
+                    <button id="btn-view-large" onclick="window.setViewMode('large')" class="px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-white transition cursor-pointer" title="Крупная сетка"><i class="fa-solid fa-border-all"></i></button>
+                    <button id="btn-view-compact" onclick="window.setViewMode('compact')" class="px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 dark:hover:text-white transition cursor-pointer" title="Мелкая сетка"><i class="fa-solid fa-table-cells"></i></button>
+                </div>
             </div>
             
             <div id="loading-placeholder" class="w-full mb-6">
@@ -1043,7 +1065,6 @@
             window.applyFilters();
         };
 
-        // Карта подкатегорий для динамической отрисовки
         // Карта подкатегорий для динамической отрисовки
         window.subcategoriesMap = {
             'Одежда': [
@@ -2121,6 +2142,41 @@
             else window.closeModal('item-modal');
         });
 
+        // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВИДА СЕТКИ ===
+        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'large';
+
+        window.setViewMode = (mode) => {
+            window.currentViewMode = mode;
+            localStorage.setItem('svalka_view_mode', mode);
+            
+            const btnL = document.getElementById('btn-view-large');
+            const btnC = document.getElementById('btn-view-compact');
+            const grid = document.getElementById('main-items-grid');
+            
+            // Перекрашиваем кнопки
+            if (btnL && btnC) {
+                if (mode === 'large') {
+                    btnL.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+                    btnC.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
+                } else {
+                    btnC.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+                    btnL.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
+                }
+            }
+            
+            // Применяем классы к сетке
+            if (grid) {
+                if (mode === 'large') {
+                    grid.classList.remove('compact-mode');
+                } else {
+                    grid.classList.add('compact-mode');
+                }
+            }
+        };
+
+        // Запускаем проверку при загрузке страницы
+        setTimeout(() => window.setViewMode(window.currentViewMode), 300);
+        
     </script>
 </body>
 </html>
