@@ -261,11 +261,15 @@
         <div id="main-cats-container" class="mb-3 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-3 pb-2 md:pb-0 snap-x md:snap-none" style="scrollbar-width: none; -ms-overflow-style: none;">
             <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все</button>
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> ТОП</button>
+            
             <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Одежда</button>
+            <button data-cat="Детям" onclick="window.filterByCategory('Детям', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Детям</button>
             <button data-cat="Электроника" onclick="window.filterByCategory('Электроника', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Электроника</button>
             <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Интерьер</button>
             <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Транспорт</button>
+            <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Красота</button>
             <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Услуги</button>
+            <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Бизнес</button>
             <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Хобби</button>
             <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Животные</button>
             <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Жилье</button>
@@ -1040,16 +1044,44 @@
         };
 
         // Карта подкатегорий для динамической отрисовки
+        // Карта подкатегорий для динамической отрисовки
         window.subcategoriesMap = {
-            'Одежда': [{val: 'Женская'}, {val: 'Мужская'}, {val: 'Детская'}, {val: 'Обувь'}, {val: 'Аксессуары'}],
-            'Электроника': [{val: 'Телефоны'}, {val: 'ПК', label: 'Ноутбуки / ПК'}, {val: 'Консоли'}, {val: 'Аудио', label: 'Аудио/Видео'}, {val: 'Бытовая', label: 'Бытовая техника'}],
-            'Интерьер': [{val: 'Мебель'}, {val: 'Декор'}, {val: 'Ремонт'}, {val: 'Сад', label: 'Сад и Огород'}],
-            'Транспорт': [{val: 'Авто'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Запчасти'}],
-            'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Красота'}, {val: 'Репетиторы'}, {val: 'Вакансии', prefix: 'Работа'}],
-            'Хобби': [{val: 'Спорт'}, {val: 'Книги'}, {val: 'Музыка'}, {val: 'Коллекции', label: 'Коллекционирование'}],
-            'Животные': [{val: 'Собаки'}, {val: 'Кошки'}, {val: 'Товары', label: 'Зоотовары'}],
-            'Жилье': [{val: 'Аренда'}, {val: 'Покупка'}, {val: 'Коммерция', label: 'Коммерческая'}],
-            'Другое': [{val: 'Игрушки', prefix: 'Детям'}, {val: 'Коляски', prefix: 'Детям'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}]
+            'Одежда': [
+                {val: 'Женская'}, {val: 'Мужская'}, {val: 'Обувь'}, {val: 'Сумки'}, {val: 'Аксессуары'}, {val: 'Спецодежда'}
+            ],
+            'Детям': [
+                {val: 'Игрушки'}, {val: 'Коляски'}, {val: 'Одежда'}, {val: 'Обувь'}, {val: 'Автокресла'}, {val: 'Мебель', label: 'Детская мебель'}
+            ],
+            'Электроника': [
+                {val: 'Телефоны', label: 'Смартфоны'}, {val: 'ПК', label: 'Компьютеры / ПК'}, {val: 'Ноутбуки'}, {val: 'Планшеты'}, {val: 'ТВ', label: 'ТВ и Видео'}, {val: 'Аудио'}, {val: 'Консоли', label: 'Игры / Консоли'}, {val: 'Бытовая', label: 'Бытовая техника'}, {val: 'Фото', label: 'Фототехника'}
+            ],
+            'Интерьер': [
+                {val: 'Мебель'}, {val: 'Декор'}, {val: 'Посуда'}, {val: 'Текстиль'}, {val: 'Ремонт', label: 'Стройматериалы'}, {val: 'Инструменты'}, {val: 'Сад', label: 'Сад и Огород'}
+            ],
+            'Транспорт': [
+                {val: 'Авто', label: 'Автомобили'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Самокаты'}, {val: 'Запчасти'}, {val: 'Шины', label: 'Шины и диски'}
+            ],
+            'Красота': [
+                {val: 'Косметика'}, {val: 'Парфюмерия'}, {val: 'Уход', label: 'Уход за собой'}, {val: 'Приборы', label: 'Фены и стайлеры'}
+            ],
+            'Услуги': [
+                {val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}, {val: 'Вакансии', prefix: 'Работа'}
+            ],
+            'Бизнес': [
+                {val: 'Оборудование'}, {val: 'Бизнес', label: 'Готовый бизнес'}, {val: 'Сырье', label: 'Сырье и материалы'}
+            ],
+            'Хобби': [
+                {val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Муз. инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}
+            ],
+            'Животные': [
+                {val: 'Собаки'}, {val: 'Кошки'}, {val: 'Птицы'}, {val: 'Аквариум', label: 'Аквариумистика'}, {val: 'Товары', label: 'Зоотовары'}
+            ],
+            'Жилье': [
+                {val: 'Аренда'}, {val: 'Посуточно', label: 'Аренда (посуточно)'}, {val: 'Покупка', label: 'Продажа'}, {val: 'Коммерция', label: 'Коммерческая'}, {val: 'Дачи', label: 'Дома и дачи'}
+            ],
+            'Другое': [
+                {val: 'Билеты'}, {val: 'Продукты', label: 'Продукты питания'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}, {val: 'Бюро', label: 'Бюро находок'}
+            ]
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
