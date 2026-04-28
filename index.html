@@ -667,6 +667,20 @@
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
                     <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                 </div>
+
+                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1">Способ передачи <span class="text-brand-500">*</span></span>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2.5 cursor-pointer group">
+                            <input type="checkbox" id="del-meet" value="Личная встреча" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked>
+                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🤝 Личная встреча</span>
+                        </label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group">
+                            <input type="checkbox" id="del-post" value="PostExpress" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
+                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">📦 PostExpress</span>
+                        </label>
+                    </div>
+                </div>
                 
                 <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
                     <div class="flex justify-between items-center mb-2 px-2 pt-1">
@@ -697,6 +711,7 @@
                 <div id="modal-status-badge" class="hidden mb-3 inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start"></div>
                 <h2 id="modal-title" class="text-xl md:text-2xl font-display font-black mb-1 leading-tight text-stone-900 dark:text-white">Название...</h2>
                 <div id="modal-price" class="text-2xl md:text-3xl price-text text-brand-600 mb-4">0 RSD</div>
+                <div id="modal-delivery-container" class="flex flex-wrap gap-2 mb-4"></div>
                 <div id="modal-address-container" class="hidden flex-col gap-3 mb-4 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700">
                     <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-pin text-brand-500 mr-1"></i> <span id="modal-address">Адрес</span></div>
                     <div id="view-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden z-10"></div>
@@ -1296,6 +1311,9 @@
         window.mapItemData = function(i) {
             try {
                 return {
+                    address: i.address || '', 
+                    coords: Array.isArray(i.coords) ? i.coords : [0,0],
+                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'] // <-- ДОБАВЛЕНО
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
@@ -1328,6 +1346,10 @@
             const titleClass = 'text-sm sm:text-base';
             const priceClass = 'text-base sm:text-lg';
 
+            let deliveryBadges = '';
+            if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 border border-brand-200 dark:border-brand-800/50" title="Отправка PostExpress"><i class="fa-solid fa-box"></i> PostExpress</span>`;
+            if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
+            
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
                 <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
@@ -1340,6 +1362,7 @@
                 <div class="${pClass} flex-1 flex flex-col justify-between">
                     <h4 class="font-bold ${titleClass} mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                    <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
                     <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-2 pt-2">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
@@ -1640,6 +1663,13 @@
                 
                 if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
 
+                // Читаем чекбоксы доставки
+                const delMeet = document.getElementById('del-meet')?.checked;
+                const delPost = document.getElementById('del-post')?.checked;
+                const deliveryArr = [];
+                if(delMeet) deliveryArr.push('Личная встреча');
+                if(delPost) deliveryArr.push('PostExpress');
+                
                 let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
                 
                 function dataURItoBlob(dataURI) {
@@ -1677,8 +1707,11 @@
                     image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
                     currency: currencyEl ? currencyEl.value : 'RSD', 
                     phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
-                    address: addressEl ? addressEl.value.trim() : '', // <-- ДОБАВЛЕНО
-                    coords: window.itemCoords                         // <-- ДОБАВЛЕНО
+                    address: addressEl ? addressEl.value.trim() : '',
+                    coords: window.itemCoords
+                    address: addressEl ? addressEl.value.trim() : '', 
+                    coords: window.itemCoords,
+                    delivery: deliveryArr
                 };
 
                 let res;
@@ -1692,6 +1725,9 @@
                 
                 if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
                     console.warn("Фоллбэк: сохранение без новых колонок для совместимости");
+                    delete itemData.status;
+                    delete itemData.phone;
+                    delete itemData.delivery; // <-- ДОБАВЛЕНО
                     delete itemData.status;
                     delete itemData.phone;
                     if (window.editingItemId) {
@@ -1877,6 +1913,16 @@
                 
                 const priceEl = document.getElementById('modal-price');
                 if(priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+
+                // Отрисовка способов доставки
+                const delCont = document.getElementById('modal-delivery-container');
+                if (delCont) {
+                    let delHtml = '';
+                    const delList = item.delivery || ['Личная встреча'];
+                    if(delList.includes('PostExpress')) delHtml += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-brand-200 dark:border-brand-800/50"><i class="fa-solid fa-box mr-1.5"></i> Отправка PostExpress</span>`;
+                    if(delList.includes('Личная встреча')) delHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-handshake mr-1.5"></i> Личная встреча</span>`;
+                    delCont.innerHTML = delHtml;
+                }
                 
                 const phoneContainer = document.getElementById('modal-phone-container');
                 if (phoneContainer) {
@@ -2021,6 +2067,8 @@
             window.editExistingImages = item.images || [];
             window.tempPhotos = []; 
             window.renderPhotoPreviews(); // Вызываем нашу новую умную отрисовку
+            document.getElementById('del-meet').checked = item.delivery ? item.delivery.includes('Личная встреча') : true;
+            document.getElementById('del-post').checked = item.delivery ? item.delivery.includes('PostExpress') : false;
         };
 
             
