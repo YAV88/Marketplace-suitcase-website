@@ -1313,7 +1313,7 @@
                 return {
                     address: i.address || '', 
                     coords: Array.isArray(i.coords) ? i.coords : [0,0],
-                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'] // <-- ДОБАВЛЕНО
+                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'], // <-- ДОБАВЛЕНО
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
@@ -1708,8 +1708,6 @@
                     currency: currencyEl ? currencyEl.value : 'RSD', 
                     phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
                     address: addressEl ? addressEl.value.trim() : '',
-                    coords: window.itemCoords
-                    address: addressEl ? addressEl.value.trim() : '', 
                     coords: window.itemCoords,
                     delivery: deliveryArr
                 };
@@ -1725,8 +1723,6 @@
                 
                 if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
                     console.warn("Фоллбэк: сохранение без новых колонок для совместимости");
-                    delete itemData.status;
-                    delete itemData.phone;
                     delete itemData.delivery; // <-- ДОБАВЛЕНО
                     delete itemData.status;
                     delete itemData.phone;
