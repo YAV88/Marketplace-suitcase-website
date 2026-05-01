@@ -1588,13 +1588,18 @@
                 const authorSubEl = document.getElementById('modal-author-sub');
                 if(authorSubEl) {
                     const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
-                    
-                    // ДОБАВИЛИ КЛИКАБЕЛЬНУЮ КНОПКУ ПРОДАВЦА
-                    const sellerBtnHtml = `<button onclick="window.openSellerProfile('${item.userId}')" class="w-full mt-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-2.5 rounded-xl text-sm font-bold hover:text-brand-600 hover:border-brand-500 transition shadow-sm cursor-pointer">Все объявления продавца</button>`;
-                    
-                    authorSubEl.innerHTML = authorBadgeHtml + sellerBtnHtml;
+                    authorSubEl.innerHTML = authorBadgeHtml;
                 }
                 
+                const sellerBtn = document.getElementById('modal-seller-btn');
+                if (sellerBtn) {
+                    sellerBtn.onclick = () => {
+                        window.closeModal('item-modal'); // Закрываем карточку товара
+                        window.openSellerProfile(item.userId); // Открываем профиль продавца
+                    };
+                }
+                // ============================================
+
                 const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                 window.updateSEO(item.title, item.description, coverImg);
                 
