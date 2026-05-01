@@ -731,8 +731,13 @@
             <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="absolute top-4 right-16 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
             <button onclick="window.shareCurrentItem()" class="absolute top-4 right-28 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>
 
-            <div id="modal-img-container" class="w-full md:w-1/2 bg-stone-100 dark:bg-stone-800 h-[300px] md:h-auto overflow-hidden flex items-center justify-center relative group">
-                <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+            <!-- ЛЕВАЯ ЧАСТЬ: Фотографии -->
+            <div class="w-full md:w-[45%] bg-stone-100 dark:bg-stone-800 h-[300px] sm:h-[400px] md:h-full flex flex-col shrink-0">
+                <div id="modal-img-container" class="flex-1 relative overflow-hidden flex items-center justify-center p-2">
+                    <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+                </div>
+                <!-- Галерея миниатюр теперь живет в отдельном блоке внизу! -->
+                <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden"></div>
             </div>
             <!-- ПРАВАЯ ЧАСТЬ: 55% ширины, своя область прокрутки -->
             <div class="w-full md:w-[55%] flex flex-col overflow-hidden text-left relative bg-white dark:bg-stone-900 rounded-r-[2rem]">
@@ -758,13 +763,16 @@
                     
                     <p id="modal-desc" class="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed font-medium whitespace-pre-wrap mb-8">Описание отсутствует.</p>
                     
-                    <!-- КАРТОЧКА ПРОДАВЦА (Теперь внутри скролла, под описанием) -->
-                    <div class="bg-stone-50 dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-200 dark:border-stone-700 flex items-center gap-4 mb-6">
-                        <div id="modal-author-avatar" class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-2xl shrink-0"><i class="fa-solid fa-user"></i></div>
-                        <div class="flex-1 overflow-hidden">
-                            <div id="modal-author" class="font-black text-base text-stone-900 dark:text-white truncate">Пользователь</div>
-                            <div id="modal-author-sub" class="text-xs text-stone-500 font-bold truncate">Продавец SVALKA</div>
+                    <!-- КАРТОЧКА ПРОДАВЦА -->
+                    <div class="bg-stone-50 dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-200 dark:border-stone-700 flex flex-col gap-3 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div id="modal-author-avatar" class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-2xl shrink-0"><i class="fa-solid fa-user"></i></div>
+                            <div class="flex-1 overflow-hidden">
+                                <div id="modal-author" class="font-black text-base text-stone-900 dark:text-white truncate">Пользователь</div>
+                                <div id="modal-author-sub" class="text-xs text-stone-500 font-bold truncate">Продавец SVALKA</div>
+                            </div>
                         </div>
+                        <button onclick="window.showToast('Профиль продавца будет доступен в следующем обновлении!')" class="w-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-2.5 rounded-xl text-sm font-bold hover:text-brand-600 hover:border-brand-500 transition shadow-sm cursor-pointer">Все объявления продавца</button>
                     </div>
 
                     <!-- КНОПКИ ВЛАДЕЛЬЦА (Тоже внутри скролла) -->
@@ -779,10 +787,10 @@
 
                 <!-- ТОНКИЙ ЛИПКИЙ ПОДВАЛ (Только для кнопок связи) -->
                 <div class="bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-stone-100 dark:border-stone-800 p-4 sm:p-5 flex gap-3 z-10 shrink-0">
-                    <div id="modal-phone-container" class="hidden w-1/3 min-w-[120px]">
-                        <a id="modal-phone" href="#" class="w-full h-full flex items-center justify-center bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl hover:bg-stone-200 transition shadow-sm font-bold text-sm text-stone-900 dark:text-white cursor-pointer"><i class="fa-solid fa-phone text-brand-500 mr-2"></i> Позвонить</a>
+                    <div id="modal-phone-container" class="hidden w-1/3 min-w-[130px]">
+                        <a id="modal-phone" href="#" class="w-full h-full py-3.5 flex items-center justify-center bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl hover:bg-stone-200 transition shadow-sm font-bold text-sm text-stone-900 dark:text-white cursor-pointer"><i class="fa-solid fa-phone text-brand-500 mr-2"></i> Позвонить</a>
                     </div>
-                    <button id="btn-contact-seller" onclick="window.openChatModal()" class="flex-1 bg-brand-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paper-plane mr-2"></i> Написать сообщение</button>
+                    <button id="btn-contact-seller" onclick="window.openChatModal()" class="flex-1 bg-brand-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-md hover:bg-brand-700 transition cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paper-plane mr-2"></i> Написать</button>
                 </div>
 
             </div>
@@ -1394,7 +1402,7 @@
                     ${condBadge}
                 </div>
                 <div class="${pClass} flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold ${titleClass} mb-1 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
+                    <h4 class="font-bold ${titleClass} mb-1 pr-7 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
                     <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-2 pt-2">
@@ -1419,11 +1427,19 @@
 
                 // Картинки и тексты
                 const imgContainer = document.getElementById('modal-img-container');
-                if (Array.isArray(item.images) && item.images.length > 1) {
-                    let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
-                    imgContainer.innerHTML = `<img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')"><div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>`;
-                } else {
-                    imgContainer.innerHTML = `<img id="modal-img" src="${item.image_url || ''}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.image_url || ''}')">`;
+                const thumbsContainer = document.getElementById('modal-thumbs-container');
+                
+                if (imgContainer && thumbsContainer) {
+                    const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                    imgContainer.innerHTML = `<img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
+
+                    if (Array.isArray(item.images) && item.images.length > 1) {
+                        thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                        thumbsContainer.classList.remove('hidden');
+                    } else {
+                        thumbsContainer.innerHTML = '';
+                        thumbsContainer.classList.add('hidden');
+                    }
                 }
 
                 document.getElementById('modal-title').innerText = item.title;
