@@ -443,11 +443,12 @@
         </div>
     </div>
 
-    <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
-        <button id="lightbox-prev" class="absolute left-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
-        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-lg" onclick="event.stopPropagation()">
-        <button id="lightbox-next" class="absolute right-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
-        <button class="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition z-50 cursor-pointer" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
+    <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
+        <button id="lightbox-prev" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
+        <!-- Магия здесь: w-full h-full заставит фото заполнить экран, а object-contain сохранит пропорции -->
+        <img id="lightbox-img" src="" class="w-full h-full object-contain rounded-lg" onclick="event.stopPropagation()">
+        <button id="lightbox-next" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="absolute top-6 right-6 text-white text-3xl md:text-4xl hover:scale-110 transition z-50 cursor-pointer" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 opacity-0 pointer-events-none"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400 text-lg"></i> <span id="toast-msg">Готово!</span></div>
@@ -1436,13 +1437,16 @@
                 
                 if (imgContainer && thumbsContainer) {
                     const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                    imgContainer.innerHTML = `<img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
+                    
+                    // Добавили w-full h-full m-auto — это отцентрирует картинку и не даст ей улететь наверх
+                    imgContainer.innerHTML = `<img id="modal-img" src="${coverImg}" class="w-full h-full m-auto object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
 
                     if (Array.isArray(item.images) && item.images.length > 1) {
                         thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                         thumbsContainer.classList.remove('hidden');
                     } else {
-                        thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden');
+                        thumbsContainer.innerHTML = '';
+                        thumbsContainer.classList.add('hidden');
                     }
                 }
 
