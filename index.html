@@ -1019,7 +1019,7 @@
                     if(icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
-                window.renderGrid();
+                window.fetchItems(false);
                 
                 if(window.activeModalItemId === itemId) {
                     const modalFavIcon = document.querySelector('#modal-fav-btn i');
@@ -1275,10 +1275,7 @@
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
                     status: i.status || 'active', phone: i.phone || '',
-                    address: i.address || '', 
-                    condition: i.condition || 'Б/У',
-                    coords: Array.isArray(i.coords) ? i.coords : [0,0],
-                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча']
+                    address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча']
                 };
             } catch(err) { return null; }
         }
@@ -1293,8 +1290,7 @@
             const isLiked = window.userFavorites && window.userFavorites.has(i.id);
             const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
             
-            let statusBadge = '';
-            let opacityClass = '';
+            let statusBadge = ''; let opacityClass = '';
             if (i.status === 'reserved') {
                 statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`;
             } else if (i.status === 'sold') {
@@ -1312,11 +1308,9 @@
             }
             
             let condBadge = '';
-            if (isService) {
-                condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
-            } else if (isEstate) {
-                condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
-            } else {
+            if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
+            else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
+            else {
                 if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
                 else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
             }
@@ -1455,12 +1449,6 @@
                 const cityTextEl = document.getElementById('modal-city-text');
                 if(cityTextEl) cityTextEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
                 
-                const catTextEl = document.getElementById('modal-category-text');
-                if(catTextEl) {
-                    const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
-                    catTextEl.innerText = catText.toUpperCase();
-                }
-
                 const authorEl = document.getElementById('modal-author');
                 if(authorEl) authorEl.innerText = item.authorName || "Пользователь";
                 
@@ -1761,7 +1749,7 @@
                     delete itemData.delivery; delete itemData.status; delete itemData.phone; delete itemData.condition;
                     if (window.editingItemId) res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
                     else res = await supabase.from('items').insert([itemData]);
-                    if(!res.error) window.showToast("Успешно, но добавьте колонки status/phone в Supabase!", true);
+                    if(!res.error) window.showToast("Успешно, но добавьте новые колонки в Supabase!", true);
                 }
 
                 if(res.error) throw new Error(res.error.message);
@@ -1828,6 +1816,21 @@
                 reader.readAsDataURL(file);
             }
             e.target.value = ''; 
+        };
+
+        window.switchProfileTab = tab => { 
+            window.currentProfileTab = tab; 
+            const t1 = document.getElementById('tab-my-items');
+            const t2 = document.getElementById('tab-my-saved');
+            if (t1) {
+                if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); }
+            }
+            if (t2) {
+                if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); }
+                else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); }
+            }
+            window.renderProfileTabs(); 
         };
 
         window.renderProfileTabs = async () => {
@@ -2072,7 +2075,7 @@
         if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
         window.addEventListener('popstate', () => {
-            const params = newSearchParams(window.location.search);
+            const params = new URLSearchParams(window.location.search);
             const item = params.get('item');
             if (item) window.openItemDetails(item);
             else window.closeModal('item-modal');
