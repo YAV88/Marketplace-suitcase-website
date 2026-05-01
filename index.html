@@ -40,13 +40,16 @@
         @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; } }
         @media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; } }
 
-        /* Вместо nth-child теперь надежные классы! */
-        .view-grid .card-img-wrap { height: 110px !important; }
+        /* Пропорциональная высота фото для разных экранов */
+        .view-grid .card-img-wrap { height: 120px !important; }
+        @media (min-width: 640px) { .view-grid .card-img-wrap { height: 140px !important; } }
+        @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 170px !important; } }
+
         .view-grid .card-body-wrap { padding: 0.5rem !important; }
         .view-grid .border-t.text-xs { display: none !important; }
         
-        /* Исправляем обрезание заголовка (добавили display: block и padding-bottom) */
-        .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; margin-bottom: 2px !important; display: block !important; padding-bottom: 2px; }
+        /* Исправляем обрезание заголовка (добавили padding-bottom и 2 строки) */
+        .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden !important; margin-bottom: 2px !important; padding-bottom: 2px; }
         .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
         /* === РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ КАК НА KP) === */
@@ -853,12 +856,15 @@
             <button onclick="window.shareCurrentItem()" class="absolute top-4 right-28 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>
 
             <!-- ЛЕВАЯ ЧАСТЬ: Фотографии -->
-            <div class="w-full md:w-[45%] bg-stone-100 dark:bg-stone-800 h-[300px] sm:h-[400px] md:h-full flex flex-col shrink-0">
-                <div id="modal-img-container" class="flex-1 relative overflow-hidden flex items-center justify-center p-2">
-                    <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">
+            <div class="w-full md:w-[45%] bg-stone-100 dark:bg-stone-800 min-h-[300px] flex flex-col shrink-0 relative">
+                <!-- Контейнер растягивается, а картинка живет внутри absolute inset-0 -->
+                <div id="modal-img-container" class="flex-1 relative overflow-hidden">
+                    <div class="absolute inset-0 p-4 flex items-center justify-center">
+                        <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox(this.src)">
+                    </div>
                 </div>
-                <!-- Галерея миниатюр теперь живет в отдельном блоке внизу! -->
-                <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden"></div>
+                <!-- Галерея миниатюр -->
+                <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden z-10 border-t border-stone-200 dark:border-stone-700"></div>
             </div>
             <!-- ПРАВАЯ ЧАСТЬ: 55% ширины, своя область прокрутки -->
             <div class="w-full md:w-[55%] flex flex-col overflow-hidden text-left relative bg-white dark:bg-stone-900 rounded-r-[2rem]">
@@ -1479,11 +1485,14 @@
                 if (imgContainer && thumbsContainer) {
                     const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                     
-                    // Добавили w-full h-full m-auto — это отцентрирует картинку и не даст ей улететь наверх
-                    imgContainer.innerHTML = `<img id="modal-img" src="${coverImg}" class="w-full h-full m-auto object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox(this.src)">`;
+                    // Обновленный HTML картинки (вложено в absolute inset-0)
+                    imgContainer.innerHTML = `
+                    <div class="absolute inset-0 p-4 flex items-center justify-center">
+                        <img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${coverImg}')">
+                    </div>`;
 
                     if (Array.isArray(item.images) && item.images.length > 1) {
-                        thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
+                        thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                         thumbsContainer.classList.remove('hidden');
                     } else {
                         thumbsContainer.innerHTML = '';
