@@ -893,6 +893,8 @@
                                 <div id="modal-author-sub" class="text-xs text-stone-500 font-bold truncate">Продавец SVALKA</div>
                             </div>
                         </div>
+                        <!-- На эту кнопку скрипт сам повесит нужную ссылку -->
+                        <button id="modal-seller-btn" class="w-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-2.5 rounded-xl text-sm font-bold hover:text-brand-600 hover:border-brand-500 transition shadow-sm cursor-pointer">Все объявления продавца</button>
                     </div>
 
                     <!-- КНОПКИ ВЛАДЕЛЬЦА (Тоже внутри скролла) -->
@@ -1492,6 +1494,21 @@
                 const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
+
+                const authorSubEl = document.getElementById('modal-author-sub');
+                if(authorSubEl) {
+                    const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
+                    authorSubEl.innerHTML = authorBadgeHtml;
+                }
+                
+                // НОВОЕ: Привязываем клик по кнопке к реальному ID продавца этого товара
+                const sellerBtn = document.getElementById('modal-seller-btn');
+                if (sellerBtn) {
+                    sellerBtn.onclick = () => {
+                        window.closeModal('item-modal'); // Сначала закрываем окно товара
+                        window.openSellerProfile(item.userId); // Открываем профиль
+                    };
+                }
                 
                 const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
                 const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
