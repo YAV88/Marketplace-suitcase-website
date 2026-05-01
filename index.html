@@ -40,11 +40,14 @@
         @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; } }
         @media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; } }
 
-        .view-grid .item-card > div:nth-child(2) { height: 110px !important; }
-        .view-grid .item-card > div:nth-child(3) { padding: 0.5rem !important; }
+        /* Вместо nth-child теперь надежные классы! */
+        .view-grid .card-img-wrap { height: 110px !important; }
+        .view-grid .card-body-wrap { padding: 0.5rem !important; }
         .view-grid .border-t.text-xs { display: none !important; }
-        .view-grid h4 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
-        .view-grid .price-text { font-size: 0.85rem !important; margin-bottom: 0 !important; }
+        
+        /* Исправляем обрезание заголовка (добавили display: block и padding-bottom) */
+        .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; margin-bottom: 2px !important; display: block !important; padding-bottom: 2px; }
+        .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
         /* === РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ КАК НА KP) === */
         .view-list { grid-template-columns: 1fr !important; gap: 0.5rem !important; }
@@ -52,12 +55,11 @@
         @media (min-width: 1280px) { .view-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
 
         .view-list .item-card { flex-direction: row !important; height: 130px !important; align-items: stretch; }
-        .view-list .item-card > div:nth-child(2) { width: 130px !important; height: 100% !important; flex-shrink: 0; }
-        .view-list .item-card > div:nth-child(3) { padding: 0.75rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .view-list .card-img-wrap { width: 130px !important; height: 100% !important; flex-shrink: 0; }
+        .view-list .card-body-wrap { padding: 0.75rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
         .view-list .price-text { font-size: 1.1rem !important; margin-top: auto !important; margin-bottom: 0.25rem !important; }
         .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: 0 !important; color: #9ca3af; }
-        /* ================================ */
         
         
         /* 2. ПРИНУДИТЕЛЬНАЯ ФИКСАЦИЯ БАЗЫ (Мелкие кнопки и текст) */
@@ -1298,7 +1300,8 @@
                 opacityClass = 'opacity-70 grayscale-[0.5]';
             }
 
-            const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
+            // Заменили flex на inline-block у короны, чтобы она не ломала текст
+            const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
             const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
             let deliveryBadges = '';
@@ -1320,13 +1323,15 @@
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
                 ${favHtml}
-                <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+                <!-- Вот они, наши спасительные классы: card-img-wrap и card-body-wrap -->
+                <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                     ${condBadge}
                 </div>
-                <div class="${pClass} flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold ${titleClass} mb-1 pr-7 line-clamp-1 leading-tight text-stone-900 dark:text-white flex items-center">${vipCrown}${i.title || 'Без названия'}</h4>
+                <div class="card-body-wrap ${pClass} flex-1 flex flex-col justify-between">
+                    <!-- Заменили flex items-center на block truncate, чтобы текст никогда не обрезался криво -->
+                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white block truncate leading-tight">${vipCrown}${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
                     <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-2 pt-2">
