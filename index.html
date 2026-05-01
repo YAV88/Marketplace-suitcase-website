@@ -63,7 +63,11 @@
         .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
         .view-list .price-text { font-size: 1.1rem !important; margin-top: auto !important; margin-bottom: 0.25rem !important; }
         .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: 0 !important; color: #9ca3af; }
-        
+        /* === ОГРАНИЧЕНИЕ СЕТКИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (Профиль и Витрина) === */
+        /* Поскольку окна ограничены 1024px, мы останавливаемся на 4 колонках, чтобы карты оставались крупными */
+        .modal-grid.view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        @media (min-width: 500px) { .modal-grid.view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+        @media (min-width: 800px) { .modal-grid.view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
         
         /* 2. ПРИНУДИТЕЛЬНАЯ ФИКСАЦИЯ БАЗЫ (Мелкие кнопки и текст) */
         body, button, input, select, textarea, span, p, div { font-family: 'Inter', sans-serif !important; }
@@ -603,7 +607,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid items-stretch view-grid" style="display: none;"></div>
+                <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid" style="display: none;"></div>
                 
                 <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
@@ -639,7 +643,7 @@
             
             <!-- Сетка товаров продавца -->
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="seller-items-grid" class="grid items-stretch view-grid" style="display: none;"></div>
+                <div id="seller-items-grid" class="grid items-stretch view-grid modal-grid" style="display: none;"></div>
                 
                 <div id="seller-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Нет активных объявлений</span>
