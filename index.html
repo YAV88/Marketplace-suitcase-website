@@ -33,24 +33,29 @@
         /* 1. ЗАГРУЗКА ШРИФТОВ */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tektur:wght@600;800&display=swap');
         
-        /* === СТИЛИ КОМПАКТНОЙ СЕТКИ === */
-        #main-items-grid.compact-mode { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.5rem !important; }
-        @media (min-width: 768px) { #main-items-grid.compact-mode { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 1rem !important; } }
-        
-        /* 1. Сжимаем сам блок с картинкой (убираем пустую дыру снизу) */
-        #main-items-grid.compact-mode .item-card > div:nth-child(2) { height: 110px !important; }
-        
-        /* 2. Уменьшаем отступы вокруг текста */
-        #main-items-grid.compact-mode .item-card > div:nth-child(3) { padding: 0.5rem !important; }
-        
-        /* 3. Прячем ТОЛЬКО полосу с городом (иконка избранного теперь не пропадет!) */
-        #main-items-grid.compact-mode .border-t.text-xs { display: none !important; }
-        
-        /* 4. Заголовок товара (h4) делаем мелким и в одну строку */
-        #main-items-grid.compact-mode h4 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
-        
-        /* 5. Настраиваем размер цены */
-        #main-items-grid.compact-mode .price-text { font-size: 0.85rem !important; margin-bottom: 0 !important; }
+        /* === РЕЖИМ СЕТКИ (НОВЫЙ СТАНДАРТ) === */
+        .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.5rem !important; }
+        @media (min-width: 640px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 0.75rem !important; } }
+        @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+        @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; } }
+
+        .view-grid .item-card > div:nth-child(2) { height: 110px !important; }
+        .view-grid .item-card > div:nth-child(3) { padding: 0.5rem !important; }
+        .view-grid .border-t.text-xs { display: none !important; }
+        .view-grid h4 { font-size: 0.75rem !important; line-height: 1.2 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px !important; }
+        .view-grid .price-text { font-size: 0.85rem !important; margin-bottom: 0 !important; }
+
+        /* === РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ КАК НА KP) === */
+        .view-list { grid-template-columns: 1fr !important; gap: 0.5rem !important; }
+        @media (min-width: 768px) { .view-list { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+        @media (min-width: 1280px) { .view-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+
+        .view-list .item-card { flex-direction: row !important; height: 130px !important; align-items: stretch; }
+        .view-list .item-card > div:nth-child(2) { width: 130px !important; height: 100% !important; flex-shrink: 0; }
+        .view-list .item-card > div:nth-child(3) { padding: 0.75rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .view-list .price-text { font-size: 1.1rem !important; margin-top: auto !important; margin-bottom: 0.25rem !important; }
+        .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: 0 !important; color: #9ca3af; }
         /* ================================ */
         
         
@@ -302,7 +307,7 @@
                 <i class="fa-solid fa-crown text-amber-500 text-2xl"></i>
                 <h4 class="font-black text-xl text-stone-800 dark:text-stone-200">ТОП Находки</h4>
             </div>
-            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch"></div>
+            <div id="vip-items-grid" class="grid items-stretch view-grid"></div>
         </div>
 
         <div id="pro-thin-banner" class="mb-10 bg-gradient-to-r from-brand-600 to-emerald-600 rounded-2xl p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4" onclick="window.openModal('crypto-modal')">
@@ -321,13 +326,13 @@
                 </div>
                 
                 <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-lg border border-stone-200 dark:border-stone-700 shrink-0">
-                    <button id="btn-view-large" onclick="window.setViewMode('large')" class="px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-white transition cursor-pointer" title="Крупная сетка"><i class="fa-solid fa-border-all"></i></button>
-                    <button id="btn-view-compact" onclick="window.setViewMode('compact')" class="px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 dark:hover:text-white transition cursor-pointer" title="Мелкая сетка"><i class="fa-solid fa-table-cells"></i></button>
+                    <button id="btn-view-grid" onclick="window.setViewMode('grid')" class="px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-white transition cursor-pointer" title="Сетка"><i class="fa-solid fa-table-cells"></i></button>
+                    <button id="btn-view-list" onclick="window.setViewMode('list')" class="px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 dark:hover:text-white transition cursor-pointer" title="Список"><i class="fa-solid fa-list"></i></button>
                 </div>
             </div>
             
             <div id="loading-placeholder" class="w-full mb-6">
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch w-full">
+                <div class="grid items-stretch w-full view-grid">
                     <div class="item-card animate-pulse bg-white dark:bg-stone-800 border-transparent h-full"><div class="h-36 sm:h-40 bg-stone-200 dark:bg-stone-700 w-full"></div><div class="p-3 sm:p-4 flex-1 flex flex-col justify-between"><div class="h-4 bg-stone-200 dark:bg-stone-700 rounded w-3/4 mb-3"></div><div class="h-5 bg-stone-200 dark:bg-stone-700 rounded w-1/2 mb-4"></div><div class="h-3 bg-stone-200 dark:bg-stone-700 rounded w-1/3 mt-2"></div></div></div>
                     <div class="item-card animate-pulse bg-white dark:bg-stone-800 border-transparent h-full"><div class="h-36 sm:h-40 bg-stone-200 dark:bg-stone-700 w-full"></div><div class="p-3 sm:p-4 flex-1 flex flex-col justify-between"><div class="h-4 bg-stone-200 dark:bg-stone-700 rounded w-3/4 mb-3"></div><div class="h-5 bg-stone-200 dark:bg-stone-700 rounded w-1/2 mb-4"></div><div class="h-3 bg-stone-200 dark:bg-stone-700 rounded w-1/3 mt-2"></div></div></div>
                     <div class="item-card animate-pulse bg-white dark:bg-stone-800 border-transparent h-full"><div class="h-36 sm:h-40 bg-stone-200 dark:bg-stone-700 w-full"></div><div class="p-3 sm:p-4 flex-1 flex flex-col justify-between"><div class="h-4 bg-stone-200 dark:bg-stone-700 rounded w-3/4 mb-3"></div><div class="h-5 bg-stone-200 dark:bg-stone-700 rounded w-1/2 mb-4"></div><div class="h-3 bg-stone-200 dark:bg-stone-700 rounded w-1/3 mt-2"></div></div></div>
@@ -337,7 +342,7 @@
                 </div>
             </div>
 
-            <div id="main-items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 items-stretch hidden"></div>
+            <div id="main-items-grid" class="grid items-stretch hidden view-grid"></div>
             
             <div class="flex justify-center mt-10 mb-6">
                 <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Показать еще</button>
@@ -581,7 +586,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 items-stretch" style="display: none;"></div>
+                <div id="profile-items-grid" class="grid items-stretch view-grid" style="display: none;"></div>
                 
                 <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
@@ -2353,32 +2358,32 @@
         // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВИДА СЕТКИ ===
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'large';
 
+        // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВИДА СЕТКИ ===
+        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
+
         window.setViewMode = (mode) => {
             window.currentViewMode = mode;
             localStorage.setItem('svalka_view_mode', mode);
             
-            const btnL = document.getElementById('btn-view-large');
-            const btnC = document.getElementById('btn-view-compact');
+            const btnGrid = document.getElementById('btn-view-grid');
+            const btnList = document.getElementById('btn-view-list');
             const grid = document.getElementById('main-items-grid');
             
             // Перекрашиваем кнопки
-            if (btnL && btnC) {
-                if (mode === 'large') {
-                    btnL.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnC.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
+            if (btnGrid && btnList) {
+                if (mode === 'grid') {
+                    btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+                    btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
                 } else {
-                    btnC.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnL.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
+                    btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+                    btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
                 }
             }
             
-            // Применяем классы к сетке
+            // Применяем классы к главной сетке
             if (grid) {
-                if (mode === 'large') {
-                    grid.classList.remove('compact-mode');
-                } else {
-                    grid.classList.add('compact-mode');
-                }
+                grid.classList.remove('view-grid', 'view-list');
+                grid.classList.add(`view-${mode}`);
             }
         };
 
