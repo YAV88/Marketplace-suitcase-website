@@ -803,12 +803,12 @@
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
-        const apiKey = ""; 
 
         window.filterCondition = 'Все';
         window.currentUser = null; 
         window.loadedItems = []; 
         window.tempPhotos = []; 
+        window.editExistingImages = [];
         window.currentCategory = 'Все'; 
         window.searchQuery = ''; 
         window.showUrgentOnly = false;
@@ -824,7 +824,6 @@
         window.authMode = 'login';
         window.authInitialized = false;
 
-        // Обновление SEO и вкладок браузера
         window.updateSEO = (title, desc, img) => {
             document.title = title ? `${title} | SVALKA` : 'SVALKA — Маркетплейс вещей в Сербии';
             const setMeta = (id, content) => { const el = document.getElementById(id); if (el && content) el.content = content; };
@@ -847,7 +846,6 @@
         };
         initPWA();
 
-        // 1. Функция мгновенной смены иконок
         const updateThemeIcons = (isDark) => {
             document.querySelectorAll('button[onclick="window.toggleDarkMode()"] i').forEach(icon => {
                 icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-lg' : 'fa-solid fa-moon text-lg';
@@ -857,12 +855,9 @@
         const setAutoTheme = () => {
             const savedTheme = localStorage.getItem('theme');
             let isDark = false;
-            if (savedTheme === 'dark') {
-                document.documentElement.classList.add('dark');
-                isDark = true;
-            } else if (savedTheme === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
+            if (savedTheme === 'dark') { document.documentElement.classList.add('dark'); isDark = true; }
+            else if (savedTheme === 'light') { document.documentElement.classList.remove('dark'); }
+            else {
                 try {
                     const opts = { timeZone: 'Europe/Belgrade', hour: 'numeric', hour12: false };
                     const hour = parseInt(new Intl.DateTimeFormat('en-GB', opts).format(new Date()));
@@ -870,7 +865,6 @@
                     else document.documentElement.classList.remove('dark');
                 } catch(e) {}
             }
-            // Меняем иконки при загрузке страницы
             setTimeout(() => updateThemeIcons(isDark), 50);
         };
         setAutoTheme();
@@ -879,11 +873,7 @@
             const html = document.documentElement;
             const isCurrentlyDark = html.classList.contains('dark');
             const newIsDark = !isCurrentlyDark;
-            
-            // 2. Даем МГНОВЕННЫЙ визуальный отклик (смена иконки)
             updateThemeIcons(newIsDark);
-
-            // 3. Откладываем тяжелый рендер Tailwind, чтобы не заблокировать кнопку
             setTimeout(() => {
                 html.classList.toggle('dark', newIsDark);
                 localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
@@ -892,7 +882,6 @@
 
         window.goHome = () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            // Ждем 300мс пока скролл плавно едет наверх, затем перерисовываем товары
             setTimeout(() => window.resetFilters(), 300);
         };
 
@@ -906,10 +895,9 @@
             if(el) { el.classList.remove('active'); }
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
             
-            // Очищаем URL при закрытии карточки товара
             if (id === 'item-modal') {
                 history.pushState(null, '', window.location.pathname);
-                window.updateSEO(); // Возвращаем SEO главной страницы
+                window.updateSEO();
             }
             
             if (id === 'add-modal') {
@@ -925,50 +913,33 @@
             }
         };
 
-        // ВОССТАНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ КНОПКИ "+ ПРИСТРОИТЬ ДОБРО"
-        // ВОССТАНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ КНОПКИ "+ ПРИСТРОИТЬ ДОБРО"
         window.checkAuthAndOpenAddModal = async () => {
             if (!window.currentUser) {
                 window.openModal('auth-modal');
                 window.showToast('Сначала войдите в аккаунт', true);
                 return;
             }
-
-            // 1. Определяем лимиты (PRO = 50, Обычный = 10)
             const isPro = window.currentUserData && window.currentUserData.is_pro;
             const maxItems = isPro ? 50 : 10;
-
-            // 2. Блокируем кнопку на время проверки
             const addBtn = document.getElementById('btn-header-add');
             const mobBtn = document.getElementById('btn-mobile-add');
             if(addBtn) addBtn.style.opacity = '0.5';
             if(mobBtn) mobBtn.style.opacity = '0.5';
 
             try {
-                // 3. Запрашиваем у Supabase количество товаров пользователя
-                const { count, error } = await supabase
-                    .from('items')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', window.currentUser.id);
-
+                const { count, error } = await supabase.from('items').select('*', { count: 'exact', head: true }).eq('user_id', window.currentUser.id);
                 if (error) throw error;
-
-                // 4. Проверяем лимит
                 if (count >= maxItems) {
                     if (!isPro) {
                         window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true);
-                        // Мягко открываем окно покупки PRO через 1.5 секунды
                         setTimeout(() => window.openModal('crypto-modal'), 1500);
                     } else {
                         window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true);
                     }
                     return;
                 }
-
-                // 5. Если всё ок - открываем окно
                 window.openModal('add-modal');
             } catch (err) {
-                console.error(err);
                 window.showToast("Ошибка проверки лимитов", true);
             } finally {
                 if(addBtn) addBtn.style.opacity = '1';
@@ -977,24 +948,17 @@
         };
 
         window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
-
-        window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
+        
         window.toggleFilters = () => { 
             const el = document.getElementById('filter-panel-wrapper'); 
             if(!el) return;
-            
             if(el.classList.contains('active')) {
-                // Закрываем панель: возвращаем жесткие рамки
                 el.style.overflow = 'hidden';
                 el.classList.remove('active');
-                
-                // Бонус: автоматически прячем список категорий, если забыли закрыть
                 const dd = document.getElementById('custom-cat-dropdown');
                 if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
             } else {
-                // Открываем панель
                 el.classList.add('active');
-                // Ждем окончания анимации (300мс) и разрешаем спискам выпадать за пределы панели!
                 setTimeout(() => { el.style.overflow = 'visible'; }, 300);
             }
         };
@@ -1025,6 +989,7 @@
             window.updateLightboxImage();
             window.openModal('lightbox');
         };
+        
         window.updateLightboxImage = () => {
             const img = document.getElementById('lightbox-img');
             if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
@@ -1033,6 +998,7 @@
             if(prev) prev.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
             if(next) next.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
         };
+        
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
@@ -1057,9 +1023,7 @@
                 
                 if(window.activeModalItemId === itemId) {
                     const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                    if(modalFavIcon) {
-                        modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-                    }
+                    if(modalFavIcon) modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
                 }
             } catch(e) { console.error(e); }
         };
@@ -1069,13 +1033,12 @@
         }
 
         window.shareCurrentItem = async () => {
-            const url = window.location.href; // Ссылка с параметром ?item=...
+            const url = window.location.href;
             const title = document.getElementById('modal-title').innerText;
             if (navigator.share) {
                 try { await navigator.share({ title: 'SVALKA', text: title, url: url }); } catch (e) {}
             } else {
-                navigator.clipboard.writeText(url);
-                window.showToast('Ссылка скопирована!');
+                navigator.clipboard.writeText(url); window.showToast('Ссылка скопирована!');
             }
         };
 
@@ -1126,12 +1089,7 @@
                 if(emailEl) emailEl.value = '';
                 if(passEl) passEl.value = '';
             } catch (e) { window.showToast(e.message, true); }
-            finally { 
-                if(btn) {
-                    btn.disabled = false; 
-                    btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; 
-                }
-            }
+            finally { if(btn) { btn.disabled = false; btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; } }
         };
 
         window.forgotPassword = async () => {
@@ -1145,15 +1103,7 @@
 
         window.logout = () => { 
             supabase.auth.signOut().catch(e => console.warn(e));
-            try {
-                const keysToRemove = [];
-                for(let i=0; i<localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if(key && key.startsWith('sb-')) keysToRemove.push(key);
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                sessionStorage.clear();
-            } catch(e) {}
+            sessionStorage.clear();
             window.currentUser = null;
             window.closeModal('profile-modal'); 
             window.location.reload(); 
@@ -1198,44 +1148,19 @@
             window.applyFilters();
         };
 
-        // Карта подкатегорий для динамической отрисовки
         window.subcategoriesMap = {
-            'Одежда': [
-                {val: 'Женская'}, {val: 'Мужская'}, {val: 'Обувь'}, {val: 'Сумки'}, {val: 'Аксессуары'}, {val: 'Спецодежда'}
-            ],
-            'Детям': [
-                {val: 'Игрушки'}, {val: 'Коляски'}, {val: 'Одежда'}, {val: 'Обувь'}, {val: 'Автокресла'}, {val: 'Мебель', label: 'Детская мебель'}
-            ],
-            'Электроника': [
-                {val: 'Телефоны', label: 'Смартфоны'}, {val: 'ПК', label: 'Компьютеры / ПК'}, {val: 'Ноутбуки'}, {val: 'Планшеты'}, {val: 'ТВ', label: 'ТВ и Видео'}, {val: 'Аудио'}, {val: 'Консоли', label: 'Игры / Консоли'}, {val: 'Бытовая', label: 'Бытовая техника'}, {val: 'Фото', label: 'Фототехника'}
-            ],
-            'Интерьер': [
-                {val: 'Мебель'}, {val: 'Декор'}, {val: 'Посуда'}, {val: 'Текстиль'}, {val: 'Ремонт', label: 'Стройматериалы'}, {val: 'Инструменты'}, {val: 'Сад', label: 'Сад и Огород'}
-            ],
-            'Транспорт': [
-                {val: 'Авто', label: 'Автомобили'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Самокаты'}, {val: 'Запчасти'}, {val: 'Шины', label: 'Шины и диски'}
-            ],
-            'Красота': [
-                {val: 'Косметика'}, {val: 'Парфюмерия'}, {val: 'Уход', label: 'Уход за собой'}, {val: 'Приборы', label: 'Фены и стайлеры'}
-            ],
-            'Услуги': [
-                {val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}, {val: 'Вакансии', prefix: 'Работа'}
-            ],
-            'Бизнес': [
-                {val: 'Оборудование'}, {val: 'Бизнес', label: 'Готовый бизнес'}, {val: 'Сырье', label: 'Сырье и материалы'}
-            ],
-            'Хобби': [
-                {val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Муз. инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}
-            ],
-            'Животные': [
-                {val: 'Собаки'}, {val: 'Кошки'}, {val: 'Птицы'}, {val: 'Аквариум', label: 'Аквариумистика'}, {val: 'Товары', label: 'Зоотовары'}
-            ],
-            'Жилье': [
-                {val: 'Аренда'}, {val: 'Посуточно', label: 'Аренда (посуточно)'}, {val: 'Покупка', label: 'Продажа'}, {val: 'Коммерция', label: 'Коммерческая'}, {val: 'Дачи', label: 'Дома и дачи'}
-            ],
-            'Другое': [
-                {val: 'Билеты'}, {val: 'Продукты', label: 'Продукты питания'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}, {val: 'Бюро', label: 'Бюро находок'}
-            ]
+            'Одежда': [{val: 'Женская'}, {val: 'Мужская'}, {val: 'Обувь'}, {val: 'Сумки'}, {val: 'Аксессуары'}, {val: 'Спецодежда'}],
+            'Детям': [{val: 'Игрушки'}, {val: 'Коляски'}, {val: 'Одежда'}, {val: 'Обувь'}, {val: 'Автокресла'}, {val: 'Мебель', label: 'Детская мебель'}],
+            'Электроника': [{val: 'Телефоны', label: 'Смартфоны'}, {val: 'ПК', label: 'Компьютеры / ПК'}, {val: 'Ноутбуки'}, {val: 'Планшеты'}, {val: 'ТВ', label: 'ТВ и Видео'}, {val: 'Аудио'}, {val: 'Консоли', label: 'Игры / Консоли'}, {val: 'Бытовая', label: 'Бытовая техника'}, {val: 'Фото', label: 'Фототехника'}],
+            'Интерьер': [{val: 'Мебель'}, {val: 'Декор'}, {val: 'Посуда'}, {val: 'Текстиль'}, {val: 'Ремонт', label: 'Стройматериалы'}, {val: 'Инструменты'}, {val: 'Сад', label: 'Сад и Огород'}],
+            'Транспорт': [{val: 'Авто', label: 'Автомобили'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Самокаты'}, {val: 'Запчасти'}, {val: 'Шины', label: 'Шины и диски'}],
+            'Красота': [{val: 'Косметика'}, {val: 'Парфюмерия'}, {val: 'Уход', label: 'Уход за собой'}, {val: 'Приборы', label: 'Фены и стайлеры'}],
+            'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}, {val: 'Вакансии', prefix: 'Работа'}],
+            'Бизнес': [{val: 'Оборудование'}, {val: 'Бизнес', label: 'Готовый бизнес'}, {val: 'Сырье', label: 'Сырье и материалы'}],
+            'Хобби': [{val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Муз. инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}],
+            'Животные': [{val: 'Собаки'}, {val: 'Кошки'}, {val: 'Птицы'}, {val: 'Аквариум', label: 'Аквариумистика'}, {val: 'Товары', label: 'Зоотовары'}],
+            'Жилье': [{val: 'Аренда'}, {val: 'Посуточно', label: 'Аренда (посуточно)'}, {val: 'Покупка', label: 'Продажа'}, {val: 'Коммерция', label: 'Коммерческая'}, {val: 'Дачи', label: 'Дома и дачи'}],
+            'Другое': [{val: 'Билеты'}, {val: 'Продукты', label: 'Продукты питания'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}, {val: 'Бюро', label: 'Бюро находок'}]
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
@@ -1246,7 +1171,6 @@
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
 
-            // Если кликнули по Главной категории
             if (!isSubCat) {
                 document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
@@ -1255,27 +1179,20 @@
                     event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 }
                 
-                // Отрисовка подкатегорий
                 const subContainer = document.getElementById('sub-cats-container');
                 if (cat !== 'Все' && window.subcategoriesMap[cat]) {
                     let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все в «${cat}»</button>`;
-                    
                     window.subcategoriesMap[cat].forEach(sub => {
                         const prefix = sub.prefix || cat;
                         const fullCat = `${prefix} - ${sub.val}`;
-                        const label = sub.label || sub.val;
-                        subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">${label}</button>`;
+                        subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">${sub.label || sub.val}</button>`;
                     });
                     subContainer.innerHTML = subHtml;
                     subContainer.classList.remove('hidden');
                 } else {
-                    if(subContainer) {
-                        subContainer.innerHTML = '';
-                        subContainer.classList.add('hidden');
-                    }
+                    if(subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }
                 }
             } else {
-                // Если кликнули по Подкатегории — выделяем её
                 document.querySelectorAll('#sub-cats-container .sub-cat-btn').forEach(b => {
                     b.className = "sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
@@ -1284,13 +1201,9 @@
                 }
             }
             
-            // Синхронизация с новым кастомным селектом
             const catInput = document.getElementById('filter-category');
             const catLabel = document.getElementById('custom-cat-label');
-            if (catInput && catLabel) {
-                catInput.value = cat;
-                catLabel.innerText = cat === 'Все' ? 'Все категории' : cat; 
-            }
+            if (catInput && catLabel) { catInput.value = cat; catLabel.innerText = cat === 'Все' ? 'Все категории' : cat; }
             window.fetchItems(); 
         };
 
@@ -1316,23 +1229,22 @@
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
         window.loadMoreItems = () => { window.displayedCount += 12; window.fetchItems(true); };
 
-        window.itemCoords = [44.8125, 20.4612]; // Центр Белграда по умолчанию
+        window.itemCoords = [44.8125, 20.4612]; 
+        
         window.handleCategoryChange = (e) => {
             const val = e.target ? e.target.value : e;
             const reFields = document.getElementById('re-fields');
-            const condBlock = document.getElementById('add-condition-block'); // Наш блок состояния
+            const condBlock = document.getElementById('add-condition-block'); 
             
-            // Прячем состояние для нефизических товаров
             if (condBlock) {
-                if (val && (val.includes('Жилье') || val.includes('Услуги') || val.includes('Работа'))) {
+                if (val && (val.includes('Жилье') || val.includes('Недвижимость') || val.includes('Услуги') || val.includes('Работа'))) {
                     condBlock.classList.add('hidden'); condBlock.classList.remove('flex');
                 } else {
                     condBlock.classList.remove('hidden'); condBlock.classList.add('flex');
                 }
             }
 
-            // Карта для недвижимости
-            if (val && val.includes('Жилье')) {
+            if (val && (val.includes('Жилье') || val.includes('Недвижимость'))) {
                 reFields.classList.remove('hidden'); reFields.classList.add('flex');
                 setTimeout(() => {
                     if(!window.addMapObj) {
@@ -1343,7 +1255,7 @@
                             const pos = window.addMarkerObj.getLatLng(); window.itemCoords = [pos.lat, pos.lng];
                         });
                         window.addMapObj.on('click', function(event) {
-                            window.itemCoords = [event.latlng.lat, event.event.lng];
+                            window.itemCoords = [event.latlng.lat, event.latlng.lng];
                             window.addMarkerObj.setLatLng(window.itemCoords);
                         });
                     } else {
@@ -1359,23 +1271,22 @@
         window.mapItemData = function(i) {
             try {
                 return {
-                    address: i.address || '', 
-                    condition: i.condition || 'Б/У',
-                    coords: Array.isArray(i.coords) ? i.coords : [0,0],
-                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'], // <-- ДОБАВЛЕНО
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
                     status: i.status || 'active', phone: i.phone || '',
-                    address: i.address || '', coords: Array.isArray(i.coords) ? i.coords : [0,0] // <-- ДОБАВЛЕНО
+                    address: i.address || '', 
+                    condition: i.condition || 'Б/У',
+                    coords: Array.isArray(i.coords) ? i.coords : [0,0],
+                    delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча']
                 };
             } catch(err) { return null; }
         }
 
         window.createCardHtml = function(i, isVIP) {
-            const isOwner = window.currentUser && window.currentUser.id === i.userId; // Проверка на владельца
+            const isOwner = window.currentUser && window.currentUser.id === i.userId;
             const isService = i.category && (i.category.includes('Услуги') || i.category.includes('Работа'));
-            const isEstate = i.category && i.category.includes('Жилье');
+            const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
 
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
             const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
@@ -1392,11 +1303,7 @@
             }
 
             const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-
-            const imgHeight = 'h-36 sm:h-40';
-            const pClass = 'p-3 sm:p-4';
-            const titleClass = 'text-sm sm:text-base';
-            const priceClass = 'text-base sm:text-lg';
+            const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
             let deliveryBadges = '';
             if (!isService && !isEstate) {
@@ -1404,7 +1311,6 @@
                 if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
             }
             
-            // Цветовые индикаторы вместо "Новое/БУ"
             let condBadge = '';
             if (isService) {
                 condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
@@ -1415,12 +1321,7 @@
                 else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
             }
             
-            // Прячем кнопку "Избранное", если товар принадлежит текущему пользователю
-            const favHtml = isOwner ? '' : `
-                <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
-                    <i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i>
-                </button>
-            `;
+            const favHtml = isOwner ? '' : `<button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
@@ -1442,7 +1343,6 @@
             </div>`;
         }
 
-        
         window.openItemDetails = async (id) => {
             try {
                 let item = window.loadedItems.find(i => i.id === id);
@@ -1450,11 +1350,10 @@
                     const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
                     if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
                 }
-                if(!item) return;
+                if(!item) { window.showToast("Товар не найден", true); return; }
                 
                 window.activeModalItemId = item.id;
 
-                // Картинки и тексты
                 const imgContainer = document.getElementById('modal-img-container');
                 const thumbsContainer = document.getElementById('modal-thumbs-container');
                 
@@ -1466,523 +1365,7 @@
                         thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                         thumbsContainer.classList.remove('hidden');
                     } else {
-                        thumbsContainer.innerHTML = '';
-                        thumbsContainer.classList.add('hidden');
-                    }
-                }
-
-                document.getElementById('modal-title').innerText = item.title;
-                document.getElementById('modal-price').innerText = `${item.price} ${item.currency}`;
-                document.getElementById('modal-desc').innerText = item.description || "Описание отсутствует.";
-                document.getElementById('modal-city-text').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${item.city.toUpperCase()}`;
-                
-                // Управление кнопками владельца
-                const isOwner = window.currentUser && window.currentUser.id === item.userId;
-                const ctrl = document.getElementById('modal-owner-controls');
-                const contactBtn = document.getElementById('btn-contact-seller');
-                const actionControls = document.getElementById('modal-owner-action-controls');
-
-                if (isOwner) {
-                    contactBtn.classList.add('hidden');
-                    ctrl.classList.remove('hidden'); ctrl.classList.add('flex');
-                    
-                    if(actionControls) {
-                        let html = '';
-                        // Редактировать (Иконка)
-                        html += `<button onclick="window.editItem('${item.id}')" title="Изменить" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 border border-stone-200 dark:border-stone-700 h-10 rounded-xl flex items-center justify-center hover:bg-brand-50 transition"><i class="fa-solid fa-pen"></i></button>`;
-                        
-                        // Статус Продано/Резерв
-                        if (item.status === 'sold') {
-                            html += `<button onclick="window.changeItemStatus('active')" class="flex-[3] bg-stone-100 text-brand-600 border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid fa-rotate-left"></i> Вернуть</button>`;
-                        } else {
-                            const isRes = item.status === 'reserved';
-                            html += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-[2] bg-stone-100 ${isRes ? 'text-stone-600' : 'text-orange-500'} border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять' : 'Резерв'}</button>`;
-                            html += `<button onclick="window.changeItemStatus('sold')" title="Продано" class="flex-1 bg-green-50 text-green-600 border border-green-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-check"></i></button>`;
-                        }
-
-                        // Удалить (Иконка)
-                        html += `<button onclick="window.deleteItem('${item.id}')" title="Удалить" class="flex-1 bg-red-50 text-red-500 border border-red-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-trash"></i></button>`;
-                        actionControls.innerHTML = html;
-                    }
-                } else {
-                    contactBtn.classList.remove('hidden');
-                    ctrl.classList.add('hidden'); ctrl.classList.remove('flex');
-                }
-
-                window.openModal('item-modal');
-                history.pushState({ modal: true }, '', '?item=' + id);
-            } catch (err) { console.error(err); }
-        };
-        
-        window.changeItemStatus = async (newStatus) => {
-            if (!window.currentUser || !window.activeModalItemId) return;
-            try {
-                await supabase.from('items').update({ status: newStatus }).eq('id', window.activeModalItemId);
-                const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
-                if (item) item.status = newStatus;
-                window.showToast("Статус обновлен!");
-                window.openItemDetails(window.activeModalItemId); 
-                window.fetchItems(false); 
-            } catch(e) { window.showToast("Ошибка", true); }
-        };
-
-        window.deleteItem = async (id) => {
-            if (!window.currentUser) return;
-            if (confirm("Удалить это объявление навсегда?")) {
-                try {
-                    await supabase.from('items').delete().eq('id', id);
-                    window.showToast("Удалено!");
-                    window.closeModal('item-modal');
-                    window.fetchItems(false);
-                } catch(e) { window.showToast("Ошибка удаления", true); }
-            }
-        };
-
-        window.editItem = async (id) => {
-            if (!window.currentUser) return;
-            const item = window.loadedItems.find(i => i.id === id);
-            if (!item) return;
-            
-            window.editingItemId = id;
-            document.getElementById('item-title').value = item.title || '';
-            document.getElementById('item-category').value = item.category || '';
-            document.getElementById('item-city').value = item.city || '';
-            document.getElementById('item-price').value = item.price || '';
-            document.getElementById('item-desc').value = item.description || '';
-            document.getElementById('item-currency').value = item.currency || 'RSD';
-            document.getElementById('item-phone').value = item.phone || '';
-
-            document.getElementById('item-address').value = item.address || '';
-            window.itemCoords = item.coords && item.coords[0] !== 0 ? item.coords : [44.8125, 20.4612];
-            window.handleCategoryChange(item.category); // Инициируем показ карты, если это Жилье
-            
-            document.getElementById('add-modal-title').innerText = "Редактировать";
-            document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
-            
-            window.editExistingImages = item.images || [];
-            const list = document.getElementById('photo-preview-list');
-            if(list) {
-                list.innerHTML = window.editExistingImages.map(src => `<div class="w-16 h-16 bg-stone-100 rounded-xl overflow-hidden shrink-0 border"><img src="${src}" class="w-full h-full object-cover"></div>`).join('');
-            }
-            window.tempPhotos = [];
-
-            window.closeModal('item-modal');
-            window.openModal('add-modal');
-        };
-        window.fetchItems = async (isLoadMore = false) => {
-            const loader = document.getElementById('loading-placeholder');
-            const mainGrid = document.getElementById('main-items-grid');
-            const emptyState = document.getElementById('empty-state');
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            const vipSection = document.getElementById('vip-section');
-            const vipGrid = document.getElementById('vip-items-grid');
-            const proBanner = document.getElementById('pro-thin-banner');
-            
-            if (!isLoadMore) {
-                window.displayedCount = 12;
-                // Вместо удаления товаров, просто делаем их полупрозрачными
-                if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
-                if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
-                if(emptyState) emptyState.classList.add('hidden');
-                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-                
-                // Показываем лоадер только если сетка вообще пустая (самая первая загрузка)
-                if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
-
-                const feedTitle = document.getElementById('main-feed-title');
-                const feedIcon = document.getElementById('main-feed-icon');
-                if(feedTitle && feedIcon) {
-                    if(window.showUrgentOnly) {
-                        feedTitle.innerText = "ТОП Находки";
-                        feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200";
-                        feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl";
-                    } else {
-                        feedTitle.innerText = "Свежие объявления";
-                        feedTitle.className = "font-black text-xl text-stone-500";
-                        feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl";
-                    }
-                }
-            }
-
-            try {
-                let res, vipRes = { data: [] };
-                let fallbackMode = false;
-
-                try {
-                    let q = supabase.from('items').select('*');
-                    if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
-                    if (window.searchQuery) q = q.textSearch('fts', window.searchQuery, { type: 'websearch' });
-                    if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
-                    if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
-                    if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
-                    if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
-
-                    if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
-                    else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
-                    else q = q.order('created_at', { ascending: false });
-
-                    q = q.limit(window.displayedCount + 1);
-
-                    let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(6);
-                    if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
-
-                    const results = await Promise.all([q, vq]);
-                    if (results[0].error) throw results[0].error;
-                    res = results[0];
-                    vipRes = results[1];
-                } catch (err) {
-                    // Fallback если БД еще не обновлена колонками status / phone
-                    if (err.code === '42703' || (err.message && err.message.includes('column'))) {
-                        fallbackMode = true;
-                        res = await supabase.from('items').select('*').order('created_at', { ascending: false });
-                        if (res.error) throw res.error;
-                    } else throw err; 
-                }
-
-                if (fallbackMode && res.data) {
-                    let filtered = res.data.filter(i => {
-                        const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                        const searchQ = (window.searchQuery || '').toLowerCase();
-                        const titleStr = (i.title || '').toLowerCase();
-                        const matchSearch = titleStr.includes(searchQ);
-                        const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
-                        const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
-                        let matchPrice = true;
-                        const p = Number(i.price) || 0;
-                        if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
-                        if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
-                        if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
-                        return matchCat && matchSearch && matchUrgent && matchCity && matchPrice;
-                    });
-                    
-                    if (window.currentSortMode === 'cheap') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-                    else if (window.currentSortMode === 'exp') filtered.sort((a, b) => Number(b.price) - Number(a.price));
-                    
-                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);
-                    res.data = filtered.slice(0, window.displayedCount + 1);
-                }
-
-                const items = (res.data || []).map(window.mapItemData).filter(Boolean);
-                const hasMore = items.length > window.displayedCount;
-                const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
-
-                if (!isLoadMore) window.loadedItems = itemsToDisplay;
-                else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
-
-                if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                    const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
-                    if (vipMapped.length > 0 && vipGrid && vipSection) {
-                        vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto'; // Возвращаем видимость
-                        vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
-                        vipSection.classList.remove('hidden');
-                        vipMapped.forEach(v => {
-                            if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v);
-                        });
-                    }
-                } else if (!isLoadMore && vipSection) {
-                    vipSection.classList.add('hidden');
-                }
-
-                if (itemsToDisplay.length > 0) {
-                    let html = '';
-                    // Передаем реальный статус товара item.isHighlighted вместо жесткого false
-                    itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
-                    
-                    if(mainGrid) {
-                        mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; // Возвращаем видимость
-                        if (!isLoadMore) mainGrid.innerHTML = html;
-                        else mainGrid.insertAdjacentHTML('beforeend', html);
-                        mainGrid.classList.remove('hidden');
-                    }
-                    if(loadMoreBtn) {
-                        if (hasMore) loadMoreBtn.classList.remove('hidden');
-                        else loadMoreBtn.classList.add('hidden');
-                    }
-                    if(proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
-                } else {
-                    if (!isLoadMore) {
-                        if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
-                        if(emptyState) emptyState.classList.remove('hidden');
-                        if(proBanner) proBanner.classList.add('hidden');
-                    }
-                    if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-                }
-            } catch(e) { 
-                console.error("Ошибка БД:", e); 
-                let errMsg = e.message || 'Ошибка сети';
-                if (errMsg.includes('status') || errMsg.includes('phone') || errMsg.includes('42703')) {
-                    errMsg = 'Внимание! Для поиска требуются колонки status и phone в БД.';
-                }
-                if (window.loadedItems.length === 0 && loader) {
-                    loader.style.display = 'block';
-                    loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${errMsg}</span></div>`;
-                }
-            } finally {
-                if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none';
-            }
-        };
-
-        window.submitNewItem = async (event) => {
-            if(event) event.preventDefault();
-            const btn = document.getElementById('add-submit-btn'); 
-            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
-            
-            try {
-                if(!window.currentUser) throw new Error("Войдите в аккаунт");
-
-                const conditionEl = document.querySelector('input[name="item-condition"]:checked');
-                const itemCondition = conditionEl ? conditionEl.value : 'Б/У';
-                const titleEl = document.getElementById('item-title');
-                const catEl = document.getElementById('item-category');
-                const cityEl = document.getElementById('item-city');
-                const priceEl = document.getElementById('item-price');
-                const descEl = document.getElementById('item-desc');
-                const currencyEl = document.getElementById('item-currency');
-                const phoneEl = document.getElementById('item-phone');
-                
-                if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
-
-                // Читаем чекбоксы доставки
-                const delMeet = document.getElementById('del-meet')?.checked;
-                const delPost = document.getElementById('del-post')?.checked;
-                const deliveryArr = [];
-                if(delMeet) deliveryArr.push('Личная встреча');
-                if(delPost) deliveryArr.push('PostExpress');
-                
-                let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
-                
-                function dataURItoBlob(dataURI) {
-                    const byteString = atob(dataURI.split(',')[1]);
-                    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
-                    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-                    return new Blob([ab], {type: mimeString});
-                }
-
-                if (window.tempPhotos.length > 0) {
-                    finalImages = [];
-                    for (let i = 0; i < window.tempPhotos.length; i++) {
-                        const dataUrl = window.tempPhotos[i];
-                        if (dataUrl.startsWith('http')) { finalImages.push(dataUrl); } 
-                        else {
-                            const blob = dataURItoBlob(dataUrl);
-                            const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
-                            const { error } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
-                            if (error) throw error;
-                            const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
-                            if (data && data.publicUrl) finalImages.push(data.publicUrl);
-                        }
-                    }
-                }
-                
-                const addressEl = document.getElementById('item-address');
-                
-                const itemData = {
-                    title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
-                    price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
-                    condition: itemCondition,
-                    author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
-                    author_avatar: window.currentUser.user_metadata?.avatar_url || '',
-                    image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
-                    currency: currencyEl ? currencyEl.value : 'RSD', 
-                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
-                    address: addressEl ? addressEl.value.trim() : '',
-                    coords: window.itemCoords,
-                    delivery: deliveryArr
-                };
-
-                let res;
-                if (window.editingItemId) {
-                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-                } else {
-                    itemData.is_highlighted = window.currentUserData?.is_pro || false;
-                    itemData.status = 'active';
-                    res = await supabase.from('items').insert([itemData]);
-                }
-                
-                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
-                    console.warn("Фоллбэк: сохранение без новых колонок для совместимости");
-                    delete itemData.delivery; // <-- ДОБАВЛЕНО
-                    delete itemData.status;
-                    delete itemData.phone;
-                    delete itemData.condition;
-                    if (window.editingItemId) {
-                        res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-                    } else {
-                        res = await supabase.from('items').insert([itemData]);
-                    }
-                    if(!res.error) window.showToast("Успешно, но добавьте колонки status/phone в Supabase!", true);
-                }
-
-                if(res.error) throw new Error(res.error.message);
-                
-                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
-                window.closeModal('add-modal');
-                window.fetchItems(false);
-            } catch(e) { 
-                console.error(e);
-                let errMsg = e.message;
-                window.showToast(`Ошибка: ${errMsg}`, true); 
-            } finally { 
-                if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить изменения` : `Опубликовать`; }
-            }
-        };
-
-        // === УМНОЕ УПРАВЛЕНИЕ ФОТОГРАФИЯМИ ===
-        window.renderPhotoPreviews = () => {
-            const list = document.getElementById('photo-preview-list');
-            if(!list) return;
-            
-            let html = '';
-            
-            // 1. Отрисовка уже существующих фото (при редактировании)
-            (window.editExistingImages || []).forEach((src, i) => {
-                html += `
-                <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${src}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
-                </div>`;
-            });
-            
-            // 2. Отрисовка новых загруженных фото
-            (window.tempPhotos || []).forEach((dataUrl, i) => {
-                html += `
-                <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${dataUrl}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
-                </div>`;
-            });
-            
-            list.innerHTML = html;
-        };
-
-        window.removePhoto = (type, index) => {
-            if (type === 'existing') {
-                window.editExistingImages.splice(index, 1);
-            } else {
-                window.tempPhotos.splice(index, 1);
-            }
-            window.renderPhotoPreviews();
-        };
-
-        // === УМНОЕ УПРАВЛЕНИЕ ФОТОГРАФИЯМИ И ЛИМИТЫ ===
-        window.renderPhotoPreviews = () => {
-            const list = document.getElementById('photo-preview-list');
-            if(!list) return;
-            
-            let html = '';
-            
-            // Отрисовка уже существующих фото (при редактировании)
-            (window.editExistingImages || []).forEach((src, i) => {
-                html += `
-                <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${src}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
-                </div>`;
-            });
-            
-            // Отрисовка новых загруженных фото
-            (window.tempPhotos || []).forEach((dataUrl, i) => {
-                html += `
-                <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${dataUrl}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
-                </div>`;
-            });
-            
-            list.innerHTML = html;
-        };
-
-        window.removePhoto = (type, index) => {
-            if (type === 'existing') window.editExistingImages.splice(index, 1);
-            else window.tempPhotos.splice(index, 1);
-            window.renderPhotoPreviews();
-        };
-
-        window.previewPhotos = async (e) => {
-            const files = Array.from(e.target.files);
-            
-            // ДИНАМИЧЕСКИЙ ЛИМИТ ФОТОГРАФИЙ
-            const isPro = window.currentUserData && window.currentUserData.is_pro;
-            const maxPhotos = isPro ? 10 : 5;
-            
-            const currentTotal = (window.editExistingImages?.length || 0) + (window.tempPhotos?.length || 0);
-            
-            if (currentTotal + files.length > maxPhotos) {
-                window.showToast(`Доступно максимум ${maxPhotos} фото ${isPro ? '' : '(Купите PRO для 10)'}`, true);
-                e.target.value = ''; // Сбрасываем инпут
-                return;
-            }
-
-            for(let file of files) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000;
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        window.tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
-                        window.renderPhotoPreviews(); // Перерисовываем с крестиками
-                    };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-            e.target.value = ''; 
-        };
-
-        window.switchProfileTab = tab => { 
-            window.currentProfileTab = tab; 
-            const t1 = document.getElementById('tab-my-items');
-            const t2 = document.getElementById('tab-my-saved');
-            if (t1) {
-                if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); }
-                else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); }
-            }
-            if (t2) {
-                if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); }
-                else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); }
-            }
-            window.renderProfileTabs(); 
-        };
-
-        window.openItemDetails = async (id) => {
-            try {
-                let item = window.loadedItems.find(i => i.id === id);
-                
-                // Бронебойный фоллбэк: если товара нет в памяти - качаем из БД
-                if (!item) {
-                    try {
-                        const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
-                        if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
-                    } catch(e) { console.error(e); }
-                }
-
-                if(!item) {
-                    window.showToast("Товар не найден", true);
-                    return;
-                }
-                
-                window.activeModalItemId = item.id;
-
-                const imgContainer = document.getElementById('modal-img-container');
-                if (imgContainer) {
-                    if (Array.isArray(item.images) && item.images.length > 1) {
-                        let thumbsHtml = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
-                        imgContainer.innerHTML = `<img id="modal-img" src="${item.images[0]}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${item.images[0]}')"><div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto custom-scrollbar">${thumbsHtml}</div>`;
-                    } else {
-                        const imageUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                        imgContainer.innerHTML = `<img id="modal-img" src="${imageUrl}" class="w-full h-full object-contain cursor-zoom-in transition duration-500" onclick="window.openLightbox('${imageUrl}')">`;
+                        thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden');
                     }
                 }
 
@@ -1990,13 +1373,29 @@
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
                 
+                const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
+                const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
+
                 const condTextEl = document.getElementById('modal-condition-text');
-                if(condTextEl) condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У';
+                if(condTextEl) {
+                    if (isService || isEstate) {
+                        condTextEl.classList.add('hidden');
+                    } else {
+                        condTextEl.classList.remove('hidden');
+                        condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У';
+                    }
+                }
                 
+                const catTextEl = document.getElementById('modal-category-text');
+                if(catTextEl) {
+                    const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
+                    catTextEl.innerText = catText.toUpperCase();
+                    catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${isService ? 'bg-blue-500' : (isEstate ? 'bg-indigo-500' : 'bg-brand-600')}`;
+                }
+
                 const priceEl = document.getElementById('modal-price');
                 if(priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
 
-                // Отрисовка способов доставки
                 const delCont = document.getElementById('modal-delivery-container');
                 if (delCont) {
                     let delHtml = '';
@@ -2028,7 +1427,7 @@
 
                 const addrCont = document.getElementById('modal-address-container');
                 if (addrCont) {
-                    if (item.category && item.category.includes('Жилье') && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
+                    if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
                         addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
                         const modalAddrEl = document.getElementById('modal-address');
                         if(modalAddrEl) modalAddrEl.innerText = item.address || item.city || '';
@@ -2043,7 +1442,7 @@
                                     window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
                                 }
                                 window.viewMapObj.invalidateSize();
-                            } catch(mapErr) { console.warn("Карта не загрузилась:", mapErr); }
+                            } catch(mapErr) {}
                         }, 150);
                     } else {
                         addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
@@ -2085,8 +1484,7 @@
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
                 const contactBtn = document.getElementById('btn-contact-seller');
-                const statusControls = document.getElementById('modal-owner-status-controls');
-                const editControls = document.getElementById('modal-owner-edit-controls');
+                const actionControls = document.getElementById('modal-owner-action-controls');
 
                 if (isOwner) {
                     if(contactBtn) contactBtn.classList.add('hidden'); 
@@ -2095,20 +1493,18 @@
                     const vipBtnText = document.getElementById('btn-owner-vip-text');
                     if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
 
-                    if(statusControls) {
-                        statusControls.innerHTML = '';
-                        if (item.status !== 'sold') {
-                            const isRes = item.status === 'reserved';
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-clock mr-1 text-orange-500"></i> ${isRes ? 'Активировать' : 'В резерв'}</button>`;
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('sold')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-check mr-1 text-green-500"></i> Продано</button>`;
+                    if(actionControls) {
+                        let html = '';
+                        html += `<button onclick="window.editItem('${item.id}')" title="Изменить" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-600 border border-stone-200 dark:border-stone-700 h-10 rounded-xl flex items-center justify-center hover:bg-brand-50 transition"><i class="fa-solid fa-pen"></i></button>`;
+                        if (item.status === 'sold') {
+                            html += `<button onclick="window.changeItemStatus('active')" class="flex-[3] bg-stone-100 text-brand-600 border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid fa-rotate-left"></i> Вернуть</button>`;
                         } else {
-                            statusControls.innerHTML += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-rotate-left mr-1 text-brand-500"></i> Активировать</button>`;
+                            const isRes = item.status === 'reserved';
+                            html += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="flex-[2] bg-stone-100 ${isRes ? 'text-stone-600' : 'text-orange-500'} border border-stone-200 h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять' : 'Резерв'}</button>`;
+                            html += `<button onclick="window.changeItemStatus('sold')" title="Продано" class="flex-1 bg-green-50 text-green-600 border border-green-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-check"></i></button>`;
                         }
-                    }
-
-                    if(editControls) {
-                        editControls.innerHTML = `<button onclick="window.editItem('${item.id}')" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer"><i class="fa-solid fa-pen text-brand-500 mr-1"></i> Редактировать</button>
-                                                  <button onclick="window.deleteItem('${item.id}')" class="flex-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 py-3 rounded-xl font-bold text-sm hover:bg-red-100 transition shadow-sm cursor-pointer"><i class="fa-solid fa-trash mr-1"></i> Удалить</button>`;
+                        html += `<button onclick="window.deleteItem('${item.id}')" title="Удалить" class="flex-1 bg-red-50 text-red-500 border border-red-200 h-10 rounded-xl flex items-center justify-center transition"><i class="fa-solid fa-trash"></i></button>`;
+                        actionControls.innerHTML = html;
                     }
                 } else {
                     if(contactBtn) contactBtn.classList.remove('hidden'); 
@@ -2117,9 +1513,7 @@
                 
                 window.openModal('item-modal');
                 history.pushState({ modal: true }, '', '?item=' + id);
-            } catch (err) {
-                console.error("КРИТИЧЕСКАЯ ОШИБКА ОТКРЫТИЯ:", err);
-            }
+            } catch (err) {}
         };
 
         window.changeItemStatus = async (newStatus) => {
@@ -2148,19 +1542,300 @@
             document.getElementById('add-modal-title').innerText = "Редактировать"; document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
             window.editExistingImages = item.images || [];
             window.tempPhotos = []; 
-            window.renderPhotoPreviews(); // Вызываем нашу новую умную отрисовку
+            window.renderPhotoPreviews(); 
             document.getElementById('del-meet').checked = item.delivery ? item.delivery.includes('Личная встреча') : true;
             document.getElementById('del-post').checked = item.delivery ? item.delivery.includes('PostExpress') : false;
+            window.closeModal('item-modal'); window.openModal('add-modal');
         };
 
+        window.fetchItems = async (isLoadMore = false) => {
+            const loader = document.getElementById('loading-placeholder');
+            const mainGrid = document.getElementById('main-items-grid');
+            const emptyState = document.getElementById('empty-state');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const vipSection = document.getElementById('vip-section');
+            const vipGrid = document.getElementById('vip-items-grid');
+            const proBanner = document.getElementById('pro-thin-banner');
             
+            if (!isLoadMore) {
+                window.displayedCount = 12;
+                if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
+                if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
+                if(emptyState) emptyState.classList.add('hidden');
+                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
+
+                const feedTitle = document.getElementById('main-feed-title');
+                const feedIcon = document.getElementById('main-feed-icon');
+                if(feedTitle && feedIcon) {
+                    if(window.showUrgentOnly) {
+                        feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200"; feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl";
+                    } else {
+                        feedTitle.innerText = "Свежие объявления"; feedTitle.className = "font-black text-xl text-stone-500"; feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl";
+                    }
+                }
+            }
+
+            try {
+                let res, vipRes = { data: [] };
+                let fallbackMode = false;
+
+                try {
+                    let q = supabase.from('items').select('*');
+                    if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
+                    if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
+                    if (window.searchQuery) q = q.textSearch('fts', window.searchQuery, { type: 'websearch' });
+                    if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
+                    if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
+                    if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
+                    if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
+                    if (window.filterCondition && window.filterCondition !== 'Все') q = q.eq('condition', window.filterCondition);
+
+                    if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
+                    else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
+                    else q = q.order('created_at', { ascending: false });
+
+                    q = q.limit(window.displayedCount + 1);
+
+                    let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(6);
+                    if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
+                    if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
+
+                    const results = await Promise.all([q, vq]);
+                    if (results[0].error) throw results[0].error;
+                    res = results[0];
+                    vipRes = results[1];
+                } catch (err) {
+                    fallbackMode = true;
+                    res = await supabase.from('items').select('*').order('created_at', { ascending: false });
+                }
+
+                if (fallbackMode && res.data) {
+                    let filtered = res.data.filter(i => {
+                        const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
+                        const searchQ = (window.searchQuery || '').toLowerCase();
+                        const titleStr = (i.title || '').toLowerCase();
+                        const matchSearch = titleStr.includes(searchQ);
+                        const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
+                        const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
+                        const matchCond = window.filterCondition === 'Все' || i.condition === window.filterCondition;
+                        let matchPrice = true;
+                        const p = Number(i.price) || 0;
+                        if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
+                        if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
+                        if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
+                        return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
+                    });
+                    
+                    if (window.currentSortMode === 'cheap') filtered.sort((a, b) => Number(a.price) - Number(b.price));
+                    else if (window.currentSortMode === 'exp') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+                    
+                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);
+                    res.data = filtered.slice(0, window.displayedCount + 1);
+                }
+
+                const items = (res.data || []).map(window.mapItemData).filter(Boolean);
+                const hasMore = items.length > window.displayedCount;
+                const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
+
+                if (!isLoadMore) window.loadedItems = itemsToDisplay;
+                else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
+
+                if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
+                    const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
+                    if (vipMapped.length > 0 && vipGrid && vipSection) {
+                        vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto'; 
+                        vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
+                        vipSection.classList.remove('hidden');
+                        vipMapped.forEach(v => { if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
+                    }
+                } else if (!isLoadMore && vipSection) {
+                    vipSection.classList.add('hidden');
+                }
+
+                if (itemsToDisplay.length > 0) {
+                    let html = '';
+                    itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
+                    if(mainGrid) {
+                        mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; 
+                        if (!isLoadMore) mainGrid.innerHTML = html;
+                        else mainGrid.insertAdjacentHTML('beforeend', html);
+                        mainGrid.classList.remove('hidden');
+                    }
+                    if(loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }
+                    if(proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
+                } else {
+                    if (!isLoadMore) {
+                        if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
+                        if(emptyState) emptyState.classList.remove('hidden');
+                        if(proBanner) proBanner.classList.add('hidden');
+                    }
+                    if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                }
+            } catch(e) { 
+                if (window.loadedItems.length === 0 && loader) {
+                    loader.style.display = 'block';
+                    loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span></div>`;
+                }
+            } finally {
+                if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none';
+            }
+        };
+
+        window.submitNewItem = async (event) => {
+            if(event) event.preventDefault();
+            const btn = document.getElementById('add-submit-btn'); 
+            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
+            
+            try {
+                if(!window.currentUser) throw new Error("Войдите в аккаунт");
+
+                const conditionEl = document.querySelector('input[name="item-condition"]:checked');
+                const itemCondition = conditionEl ? conditionEl.value : 'Б/У';
+                const titleEl = document.getElementById('item-title');
+                const catEl = document.getElementById('item-category');
+                const cityEl = document.getElementById('item-city');
+                const priceEl = document.getElementById('item-price');
+                const descEl = document.getElementById('item-desc');
+                const currencyEl = document.getElementById('item-currency');
+                const phoneEl = document.getElementById('item-phone');
+                
+                if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
+
+                const delMeet = document.getElementById('del-meet')?.checked;
+                const delPost = document.getElementById('del-post')?.checked;
+                const deliveryArr = [];
+                if(delMeet) deliveryArr.push('Личная встреча');
+                if(delPost) deliveryArr.push('PostExpress');
+                
+                let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
+                
+                function dataURItoBlob(dataURI) {
+                    const byteString = atob(dataURI.split(',')[1]);
+                    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                    return new Blob([ab], {type: mimeString});
+                }
+
+                if (window.tempPhotos.length > 0) {
+                    finalImages = [];
+                    for (let i = 0; i < window.tempPhotos.length; i++) {
+                        const dataUrl = window.tempPhotos[i];
+                        if (dataUrl.startsWith('http')) { finalImages.push(dataUrl); } 
+                        else {
+                            const blob = dataURItoBlob(dataUrl);
+                            const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
+                            const { error } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
+                            if (error) throw error;
+                            const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
+                            if (data && data.publicUrl) finalImages.push(data.publicUrl);
+                        }
+                    }
+                }
+                
+                const addressEl = document.getElementById('item-address');
+                
+                const itemData = {
+                    title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
+                    price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
+                    condition: itemCondition, author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
+                    author_avatar: window.currentUser.user_metadata?.avatar_url || '',
+                    image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
+                    currency: currencyEl ? currencyEl.value : 'RSD', 
+                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
+                    address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr
+                };
+
+                let res;
+                if (window.editingItemId) {
+                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
+                } else {
+                    itemData.is_highlighted = window.currentUserData?.is_pro || false;
+                    itemData.status = 'active';
+                    res = await supabase.from('items').insert([itemData]);
+                }
+                
+                if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
+                    delete itemData.delivery; delete itemData.status; delete itemData.phone; delete itemData.condition;
+                    if (window.editingItemId) res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
+                    else res = await supabase.from('items').insert([itemData]);
+                    if(!res.error) window.showToast("Успешно, но добавьте колонки status/phone в Supabase!", true);
+                }
+
+                if(res.error) throw new Error(res.error.message);
+                
+                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
+                window.closeModal('add-modal');
+                window.fetchItems(false);
+            } catch(e) { window.showToast(`Ошибка: ${e.message}`, true); } 
+            finally { if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить` : `Опубликовать`; } }
+        };
+
+        window.renderPhotoPreviews = () => {
+            const list = document.getElementById('photo-preview-list');
+            if(!list) return;
+            let html = '';
+            (window.editExistingImages || []).forEach((src, i) => {
+                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
+                    <img src="${src}" class="w-full h-full object-cover rounded-xl">
+                    <button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+            });
+            (window.tempPhotos || []).forEach((dataUrl, i) => {
+                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
+                    <img src="${dataUrl}" class="w-full h-full object-cover rounded-xl">
+                    <button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+            });
+            list.innerHTML = html;
+        };
+
+        window.removePhoto = (type, index) => {
+            if (type === 'existing') window.editExistingImages.splice(index, 1);
+            else window.tempPhotos.splice(index, 1);
+            window.renderPhotoPreviews();
+        };
+
+        window.previewPhotos = async (e) => {
+            const files = Array.from(e.target.files);
+            const isPro = window.currentUserData && window.currentUserData.is_pro;
+            const maxPhotos = isPro ? 10 : 5;
+            const currentTotal = (window.editExistingImages?.length || 0) + (window.tempPhotos?.length || 0);
+            
+            if (currentTotal + files.length > maxPhotos) {
+                window.showToast(`Доступно максимум ${maxPhotos} фото ${isPro ? '' : '(Купите PRO для 10)'}`, true);
+                e.target.value = ''; return;
+            }
+
+            for(let file of files) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000;
+                        let width = img.width; let height = img.height;
+                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        window.tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
+                        window.renderPhotoPreviews(); 
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = ''; 
+        };
+
         window.renderProfileTabs = async () => {
             const grid = document.getElementById('profile-items-grid');
             const empty = document.getElementById('profile-empty');
             if(!grid || !empty || !window.currentUser) return;
 
-            grid.style.display = 'none';
-            empty.style.display = 'none';
+            grid.style.display = 'none'; empty.style.display = 'none';
 
             try {
                 const favCount = window.userFavorites ? window.userFavorites.size : 0;
@@ -2193,11 +1868,9 @@
                 } else {
                     empty.style.display = 'flex';
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         };
 
-
-        // === ВЕРНУЛИ УДАЛЕННЫЕ КНОПКИ (ЧАТ, PRO, ПОДНЯТИЯ) ===
         window.openChatModal = () => {
             if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             document.getElementById('chat-item-title').innerText = document.getElementById('modal-title').innerText;
@@ -2249,7 +1922,7 @@
                     window.currentUserData.wallet_balance = newBal;
                     document.querySelectorAll('#profile-balance').forEach(el => el.innerText = newBal + ' шт.');
                     window.closeModal('share-modal');
-                } catch(e) { console.error(e); }
+                } catch(e) {}
             }, 4000); 
         };
 
@@ -2295,7 +1968,6 @@
                 finally { if(btn) { btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; } }
             }, 4000);
         };
-
         
         window.handleAuthChange = async (session) => {
             try {
@@ -2336,50 +2008,31 @@
                     if(profileLogoutBtn) { profileLogoutBtn.classList.add('hidden'); profileLogoutBtn.classList.remove('flex'); }
                 }
                 
-                if(window.currentUser) window.renderProfileTabs();
-            } catch(e) { console.error("Auth error:", e); }
+                if(window.currentUser) window.switchProfileTab(window.currentProfileTab);
+            } catch(e) {}
         };
 
-        supabase.auth.getSession().then(({ data: { session } }) => { 
-            window.handleAuthChange(session);
-        });
-        
-        supabase.auth.onAuthStateChange((_e, s) => { 
-            if(window.authInitialized) window.handleAuthChange(s); 
-        });
+        supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
+        supabase.auth.onAuthStateChange((_e, s) => { if(window.authInitialized) window.handleAuthChange(s); });
 
-        // === ЛОГИКА КАСТОМНОГО СЕЛЕКТА КАТЕГОРИЙ ===
         window.renderCustomCategorySelect = () => {
             const list = document.getElementById('custom-cat-list');
             if(!list || !window.subcategoriesMap) return;
             
-            // Главная кнопка "Все категории"
             let html = `<button onclick="window.selectCustomCat('Все', 'Все категории', event)" type="button" class="w-full text-left px-4 py-3.5 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 font-black text-base text-brand-600 dark:text-brand-400 transition cursor-pointer border border-transparent hover:border-brand-100 dark:hover:border-brand-800/50 mb-2 shadow-sm">Все категории</button>`;
             
-            // Генерируем красивый список
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-                
-                // 1. ГЛАВНАЯ КАТЕГОРИЯ (Крупная, жирная, с разделителем)
-                html += `<div class="px-4 py-2 mt-4 mb-2 text-lg font-black text-stone-900 dark:text-white uppercase tracking-tight border-b border-stone-100 dark:border-stone-700/50">
-                            ${mainCat}
-                         </div>`;
-                
-                // 2. ПОДКАТЕГОРИИ (С аккуратным маркером-точкой)
+                html += `<div class="px-4 py-2 mt-4 mb-2 text-lg font-black text-stone-900 dark:text-white uppercase tracking-tight border-b border-stone-100 dark:border-stone-700/50">${mainCat}</div>`;
                 subs.forEach(sub => {
                     const prefix = sub.prefix || mainCat;
                     const val = `${prefix} - ${sub.val}`;
                     const label = sub.label || sub.val;
-                    
-                    html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 font-medium text-base text-stone-600 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-700 flex items-center gap-3">
-                                <span class="w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 shrink-0"></span>
-                                ${label}
-                             </button>`;
+                    html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 font-medium text-base text-stone-600 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-700 flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 shrink-0"></span>${label}</button>`;
                 });
             }
             list.innerHTML = html;
         };
 
-        // Плавное открытие/закрытие
         window.toggleCustomCat = () => {
             const dd = document.getElementById('custom-cat-dropdown');
             const icon = document.getElementById('custom-cat-icon');
@@ -2393,7 +2046,6 @@
             }
         };
 
-        // Выбор элемента
         window.selectCustomCat = (val, label, e) => {
             if(e) e.stopPropagation();
             const input = document.getElementById('filter-category');
@@ -2405,52 +2057,35 @@
             if (dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
         };
 
-        // Закрытие при клике мимо окна
         document.addEventListener('click', (e) => {
             const wrapper = document.getElementById('custom-cat-wrapper');
             const dd = document.getElementById('custom-cat-dropdown');
-            if (wrapper && !wrapper.contains(e.target) && dd && !dd.classList.contains('hidden')) {
-                window.toggleCustomCat();
-            }
+            if (wrapper && !wrapper.contains(e.target) && dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
         });
 
-        // Запускаем отрисовку через секунду после загрузки страницы
         setTimeout(window.renderCustomCategorySelect, 200);
         
-        // INIT LOAD
         window.fetchItems();
 
-        // === DEEP LINKING (РОУТИНГ) ===
-        // 1. Проверяем URL при загрузке страницы
         const urlParams = new URLSearchParams(window.location.search);
         const itemIdFromUrl = urlParams.get('item');
-        if (itemIdFromUrl) {
-            window.openItemDetails(itemIdFromUrl);
-        }
+        if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
-        // 2. Корректно обрабатываем кнопку "Назад" в браузере
         window.addEventListener('popstate', () => {
-            const params = new URLSearchParams(window.location.search);
+            const params = newSearchParams(window.location.search);
             const item = params.get('item');
             if (item) window.openItemDetails(item);
             else window.closeModal('item-modal');
         });
 
-        // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВИДА СЕТКИ ===
-        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'large';
-
-        // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВИДА СЕТКИ ===
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
 
         window.setViewMode = (mode) => {
             window.currentViewMode = mode;
             localStorage.setItem('svalka_view_mode', mode);
-            
             const btnGrid = document.getElementById('btn-view-grid');
             const btnList = document.getElementById('btn-view-list');
             const grid = document.getElementById('main-items-grid');
-            
-            // Перекрашиваем кнопки
             if (btnGrid && btnList) {
                 if (mode === 'grid') {
                     btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
@@ -2460,17 +2095,10 @@
                     btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
                 }
             }
-            
-            // Применяем классы к главной сетке
-            if (grid) {
-                grid.classList.remove('view-grid', 'view-list');
-                grid.classList.add(`view-${mode}`);
-            }
+            if (grid) { grid.classList.remove('view-grid', 'view-list'); grid.classList.add(`view-${mode}`); }
         };
 
-        // Запускаем проверку при загрузке страницы
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
-        
     </script>
 </body>
 </html>
