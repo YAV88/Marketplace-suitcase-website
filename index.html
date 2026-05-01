@@ -583,8 +583,9 @@
                     </div>
                 </div>
                 
-                <div class="w-full">
-                    <div id="profile-economy-section" class="hidden flex-row justify-between items-center w-full bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm">
+                <div class="w-full flex justify-start">
+                    <!-- Заменили w-full на w-full sm:w-max и добавили отступ gap-8 -->
+                    <div id="profile-economy-section" class="hidden flex-row justify-between items-center w-full sm:w-max gap-4 sm:gap-8 bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm">
                         <div class="flex items-center gap-1.5 pl-2">
                             <span class="text-[10px] sm:text-xs text-stone-500 font-bold uppercase tracking-wider">Поднятия:</span>
                             <span class="font-black text-sm sm:text-base text-brand-600 dark:text-brand-400" id="profile-balance">0 шт.</span>
@@ -595,15 +596,23 @@
                         </div>
                     </div>
                     
-                    <div id="profile-login-wrapper" class="block">
-                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-bold text-sm shadow-md transition cursor-pointer">Войти</button>
+                    <div id="profile-login-wrapper" class="block w-full sm:w-auto">
+                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="w-full sm:w-64 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-bold text-sm shadow-md transition cursor-pointer">Войти</button>
                     </div>
                 </div>
             </div>
 
-            <div class="flex border-b dark:border-stone-800 px-4 sm:px-6 font-black text-sm pt-1">
-                <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer">Мои вещи</button>
-                <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer">Заначка</button>
+            <!-- Вкладки и Поиск -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
+                <div class="flex font-black text-sm w-full sm:w-auto overflow-x-auto custom-scrollbar">
+                    <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0">Мои вещи</button>
+                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Заначка</button>
+                </div>
+                <!-- Строка поиска -->
+                <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
+                    <input type="text" id="profile-search-input" oninput="window.filterProfileItems(this, 'profile-items-grid')" placeholder="Поиск по профилю..." class="w-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
+                </div>
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
@@ -637,8 +646,16 @@
                 </div>
             </div>
 
-            <div class="flex border-b dark:border-stone-800 px-4 sm:px-6 font-black text-sm pt-1">
-                <button class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 cursor-default">Все объявления</button>
+            <!-- Вкладки и Поиск продавца -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
+                <div class="flex font-black text-sm">
+                    <button class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 cursor-default">Все объявления</button>
+                </div>
+                <!-- Строка поиска -->
+                <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
+                    <input type="text" id="seller-search-input" oninput="window.filterProfileItems(this, 'seller-items-grid')" placeholder="Поиск по товарам..." class="w-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
+                </div>
             </div>
             
             <!-- Сетка товаров продавца -->
@@ -2320,6 +2337,45 @@
         };
 
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
+
+        // === ЛОКАЛЬНЫЙ ПОИСК ПО КАРТОЧКАМ В ПРОФИЛЯХ ===
+        window.filterProfileItems = (input, gridId) => {
+            const term = input.value.toLowerCase().trim();
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            
+            const cards = grid.querySelectorAll('.item-card');
+            let hasVisible = false;
+
+            cards.forEach(card => {
+                const title = card.querySelector('h4').innerText.toLowerCase();
+                if (title.includes(term)) {
+                    card.style.display = 'flex';
+                    hasVisible = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Если ничего не найдено - можно показать заглушку (если она есть)
+            const emptyState = document.getElementById(gridId.replace('-grid', '-empty'));
+            if (emptyState) {
+                if (!hasVisible && cards.length > 0) {
+                    emptyState.style.display = 'flex';
+                    emptyState.querySelector('span').innerText = 'По вашему запросу ничего не найдено';
+                } else if (cards.length > 0) {
+                    emptyState.style.display = 'none';
+                }
+            }
+        };
+
+        // Очищаем поиск при переключении вкладок
+        const originalSwitchTab = window.switchProfileTab;
+        window.switchProfileTab = (tab) => {
+            const searchInput = document.getElementById('profile-search-input');
+            if(searchInput) searchInput.value = '';
+            originalSwitchTab(tab);
+        };
     </script>
 </body>
 </html>
