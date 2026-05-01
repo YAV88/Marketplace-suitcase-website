@@ -1495,20 +1495,7 @@
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
 
-                const authorSubEl = document.getElementById('modal-author-sub');
-                if(authorSubEl) {
-                    const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
-                    authorSubEl.innerHTML = authorBadgeHtml;
-                }
                 
-                // НОВОЕ: Привязываем клик по кнопке к реальному ID продавца этого товара
-                const sellerBtn = document.getElementById('modal-seller-btn');
-                if (sellerBtn) {
-                    sellerBtn.onclick = () => {
-                        window.closeModal('item-modal'); // Сначала закрываем окно товара
-                        window.openSellerProfile(item.userId); // Открываем профиль
-                    };
-                }
                 
                 const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
                 const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
