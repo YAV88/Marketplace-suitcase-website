@@ -556,7 +556,7 @@
     </div>
 
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm z-[70]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
                 
@@ -699,7 +699,7 @@
                 </div>
 
                 <!-- СОСТОЯНИЕ ВЕЩИ -->
-                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
                     <span class="text-sm font-bold text-stone-500 mb-1">Состояние <span class="text-brand-500">*</span></span>
                     <div class="flex gap-3">
                         <label class="flex-1 cursor-pointer">
@@ -1320,6 +1320,18 @@
         window.handleCategoryChange = (e) => {
             const val = e.target ? e.target.value : e;
             const reFields = document.getElementById('re-fields');
+            const condBlock = document.getElementById('add-condition-block'); // Наш блок состояния
+            
+            // Прячем состояние для нефизических товаров
+            if (condBlock) {
+                if (val && (val.includes('Жилье') || val.includes('Услуги') || val.includes('Работа'))) {
+                    condBlock.classList.add('hidden'); condBlock.classList.remove('flex');
+                } else {
+                    condBlock.classList.remove('hidden'); condBlock.classList.add('flex');
+                }
+            }
+
+            // Карта для недвижимости
             if (val && val.includes('Жилье')) {
                 reFields.classList.remove('hidden'); reFields.classList.add('flex');
                 setTimeout(() => {
@@ -1331,7 +1343,7 @@
                             const pos = window.addMarkerObj.getLatLng(); window.itemCoords = [pos.lat, pos.lng];
                         });
                         window.addMapObj.on('click', function(event) {
-                            window.itemCoords = [event.latlng.lat, event.latlng.lng];
+                            window.itemCoords = [event.latlng.lat, event.event.lng];
                             window.addMarkerObj.setLatLng(window.itemCoords);
                         });
                     } else {
@@ -1361,6 +1373,10 @@
         }
 
         window.createCardHtml = function(i, isVIP) {
+            const isOwner = window.currentUser && window.currentUser.id === i.userId; // Проверка на владельца
+            const isService = i.category && (i.category.includes('Услуги') || i.category.includes('Работа'));
+            const isEstate = i.category && i.category.includes('Жилье');
+
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
             const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
             const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -1377,25 +1393,38 @@
 
             const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
 
-            // Единый стандартный размер для всех карточек
             const imgHeight = 'h-36 sm:h-40';
             const pClass = 'p-3 sm:p-4';
             const titleClass = 'text-sm sm:text-base';
             const priceClass = 'text-base sm:text-lg';
 
             let deliveryBadges = '';
-            if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 border border-brand-200 dark:border-brand-800/50" title="Отправка PostExpress"><i class="fa-solid fa-box"></i> PostExpress</span>`;
-            if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
+            if (!isService && !isEstate) {
+                if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 border border-brand-200 dark:border-brand-800/50" title="Отправка PostExpress"><i class="fa-solid fa-box"></i> PostExpress</span>`;
+                if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
+            }
             
+            // Цветовые индикаторы вместо "Новое/БУ"
             let condBadge = '';
-            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
-            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
+            if (isService) {
+                condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
+            } else if (isEstate) {
+                condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
+            } else {
+                if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
+                else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
+            }
             
-            return `
-            <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
+            // Прячем кнопку "Избранное", если товар принадлежит текущему пользователю
+            const favHtml = isOwner ? '' : `
                 <button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')">
                     <i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i>
                 </button>
+            `;
+
+            return `
+            <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
+                ${favHtml}
                 <div class="${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
@@ -1961,11 +1990,26 @@
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
                 
+                const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
+                const isEstate = item.category && item.category.includes('Жилье');
+
                 const condTextEl = document.getElementById('modal-condition-text');
-                if(condTextEl) condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У';
+                if(condTextEl) {
+                    if (isService || isEstate) {
+                        condTextEl.classList.add('hidden'); // Прячем Б/У для услуг
+                    } else {
+                        condTextEl.classList.remove('hidden');
+                        condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У';
+                    }
+                }
                 
-                const priceEl = document.getElementById('modal-price');
-                if(priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+                const catTextEl = document.getElementById('modal-category-text');
+                if(catTextEl) {
+                    const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
+                    catTextEl.innerText = catText.toUpperCase();
+                    // Красим тег в цвет категории
+                    catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${isService ? 'bg-blue-500' : (isEstate ? 'bg-indigo-500' : 'bg-brand-600')}`;
+                }
 
                 // Отрисовка способов доставки
                 const delCont = document.getElementById('modal-delivery-container');
