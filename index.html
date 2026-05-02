@@ -496,15 +496,19 @@
         </div>
     </div>
 
-    <div id="chat-list-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 md:backdrop-blur-sm z-[100]">
+    <div id="chat-list-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
+            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50 shrink-0">
                 <div class="font-black text-xl text-stone-900 dark:text-white">Сообщения</div>
                 <button onclick="window.closeModal('chat-list-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col items-center justify-center">
-                <i class="fa-regular fa-envelope-open text-6xl text-stone-300 mb-4"></i>
-                <div class="text-center text-base font-bold text-stone-400">У вас пока нет активных диалогов</div>
+            
+            <!-- Добавили id="chat-list-container" и убрали p-6, чтобы карточки были от края до края -->
+            <div id="chat-list-container" class="flex-1 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col custom-scrollbar">
+                <div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20">
+                    <i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i>
+                    <div class="text-base font-bold">У вас пока нет активных диалогов</div>
+                </div>
             </div>
         </div>
     </div>
@@ -2213,12 +2217,80 @@
         };
 
         // Заглушка списка всех диалогов (Сделаем на следующем шаге!)
-        window.openChatListModal = () => {
+        // 5. ОТКРЫТИЕ СПИСКА ЧАТОВ (Входящие)
+        window.openChatListModal = async () => {
             if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            document.getElementById('chat-item-title').innerText = "Все сообщения";
-            document.getElementById('chat-author-name').innerText = "Список чатов";
-            document.getElementById('chat-messages').innerHTML = `<div class="text-center text-xs font-bold text-stone-400 mt-10"><i class="fa-solid fa-wrench text-3xl mb-3 block"></i>Список диалогов в разработке...</div>`;
+            window.openModal('chat-list-modal');
+            
+            const container = document.getElementById('chat-list-container');
+            if(container) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+
+            try {
+                // Ищем все чаты, где я либо покупатель, либо продавец
+                const { data: chats, error } = await supabase
+                    .from('chats')
+                    .select('*')
+                    .or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!chats || chats.length === 0) {
+                    container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20"><i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i><div class="text-base font-bold">Нет активных диалогов</div></div>`;
+                    return;
+                }
+
+                let html = '';
+                for (const chat of chats) {
+                    // Запрашиваем последнее сообщение в этом чате
+                    const { data: msgs } = await supabase.from('messages').select('text').eq('chat_id', chat.id).order('created_at', { ascending: false }).limit(1);
+                    const lastMsg = msgs && msgs.length > 0 ? msgs[0].text : 'Нет сообщений...';
+                    
+                    // Запрашиваем инфу о товаре (картинку и название)
+                    const { data: item } = await supabase.from('items').select('title, image_url').eq('id', chat.item_id).maybeSingle();
+                    const itemTitle = item ? item.title : 'Товар удален';
+                    const itemImg = (item && item.image_url) ? item.image_url : 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
+
+                    // Определяем нашу роль в этом конкретном чате
+                    const isSeller = chat.seller_id === window.currentUser.id;
+                    const roleLabel = isSeller ? 'Чат с покупателем' : 'Чат с продавцом';
+
+                    html += `
+                    <div onclick="window.openExistingChat('${chat.id}', '${itemTitle.replace(/'/g, "\\'")}', '${roleLabel}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+                        <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate pr-2">${itemTitle}</h4>
+                            </div>
+                            <div class="text-[10px] text-brand-600 font-black tracking-widest uppercase mb-1">${roleLabel}</div>
+                            <p class="text-sm text-stone-500 font-medium truncate">${lastMsg}</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 dark:text-stone-600"></i>
+                    </div>`;
+                }
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка загрузки чатов</div>`;
+            }
+        };
+
+        // 6. ОТКРЫТИЕ КОНКРЕТНОГО ЧАТА ИЗ СПИСКА
+        window.openExistingChat = async (chatId, itemTitle, roleLabel) => {
+            window.closeModal('chat-list-modal'); // Прячем список
+            
+            // Настраиваем окно самого чата
+            document.getElementById('chat-item-title').innerText = itemTitle;
+            document.getElementById('chat-author-name').innerText = roleLabel;
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
             window.openModal('chat-modal');
+
+            // Подгружаем историю и подписываемся на обновления
+            window.currentChatId = chatId;
+            await window.loadMessages();
+            window.subscribeToMessages();
         };
 
         window.completeShareTask = (network) => {
