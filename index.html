@@ -590,6 +590,28 @@
         </div>
     </div>
 
+    <div id="edit-profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[85]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white">Настройки</h2>
+            <form id="edit-profile-form" class="flex flex-col gap-4 text-left" onsubmit="window.saveProfile(event);">
+                <div>
+                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Ваше Имя</label>
+                    <input type="text" id="edit-name" placeholder="Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white" required>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Телефон (для объявлений)</label>
+                    <input type="tel" id="edit-phone" placeholder="+381..." class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white">
+                </div>
+                <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border border-transparent dark:border-stone-700 mt-2">
+                    <label class="text-sm font-bold text-stone-500 mb-3 block">Аватарка</label>
+                    <div class="grid grid-cols-5 gap-3" id="edit-avatar-grid"></div>
+                </div>
+                <button type="submit" id="edit-submit-btn" class="bg-brand-600 text-white w-full mt-4 py-3.5 rounded-xl font-bold text-base transition shadow-md hover:bg-brand-700 cursor-pointer">Сохранить изменения</button>
+            </form>
+        </div>
+    </div>
+    
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[70]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -603,6 +625,8 @@
                         <div class="flex items-center gap-2 mb-0.5">
                             <h2 id="profile-name" class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">Гость</h2>
                             <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
+                            <!-- Кнопка редактирования -->
+                            <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden text-stone-300 hover:text-brand-600 dark:text-stone-600 dark:hover:text-brand-400 transition cursor-pointer p-1"><i class="fa-solid fa-pen text-sm"></i></button>
                         </div>
                         <p id="profile-email" class="text-xs sm:text-sm text-stone-500 truncate">Не авторизован</p>
                     </div>
@@ -1313,6 +1337,14 @@
                     if (!isPro) { window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); setTimeout(() => window.openModal('crypto-modal'), 1500); } 
                     else { window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); } return;
                 }
+                
+                // === НОВЫЙ БЛОК: Автозаполнение телефона из профиля ===
+                const phoneInput = document.getElementById('item-phone');
+                if (phoneInput && window.currentUser.user_metadata?.phone) {
+                    phoneInput.value = window.currentUser.user_metadata.phone;
+                }
+                // ========================================================
+
                 window.openModal('add-modal');
             } catch (err) { window.showToast("Ошибка проверки лимитов", true); } 
             finally { if(addBtn) addBtn.style.opacity = '1'; if(mobBtn) mobBtn.style.opacity = '1'; }
@@ -1441,6 +1473,54 @@
             if(error) window.showToast(error.message, true); else window.showToast("Ссылка отправлена на почту!");
         };
 
+        window.openEditProfile = () => {
+            if (!window.currentUser) return;
+            const meta = window.currentUser.user_metadata || {};
+            document.getElementById('edit-name').value = meta.full_name || '';
+            document.getElementById('edit-phone').value = meta.phone || '';
+            
+            const grid = document.getElementById('edit-avatar-grid');
+            if(grid) {
+                grid.innerHTML = '';
+                const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
+                avatars.forEach((a, i) => {
+                    const avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${a}`;
+                    const isChecked = meta.avatar_url === avatarUrl || (!meta.avatar_url && i === 0);
+                    grid.innerHTML += `<label class="cursor-pointer"><input type="radio" name="edit_avatar" value="${avatarUrl}" class="peer hidden" ${isChecked?'checked':''}><img src="${avatarUrl}" class="rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 transition hover:scale-105"></label>`;
+                });
+            }
+            window.openModal('edit-profile-modal');
+        };
+
+        window.saveProfile = async (event) => {
+            if(event) event.preventDefault();
+            const btn = document.getElementById('edit-submit-btn');
+            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
+            
+            const name = document.getElementById('edit-name').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const avatarEl = document.querySelector('input[name="edit_avatar"]:checked'); 
+            const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
+
+            try {
+                // Обновляем метаданные прямо в Supabase Auth
+                const { data, error } = await supabase.auth.updateUser({
+                    data: { full_name: name, avatar_url: avatar, phone: phone }
+                });
+                if (error) throw error;
+                
+                window.currentUser = data.user;
+                window.handleAuthChange({ user: data.user }); // Мгновенно обновляем интерфейс
+                
+                window.closeModal('edit-profile-modal');
+                window.showToast("Профиль обновлен!");
+            } catch (e) {
+                window.showToast(e.message, true);
+            } finally {
+                if(btn) { btn.disabled = false; btn.innerText = "Сохранить изменения"; }
+            }
+        };
+        
         window.logout = () => { 
             supabase.auth.signOut().catch(e => console.warn(e)); sessionStorage.clear(); window.currentUser = null;
             window.closeModal('profile-modal'); window.location.reload(); 
@@ -2126,7 +2206,7 @@
                     loginBtns.forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
                     userControls.forEach(el => { el.classList.remove('hidden'); el.classList.add('flex'); });
                     if(profileLogoutBtn) { profileLogoutBtn.classList.remove('hidden'); profileLogoutBtn.classList.add('flex'); }
-
+                    const editBtn = document.getElementById('btn-edit-profile'); if(editBtn) editBtn.classList.remove('hidden');
                     const meta = window.currentUser.user_metadata || {};
                     document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
                     document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
