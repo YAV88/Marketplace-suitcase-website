@@ -989,38 +989,41 @@
         window.updateChatBadges = async () => {
             if (!window.currentUser) return;
             try {
-                // 1. Ищем все чаты пользователя
                 const { data: myChats } = await supabase.from('chats').select('id').or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`);
                 if (!myChats || myChats.length === 0) return;
                 
-                // 2. Считаем непрочитанные сообщения в этих чатах (где отправитель НЕ я)
                 const chatIds = myChats.map(c => c.id);
                 const { data: unread } = await supabase.from('messages').select('id').in('chat_id', chatIds).eq('is_read', false).neq('sender_id', window.currentUser.id);
                 
-                // 3. Обновляем все кружочки-уведомления
                 const badges = document.querySelectorAll('#nav-chat-badge');
                 if (unread && unread.length > 0) {
                     const count = unread.length > 99 ? '99+' : unread.length;
                     badges.forEach(b => {
-                        b.classList.remove('hidden', 'w-3', 'h-3'); // Убираем старую точку
+                        b.classList.remove('hidden', 'w-3', 'h-3'); 
                         b.classList.add('flex', 'items-center', 'justify-center', 'min-w-[18px]', 'h-[18px]', 'text-[10px]', 'text-white', 'px-1');
-                        b.innerText = count; // Ставим цифру!
+                        b.innerText = count; 
                     });
                 } else {
-                    badges.forEach(b => {
-                        b.classList.add('hidden');
-                        b.innerText = '';
-                    });
+                    badges.forEach(b => { b.classList.add('hidden'); b.innerText = ''; });
                 }
             } catch (e) { console.error("Ошибка бейджей", e); }
         };
 
         window.initGlobalChatListener = () => {
             if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
-            window.globalChatSubscription = supabase.channel('global_chat_channel')
+            
+            // УНИКАЛЬНЫЙ КАНАЛ ДЛЯ УВЕДОМЛЕНИЙ
+            const channelName = 'global_chats_' + (window.currentUser?.id || 'guest');
+            window.globalChatSubscription = supabase.channel(channelName)
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                     if (window.currentUser && payload.new.sender_id !== window.currentUser.id) {
-                        window.updateChatBadges(); // Мгновенно пересчитываем кружок при новом сообщении
+                        window.updateChatBadges(); 
+                        
+                        // АВТО-ОБНОВЛЕНИЕ СПИСКА ЧАТОВ (Если окно открыто)
+                        const listModal = document.getElementById('chat-list-modal');
+                        if (listModal && listModal.classList.contains('active')) {
+                            window.openChatListModal(true); // true = без перезагрузки экрана
+                        }
                     }
                 }).subscribe();
         };
@@ -1029,7 +1032,6 @@
             if (!window.currentChatId) return;
             const { data, error } = await supabase.from('messages').select('*').eq('chat_id', window.currentChatId).order('created_at', { ascending: true });
             
-            // Если зашли в чат, помечаем все сообщения в нем как "Прочитанные"
             if (window.currentUser) {
                 supabase.from('messages').update({ is_read: true }).eq('chat_id', window.currentChatId).neq('sender_id', window.currentUser.id).eq('is_read', false).then(() => window.updateChatBadges());
             }
@@ -1069,7 +1071,10 @@
 
         window.subscribeToMessages = () => {
             if (window.chatSubscription) supabase.removeChannel(window.chatSubscription);
-            window.chatSubscription = supabase.channel('messages_channel')
+            
+            // УНИКАЛЬНЫЙ КАНАЛ ДЛЯ КОНКРЕТНОЙ КОМНАТЫ
+            const roomName = 'chat_room_' + window.currentChatId;
+            window.chatSubscription = supabase.channel(roomName)
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
                     const newMsg = payload.new;
                     if (newMsg.sender_id !== window.currentUser?.id) {
@@ -1078,13 +1083,12 @@
                         container.insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${newMsg.text}</div></div>`);
                         container.scrollTop = container.scrollHeight;
                         
-                        // Сразу помечаем прочитанным, так как чат открыт перед глазами
                         supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => window.updateChatBadges());
                     }
                 }).subscribe();
         };
 
-        window.currentChatItemId = null; // Сохраняем ID товара для клика в шапке
+        window.currentChatItemId = null; 
 
         window.openChatModal = async () => {
             if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
@@ -1094,7 +1098,6 @@
 
             window.currentChatItemId = item.id;
 
-            // Мы всегда ПОКУПАТЕЛЬ, если жмем "Написать" из карточки товара
             const badge = document.getElementById('chat-role-badge');
             if(badge) { badge.innerText = "ПОКУПКА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-emerald-500"; }
             
@@ -1122,14 +1125,12 @@
             } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
         };
 
-        // ... функции loadMessages, sendChatMessage и subscribeToMessages остаются без изменений ...
-
-        window.openChatListModal = async () => {
+        window.openChatListModal = async (silentLoad = false) => {
             if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            window.openModal('chat-list-modal');
+            if(!silentLoad) window.openModal('chat-list-modal');
             
             const container = document.getElementById('chat-list-container');
-            if(container) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+            if(container && !silentLoad) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
 
             try {
                 const { data: chats, error } = await supabase.from('chats').select('*').or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`).order('created_at', { ascending: false });
@@ -1153,7 +1154,6 @@
 
                     const isSeller = chat.seller_id === window.currentUser.id;
                     
-                    // Умный поиск имени собеседника
                     let interlocutorName = "Собеседник";
                     if (isSeller) {
                         try {
@@ -1165,7 +1165,6 @@
                         interlocutorName = (item && item.author_name) ? item.author_name : "Продавец";
                     }
 
-                    // Бейджи в списке чатов (Входящие)
                     const roleBadge = isSeller ? `<span class="bg-indigo-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Продажа</span>` : `<span class="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Покупка</span>`;
 
                     html += `
@@ -1183,7 +1182,7 @@
                     </div>`;
                 }
                 container.innerHTML = html;
-            } catch (e) { container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка загрузки чатов</div>`; }
+            } catch (e) { container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка: ${e.message}</div>`; }
         };
 
         window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) => {
@@ -1193,7 +1192,6 @@
             
             const isSeller = isSellerStr === 'true';
 
-            // Настраиваем шапку в зависимости от роли
             const badge = document.getElementById('chat-role-badge');
             if (badge) {
                 if (isSeller) {
@@ -1206,18 +1204,15 @@
             document.getElementById('chat-author-name').innerText = interlocutorName || "Собеседник";
             document.getElementById('chat-item-title').innerText = "Загрузка...";
             document.getElementById('chat-item-price').innerText = "";
-            document.getElementById('chat-item-img').src = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100"; // Заглушка
+            document.getElementById('chat-item-img').src = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100"; 
 
-            // Мгновенно подтягиваем актуальные данные о товаре из базы
             supabase.from('items').select('title, price, currency, images, image_url').eq('id', itemId).maybeSingle().then(({data}) => {
                 if (data) {
                     document.getElementById('chat-item-title').innerText = data.title;
                     document.getElementById('chat-item-price').innerText = `${data.price || 0} ${data.currency || 'RSD'}`;
                     const img = (Array.isArray(data.images) && data.images.length > 0) ? data.images[0] : (data.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100');
                     document.getElementById('chat-item-img').src = img;
-                } else {
-                    document.getElementById('chat-item-title').innerText = "Товар удален";
-                }
+                } else { document.getElementById('chat-item-title').innerText = "Товар удален"; }
             });
 
             const messagesContainer = document.getElementById('chat-messages');
