@@ -521,25 +521,22 @@
 
     <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 md:backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <!-- Новая шапка чата (Мини-карточка) -->
             <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 shrink-0">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex items-center gap-3">
-                        <!-- НОВАЯ КНОПКА НАЗАД -->
-                        <button onclick="window.closeModal('chat-modal'); window.openChatListModal();" class="text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer flex items-center justify-center p-1 -ml-1"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="flex justify-between items-start mb-3 gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <button onclick="window.closeModal('chat-modal'); window.openChatListModal();" class="text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer flex items-center justify-center p-1 -ml-1 shrink-0"><i class="fa-solid fa-arrow-left"></i></button>
                         
-                        <div class="flex items-center gap-2">
-                            <!-- Динамическая плашка Покупка/Продажа -->
-                            <span id="chat-role-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white">РОЛЬ</span>
-                            <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-400">
-                                <i class="fa-solid fa-user text-xs"></i>
-                                <!-- Имя собеседника -->
-                                <span id="chat-author-name" class="font-bold text-sm">Собеседник</span>
+                        <div class="flex flex-wrap items-center gap-1.5 min-w-0">
+                            <!-- Динамическая плашка -->
+                            <span id="chat-role-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white shrink-0">РОЛЬ</span>
+                            <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-400 min-w-0">
+                                <i class="fa-solid fa-user text-xs shrink-0"></i>
+                                <span id="chat-author-name" class="font-bold text-sm truncate max-w-[100px] sm:max-w-[200px]">Собеседник</span>
                             </div>
                         </div>
                     </div>
-                    <!-- Кнопка полного закрытия (крестик) -->
-                    <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center -mr-2 -mt-2"><i class="fa-solid fa-xmark"></i></button>
+                    <!-- Кнопка закрытия (крестик) -->
+                    <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center -mr-2 -mt-2 shrink-0"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
                 <!-- Кликабельная карточка товара -->
