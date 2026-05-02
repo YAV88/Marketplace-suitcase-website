@@ -958,25 +958,203 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        window.filterCondition = 'Все';
-        window.currentUser = null; 
-        window.loadedItems = []; 
-        window.tempPhotos = []; 
-        window.editExistingImages = [];
-        window.currentCategory = 'Все'; 
-        window.searchQuery = ''; 
-        window.showUrgentOnly = false;
-        window.filterCity = 'Все';
-        window.filterPriceMin = '';
-        window.filterPriceMax = '';
-        window.filterCurrency = 'Все'; 
-        window.currentProfileTab = 'items';
-        window.activeModalItemId = null; 
-        window.editingItemId = null; 
-        window.userFavorites = new Set(); 
-        window.displayedCount = 12; 
-        window.authMode = 'login';
-        window.authInitialized = false;
+        window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = []; 
+        window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все'; 
+        window.searchQuery = ''; window.showUrgentOnly = false; window.filterCity = 'Все';
+        window.filterPriceMin = ''; window.filterPriceMax = ''; window.filterCurrency = 'Все'; 
+        window.currentProfileTab = 'items'; window.activeModalItemId = null; 
+        window.editingItemId = null; window.userFavorites = new Set(); 
+        window.displayedCount = 12; window.authMode = 'login'; window.authInitialized = false;
+
+        // === ЧАТЫ И УВЕДОМЛЕНИЯ ===
+        window.currentChatId = null;
+        window.chatSubscription = null;
+        window.globalChatSubscription = null;
+
+        window.updateChatBadges = async () => {
+            if (!window.currentUser) return;
+            try {
+                // 1. Ищем все чаты пользователя
+                const { data: myChats } = await supabase.from('chats').select('id').or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`);
+                if (!myChats || myChats.length === 0) return;
+                
+                // 2. Считаем непрочитанные сообщения в этих чатах (где отправитель НЕ я)
+                const chatIds = myChats.map(c => c.id);
+                const { data: unread } = await supabase.from('messages').select('id').in('chat_id', chatIds).eq('is_read', false).neq('sender_id', window.currentUser.id);
+                
+                // 3. Обновляем все кружочки-уведомления
+                const badges = document.querySelectorAll('#nav-chat-badge');
+                if (unread && unread.length > 0) {
+                    const count = unread.length > 99 ? '99+' : unread.length;
+                    badges.forEach(b => {
+                        b.classList.remove('hidden', 'w-3', 'h-3'); // Убираем старую точку
+                        b.classList.add('flex', 'items-center', 'justify-center', 'min-w-[18px]', 'h-[18px]', 'text-[10px]', 'text-white', 'px-1');
+                        b.innerText = count; // Ставим цифру!
+                    });
+                } else {
+                    badges.forEach(b => {
+                        b.classList.add('hidden');
+                        b.innerText = '';
+                    });
+                }
+            } catch (e) { console.error("Ошибка бейджей", e); }
+        };
+
+        window.initGlobalChatListener = () => {
+            if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
+            window.globalChatSubscription = supabase.channel('global_chat_channel')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                    if (window.currentUser && payload.new.sender_id !== window.currentUser.id) {
+                        window.updateChatBadges(); // Мгновенно пересчитываем кружок при новом сообщении
+                    }
+                }).subscribe();
+        };
+
+        window.openChatModal = async () => {
+            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            
+            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+            if (!item) return;
+
+            document.getElementById('chat-item-title').innerText = item.title;
+            document.getElementById('chat-author-name').innerText = item.authorName || "Продавец";
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+            window.openModal('chat-modal');
+
+            try {
+                let { data: chat } = await supabase.from('chats').select('*').eq('item_id', item.id).eq('buyer_id', window.currentUser.id).maybeSingle();
+                if (!chat) {
+                    const { data: newChat, error } = await supabase.from('chats').insert([{ item_id: item.id, buyer_id: window.currentUser.id, seller_id: item.userId }]).select().single();
+                    if (error) throw error;
+                    chat = newChat;
+                }
+                window.currentChatId = chat.id;
+                await window.loadMessages();
+                window.subscribeToMessages();
+            } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
+        };
+
+        window.loadMessages = async () => {
+            if (!window.currentChatId) return;
+            const { data, error } = await supabase.from('messages').select('*').eq('chat_id', window.currentChatId).order('created_at', { ascending: true });
+            
+            // Если зашли в чат, помечаем все сообщения в нем как "Прочитанные"
+            if (window.currentUser) {
+                supabase.from('messages').update({ is_read: true }).eq('chat_id', window.currentChatId).neq('sender_id', window.currentUser.id).eq('is_read', false).then(() => window.updateChatBadges());
+            }
+
+            const container = document.getElementById('chat-messages');
+            if (error || !data || data.length === 0) {
+                container.innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-4">Напишите первое сообщение!</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(m => {
+                const isMe = m.sender_id === window.currentUser.id;
+                if (isMe) return `<div class="flex items-end justify-end gap-2 w-full mt-2"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${m.text}</div></div>`;
+                else return `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${m.text}</div></div>`;
+            }).join('');
+            container.scrollTop = container.scrollHeight; 
+        };
+
+        window.sendChatMessage = async () => {
+            if (!window.currentChatId || !window.currentUser) return;
+            const input = document.getElementById('chat-input-field');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = ''; 
+            
+            const container = document.getElementById('chat-messages');
+            if(container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
+            container.insertAdjacentHTML('beforeend', `<div class="flex items-end justify-end gap-2 w-full mt-2 opacity-50 transition-opacity" id="temp-msg"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${text}</div></div>`);
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                await supabase.from('messages').insert([{ chat_id: window.currentChatId, sender_id: window.currentUser.id, text: text }]);
+                const tempMsg = document.getElementById('temp-msg');
+                if(tempMsg) { tempMsg.classList.remove('opacity-50'); tempMsg.removeAttribute('id'); } 
+            } catch (e) { window.showToast("Ошибка отправки", true); }
+        };
+
+        window.subscribeToMessages = () => {
+            if (window.chatSubscription) supabase.removeChannel(window.chatSubscription);
+            window.chatSubscription = supabase.channel('messages_channel')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
+                    const newMsg = payload.new;
+                    if (newMsg.sender_id !== window.currentUser?.id) {
+                        const container = document.getElementById('chat-messages');
+                        if(container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
+                        container.insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${newMsg.text}</div></div>`);
+                        container.scrollTop = container.scrollHeight;
+                        
+                        // Сразу помечаем прочитанным, так как чат открыт перед глазами
+                        supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => window.updateChatBadges());
+                    }
+                }).subscribe();
+        };
+
+        window.openChatListModal = async () => {
+            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            window.openModal('chat-list-modal');
+            
+            const container = document.getElementById('chat-list-container');
+            if(container) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+
+            try {
+                const { data: chats, error } = await supabase.from('chats').select('*').or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`).order('created_at', { ascending: false });
+                if (error) throw error;
+                if (!chats || chats.length === 0) {
+                    container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20"><i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i><div class="text-base font-bold">Нет активных диалогов</div></div>`;
+                    return;
+                }
+
+                let html = '';
+                for (const chat of chats) {
+                    const { data: msgs } = await supabase.from('messages').select('text').eq('chat_id', chat.id).order('created_at', { ascending: false }).limit(1);
+                    const lastMsg = msgs && msgs.length > 0 ? msgs[0].text : 'Нет сообщений...';
+                    
+                    // Считаем непрочитанные в этом диалоге
+                    const { count: unreadCount } = await supabase.from('messages').select('*', { count: 'exact', head: true }).eq('chat_id', chat.id).eq('is_read', false).neq('sender_id', window.currentUser.id);
+                    const unreadBadge = unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : '';
+
+                    const { data: item } = await supabase.from('items').select('title, image_url').eq('id', chat.item_id).maybeSingle();
+                    const itemTitle = item ? item.title : 'Товар удален';
+                    const itemImg = (item && item.image_url) ? item.image_url : 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
+
+                    const isSeller = chat.seller_id === window.currentUser.id;
+                    const roleLabel = isSeller ? 'Чат с покупателем' : 'Чат с продавцом';
+
+                    html += `
+                    <div onclick="window.openExistingChat('${chat.id}', '${itemTitle.replace(/'/g, "\\'")}', '${roleLabel}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+                        <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate pr-2">${itemTitle}</h4>
+                            </div>
+                            <div class="text-[10px] text-brand-600 font-black tracking-widest uppercase mb-1">${roleLabel}</div>
+                            <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${lastMsg}</p>
+                        </div>
+                        ${unreadBadge}
+                        <i class="fa-solid fa-chevron-right text-stone-300 dark:text-stone-600 ${unreadCount > 0 ? 'ml-2' : ''}"></i>
+                    </div>`;
+                }
+                container.innerHTML = html;
+            } catch (e) { container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка загрузки чатов</div>`; }
+        };
+
+        window.openExistingChat = async (chatId, itemTitle, roleLabel) => {
+            window.closeModal('chat-list-modal'); 
+            document.getElementById('chat-item-title').innerText = itemTitle;
+            document.getElementById('chat-author-name').innerText = roleLabel;
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+            window.openModal('chat-modal');
+            window.currentChatId = chatId;
+            await window.loadMessages();
+            window.subscribeToMessages();
+        };
+        // ========================
 
         window.updateSEO = (title, desc, img) => {
             document.title = title ? `${title} | SVALKA` : 'SVALKA — Маркетплейс вещей в Сербии';
@@ -995,8 +1173,6 @@
             const manifestUrl = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(manifest))}`;
             document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestUrl}">`);
             document.head.insertAdjacentHTML('beforeend', `<meta name="theme-color" content="#14b8a6">`);
-            document.head.insertAdjacentHTML('beforeend', `<meta name="apple-mobile-web-app-capable" content="yes">`);
-            document.head.insertAdjacentHTML('beforeend', `<meta name="apple-mobile-web-app-status-bar-style" content="default">`);
         };
         initPWA();
 
@@ -1025,80 +1201,42 @@
 
         window.toggleDarkMode = () => { 
             const html = document.documentElement;
-            const isCurrentlyDark = html.classList.contains('dark');
-            const newIsDark = !isCurrentlyDark;
+            const newIsDark = !html.classList.contains('dark');
             updateThemeIcons(newIsDark);
-            setTimeout(() => {
-                html.classList.toggle('dark', newIsDark);
-                localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
-            }, 50);
+            setTimeout(() => { html.classList.toggle('dark', newIsDark); localStorage.setItem('theme', newIsDark ? 'dark' : 'light'); }, 50);
         };
 
-        window.goHome = () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => window.resetFilters(), 300);
-        };
+        window.goHome = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.resetFilters(), 300); };
 
-        window.openModal = id => { 
-            const el = document.getElementById(id);
-            if(el) { el.classList.add('active'); document.body.classList.add('modal-open'); }
-        };
-        
+        window.openModal = id => { const el = document.getElementById(id); if(el) { el.classList.add('active'); document.body.classList.add('modal-open'); } };
         window.closeModal = id => { 
-            const el = document.getElementById(id);
-            if(el) { el.classList.remove('active'); }
+            const el = document.getElementById(id); if(el) el.classList.remove('active');
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
-            
-            if (id === 'item-modal') {
-                history.pushState(null, '', window.location.pathname);
-                window.updateSEO();
-            }
-            
+            if (id === 'item-modal') { history.pushState(null, '', window.location.pathname); window.updateSEO(); }
             if (id === 'add-modal') {
-                window.editingItemId = null;
-                document.getElementById('add-modal-title').innerText = "Пристроить добро";
-                document.getElementById('add-submit-btn').innerText = "Опубликовать";
-                const formEl = document.getElementById('add-form');
-                if(formEl) formEl.reset();
-                window.tempPhotos = []; 
-                window.editExistingImages = [];
-                const photoList = document.getElementById('photo-preview-list');
-                if(photoList) photoList.innerHTML = '';
+                window.editingItemId = null; document.getElementById('add-modal-title').innerText = "Пристроить добро"; document.getElementById('add-submit-btn').innerText = "Опубликовать";
+                const formEl = document.getElementById('add-form'); if(formEl) formEl.reset(); window.tempPhotos = []; window.editExistingImages = [];
+                const photoList = document.getElementById('photo-preview-list'); if(photoList) photoList.innerHTML = '';
             }
         };
 
         window.checkAuthAndOpenAddModal = async () => {
-            if (!window.currentUser) {
-                window.openModal('auth-modal');
-                window.showToast('Сначала войдите в аккаунт', true);
-                return;
-            }
+            if (!window.currentUser) { window.openModal('auth-modal'); window.showToast('Сначала войдите в аккаунт', true); return; }
             const isPro = window.currentUserData && window.currentUserData.is_pro;
             const maxItems = isPro ? 50 : 10;
-            const addBtn = document.getElementById('btn-header-add');
-            const mobBtn = document.getElementById('btn-mobile-add');
-            if(addBtn) addBtn.style.opacity = '0.5';
-            if(mobBtn) mobBtn.style.opacity = '0.5';
+            const addBtn = document.getElementById('btn-header-add'); const mobBtn = document.getElementById('btn-mobile-add');
+            if(addBtn) addBtn.style.opacity = '0.5'; if(mobBtn) mobBtn.style.opacity = '0.5';
 
             try {
                 const { count, error } = await supabase.from('items').select('*', { count: 'exact', head: true }).eq('user_id', window.currentUser.id);
                 if (error) throw error;
                 if (count >= maxItems) {
-                    if (!isPro) {
-                        window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true);
-                        setTimeout(() => window.openModal('crypto-modal'), 1500);
-                    } else {
-                        window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true);
-                    }
-                    return;
+                    if (!isPro) { window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); setTimeout(() => window.openModal('crypto-modal'), 1500); } 
+                    else { window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); } return;
                 }
                 window.openModal('add-modal');
-            } catch (err) {
-                window.showToast("Ошибка проверки лимитов", true);
-            } finally {
-                if(addBtn) addBtn.style.opacity = '1';
-                if(mobBtn) mobBtn.style.opacity = '1';
-            }
+            } catch (err) { window.showToast("Ошибка проверки лимитов", true); } 
+            finally { if(addBtn) addBtn.style.opacity = '1'; if(mobBtn) mobBtn.style.opacity = '1'; }
         };
 
         window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
@@ -1107,20 +1245,13 @@
             const el = document.getElementById('filter-panel-wrapper'); 
             if(!el) return;
             if(el.classList.contains('active')) {
-                el.style.overflow = 'hidden';
-                el.classList.remove('active');
-                const dd = document.getElementById('custom-cat-dropdown');
-                if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
-            } else {
-                el.classList.add('active');
-                setTimeout(() => { el.style.overflow = 'visible'; }, 300);
-            }
+                el.style.overflow = 'hidden'; el.classList.remove('active');
+                const dd = document.getElementById('custom-cat-dropdown'); if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
+            } else { el.classList.add('active'); setTimeout(() => { el.style.overflow = 'visible'; }, 300); }
         };
         
         window.showToast = (msg, err=false) => { 
-            const t = document.getElementById('toast'); 
-            const tMsg = document.getElementById('toast-msg');
-            const tIco = document.getElementById('toast-icon');
+            const t = document.getElementById('toast'); const tMsg = document.getElementById('toast-msg'); const tIco = document.getElementById('toast-icon');
             if(tMsg) tMsg.innerText = msg;
             if(tIco) tIco.className = `fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'} text-lg`;
             if (t) {
@@ -1129,30 +1260,24 @@
             }
         };
 
-        window.currentLightboxImages = [];
-        window.currentLightboxIndex = 0;
+        window.currentLightboxImages = []; window.currentLightboxIndex = 0;
         window.openLightbox = (src) => {
             if (window.activeModalItemId) {
                 const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
-                if (item && Array.isArray(item.images) && item.images.length > 0) window.currentLightboxImages = item.images;
-                else window.currentLightboxImages = [src];
+                if (item && Array.isArray(item.images) && item.images.length > 0) window.currentLightboxImages = item.images; else window.currentLightboxImages = [src];
             } else { window.currentLightboxImages = [src]; }
             const currentMainSrc = document.getElementById('modal-img').src;
             window.currentLightboxIndex = window.currentLightboxImages.findIndex(img => currentMainSrc.includes(img));
             if(window.currentLightboxIndex === -1) window.currentLightboxIndex = 0;
-            window.updateLightboxImage();
-            window.openModal('lightbox');
+            window.updateLightboxImage(); window.openModal('lightbox');
         };
         
         window.updateLightboxImage = () => {
-            const img = document.getElementById('lightbox-img');
-            if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
-            const prev = document.getElementById('lightbox-prev');
-            const next = document.getElementById('lightbox-next');
+            const img = document.getElementById('lightbox-img'); if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
+            const prev = document.getElementById('lightbox-prev'); const next = document.getElementById('lightbox-next');
             if(prev) prev.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
             if(next) next.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
         };
-        
         window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
@@ -1174,33 +1299,24 @@
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
                 window.fetchItems(false);
-                
                 if(window.activeModalItemId === itemId) {
                     const modalFavIcon = document.querySelector('#modal-fav-btn i');
                     if(modalFavIcon) modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         };
         
-        window.toggleFavoriteModal = (event) => {
-            if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId);
-        }
+        window.toggleFavoriteModal = (event) => { if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId); }
 
         window.shareCurrentItem = async () => {
-            const url = window.location.href;
-            const title = document.getElementById('modal-title').innerText;
-            if (navigator.share) {
-                try { await navigator.share({ title: 'SVALKA', text: title, url: url }); } catch (e) {}
-            } else {
-                navigator.clipboard.writeText(url); window.showToast('Ссылка скопирована!');
-            }
+            const url = window.location.href; const title = document.getElementById('modal-title').innerText;
+            if (navigator.share) { try { await navigator.share({ title: 'SVALKA', text: title, url: url }); } catch (e) {} } 
+            else { navigator.clipboard.writeText(url); window.showToast('Ссылка скопирована!'); }
         };
 
         window.setAuthMode = mode => {
             window.authMode = mode;
-            const fields = document.getElementById('auth-name-field');
-            const tabL = document.getElementById('tab-login');
-            const tabR = document.getElementById('tab-register');
+            const fields = document.getElementById('auth-name-field'); const tabL = document.getElementById('tab-login'); const tabR = document.getElementById('tab-register');
             if(mode === 'register') { 
                 if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
                 if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
@@ -1214,11 +1330,8 @@
 
         window.submitAuth = async (event) => {
             if(event) event.preventDefault();
-            const btn = document.getElementById('auth-submit-btn');
-            const emailEl = document.getElementById('auth-email');
-            const passEl = document.getElementById('auth-password');
-            const email = emailEl ? emailEl.value.trim() : '';
-            const pass = passEl ? passEl.value : '';
+            const btn = document.getElementById('auth-submit-btn'); const emailEl = document.getElementById('auth-email'); const passEl = document.getElementById('auth-password');
+            const email = emailEl ? emailEl.value.trim() : ''; const pass = passEl ? passEl.value : '';
 
             if (window.authMode === 'register') {
                 const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
@@ -1231,36 +1344,27 @@
                     const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
                     if (error) throw error;
                 } else {
-                    const nameEl = document.getElementById('auth-name');
-                    const name = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Пользователь';
-                    const avatarEl = document.querySelector('input[name="avatar"]:checked');
-                    const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
+                    const nameEl = document.getElementById('auth-name'); const name = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Пользователь';
+                    const avatarEl = document.querySelector('input[name="avatar"]:checked'); const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
                     const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { full_name: name, avatar_url: avatar } } });
                     if (error) throw error;
                 }
-                window.closeModal('auth-modal');
-                window.showToast("Успешно!");
-                if(emailEl) emailEl.value = '';
-                if(passEl) passEl.value = '';
+                window.closeModal('auth-modal'); window.showToast("Успешно!");
+                if(emailEl) emailEl.value = ''; if(passEl) passEl.value = '';
             } catch (e) { window.showToast(e.message, true); }
             finally { if(btn) { btn.disabled = false; btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; } }
         };
 
         window.forgotPassword = async () => {
-            const emailEl = document.getElementById('auth-email');
-            const email = emailEl ? emailEl.value.trim() : '';
+            const emailEl = document.getElementById('auth-email'); const email = emailEl ? emailEl.value.trim() : '';
             if(!email) { window.showToast("Введите Email!", true); return; }
             const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-            if(error) window.showToast(error.message, true);
-            else window.showToast("Ссылка отправлена на почту!");
+            if(error) window.showToast(error.message, true); else window.showToast("Ссылка отправлена на почту!");
         };
 
         window.logout = () => { 
-            supabase.auth.signOut().catch(e => console.warn(e));
-            sessionStorage.clear();
-            window.currentUser = null;
-            window.closeModal('profile-modal'); 
-            window.location.reload(); 
+            supabase.auth.signOut().catch(e => console.warn(e)); sessionStorage.clear(); window.currentUser = null;
+            window.closeModal('profile-modal'); window.location.reload(); 
         };
 
         const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
@@ -1273,19 +1377,13 @@
         }
 
         window.applyFilters = () => {
-            const elCat = document.getElementById('filter-category');
-            const elCity = document.getElementById('filter-city');
-            const elMin = document.getElementById('filter-price-min');
-            const elMax = document.getElementById('filter-price-max');
-            const elCur = document.getElementById('filter-currency');
-            const elCond = document.getElementById('filter-condition');
+            const elCat = document.getElementById('filter-category'); const elCity = document.getElementById('filter-city');
+            const elMin = document.getElementById('filter-price-min'); const elMax = document.getElementById('filter-price-max');
+            const elCur = document.getElementById('filter-currency'); const elCond = document.getElementById('filter-condition');
             
-            if (elCat) window.currentCategory = elCat.value;
-            if (elCity) window.filterCity = elCity.value;
-            if (elMin) window.filterPriceMin = elMin.value;
-            if (elMax) window.filterPriceMax = elMax.value;
-            if (elCur) window.filterCurrency = elCur.value;
-            if (elCond) window.filterCondition = elCond.value;
+            if (elCat) window.currentCategory = elCat.value; if (elCity) window.filterCity = elCity.value;
+            if (elMin) window.filterPriceMin = elMin.value; if (elMax) window.filterPriceMax = elMax.value;
+            if (elCur) window.filterCurrency = elCur.value; if (elCond) window.filterCondition = elCond.value;
             
             window.showUrgentOnly = false; window.displayedCount = 12; 
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-brand-600', 'text-white'));
@@ -1293,11 +1391,8 @@
         };
 
         window.resetFilters = () => {
-            document.getElementById('filter-city').value = 'Все';
-            document.getElementById('filter-price-min').value = '';
-            document.getElementById('filter-price-max').value = '';
-            document.getElementById('filter-currency').value = 'Все';
-            document.getElementById('filter-condition').value = 'Все';
+            document.getElementById('filter-city').value = 'Все'; document.getElementById('filter-price-min').value = '';
+            document.getElementById('filter-price-max').value = ''; document.getElementById('filter-currency').value = 'Все'; document.getElementById('filter-condition').value = 'Все';
             if(window.selectCustomCat) window.selectCustomCat('Все', 'Все категории');
             window.applyFilters();
         };
@@ -1318,9 +1413,7 @@
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
-            window.currentCategory = cat; 
-            window.showUrgentOnly = false;
-            window.displayedCount = 12; 
+            window.currentCategory = cat; window.showUrgentOnly = false; window.displayedCount = 12; 
             
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
@@ -1329,49 +1422,36 @@
                 document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
-                if (event && event.currentTarget) {
-                    event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                }
+                if (event && event.currentTarget) event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 
                 const subContainer = document.getElementById('sub-cats-container');
                 if (cat !== 'Все' && window.subcategoriesMap[cat]) {
                     let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все в «${cat}»</button>`;
                     window.subcategoriesMap[cat].forEach(sub => {
-                        const prefix = sub.prefix || cat;
-                        const fullCat = `${prefix} - ${sub.val}`;
+                        const prefix = sub.prefix || cat; const fullCat = `${prefix} - ${sub.val}`;
                         subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">${sub.label || sub.val}</button>`;
                     });
-                    subContainer.innerHTML = subHtml;
-                    subContainer.classList.remove('hidden');
-                } else {
-                    if(subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }
-                }
+                    subContainer.innerHTML = subHtml; subContainer.classList.remove('hidden');
+                } else { if(subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); } }
             } else {
                 document.querySelectorAll('#sub-cats-container .sub-cat-btn').forEach(b => {
                     b.className = "sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
-                if (event && event.currentTarget) {
-                    event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                }
+                if (event && event.currentTarget) event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
             }
             
-            const catInput = document.getElementById('filter-category');
-            const catLabel = document.getElementById('custom-cat-label');
+            const catInput = document.getElementById('filter-category'); const catLabel = document.getElementById('custom-cat-label');
             if (catInput && catLabel) { catInput.value = cat; catLabel.innerText = cat === 'Все' ? 'Все категории' : cat; }
             window.fetchItems(); 
         };
 
         window.toggleUrgentFilter = () => {
-            window.showUrgentOnly = !window.showUrgentOnly;
-            window.displayedCount = 12; 
-            const btn = document.getElementById('btn-cat-urgent');
-            const subContainer = document.getElementById('sub-cats-container');
+            window.showUrgentOnly = !window.showUrgentOnly; window.displayedCount = 12; 
+            const btn = document.getElementById('btn-cat-urgent'); const subContainer = document.getElementById('sub-cats-container');
             if (window.showUrgentOnly) {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 window.currentCategory = 'Все';
-                document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-                    b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                });
+                document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => { b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start"; });
                 if(subContainer) subContainer.classList.add('hidden');
             } else {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
@@ -1387,15 +1467,11 @@
         
         window.handleCategoryChange = (e) => {
             const val = e.target ? e.target.value : e;
-            const reFields = document.getElementById('re-fields');
-            const condBlock = document.getElementById('add-condition-block'); 
+            const reFields = document.getElementById('re-fields'); const condBlock = document.getElementById('add-condition-block'); 
             
             if (condBlock) {
-                if (val && (val.includes('Жилье') || val.includes('Недвижимость') || val.includes('Услуги') || val.includes('Работа'))) {
-                    condBlock.classList.add('hidden'); condBlock.classList.remove('flex');
-                } else {
-                    condBlock.classList.remove('hidden'); condBlock.classList.add('flex');
-                }
+                if (val && (val.includes('Жилье') || val.includes('Недвижимость') || val.includes('Услуги') || val.includes('Работа'))) { condBlock.classList.add('hidden'); condBlock.classList.remove('flex'); } 
+                else { condBlock.classList.remove('hidden'); condBlock.classList.add('flex'); }
             }
 
             if (val && (val.includes('Жилье') || val.includes('Недвижимость'))) {
@@ -1405,21 +1481,14 @@
                         window.addMapObj = L.map('add-map').setView(window.itemCoords, 13);
                         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.addMapObj);
                         window.addMarkerObj = L.marker(window.itemCoords, {draggable: true}).addTo(window.addMapObj);
-                        window.addMarkerObj.on('dragend', function(){
-                            const pos = window.addMarkerObj.getLatLng(); window.itemCoords = [pos.lat, pos.lng];
-                        });
-                        window.addMapObj.on('click', function(event) {
-                            window.itemCoords = [event.latlng.lat, event.latlng.lng];
-                            window.addMarkerObj.setLatLng(window.itemCoords);
-                        });
+                        window.addMarkerObj.on('dragend', function(){ const pos = window.addMarkerObj.getLatLng(); window.itemCoords = [pos.lat, pos.lng]; });
+                        window.addMapObj.on('click', function(event) { window.itemCoords = [event.latlng.lat, event.latlng.lng]; window.addMarkerObj.setLatLng(window.itemCoords); });
                     } else {
                         window.addMarkerObj.setLatLng(window.itemCoords); window.addMapObj.setView(window.itemCoords, 13);
                     }
                     window.addMapObj.invalidateSize();
                 }, 150);
-            } else {
-                reFields.classList.add('hidden'); reFields.classList.remove('flex'); window.itemCoords = [0, 0];
-            }
+            } else { reFields.classList.add('hidden'); reFields.classList.remove('flex'); window.itemCoords = [0, 0]; }
         };
         
         window.mapItemData = function(i) {
@@ -1445,14 +1514,9 @@
             const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
             
             let statusBadge = ''; let opacityClass = '';
-            if (i.status === 'reserved') {
-                statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`;
-            } else if (i.status === 'sold') {
-                statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`;
-                opacityClass = 'opacity-70 grayscale-[0.5]';
-            }
+            if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`; } 
+            else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
-            // Заменили flex на inline-block у короны, чтобы она не ломала текст
             const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
             const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
@@ -1467,22 +1531,20 @@
             else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
             else {
                 if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
-                else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 md:backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
+                else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
             }
             
-            const favHtml = isOwner ? '' : `<button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 md:backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
+            const favHtml = isOwner ? '' : `<button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
             return `
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
                 ${favHtml}
-                <!-- Вот они, наши спасительные классы: card-img-wrap и card-body-wrap -->
                 <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                     ${condBadge}
                 </div>
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col justify-between">
-                    <!-- Заменили flex items-center на block truncate, чтобы текст никогда не обрезался криво -->
                     <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white block truncate leading-tight">${vipCrown}${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
@@ -1510,39 +1572,27 @@
                 
                 if (imgContainer && thumbsContainer) {
                     const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                    
-                    // Обновленный HTML картинки (вложено в absolute inset-0)
-                    imgContainer.innerHTML = `
-                    <div class="absolute inset-0 p-4 flex items-center justify-center">
-                        <img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${coverImg}')">
-                    </div>`;
+                    imgContainer.innerHTML = `<div class="absolute inset-0 p-4 flex items-center justify-center"><img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${coverImg}')"></div>`;
 
                     if (Array.isArray(item.images) && item.images.length > 1) {
                         thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
                         thumbsContainer.classList.remove('hidden');
                     } else {
-                        thumbsContainer.innerHTML = '';
-                        thumbsContainer.classList.add('hidden');
+                        thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden');
                     }
                 }
 
                 const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
-
-                
                 
                 const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
                 const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
 
                 const condTextEl = document.getElementById('modal-condition-text');
                 if(condTextEl) {
-                    if (isService || isEstate) {
-                        condTextEl.classList.add('hidden');
-                    } else {
-                        condTextEl.classList.remove('hidden');
-                        condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У';
-                    }
+                    if (isService || isEstate) { condTextEl.classList.add('hidden'); } 
+                    else { condTextEl.classList.remove('hidden'); condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У'; }
                 }
                 
                 const catTextEl = document.getElementById('modal-category-text');
@@ -1570,18 +1620,14 @@
                         phoneContainer.classList.remove('hidden'); phoneContainer.classList.add('flex');
                         const phoneEl = document.getElementById('modal-phone');
                         if(phoneEl) { phoneEl.innerText = item.phone; phoneEl.href = `tel:${item.phone}`; }
-                    } else {
-                        phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex');
-                    }
+                    } else { phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex'); }
                 }
 
                 const statusBadgeEl = document.getElementById('modal-status-badge');
                 if (statusBadgeEl) {
-                    if (item.status === 'reserved') {
-                        statusBadgeEl.innerText = 'В РЕЗЕРВЕ'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max';
-                    } else if (item.status === 'sold') {
-                        statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max';
-                    } else { statusBadgeEl.className = 'hidden'; }
+                    if (item.status === 'reserved') { statusBadgeEl.innerText = 'В РЕЗЕРВЕ'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-orange-500 w-max'; } 
+                    else if (item.status === 'sold') { statusBadgeEl.innerText = 'ПРОДАНО'; statusBadgeEl.className = 'inline-block px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest text-white self-start mb-3 bg-stone-800 w-max'; } 
+                    else { statusBadgeEl.className = 'hidden'; }
                 }
 
                 const addrCont = document.getElementById('modal-address-container');
@@ -1603,9 +1649,7 @@
                                 window.viewMapObj.invalidateSize();
                             } catch(mapErr) {}
                         }, 150);
-                    } else {
-                        addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
-                    }
+                    } else { addrCont.classList.add('hidden'); addrCont.classList.remove('flex'); }
                 }
                 
                 const descEl = document.getElementById('modal-desc');
@@ -1623,18 +1667,10 @@
                 const authorSubEl = document.getElementById('modal-author-sub');
                 if(authorSubEl) {
                     const authorBadgeHtml = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
-                    authorSubEl.innerHTML = authorBadgeHtml;
+                    const sellerBtnHtml = `<button onclick="window.openSellerProfile('${item.userId}')" class="w-full mt-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-2.5 rounded-xl text-sm font-bold hover:text-brand-600 hover:border-brand-500 transition shadow-sm cursor-pointer">Все объявления продавца</button>`;
+                    authorSubEl.innerHTML = authorBadgeHtml + sellerBtnHtml;
                 }
                 
-                const sellerBtn = document.getElementById('modal-seller-btn');
-                if (sellerBtn) {
-                    sellerBtn.onclick = () => {
-                        window.closeModal('item-modal'); // Закрываем карточку товара
-                        window.openSellerProfile(item.userId); // Открываем профиль продавца
-                    };
-                }
-                // ============================================
-
                 const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                 window.updateSEO(item.title, item.description, coverImg);
                 
@@ -1703,20 +1739,16 @@
             document.getElementById('item-title').value = item.title || ''; document.getElementById('item-category').value = item.category || ''; document.getElementById('item-city').value = item.city || ''; document.getElementById('item-price').value = item.price || ''; document.getElementById('item-desc').value = item.description || ''; document.getElementById('item-currency').value = item.currency || 'RSD'; document.getElementById('item-phone').value = item.phone || '';
             document.getElementById('add-modal-title').innerText = "Редактировать"; document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
             window.editExistingImages = item.images || [];
-            window.tempPhotos = []; 
-            window.renderPhotoPreviews(); 
+            window.tempPhotos = []; window.renderPhotoPreviews(); 
             document.getElementById('del-meet').checked = item.delivery ? item.delivery.includes('Личная встреча') : true;
             document.getElementById('del-post').checked = item.delivery ? item.delivery.includes('PostExpress') : false;
             window.closeModal('item-modal'); window.openModal('add-modal');
         };
 
         window.fetchItems = async (isLoadMore = false) => {
-            const loader = document.getElementById('loading-placeholder');
-            const mainGrid = document.getElementById('main-items-grid');
-            const emptyState = document.getElementById('empty-state');
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            const vipSection = document.getElementById('vip-section');
-            const vipGrid = document.getElementById('vip-items-grid');
+            const loader = document.getElementById('loading-placeholder'); const mainGrid = document.getElementById('main-items-grid');
+            const emptyState = document.getElementById('empty-state'); const loadMoreBtn = document.getElementById('load-more-btn');
+            const vipSection = document.getElementById('vip-section'); const vipGrid = document.getElementById('vip-items-grid');
             const proBanner = document.getElementById('pro-thin-banner');
             
             if (!isLoadMore) {
@@ -1727,20 +1759,15 @@
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
                 if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
 
-                const feedTitle = document.getElementById('main-feed-title');
-                const feedIcon = document.getElementById('main-feed-icon');
+                const feedTitle = document.getElementById('main-feed-title'); const feedIcon = document.getElementById('main-feed-icon');
                 if(feedTitle && feedIcon) {
-                    if(window.showUrgentOnly) {
-                        feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200"; feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl";
-                    } else {
-                        feedTitle.innerText = "Свежие объявления"; feedTitle.className = "font-black text-xl text-stone-500"; feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl";
-                    }
+                    if(window.showUrgentOnly) { feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200"; feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl"; } 
+                    else { feedTitle.innerText = "Свежие объявления"; feedTitle.className = "font-black text-xl text-stone-500"; feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl"; }
                 }
             }
 
             try {
-                let res, vipRes = { data: [] };
-                let fallbackMode = false;
+                let res, vipRes = { data: [] }; let fallbackMode = false;
 
                 try {
                     let q = supabase.from('items').select('*');
@@ -1765,43 +1792,34 @@
 
                     const results = await Promise.all([q, vq]);
                     if (results[0].error) throw results[0].error;
-                    res = results[0];
-                    vipRes = results[1];
+                    res = results[0]; vipRes = results[1];
                 } catch (err) {
-                    fallbackMode = true;
-                    res = await supabase.from('items').select('*').order('created_at', { ascending: false });
+                    fallbackMode = true; res = await supabase.from('items').select('*').order('created_at', { ascending: false });
                 }
 
                 if (fallbackMode && res.data) {
                     let filtered = res.data.filter(i => {
                         const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                        const searchQ = (window.searchQuery || '').toLowerCase();
-                        const titleStr = (i.title || '').toLowerCase();
-                        const matchSearch = titleStr.includes(searchQ);
-                        const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
+                        const searchQ = (window.searchQuery || '').toLowerCase(); const titleStr = (i.title || '').toLowerCase();
+                        const matchSearch = titleStr.includes(searchQ); const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
                         const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
                         const matchCond = window.filterCondition === 'Все' || i.condition === window.filterCondition;
-                        let matchPrice = true;
-                        const p = Number(i.price) || 0;
+                        let matchPrice = true; const p = Number(i.price) || 0;
                         if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
                         if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
                         if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
                         return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
                     });
-                    
                     if (window.currentSortMode === 'cheap') filtered.sort((a, b) => Number(a.price) - Number(b.price));
                     else if (window.currentSortMode === 'exp') filtered.sort((a, b) => Number(b.price) - Number(a.price));
-                    
-                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);
-                    res.data = filtered.slice(0, window.displayedCount + 1);
+                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6); res.data = filtered.slice(0, window.displayedCount + 1);
                 }
 
                 const items = (res.data || []).map(window.mapItemData).filter(Boolean);
                 const hasMore = items.length > window.displayedCount;
                 const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
 
-                if (!isLoadMore) window.loadedItems = itemsToDisplay;
-                else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
+                if (!isLoadMore) window.loadedItems = itemsToDisplay; else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
 
                 if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
                     const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
@@ -1811,17 +1829,13 @@
                         vipSection.classList.remove('hidden');
                         vipMapped.forEach(v => { if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
                     }
-                } else if (!isLoadMore && vipSection) {
-                    vipSection.classList.add('hidden');
-                }
+                } else if (!isLoadMore && vipSection) { vipSection.classList.add('hidden'); }
 
                 if (itemsToDisplay.length > 0) {
-                    let html = '';
-                    itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
+                    let html = ''; itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
                     if(mainGrid) {
                         mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; 
-                        if (!isLoadMore) mainGrid.innerHTML = html;
-                        else mainGrid.insertAdjacentHTML('beforeend', html);
+                        if (!isLoadMore) mainGrid.innerHTML = html; else mainGrid.insertAdjacentHTML('beforeend', html);
                         mainGrid.classList.remove('hidden');
                     }
                     if(loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }
@@ -1829,8 +1843,7 @@
                 } else {
                     if (!isLoadMore) {
                         if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
-                        if(emptyState) emptyState.classList.remove('hidden');
-                        if(proBanner) proBanner.classList.add('hidden');
+                        if(emptyState) emptyState.classList.remove('hidden'); if(proBanner) proBanner.classList.add('hidden');
                     }
                     if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
                 }
@@ -1839,9 +1852,7 @@
                     loader.style.display = 'block';
                     loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span></div>`;
                 }
-            } finally {
-                if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none';
-            }
+            } finally { if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; }
         };
 
         window.submitNewItem = async (event) => {
@@ -1852,31 +1863,21 @@
             try {
                 if(!window.currentUser) throw new Error("Войдите в аккаунт");
 
-                const conditionEl = document.querySelector('input[name="item-condition"]:checked');
-                const itemCondition = conditionEl ? conditionEl.value : 'Б/У';
-                const titleEl = document.getElementById('item-title');
-                const catEl = document.getElementById('item-category');
-                const cityEl = document.getElementById('item-city');
-                const priceEl = document.getElementById('item-price');
-                const descEl = document.getElementById('item-desc');
-                const currencyEl = document.getElementById('item-currency');
-                const phoneEl = document.getElementById('item-phone');
+                const conditionEl = document.querySelector('input[name="item-condition"]:checked'); const itemCondition = conditionEl ? conditionEl.value : 'Б/У';
+                const titleEl = document.getElementById('item-title'); const catEl = document.getElementById('item-category'); const cityEl = document.getElementById('item-city');
+                const priceEl = document.getElementById('item-price'); const descEl = document.getElementById('item-desc');
+                const currencyEl = document.getElementById('item-currency'); const phoneEl = document.getElementById('item-phone');
                 
                 if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
 
-                const delMeet = document.getElementById('del-meet')?.checked;
-                const delPost = document.getElementById('del-post')?.checked;
-                const deliveryArr = [];
-                if(delMeet) deliveryArr.push('Личная встреча');
-                if(delPost) deliveryArr.push('PostExpress');
+                const delMeet = document.getElementById('del-meet')?.checked; const delPost = document.getElementById('del-post')?.checked;
+                const deliveryArr = []; if(delMeet) deliveryArr.push('Личная встреча'); if(delPost) deliveryArr.push('PostExpress');
                 
                 let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
                 
                 function dataURItoBlob(dataURI) {
-                    const byteString = atob(dataURI.split(',')[1]);
-                    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
+                    const byteString = atob(dataURI.split(',')[1]); const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length); const ia = new Uint8Array(ab);
                     for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
                     return new Blob([ab], {type: mimeString});
                 }
@@ -1903,87 +1904,55 @@
                     title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
                     price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
                     condition: itemCondition, author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
-                    author_avatar: window.currentUser.user_metadata?.avatar_url || '',
-                    image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
-                    currency: currencyEl ? currencyEl.value : 'RSD', 
-                    phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
+                    author_avatar: window.currentUser.user_metadata?.avatar_url || '', image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
+                    currency: currencyEl ? currencyEl.value : 'RSD', phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
                     address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr
                 };
 
                 let res;
-                if (window.editingItemId) {
-                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-                } else {
-                    itemData.is_highlighted = window.currentUserData?.is_pro || false;
-                    itemData.status = 'active';
-                    res = await supabase.from('items').insert([itemData]);
-                }
+                if (window.editingItemId) { res = await supabase.from('items').update(itemData).eq('id', window.editingItemId); } 
+                else { itemData.is_highlighted = window.currentUserData?.is_pro || false; itemData.status = 'active'; res = await supabase.from('items').insert([itemData]); }
                 
                 if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
                     delete itemData.delivery; delete itemData.status; delete itemData.phone; delete itemData.condition;
                     if (window.editingItemId) res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
                     else res = await supabase.from('items').insert([itemData]);
-                    if(!res.error) window.showToast("Успешно, но добавьте новые колонки в Supabase!", true);
                 }
 
                 if(res.error) throw new Error(res.error.message);
                 
-                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
-                window.closeModal('add-modal');
-                window.fetchItems(false);
+                window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); window.closeModal('add-modal'); window.fetchItems(false);
             } catch(e) { window.showToast(`Ошибка: ${e.message}`, true); } 
             finally { if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить` : `Опубликовать`; } }
         };
 
         window.renderPhotoPreviews = () => {
-            const list = document.getElementById('photo-preview-list');
-            if(!list) return;
-            let html = '';
+            const list = document.getElementById('photo-preview-list'); if(!list) return; let html = '';
             (window.editExistingImages || []).forEach((src, i) => {
-                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${src}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${src}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
             });
             (window.tempPhotos || []).forEach((dataUrl, i) => {
-                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2">
-                    <img src="${dataUrl}" class="w-full h-full object-cover rounded-xl">
-                    <button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+                html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${dataUrl}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
             });
             list.innerHTML = html;
         };
 
-        window.removePhoto = (type, index) => {
-            if (type === 'existing') window.editExistingImages.splice(index, 1);
-            else window.tempPhotos.splice(index, 1);
-            window.renderPhotoPreviews();
-        };
+        window.removePhoto = (type, index) => { if (type === 'existing') window.editExistingImages.splice(index, 1); else window.tempPhotos.splice(index, 1); window.renderPhotoPreviews(); };
 
         window.previewPhotos = async (e) => {
-            const files = Array.from(e.target.files);
-            const isPro = window.currentUserData && window.currentUserData.is_pro;
-            const maxPhotos = isPro ? 10 : 5;
-            const currentTotal = (window.editExistingImages?.length || 0) + (window.tempPhotos?.length || 0);
-            
-            if (currentTotal + files.length > maxPhotos) {
-                window.showToast(`Доступно максимум ${maxPhotos} фото ${isPro ? '' : '(Купите PRO для 10)'}`, true);
-                e.target.value = ''; return;
-            }
+            const files = Array.from(e.target.files); const isPro = window.currentUserData && window.currentUserData.is_pro;
+            const maxPhotos = isPro ? 10 : 5; const currentTotal = (window.editExistingImages?.length || 0) + (window.tempPhotos?.length || 0);
+            if (currentTotal + files.length > maxPhotos) { window.showToast(`Доступно максимум ${maxPhotos} фото ${isPro ? '' : '(Купите PRO для 10)'}`, true); e.target.value = ''; return; }
 
             for(let file of files) {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     const img = new Image();
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000;
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        window.tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
-                        window.renderPhotoPreviews(); 
+                        const canvas = document.createElement('canvas'); const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000; let width = img.width; let height = img.height;
+                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                        canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                        window.tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8)); window.renderPhotoPreviews(); 
                     };
                     img.src = ev.target.result;
                 };
@@ -1994,37 +1963,26 @@
 
         window.switchProfileTab = tab => { 
             window.currentProfileTab = tab; 
-            const t1 = document.getElementById('tab-my-items');
-            const t2 = document.getElementById('tab-my-saved');
-            if (t1) {
-                if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); }
-                else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); }
-            }
-            if (t2) {
-                if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); }
-                else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); }
-            }
+            const t1 = document.getElementById('tab-my-items'); const t2 = document.getElementById('tab-my-saved');
+            if (t1) { if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); } else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); } }
+            if (t2) { if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); } else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); } }
             window.renderProfileTabs(); 
         };
 
         window.renderProfileTabs = async () => {
-            const grid = document.getElementById('profile-items-grid');
-            const empty = document.getElementById('profile-empty');
+            const grid = document.getElementById('profile-items-grid'); const empty = document.getElementById('profile-empty');
             if(!grid || !empty || !window.currentUser) return;
-
             grid.style.display = 'none'; empty.style.display = 'none';
 
             try {
                 const favCount = window.userFavorites ? window.userFavorites.size : 0;
-                const tabSaved = document.getElementById('tab-my-saved');
-                if(tabSaved) tabSaved.innerText = `Заначка (${favCount})`;
+                const tabSaved = document.getElementById('tab-my-saved'); if(tabSaved) tabSaved.innerText = `Заначка (${favCount})`;
 
                 let items = [];
                 if (window.currentProfileTab === 'items') {
                     const { data } = await supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
                     items = (data || []).map(window.mapItemData).filter(Boolean);
-                    const tabItems = document.getElementById('tab-my-items');
-                    if(tabItems) tabItems.innerText = `Мои вещи (${items.length})`;
+                    const tabItems = document.getElementById('tab-my-items'); if(tabItems) tabItems.innerText = `Мои вещи (${items.length})`;
                 } else {
                     const favIds = Array.from(window.userFavorites);
                     if (favIds.length > 0) {
@@ -2033,331 +1991,49 @@
                     }
                 }
 
-                items.forEach(v => {
-                    const exists = window.loadedItems.findIndex(i => i.id === v.id);
-                    if (exists === -1) window.loadedItems.push(v);
-                    else window.loadedItems[exists] = v;
-                });
-
-                if(items.length > 0) {
-                    grid.style.display = 'grid';
-                    grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
-                } else {
-                    empty.style.display = 'flex';
-                }
+                items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
+                if(items.length > 0) { grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join(''); } 
+                else { empty.style.display = 'flex'; }
             } catch(e) {}
         };
 
-        // ЗАГРУЗКА И ОТКРЫТИЕ ПУБЛИЧНОГО ПРОФИЛЯ ПРОДАВЦА
         window.openSellerProfile = async (userId) => {
-            if (!userId) return;
-            window.openModal('seller-modal');
-            
-            const grid = document.getElementById('seller-items-grid');
-            const empty = document.getElementById('seller-empty');
-            const loader = document.getElementById('seller-loading');
-            
-            grid.style.display = 'none';
-            empty.style.display = 'none';
-            loader.style.display = 'flex';
+            if (!userId) return; window.openModal('seller-modal');
+            const grid = document.getElementById('seller-items-grid'); const empty = document.getElementById('seller-empty'); const loader = document.getElementById('seller-loading');
+            grid.style.display = 'none'; empty.style.display = 'none'; loader.style.display = 'flex';
 
             try {
-                // Запрашиваем только активные товары этого пользователя
-                const { data, error } = await supabase
-                    .from('items')
-                    .select('*')
-                    .eq('user_id', userId)
-                    .eq('status', 'active')
-                    .order('created_at', { ascending: false });
-
+                const { data, error } = await supabase.from('items').select('*').eq('user_id', userId).eq('status', 'active').order('created_at', { ascending: false });
                 if (error) throw error;
-
                 const items = (data || []).map(window.mapItemData).filter(Boolean);
                 loader.style.display = 'none';
 
                 if (items.length > 0) {
-                    // Берем имя и аватар из первого товара
-                    const firstItem = items[0];
-                    document.getElementById('seller-name').innerText = firstItem.authorName || 'Пользователь';
-                    
+                    const firstItem = items[0]; document.getElementById('seller-name').innerText = firstItem.authorName || 'Пользователь';
                     const avatarCont = document.getElementById('seller-avatar-container');
-                    if(firstItem.authorAvatar) avatarCont.innerHTML = `<img src="${firstItem.authorAvatar}" class="w-full h-full object-cover">`;
-                    else avatarCont.innerHTML = `<i class="fa-solid fa-user"></i>`;
-                    
-                    // Если хотя бы 1 товар в топе - вешаем плашку VIP
-                    const isPro = items.some(i => i.isHighlighted);
-                    const proBadge = document.getElementById('seller-pro-badge');
-                    if (isPro) proBadge.classList.remove('hidden');
-                    else proBadge.classList.add('hidden');
-
+                    if(firstItem.authorAvatar) avatarCont.innerHTML = `<img src="${firstItem.authorAvatar}" class="w-full h-full object-cover">`; else avatarCont.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                    const isPro = items.some(i => i.isHighlighted); const proBadge = document.getElementById('seller-pro-badge');
+                    if (isPro) proBadge.classList.remove('hidden'); else proBadge.classList.add('hidden');
                     document.getElementById('seller-stats').innerText = `Активных объявлений: ${items.length}`;
-
-                    grid.style.display = 'grid';
-                    grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
-                    
-                    // Добавляем товары в локальную память, чтобы их можно было открывать
-                    items.forEach(v => {
-                        const exists = window.loadedItems.findIndex(i => i.id === v.id);
-                        if (exists === -1) window.loadedItems.push(v);
-                        else window.loadedItems[exists] = v;
-                    });
+                    grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
+                    items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
                 } else {
-                    empty.style.display = 'flex';
-                    document.getElementById('seller-stats').innerText = `Активных объявлений: 0`;
-                    document.getElementById('seller-name').innerText = "Пользователь";
+                    empty.style.display = 'flex'; document.getElementById('seller-stats').innerText = `Активных объявлений: 0`; document.getElementById('seller-name').innerText = "Пользователь";
                 }
-            } catch (e) {
-                console.error(e);
-                loader.style.display = 'none';
-                empty.style.display = 'flex';
-                window.showToast("Ошибка загрузки профиля", true);
-            }
-        };
-        
-        window.currentChatId = null;
-        window.chatSubscription = null;
-
-        // 1. ОТКРЫТИЕ ЧАТА (При клике "Написать" в карточке товара)
-        window.openChatModal = async () => {
-            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            
-            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
-            if (!item) return;
-
-            // Заполняем шапку чата
-            document.getElementById('chat-item-title').innerText = item.title;
-            document.getElementById('chat-author-name').innerText = item.authorName || "Продавец";
-            const messagesContainer = document.getElementById('chat-messages');
-            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
-            window.openModal('chat-modal');
-
-            try {
-                // Ищем, есть ли уже переписка по этому товару
-                let { data: chat } = await supabase.from('chats').select('*').eq('item_id', item.id).eq('buyer_id', window.currentUser.id).maybeSingle();
-
-                // Если переписки нет — создаем новую "комнату"
-                if (!chat) {
-                    const { data: newChat, error } = await supabase.from('chats').insert([{ item_id: item.id, buyer_id: window.currentUser.id, seller_id: item.userId }]).select().single();
-                    if (error) throw error;
-                    chat = newChat;
-                }
-
-                window.currentChatId = chat.id;
-                await window.loadMessages(); // Загружаем историю
-                window.subscribeToMessages(); // Включаем "прослушку" новых сообщений
-            } catch (e) {
-                console.error(e);
-                messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`;
-            }
+            } catch (e) { loader.style.display = 'none'; empty.style.display = 'flex'; window.showToast("Ошибка загрузки профиля", true); }
         };
 
-        // 2. ЗАГРУЗКА ИСТОРИИ СООБЩЕНИЙ
-        window.loadMessages = async () => {
-            if (!window.currentChatId) return;
-            const { data, error } = await supabase.from('messages').select('*').eq('chat_id', window.currentChatId).order('created_at', { ascending: true });
-            
-            const container = document.getElementById('chat-messages');
-            if (error || !data || data.length === 0) {
-                container.innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-4">Напишите первое сообщение!</div>`;
-                return;
-            }
-
-            // Рисуем сообщения (свои справа синие, чужие слева серые)
-            container.innerHTML = data.map(m => {
-                const isMe = m.sender_id === window.currentUser.id;
-                if (isMe) {
-                    return `<div class="flex items-end justify-end gap-2 w-full mt-2"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${m.text}</div></div>`;
-                } else {
-                    return `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${m.text}</div></div>`;
-                }
-            }).join('');
-            container.scrollTop = container.scrollHeight; // Скроллим в самый низ
+        window.filterProfileItems = (input, gridId) => {
+            const term = input.value.toLowerCase().trim(); const grid = document.getElementById(gridId); if (!grid) return;
+            const cards = grid.querySelectorAll('.item-card'); let hasVisible = false;
+            cards.forEach(card => { const title = card.querySelector('h4').innerText.toLowerCase(); if (title.includes(term)) { card.style.display = 'flex'; hasVisible = true; } else { card.style.display = 'none'; } });
+            const emptyState = document.getElementById(gridId.replace('-grid', '-empty'));
+            if (emptyState) { if (!hasVisible && cards.length > 0) { emptyState.style.display = 'flex'; emptyState.querySelector('span').innerText = 'Ничего не найдено'; } else if (cards.length > 0) { emptyState.style.display = 'none'; } }
         };
 
-        // 3. ОТПРАВКА СООБЩЕНИЯ
-        window.sendChatMessage = async () => {
-            if (!window.currentChatId || !window.currentUser) return;
-            const input = document.getElementById('chat-input-field');
-            const text = input.value.trim();
-            if (!text) return;
-            
-            input.value = ''; // Мгновенно очищаем поле ввода
-            
-            // Оптимистичный UI: сразу рисуем сообщение полупрозрачным, пока оно летит на сервер
-            const container = document.getElementById('chat-messages');
-            if(container.innerHTML.includes('Напишите первое')) container.innerHTML = ''; // Убираем заглушку
-            container.insertAdjacentHTML('beforeend', `<div class="flex items-end justify-end gap-2 w-full mt-2 opacity-50 transition-opacity" id="temp-msg"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${text}</div></div>`);
-            container.scrollTop = container.scrollHeight;
+        const originalSwitchTab = window.switchProfileTab;
+        window.switchProfileTab = (tab) => { const searchInput = document.getElementById('profile-search-input'); if(searchInput) searchInput.value = ''; originalSwitchTab(tab); };
 
-            try {
-                await supabase.from('messages').insert([{ chat_id: window.currentChatId, sender_id: window.currentUser.id, text: text }]);
-                const tempMsg = document.getElementById('temp-msg');
-                if(tempMsg) { tempMsg.classList.remove('opacity-50'); tempMsg.removeAttribute('id'); } // Делаем ярким
-            } catch (e) { window.showToast("Ошибка отправки", true); }
-        };
-
-        // 4. SUPABASE REALTIME (Мгновенная доставка чужих сообщений)
-        window.subscribeToMessages = () => {
-            if (window.chatSubscription) supabase.removeChannel(window.chatSubscription);
-            
-            window.chatSubscription = supabase.channel('messages_channel')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
-                    const newMsg = payload.new;
-                    // Если сообщение пришло от собеседника - рисуем его слева
-                    if (newMsg.sender_id !== window.currentUser?.id) {
-                        const container = document.getElementById('chat-messages');
-                        if(container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
-                        
-                        container.insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${newMsg.text}</div></div>`);
-                        container.scrollTop = container.scrollHeight;
-                        window.showToast("Новое сообщение!");
-                    }
-                })
-                .subscribe();
-        };
-
-        // Заглушка списка всех диалогов (Сделаем на следующем шаге!)
-        // 5. ОТКРЫТИЕ СПИСКА ЧАТОВ (Входящие)
-        window.openChatListModal = async () => {
-            if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            window.openModal('chat-list-modal');
-            
-            const container = document.getElementById('chat-list-container');
-            if(container) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
-
-            try {
-                // Ищем все чаты, где я либо покупатель, либо продавец
-                const { data: chats, error } = await supabase
-                    .from('chats')
-                    .select('*')
-                    .or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!chats || chats.length === 0) {
-                    container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20"><i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i><div class="text-base font-bold">Нет активных диалогов</div></div>`;
-                    return;
-                }
-
-                let html = '';
-                for (const chat of chats) {
-                    // Запрашиваем последнее сообщение в этом чате
-                    const { data: msgs } = await supabase.from('messages').select('text').eq('chat_id', chat.id).order('created_at', { ascending: false }).limit(1);
-                    const lastMsg = msgs && msgs.length > 0 ? msgs[0].text : 'Нет сообщений...';
-                    
-                    // Запрашиваем инфу о товаре (картинку и название)
-                    const { data: item } = await supabase.from('items').select('title, image_url').eq('id', chat.item_id).maybeSingle();
-                    const itemTitle = item ? item.title : 'Товар удален';
-                    const itemImg = (item && item.image_url) ? item.image_url : 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
-
-                    // Определяем нашу роль в этом конкретном чате
-                    const isSeller = chat.seller_id === window.currentUser.id;
-                    const roleLabel = isSeller ? 'Чат с покупателем' : 'Чат с продавцом';
-
-                    html += `
-                    <div onclick="window.openExistingChat('${chat.id}', '${itemTitle.replace(/'/g, "\\'")}', '${roleLabel}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
-                        <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
-                        <div class="flex-1 overflow-hidden">
-                            <div class="flex justify-between items-center mb-1">
-                                <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate pr-2">${itemTitle}</h4>
-                            </div>
-                            <div class="text-[10px] text-brand-600 font-black tracking-widest uppercase mb-1">${roleLabel}</div>
-                            <p class="text-sm text-stone-500 font-medium truncate">${lastMsg}</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-stone-300 dark:text-stone-600"></i>
-                    </div>`;
-                }
-                container.innerHTML = html;
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка загрузки чатов</div>`;
-            }
-        };
-
-        // 6. ОТКРЫТИЕ КОНКРЕТНОГО ЧАТА ИЗ СПИСКА
-        window.openExistingChat = async (chatId, itemTitle, roleLabel) => {
-            window.closeModal('chat-list-modal'); // Прячем список
-            
-            // Настраиваем окно самого чата
-            document.getElementById('chat-item-title').innerText = itemTitle;
-            document.getElementById('chat-author-name').innerText = roleLabel;
-            
-            const messagesContainer = document.getElementById('chat-messages');
-            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
-            window.openModal('chat-modal');
-
-            // Подгружаем историю и подписываемся на обновления
-            window.currentChatId = chatId;
-            await window.loadMessages();
-            window.subscribeToMessages();
-        };
-
-        window.completeShareTask = (network) => {
-            const text = encodeURIComponent("Нашел крутую барахолку в Сербии — SVALKA!");
-            const url = encodeURIComponent(`https://svalka.trade/?ref=${window.currentUser?.id || 'guest'}`);
-            let shareUrl = '';
-            if (network === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
-            else if (network === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
-            else if (network === 'viber') shareUrl = `viber://forward?text=${text}%20${url}`;
-            else if (network === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-            if(shareUrl) window.open(shareUrl, '_blank');
-            
-            setTimeout(async () => {
-                window.showToast("+3 Поднятия получено!");
-                const newBal = (window.currentUserData?.wallet_balance || 0) + 3;
-                try {
-                    await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
-                    window.currentUserData.wallet_balance = newBal;
-                    document.querySelectorAll('#profile-balance').forEach(el => el.innerText = newBal + ' шт.');
-                    window.closeModal('share-modal');
-                } catch(e) {}
-            }, 4000); 
-        };
-
-        window.bumpItem = async () => {
-            if(!window.currentUser || !window.activeModalItemId) return;
-            if((window.currentUserData?.wallet_balance || 0) < 1) { window.showToast("Нет поднятий. Получите бесплатно!", true); return; }
-            try {
-                await supabase.from('items').update({ created_at: new Date().toISOString() }).eq('id', window.activeModalItemId);
-                const newBal = window.currentUserData.wallet_balance - 1;
-                await supabase.from('profiles').update({ wallet_balance: newBal }).eq('id', window.currentUser.id);
-                window.currentUserData.wallet_balance = newBal;
-                window.showToast("Объявление поднято в ленте!"); window.closeModal('item-modal'); 
-                window.fetchItems(false);
-            } catch(e) { window.showToast("Ошибка", true); }
-        };
-
-        window.highlightItem = async () => {
-            if(!window.currentUser || !window.activeModalItemId) return;
-            if(window.currentUserData && window.currentUserData.is_pro) {
-                try {
-                    await supabase.from('items').update({ is_highlighted: true }).eq('id', window.activeModalItemId);
-                    window.showToast("Объявление выделено в ТОП (PRO)!");
-                    window.closeModal('item-modal'); 
-                    window.fetchItems(false);
-                } catch(e) { window.showToast("Ошибка", true); }
-            } else {
-                window.closeModal('item-modal');
-                window.openModal('crypto-modal');
-            }
-        };
-
-        window.verifyCryptoPayment = () => {
-            const btn = document.getElementById('btn-crypto-paid');
-            if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Проверка...'; }
-            setTimeout(async () => {
-                try {
-                    await supabase.from('profiles').update({ is_pro: true }).eq('id', window.currentUser.id);
-                    window.currentUserData.is_pro = true;
-                    document.querySelectorAll('#profile-pro-badge').forEach(pb => pb.classList.remove('hidden'));
-                    window.showToast("Транзакция найдена! PRO активирован.");
-                    window.closeModal('crypto-modal');
-                } catch(e) { window.showToast("Ошибка сети", true); }
-                finally { if(btn) { btn.disabled = false; btn.innerHTML = 'Я оплатил 5 USDT'; } }
-            }, 4000);
-        };
-        
         window.handleAuthChange = async (session) => {
             try {
                 if(!window.authInitialized) window.authInitialized = true;
@@ -2376,9 +2052,7 @@
                     document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
                     document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
                     
-                    if(meta.avatar_url) {
-                        document.querySelectorAll('#profile-avatar-container').forEach(el => { el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`; });
-                    }
+                    if(meta.avatar_url) document.querySelectorAll('#profile-avatar-container').forEach(el => { el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`; });
 
                     try {
                         const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
@@ -2391,10 +2065,16 @@
                         const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
                         window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                     } catch(e) {}
+
+                    // ЗАПУСКАЕМ СЛУЖАЩЕГО ЗА УВЕДОМЛЕНИЯМИ
+                    window.updateChatBadges();
+                    window.initGlobalChatListener();
+
                 } else {
                     loginBtns.forEach(el => { el.classList.remove('hidden'); });
                     userControls.forEach(el => { el.classList.add('hidden'); userControls.classList.remove('flex'); });
                     if(profileLogoutBtn) { profileLogoutBtn.classList.add('hidden'); profileLogoutBtn.classList.remove('flex'); }
+                    if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
                 }
                 
                 if(window.currentUser) window.switchProfileTab(window.currentProfileTab);
@@ -2405,17 +2085,12 @@
         supabase.auth.onAuthStateChange((_e, s) => { if(window.authInitialized) window.handleAuthChange(s); });
 
         window.renderCustomCategorySelect = () => {
-            const list = document.getElementById('custom-cat-list');
-            if(!list || !window.subcategoriesMap) return;
-            
+            const list = document.getElementById('custom-cat-list'); if(!list || !window.subcategoriesMap) return;
             let html = `<button onclick="window.selectCustomCat('Все', 'Все категории', event)" type="button" class="w-full text-left px-4 py-3.5 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 font-black text-base text-brand-600 dark:text-brand-400 transition cursor-pointer border border-transparent hover:border-brand-100 dark:hover:border-brand-800/50 mb-2 shadow-sm">Все категории</button>`;
-            
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
                 html += `<div class="px-4 py-2 mt-4 mb-2 text-lg font-black text-stone-900 dark:text-white uppercase tracking-tight border-b border-stone-100 dark:border-stone-700/50">${mainCat}</div>`;
                 subs.forEach(sub => {
-                    const prefix = sub.prefix || mainCat;
-                    const val = `${prefix} - ${sub.val}`;
-                    const label = sub.label || sub.val;
+                    const prefix = sub.prefix || mainCat; const val = `${prefix} - ${sub.val}`; const label = sub.label || sub.val;
                     html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 font-medium text-base text-stone-600 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-700 flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 shrink-0"></span>${label}</button>`;
                 });
             }
@@ -2423,110 +2098,41 @@
         };
 
         window.toggleCustomCat = () => {
-            const dd = document.getElementById('custom-cat-dropdown');
-            const icon = document.getElementById('custom-cat-icon');
-            if(!dd) return;
-            if (dd.classList.contains('hidden')) {
-                dd.classList.remove('hidden');
-                setTimeout(() => { dd.classList.remove('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.add('rotate-180'); }, 10);
-            } else {
-                dd.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.remove('rotate-180');
-                setTimeout(() => dd.classList.add('hidden'), 300);
-            }
+            const dd = document.getElementById('custom-cat-dropdown'); const icon = document.getElementById('custom-cat-icon'); if(!dd) return;
+            if (dd.classList.contains('hidden')) { dd.classList.remove('hidden'); setTimeout(() => { dd.classList.remove('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.add('rotate-180'); }, 10); } 
+            else { dd.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.remove('rotate-180'); setTimeout(() => dd.classList.add('hidden'), 300); }
         };
 
         window.selectCustomCat = (val, label, e) => {
-            if(e) e.stopPropagation();
-            const input = document.getElementById('filter-category');
-            const labelEl = document.getElementById('custom-cat-label');
-            if(input) input.value = val;
-            if(labelEl) labelEl.innerText = label;
-            
-            const dd = document.getElementById('custom-cat-dropdown');
-            if (dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
+            if(e) e.stopPropagation(); const input = document.getElementById('filter-category'); const labelEl = document.getElementById('custom-cat-label');
+            if(input) input.value = val; if(labelEl) labelEl.innerText = label;
+            const dd = document.getElementById('custom-cat-dropdown'); if (dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
         };
 
         document.addEventListener('click', (e) => {
-            const wrapper = document.getElementById('custom-cat-wrapper');
-            const dd = document.getElementById('custom-cat-dropdown');
+            const wrapper = document.getElementById('custom-cat-wrapper'); const dd = document.getElementById('custom-cat-dropdown');
             if (wrapper && !wrapper.contains(e.target) && dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
         });
 
         setTimeout(window.renderCustomCategorySelect, 200);
-        
         window.fetchItems();
 
         const urlParams = new URLSearchParams(window.location.search);
-        const itemIdFromUrl = urlParams.get('item');
-        if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
+        const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
-        window.addEventListener('popstate', () => {
-            const params = new URLSearchParams(window.location.search);
-            const item = params.get('item');
-            if (item) window.openItemDetails(item);
-            else window.closeModal('item-modal');
-        });
+        window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
 
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
-
         window.setViewMode = (mode) => {
-            window.currentViewMode = mode;
-            localStorage.setItem('svalka_view_mode', mode);
-            const btnGrid = document.getElementById('btn-view-grid');
-            const btnList = document.getElementById('btn-view-list');
-            const grid = document.getElementById('main-items-grid');
+            window.currentViewMode = mode; localStorage.setItem('svalka_view_mode', mode);
+            const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list'); const grid = document.getElementById('main-items-grid');
             if (btnGrid && btnList) {
-                if (mode === 'grid') {
-                    btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
-                } else {
-                    btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer";
-                }
+                if (mode === 'grid') { btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; } 
+                else { btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; }
             }
             if (grid) { grid.classList.remove('view-grid', 'view-list'); grid.classList.add(`view-${mode}`); }
         };
-
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
-
-        // === ЛОКАЛЬНЫЙ ПОИСК ПО КАРТОЧКАМ В ПРОФИЛЯХ ===
-        window.filterProfileItems = (input, gridId) => {
-            const term = input.value.toLowerCase().trim();
-            const grid = document.getElementById(gridId);
-            if (!grid) return;
-            
-            const cards = grid.querySelectorAll('.item-card');
-            let hasVisible = false;
-
-            cards.forEach(card => {
-                const title = card.querySelector('h4').innerText.toLowerCase();
-                if (title.includes(term)) {
-                    card.style.display = 'flex';
-                    hasVisible = true;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Если ничего не найдено - можно показать заглушку (если она есть)
-            const emptyState = document.getElementById(gridId.replace('-grid', '-empty'));
-            if (emptyState) {
-                if (!hasVisible && cards.length > 0) {
-                    emptyState.style.display = 'flex';
-                    emptyState.querySelector('span').innerText = 'По вашему запросу ничего не найдено';
-                } else if (cards.length > 0) {
-                    emptyState.style.display = 'none';
-                }
-            }
-        };
-
-        // Очищаем поиск при переключении вкладок
-        const originalSwitchTab = window.switchProfileTab;
-        window.switchProfileTab = (tab) => {
-            const searchInput = document.getElementById('profile-search-input');
-            if(searchInput) searchInput.value = '';
-            originalSwitchTab(tab);
-        };
     </script>
 </body>
 </html>
