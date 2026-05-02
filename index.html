@@ -315,6 +315,7 @@
             <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Транспорт</button>
             <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Красота</button>
             <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Услуги</button>
+            <button data-cat="Работа" onclick="window.filterByCategory('Работа', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Работа</button>
             <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Бизнес</button>
             <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Хобби</button>
             <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Животные</button>
@@ -800,14 +801,18 @@
                                 <option value="Красота - Приборы">Фены и стайлеры</option>
                             </optgroup>
 
-                            <optgroup label="Услуги и Работа">
+                            <optgroup label="Услуги">
                                 <option value="Услуги - Ремонт">Ремонт техники</option>
                                 <option value="Услуги - Автосервис">Автосервис</option>
                                 <option value="Услуги - Стройка">Ремонт и стройка</option>
                                 <option value="Услуги - Красота">Бьюти услуги</option>
                                 <option value="Услуги - Репетиторы">Репетиторы</option>
                                 <option value="Услуги - Праздники">Праздники</option>
+                            </optgroup>
+
+                            <optgroup label="Работа">
                                 <option value="Работа - Вакансии">Вакансии</option>
+                                <option value="Работа - Резюме">Ищу работу (Резюме)</option>
                             </optgroup>
 
                             <optgroup label="Для Бизнеса">
@@ -1564,7 +1569,8 @@
             'Интерьер': [{val: 'Мебель'}, {val: 'Декор'}, {val: 'Посуда'}, {val: 'Текстиль'}, {val: 'Ремонт', label: 'Стройматериалы'}, {val: 'Инструменты'}, {val: 'Сад', label: 'Сад и Огород'}],
             'Транспорт': [{val: 'Авто', label: 'Автомобили'}, {val: 'Мото'}, {val: 'Вело', label: 'Велосипеды'}, {val: 'Самокаты'}, {val: 'Запчасти'}, {val: 'Шины', label: 'Шины и диски'}],
             'Красота': [{val: 'Косметика'}, {val: 'Парфюмерия'}, {val: 'Уход', label: 'Уход за собой'}, {val: 'Приборы', label: 'Фены и стайлеры'}],
-            'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}, {val: 'Вакансии', prefix: 'Работа'}],
+            'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}],
+            'Работа': [{val: 'Вакансии'}, {val: 'Резюме', label: 'Ищу работу'}],
             'Бизнес': [{val: 'Оборудование'}, {val: 'Бизнес', label: 'Готовый бизнес'}, {val: 'Сырье', label: 'Сырье и материалы'}],
             'Хобби': [{val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Муз. инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}],
             'Животные': [{val: 'Собаки'}, {val: 'Кошки'}, {val: 'Птицы'}, {val: 'Аквариум', label: 'Аквариумистика'}, {val: 'Товары', label: 'Зоотовары'}, {val: 'Другие'}],
@@ -1671,10 +1677,10 @@
 
         window.createCardHtml = function(i, isVIP) {
             const isOwner = window.currentUser && window.currentUser.id === i.userId;
-            const isService = i.category && (i.category.includes('Услуги') || i.category.includes('Работа'));
+            const isService = i.category && i.category.includes('Услуги');
+            const isJob = i.category && i.category.includes('Работа');
             const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
             const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
-
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
             const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
             const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -1695,8 +1701,9 @@
             
             let condBadge = '';
             if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
+            else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">РАБОТА</div>`;
             else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
-            else if (isAnimalEntity) condBadge = ''; 
+            else if (isAnimalEntity) condBadge = '';
             else {
                 if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
                 else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
@@ -1754,14 +1761,14 @@
                 const titleEl = document.getElementById('modal-title');
                 if(titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
                 
-                const isService = item.category && (item.category.includes('Услуги') || item.category.includes('Работа'));
+                const isService = item.category && item.category.includes('Услуги');
+                const isJob = item.category && item.category.includes('Работа');
                 const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
                 const isAnimalEntity = item.category && item.category.startsWith('Животные') && !item.category.includes('Товары');
 
                 const condTextEl = document.getElementById('modal-condition-text');
                 if(condTextEl) {
-                    // Если это услуги, недвижимость ИЛИ питомец - прячем серую плашку "Б/У"
-                    if (isService || isEstate || isAnimalEntity) { condTextEl.classList.add('hidden'); } 
+                    if (isService || isJob || isEstate || isAnimalEntity) { condTextEl.classList.add('hidden'); } 
                     else { condTextEl.classList.remove('hidden'); condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У'; }
                 }
                 
@@ -1769,9 +1776,15 @@
                 if(catTextEl) {
                     const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
                     catTextEl.innerText = catText.toUpperCase();
-                    catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${isService ? 'bg-blue-500' : (isEstate ? 'bg-indigo-500' : 'bg-brand-600')}`;
+                    
+                    let bgClass = 'bg-brand-600';
+                    if (isService) bgClass = 'bg-blue-500';
+                    else if (isJob) bgClass = 'bg-fuchsia-500';
+                    else if (isEstate) bgClass = 'bg-indigo-500';
+                    
+                    catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${bgClass}`;
                 }
-
+                
                 const priceEl = document.getElementById('modal-price');
                 if(priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
 
