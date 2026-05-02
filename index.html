@@ -151,7 +151,8 @@
                     <div class="relative w-10 h-10 flex items-center justify-center shrink-0">
                         <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[3px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
                         <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
-                            <i class="fa-solid fa-box-open text-brand-600 text-sm"></i>
+                            <!-- Эмодзи матрёшки вместо коробки -->
+                            <span class="text-xl pb-0.5 drop-shadow-sm">🪆</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-1 pt-1">
@@ -379,11 +380,12 @@
 
     <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex items-center gap-3 mb-8 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.goHome()">
-                <div class="relative w-12 h-12 flex items-center justify-center shrink-0 grayscale opacity-80">
+            <div class="flex items-center gap-3 mb-8 opacity-80 hover:opacity-100 transition cursor-pointer group" onclick="window.goHome()">
+                <!-- Добавлен hover:grayscale-0 чтобы матрёшка становилась цветной при наведении -->
+                <div class="relative w-12 h-12 flex items-center justify-center shrink-0 grayscale opacity-80 group-hover:grayscale-0 transition-all duration-300">
                     <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
                     <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
-                        <i class="fa-solid fa-box-open text-brand-600 text-base mt-0.5"></i>
+                        <span class="text-2xl pb-0.5">🪆</span>
                     </div>
                 </div>
                 <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
