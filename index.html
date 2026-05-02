@@ -590,7 +590,7 @@
         </div>
     </div>
 
-    <!-- ОКНО РЕДАКТИРОВАНИЯ ПРОФИЛЯ -->    
+    <!-- ОКНО РЕДАКТИРОВАНИЯ ПРОФИЛЯ -->       
     <div id="edit-profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[105]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -1475,14 +1475,6 @@
             if(error) window.showToast(error.message, true); else window.showToast("Ссылка отправлена на почту!");
         };
 
-        window.forgotPassword = async () => {
-            const emailEl = document.getElementById('auth-email'); const email = emailEl ? emailEl.value.trim() : '';
-            if(!email) { window.showToast("Введите Email!", true); return; }
-            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-            if(error) window.showToast(error.message, true); else window.showToast("Ссылка отправлена на почту!");
-        };
-
-        // Оставляем только ОДНУ копию этих функций
         window.openEditProfile = () => {
             if (!window.currentUser) return;
             const meta = window.currentUser.user_metadata || {};
@@ -1492,8 +1484,8 @@
             const grid = document.getElementById('edit-avatar-grid');
             if(grid) {
                 grid.innerHTML = '';
-                const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
-                avatars.forEach((a, i) => {
+                const avatarsList = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
+                avatarsList.forEach((a, i) => {
                     const avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${a}`;
                     const isChecked = meta.avatar_url === avatarUrl || (!meta.avatar_url && i === 0);
                     grid.innerHTML += `<label class="cursor-pointer"><input type="radio" name="edit_avatar" value="${avatarUrl}" class="peer hidden" ${isChecked?'checked':''}><img src="${avatarUrl}" class="rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 transition hover:scale-105"></label>`;
@@ -1513,14 +1505,13 @@
             const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
             try {
-                // Обновляем метаданные прямо в Supabase Auth
                 const { data, error } = await supabase.auth.updateUser({
                     data: { full_name: name, avatar_url: avatar, phone: phone }
                 });
                 if (error) throw error;
                 
                 window.currentUser = data.user;
-                window.handleAuthChange({ user: data.user }); // Мгновенно обновляем интерфейс
+                window.handleAuthChange({ user: data.user });
                 
                 window.closeModal('edit-profile-modal');
                 window.showToast("Профиль обновлен!");
@@ -1529,11 +1520,6 @@
             } finally {
                 if(btn) { btn.disabled = false; btn.innerText = "Сохранить изменения"; }
             }
-        };
-        
-        window.logout = () => { 
-            supabase.auth.signOut().catch(e => console.warn(e)); sessionStorage.clear(); window.currentUser = null;
-            window.closeModal('profile-modal'); window.location.reload(); 
         };
         
         window.logout = () => { 
@@ -1687,11 +1673,6 @@
             const isOwner = window.currentUser && window.currentUser.id === i.userId;
             const isService = i.category && (i.category.includes('Услуги') || i.category.includes('Работа'));
             const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
-
-            const isOwner = window.currentUser && window.currentUser.id === i.userId;
-            const isService = i.category && (i.category.includes('Услуги') || i.category.includes('Работа'));
-            const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
-            // Добавляем проверку на питомца
             const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
 
             const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
@@ -1715,15 +1696,12 @@
             let condBadge = '';
             if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
             else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
-            else if (isAnimalEntity) condBadge = ''; // Пусто! Прячем плашку для живых питомцев
+            else if (isAnimalEntity) condBadge = ''; 
             else {
                 if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
                 else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
             }
             
-            const favHtml = isOwner ? '' : `<button type="button" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
-
-            return `
             const favHtml = isOwner ? '' : `<button type="button" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
             return `
@@ -1735,7 +1713,6 @@
                     ${condBadge}
                 </div>
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col justify-between">
-                    <!-- Заменили block truncate на line-clamp-2 break-words -->
                     <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">${vipCrown}${i.title || 'Без названия'}</h4>
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
                     <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
