@@ -147,9 +147,16 @@
     <nav class="bg-white/90 dark:bg-stone-900/90 md:backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-4 lg:gap-8 flex-1">
-                <!-- Новый логотип картинкой -->
-                <div class="flex items-center cursor-pointer shrink-0" onclick="window.goHome()">
-                    <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logo_transparent.png" alt="SVALKA" class="w-22 h-14 sm:w-16 sm:h-16 object-contain group-hover:scale-110 group-active:scale-95 transition-all duration-300 drop-shadow-sm">
+                <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="window.goHome()">
+                    <div class="relative w-10 h-10 flex items-center justify-center shrink-0">
+                        <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[3px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
+                        <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
+                            <i class="fa-solid fa-box-open text-brand-600 text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 pt-1">
+                        <span class="text-2xl font-display font-black tracking-tighter text-stone-900 dark:text-white">SVALKA</span>
+                    </div>
                 </div>
 
                 <div class="hidden sm:flex items-center gap-4 ml-auto">
@@ -186,8 +193,8 @@
 
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.goHome(); window.toggleMobileMenu();">
-                <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logo_transparent.png" alt="SVALKA" class="h-8 w-auto object-contain">
+            <div class="flex items-center gap-1 pt-1" onclick="window.goHome(); window.toggleMobileMenu();">
+                <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
                 <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
             </div>
             <button onclick="window.toggleMobileMenu()" class="text-3xl text-stone-400 hover:text-brand-600 p-2 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -372,8 +379,14 @@
 
     <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex items-center justify-center mb-8 opacity-70 hover:opacity-100 transition cursor-pointer grayscale hover:grayscale-0" onclick="window.goHome()">
-                <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logo_transparent.png" alt="SVALKA" class="h-12 md:h-16 w-auto object-contain">
+            <div class="flex items-center gap-3 mb-8 opacity-80 hover:opacity-100 transition cursor-pointer" onclick="window.goHome()">
+                <div class="relative w-12 h-12 flex items-center justify-center shrink-0 grayscale opacity-80">
+                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
+                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700">
+                        <i class="fa-solid fa-box-open text-brand-600 text-base mt-0.5"></i>
+                    </div>
+                </div>
+                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
             </div>
             <div class="flex flex-wrap justify-center gap-8 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
                 <button onclick="window.openModal('policy-modal')" class="hover:text-brand-600 transition cursor-pointer">Политика</button>
