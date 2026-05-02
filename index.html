@@ -515,15 +515,30 @@
 
     <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 md:backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center text-stone-500 text-lg"><i class="fa-solid fa-user"></i></div>
-                    <div>
-                        <div class="font-black text-lg text-stone-900 dark:text-white" id="chat-author-name">Продавец</div>
-                        <div class="text-sm text-brand-600 font-bold line-clamp-1" id="chat-item-title">Товар</div>
+            <!-- Новая шапка чата (Мини-карточка) -->
+            <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 shrink-0">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-2">
+                        <!-- Динамическая плашка Покупка/Продажа -->
+                        <span id="chat-role-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white">РОЛЬ</span>
+                        <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-400">
+                            <i class="fa-solid fa-user text-xs"></i>
+                            <!-- Имя собеседника -->
+                            <span id="chat-author-name" class="font-bold text-sm">Собеседник</span>
+                        </div>
                     </div>
+                    <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center -mr-2 -mt-2"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                
+                <!-- Кликабельная карточка товара -->
+                <div class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-brand-500 transition shadow-sm" onclick="window.closeModal('chat-modal'); window.openItemDetails(window.currentChatItemId)">
+                    <img id="chat-item-img" src="" class="w-12 h-12 rounded-lg object-cover bg-stone-100 shrink-0">
+                    <div class="flex-1 overflow-hidden">
+                        <div id="chat-item-title" class="font-black text-sm text-stone-900 dark:text-white truncate">Загрузка...</div>
+                        <div id="chat-item-price" class="font-bold text-brand-600 text-sm mt-0.5"></div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-stone-300 mr-2"></i>
+                </div>
             </div>
             <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar" id="chat-messages">
                 <div class="text-center text-sm font-bold text-stone-400 my-2">Сегодня</div>
@@ -1010,31 +1025,6 @@
                 }).subscribe();
         };
 
-        window.openChatModal = async () => {
-            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
-            
-            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
-            if (!item) return;
-
-            document.getElementById('chat-item-title').innerText = item.title;
-            document.getElementById('chat-author-name').innerText = item.authorName || "Продавец";
-            const messagesContainer = document.getElementById('chat-messages');
-            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
-            window.openModal('chat-modal');
-
-            try {
-                let { data: chat } = await supabase.from('chats').select('*').eq('item_id', item.id).eq('buyer_id', window.currentUser.id).maybeSingle();
-                if (!chat) {
-                    const { data: newChat, error } = await supabase.from('chats').insert([{ item_id: item.id, buyer_id: window.currentUser.id, seller_id: item.userId }]).select().single();
-                    if (error) throw error;
-                    chat = newChat;
-                }
-                window.currentChatId = chat.id;
-                await window.loadMessages();
-                window.subscribeToMessages();
-            } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
-        };
-
         window.loadMessages = async () => {
             if (!window.currentChatId) return;
             const { data, error } = await supabase.from('messages').select('*').eq('chat_id', window.currentChatId).order('created_at', { ascending: true });
@@ -1094,6 +1084,46 @@
                 }).subscribe();
         };
 
+        window.currentChatItemId = null; // Сохраняем ID товара для клика в шапке
+
+        window.openChatModal = async () => {
+            if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+            
+            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+            if (!item) return;
+
+            window.currentChatItemId = item.id;
+
+            // Мы всегда ПОКУПАТЕЛЬ, если жмем "Написать" из карточки товара
+            const badge = document.getElementById('chat-role-badge');
+            if(badge) { badge.innerText = "ПОКУПКА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-emerald-500"; }
+            
+            document.getElementById('chat-author-name').innerText = item.authorName || "Продавец";
+            document.getElementById('chat-item-title').innerText = item.title;
+            document.getElementById('chat-item-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+            
+            const imgEl = document.getElementById('chat-item-img');
+            if(imgEl) imgEl.src = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100');
+
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+            window.openModal('chat-modal');
+
+            try {
+                let { data: chat } = await supabase.from('chats').select('*').eq('item_id', item.id).eq('buyer_id', window.currentUser.id).maybeSingle();
+                if (!chat) {
+                    const { data: newChat, error } = await supabase.from('chats').insert([{ item_id: item.id, buyer_id: window.currentUser.id, seller_id: item.userId }]).select().single();
+                    if (error) throw error;
+                    chat = newChat;
+                }
+                window.currentChatId = chat.id;
+                await window.loadMessages();
+                window.subscribeToMessages();
+            } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
+        };
+
+        // ... функции loadMessages, sendChatMessage и subscribeToMessages остаются без изменений ...
+
         window.openChatListModal = async () => {
             if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             window.openModal('chat-list-modal');
@@ -1114,43 +1144,86 @@
                     const { data: msgs } = await supabase.from('messages').select('text').eq('chat_id', chat.id).order('created_at', { ascending: false }).limit(1);
                     const lastMsg = msgs && msgs.length > 0 ? msgs[0].text : 'Нет сообщений...';
                     
-                    // Считаем непрочитанные в этом диалоге
                     const { count: unreadCount } = await supabase.from('messages').select('*', { count: 'exact', head: true }).eq('chat_id', chat.id).eq('is_read', false).neq('sender_id', window.currentUser.id);
                     const unreadBadge = unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : '';
 
-                    const { data: item } = await supabase.from('items').select('title, image_url').eq('id', chat.item_id).maybeSingle();
+                    const { data: item } = await supabase.from('items').select('title, image_url, author_name').eq('id', chat.item_id).maybeSingle();
                     const itemTitle = item ? item.title : 'Товар удален';
                     const itemImg = (item && item.image_url) ? item.image_url : 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
 
                     const isSeller = chat.seller_id === window.currentUser.id;
-                    const roleLabel = isSeller ? 'Чат с покупателем' : 'Чат с продавцом';
+                    
+                    // Умный поиск имени собеседника
+                    let interlocutorName = "Собеседник";
+                    if (isSeller) {
+                        try {
+                            const {data: prof} = await supabase.from('profiles').select('full_name').eq('id', chat.buyer_id).maybeSingle();
+                            if (prof && prof.full_name) interlocutorName = prof.full_name;
+                            else interlocutorName = "Покупатель";
+                        } catch(e) { interlocutorName = "Покупатель"; }
+                    } else {
+                        interlocutorName = (item && item.author_name) ? item.author_name : "Продавец";
+                    }
+
+                    // Бейджи в списке чатов (Входящие)
+                    const roleBadge = isSeller ? `<span class="bg-indigo-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Продажа</span>` : `<span class="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Покупка</span>`;
 
                     html += `
-                    <div onclick="window.openExistingChat('${chat.id}', '${itemTitle.replace(/'/g, "\\'")}', '${roleLabel}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+                    <div onclick="window.openExistingChat('${chat.id}', '${chat.item_id}', '${isSeller}', '${interlocutorName.replace(/'/g, "\\'")}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
                         <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
                         <div class="flex-1 overflow-hidden">
-                            <div class="flex justify-between items-center mb-1">
-                                <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate pr-2">${itemTitle}</h4>
+                            <div class="flex items-center gap-2 mb-1">
+                                ${roleBadge}
+                                <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${itemTitle}</h4>
                             </div>
-                            <div class="text-[10px] text-brand-600 font-black tracking-widest uppercase mb-1">${roleLabel}</div>
+                            <p class="text-xs text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user mr-1 text-stone-300 dark:text-stone-600"></i>${interlocutorName}</p>
                             <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${lastMsg}</p>
                         </div>
                         ${unreadBadge}
-                        <i class="fa-solid fa-chevron-right text-stone-300 dark:text-stone-600 ${unreadCount > 0 ? 'ml-2' : ''}"></i>
                     </div>`;
                 }
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = `<div class="text-center text-red-500 font-bold mt-10">Ошибка загрузки чатов</div>`; }
         };
 
-        window.openExistingChat = async (chatId, itemTitle, roleLabel) => {
+        window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) => {
             window.closeModal('chat-list-modal'); 
-            document.getElementById('chat-item-title').innerText = itemTitle;
-            document.getElementById('chat-author-name').innerText = roleLabel;
+            window.currentChatId = chatId;
+            window.currentChatItemId = itemId;
+            
+            const isSeller = isSellerStr === 'true';
+
+            // Настраиваем шапку в зависимости от роли
+            const badge = document.getElementById('chat-role-badge');
+            if (badge) {
+                if (isSeller) {
+                    badge.innerText = "ПРОДАЖА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-indigo-500";
+                } else {
+                    badge.innerText = "ПОКУПКА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-emerald-500";
+                }
+            }
+
+            document.getElementById('chat-author-name').innerText = interlocutorName || "Собеседник";
+            document.getElementById('chat-item-title').innerText = "Загрузка...";
+            document.getElementById('chat-item-price').innerText = "";
+            document.getElementById('chat-item-img').src = "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100"; // Заглушка
+
+            // Мгновенно подтягиваем актуальные данные о товаре из базы
+            supabase.from('items').select('title, price, currency, images, image_url').eq('id', itemId).maybeSingle().then(({data}) => {
+                if (data) {
+                    document.getElementById('chat-item-title').innerText = data.title;
+                    document.getElementById('chat-item-price').innerText = `${data.price || 0} ${data.currency || 'RSD'}`;
+                    const img = (Array.isArray(data.images) && data.images.length > 0) ? data.images[0] : (data.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100');
+                    document.getElementById('chat-item-img').src = img;
+                } else {
+                    document.getElementById('chat-item-title').innerText = "Товар удален";
+                }
+            });
+
             const messagesContainer = document.getElementById('chat-messages');
             messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
             window.openModal('chat-modal');
-            window.currentChatId = chatId;
+            
             await window.loadMessages();
             window.subscribeToMessages();
         };
