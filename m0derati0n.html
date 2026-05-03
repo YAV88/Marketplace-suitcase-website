@@ -148,7 +148,7 @@
                             <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
                                 <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200">
                                 <div class="overflow-hidden">
-                                    <div class="font-black text-stone-800 truncate text-base">${item.is_highlighted ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}${item.title || 'Без названия'}</div>
+                                    <div class="font-black text-stone-800 truncate text-base">${(item.highlighted_until && new Date(item.highlighted_until) > new Date()) ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}${item.title || 'Без названия'}</div>
                                     <div class="text-xs text-stone-500 font-bold mt-1">Автор: ${item.author_name} | ID: ${item.id.substring(0,8)}...</div>
                                     <div class="text-sm font-bold text-brand-600 mt-0.5">${item.price} ${item.currency}</div>
                                 </div>
@@ -175,7 +175,7 @@
 
                 filteredUsers.forEach(user => {
                     const avatarUrl = user.avatar_url || 'https://via.placeholder.com/150';
-                    const isPro = user.is_pro;
+                    const isPro = user.pro_until ? new Date(user.pro_until) > new Date() : false;
                     const itemsCount = adminState.items.filter(i => i.user_id === user.id).length;
                     
                     list.insertAdjacentHTML('beforeend', `
@@ -228,17 +228,23 @@
         // Выдача/Снятие PRO статуса
         async function togglePro(userId, currentStatus, btn) {
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            const newStatus = !currentStatus;
+            
+            // Если сейчас PRO активен — обнуляем. Если нет — даем 30 дней.
+            let newDate = null;
+            if (!currentStatus) {
+                const d = new Date();
+                d.setDate(d.getDate() + 30);
+                newDate = d.toISOString();
+            }
 
-            const { error } = await supabaseClient.from('profiles').update({ is_pro: newStatus }).eq('id', userId);
+            const { error } = await supabaseClient.from('profiles').update({ pro_until: newDate }).eq('id', userId);
             if (error) {
                 alert("Ошибка выдачи PRO: " + error.message);
-                renderList(); // Возвращаем кнопку в норму
+                renderList(); 
             } else {
-                // Обновляем статус в локальном массиве
                 const userIndex = adminState.profiles.findIndex(p => p.id === userId);
-                if(userIndex > -1) adminState.profiles[userIndex].is_pro = newStatus;
-                renderList(); // Перерисовываем список
+                if(userIndex > -1) adminState.profiles[userIndex].pro_until = newDate;
+                renderList(); 
             }
         }
 
