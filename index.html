@@ -736,7 +736,10 @@
     <!-- ПРОФИЛЬ ПРОДАВЦА -->
     <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[85]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('seller-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
+                <button id="btn-report-seller" onclick="window.openReportModal()" class="bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition shadow-md cursor-pointer" title="Пожаловаться"><i class="fa-solid fa-flag text-lg"></i></button>
+                <button onclick="window.closeModal('seller-modal')" class="bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
             
             <!-- Шапка продавца -->
             <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
@@ -1059,6 +1062,36 @@
         </div>
     </div>
 
+    <!-- ОКНО ЖАЛОБЫ -->
+    <div id="report-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[110]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl p-6 sm:p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('report-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-red-500 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl"></i>
+                <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Жалоба</h2>
+            </div>
+            
+            <form onsubmit="window.submitReport(event)" class="flex flex-col gap-4">
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
+                    <select id="report-reason" required class="bg-transparent p-3 w-full font-bold text-sm outline-none cursor-pointer text-stone-900 dark:text-white">
+                        <option value="" disabled selected>Выберите причину...</option>
+                        <option value="Мошенничество">Мошенничество / Обман</option>
+                        <option value="Спам">Спам / Дубликаты</option>
+                        <option value="Неадекватное поведение">Оскорбления / Неадекватное поведение</option>
+                        <option value="Запрещенный товар">Продажа запрещенных вещей</option>
+                        <option value="Другое">Другое</option>
+                    </select>
+                </div>
+                
+                <div class="bg-stone-50 dark:bg-stone-800 p-2 rounded-xl border dark:border-stone-700 focus-within:border-red-500 transition-colors">
+                    <textarea id="report-comment" placeholder="Опишите проблему подробнее (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
+                </div>
+                
+                <button type="submit" id="btn-submit-report" class="bg-red-500 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-red-600 transition cursor-pointer mt-2">Отправить жалобу</button>
+            </form>
+        </div>
+    </div>
+    
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
         
@@ -1189,6 +1222,64 @@
 
         window.currentChatItemId = null; 
 
+        window.currentReportedUserId = null;
+
+        window.openReportModal = () => {
+            if (!window.currentUser) {
+                window.showToast("Сначала войдите в аккаунт", true);
+                window.openModal('auth-modal');
+                return;
+            }
+            
+            // Получаем ID пользователя, профиль которого сейчас открыт
+            const sellerItems = document.getElementById('seller-items-grid');
+            // Если сетка пустая, мы не знаем ID, поэтому страхуемся через открытый товар
+            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+            if(item) {
+                window.currentReportedUserId = item.userId;
+            }
+
+            if(window.currentReportedUserId === window.currentUser.id) {
+                window.showToast("Вы не можете пожаловаться на самого себя :)", true);
+                return;
+            }
+
+            document.getElementById('report-reason').value = '';
+            document.getElementById('report-comment').value = '';
+            window.openModal('report-modal');
+        };
+
+        window.submitReport = async (event) => {
+            event.preventDefault();
+            if (!window.currentUser || !window.currentReportedUserId) return;
+
+            const btn = document.getElementById('btn-submit-report');
+            const reason = document.getElementById('report-reason').value;
+            const comment = document.getElementById('report-comment').value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+
+            try {
+                const { error } = await supabase.from('reports').insert([{
+                    reporter_id: window.currentUser.id,
+                    reported_user_id: window.currentReportedUserId,
+                    reason: reason,
+                    comment: comment
+                }]);
+
+                if (error) throw error;
+
+                window.closeModal('report-modal');
+                window.showToast("Жалоба отправлена модераторам!");
+            } catch (e) {
+                window.showToast("Ошибка отправки", true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Отправить жалобу";
+            }
+        };
+        
         window.openChatModal = async () => {
             if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             
