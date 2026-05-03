@@ -742,8 +742,9 @@
                 <button onclick="window.closeModal('seller-modal')" class="bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4 shrink-0">
-                <div class="flex flex-row items-center gap-4">
+            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-4 shrink-0">
+                <!-- Верхняя строка: Аватар и инфа (pr-24 не дает тексту залезть под крестик) -->
+                <div class="flex flex-row items-center gap-4 pr-24">
                     <div id="seller-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-[3px] border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
@@ -755,7 +756,11 @@
                         <div id="seller-rating-container" class="flex items-center gap-1 text-sm mb-1 hidden"></div>
                         <p id="seller-stats" class="text-xs sm:text-sm text-stone-500 font-bold truncate">Объявлений: 0</p>
                     </div>
-                    <button id="btn-leave-review" class="hidden shrink-0 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm">Оставить отзыв</button>
+                </div>
+                
+                <!-- Нижняя строка: Кнопка отзыва -->
+                <div>
+                    <button id="btn-leave-review" class="hidden w-full sm:w-max bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm">Оставить отзыв</button>
                 </div>
             </div>
 
