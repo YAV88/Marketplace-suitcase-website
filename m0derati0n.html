@@ -80,12 +80,12 @@
                 </div>`;
         }
 
-        // Загружаем сразу всё: и товары, и пользователей
+        // Загружаем сразу всё: и товары, и пользователей (через новую секретную функцию)
         async function loadData() {
             try {
                 const [itemsRes, profilesRes] = await Promise.all([
                     supabaseClient.from('items').select('*').order('created_at', { ascending: false }),
-                    supabaseClient.from('profiles').select('*').order('created_at', { ascending: false })
+                    supabaseClient.rpc('get_all_users_for_admin') // 👈 ВЫЗЫВАЕМ НАШУ ФУНКЦИЮ
                 ]);
                 
                 if (itemsRes.error) throw itemsRes.error;
@@ -129,7 +129,7 @@
             list.innerHTML = '';
 
             if (adminState.currentTab === 'items') {
-                // ФИЛЬТРАЦИЯ ТОВАРОВ
+                // ... (Код товаров остается без изменений) ...
                 const filteredItems = adminState.items.filter(item => 
                     (item.title || '').toLowerCase().includes(searchTerm) || 
                     item.id.toLowerCase().includes(searchTerm) ||
@@ -161,9 +161,10 @@
                 });
 
             } else {
-                // ФИЛЬТРАЦИЯ ПОЛЬЗОВАТЕЛЕЙ
+                // ФИЛЬТРАЦИЯ ПОЛЬЗОВАТЕЛЕЙ (Теперь с Email и Именами!)
                 const filteredUsers = adminState.profiles.filter(user => 
                     (user.full_name || '').toLowerCase().includes(searchTerm) || 
+                    (user.email || '').toLowerCase().includes(searchTerm) || 
                     user.id.toLowerCase().includes(searchTerm)
                 );
 
@@ -186,11 +187,11 @@
                                 </div>
                                 <div class="overflow-hidden">
                                     <div class="font-black text-stone-800 truncate text-base flex items-center gap-2">
-                                        ${user.full_name || 'Аноним'} 
+                                        ${user.full_name || 'Без имени'} 
                                         ${isPro ? '<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest">VIP</span>' : ''}
                                     </div>
-                                    <div class="text-xs text-stone-500 font-mono mt-1">${user.id}</div>
-                                    <div class="text-xs font-bold text-stone-400 mt-0.5">Товаров: <span class="text-stone-700">${itemsCount}</span> | Баланс: <span class="text-brand-600">${user.wallet_balance || 0}</span></div>
+                                    <div class="text-sm text-stone-500 font-bold mt-0.5"><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</div>
+                                    <div class="text-xs font-bold text-stone-400 mt-1">Товаров: <span class="text-stone-700">${itemsCount}</span> | Баланс: <span class="text-brand-600">${user.wallet_balance || 0}</span></div>
                                 </div>
                             </div>
                             
