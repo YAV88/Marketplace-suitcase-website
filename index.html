@@ -1701,7 +1701,7 @@
                 return {
                     id: i.id, title: i.title || 'Без названия', description: i.description || '', price: i.price || 0, currency: i.currency || 'RSD',
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
-                    authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: !!i.is_highlighted, category: i.category || 'Другое', createdAt: i.created_at,
+                    authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.highlighted_until ? new Date(i.highlighted_until) > new Date() : false, category: i.category || 'Другое', createdAt: i.created_at,
                     status: i.status || 'active', phone: i.phone || '',
                     address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча']
                 };
@@ -1997,7 +1997,7 @@
                     if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
                     if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
                     if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
-                    if (window.showUrgentOnly) q = q.eq('is_highlighted', true);
+                    if (window.showUrgentOnly) q = q.gt('highlighted_until', new Date().toISOString());
                     if (window.filterCondition && window.filterCondition !== 'Все') q = q.eq('condition', window.filterCondition);
 
                     if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
@@ -2006,7 +2006,7 @@
 
                     q = q.limit(window.displayedCount + 1);
 
-                    let vq = supabase.from('items').select('*').eq('is_highlighted', true).limit(6);
+                    let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(6);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
 
@@ -2130,8 +2130,18 @@
                 };
 
                 let res;
-                if (window.editingItemId) { res = await supabase.from('items').update(itemData).eq('id', window.editingItemId); } 
-                else { itemData.is_highlighted = window.currentUserData?.is_pro || false; itemData.status = 'active'; res = await supabase.from('items').insert([itemData]); }
+                if (window.editingItemId) { 
+                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId); 
+                } else { 
+                    // Если у юзера активен PRO, даем товару 30 дней ТОПа
+                    if (window.currentUserData?.is_pro) {
+                        const topDate = new Date();
+                        topDate.setDate(topDate.getDate() + 30);
+                        itemData.highlighted_until = topDate.toISOString();
+                    }
+                    itemData.status = 'active'; 
+                    res = await supabase.from('items').insert([itemData]); 
+                }
                 
                 if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
                     delete itemData.delivery; delete itemData.status; delete itemData.phone; delete itemData.condition;
@@ -2278,9 +2288,15 @@
 
                     try {
                         const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
-                        window.currentUserData = profile || { wallet_balance: 0, is_pro: false };
+                        
+                        // Проверяем, не истекло ли время PRO
+                        const isProActive = profile?.pro_until ? new Date(profile.pro_until) > new Date() : false;
+                        
+                        window.currentUserData = profile || { wallet_balance: 0 };
+                        window.currentUserData.is_pro = isProActive; // Сохраняем для всего сайта
+                        
                         document.querySelectorAll('#profile-balance').forEach(el => el.innerText = window.currentUserData.wallet_balance || 0);
-                        if(window.currentUserData.is_pro) document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
+                        if(isProActive) document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
                     } catch(e) {}
                     
                     try {
