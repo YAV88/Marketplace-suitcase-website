@@ -1530,19 +1530,18 @@
             }
         };
         
-        window.logout = () => { 
-            supabase.auth.signOut().catch(e => console.warn(e)); sessionStorage.clear(); window.currentUser = null;
-            window.closeModal('profile-modal'); window.location.reload(); 
+        window.logout = async () => { 
+            // 1. Ждем, пока Supabase точно удалит сессию
+            await supabase.auth.signOut(); 
+    
+            // 2. Очищаем локальные данные
+            sessionStorage.clear(); 
+            window.currentUser = null;
+            window.closeModal('profile-modal'); 
+    
+            // 3.Перезагружаем страницу
+            window.location.reload(); 
         };
-
-        const avatars = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
-        const grid = document.getElementById('avatar-grid');
-        if(grid) {
-            grid.innerHTML = '';
-            avatars.forEach((a, i) => {
-                grid.innerHTML += `<label class="cursor-pointer"><input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="peer hidden" ${i===0?'checked':''}><img src="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 transition hover:scale-105"></label>`;
-            });
-        }
 
         window.applyFilters = () => {
             const elCat = document.getElementById('filter-category'); const elCity = document.getElementById('filter-city');
