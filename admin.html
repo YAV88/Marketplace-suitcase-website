@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVALKA - Патруль модерации</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f5f5f4; }
+        h1, h2 { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 text-stone-800">
+
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-shield-halved text-red-600 text-3xl"></i>
+                <h1 class="text-3xl font-black uppercase tracking-tighter">Svalka <span class="text-red-600">Admin</span></h1>
+            </div>
+            <a href="index.html" class="text-stone-500 hover:text-stone-800 font-bold transition flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> На сайт</a>
+        </div>
+        
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
+            <h2 class="text-xl font-bold mb-4 text-stone-800 border-b pb-4">Все товары на платформе</h2>
+            
+            <div id="admin-items-list" class="space-y-3">
+                <div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-stone-300"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ⚠️ ВСТАВЬ СЮДА СВОИ КЛЮЧИ SUPABASE 
+        const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function initAdminPanel() {
+            // 1. Проверяем авторизацию
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                showError("Доступ запрещен. Вы не вошли в аккаунт!");
+                return;
+            }
+
+            // 2. Проверяем наличие короны (is_admin === true)
+            const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+            if (!profile || profile.is_admin !== true) {
+                showError("У вас нет прав модератора!");
+                return;
+            }
+
+            // 3. Загружаем товары
+            loadItems();
+        }
+
+        function showError(msg) {
+            document.getElementById('admin-items-list').innerHTML = `
+                <div class="bg-red-50 text-red-600 p-6 rounded-xl font-bold text-center border border-red-200">
+                    <i class="fa-solid fa-hand-paper text-3xl mb-2 block"></i> ${msg}
+                </div>`;
+        }
+
+        async function loadItems() {
+            const list = document.getElementById('admin-items-list');
+            
+            const { data: items, error } = await supabase
+                .from('items')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                showError(`Ошибка загрузки: ${error.message}`);
+                return;
+            }
+
+            list.innerHTML = '';
+
+            if (items.length === 0) {
+                list.innerHTML = '<p class="text-stone-500 text-center py-10 font-bold">Товаров пока нет.</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "flex justify-between items-center p-3 bg-stone-50 border border-stone-200 rounded-xl hover:bg-stone-100 transition";
+                itemDiv.innerHTML = `
+                    <div class="flex items-center gap-4 overflow-hidden">
+                        <img src="${imgUrl}" class="w-12 h-12 rounded-lg object-cover shrink-0">
+                        <div class="overflow-hidden">
+                            <div class="font-bold text-stone-800 truncate">${item.title || 'Без названия'}</div>
+                            <div class="text-xs text-stone-500 font-medium mt-0.5">ID: ${item.id} | ${item.price} ${item.currency}</div>
+                        </div>
+                    </div>
+                    <button onclick="deleteItem('${item.id}', this)" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 shrink-0 ml-4">
+                        <i class="fa-solid fa-trash"></i> <span class="hidden sm:inline">Удалить</span>
+                    </button>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        async function deleteItem(itemId, buttonElement) {
+            if(!confirm("Снести этот товар навсегда?")) return;
+            
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+            const { error } = await supabase.from('items').delete().eq('id', itemId);
+            
+            if (error) {
+                alert("Ошибка: " + error.message);
+                buttonElement.disabled = false;
+                buttonElement.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
+            } else {
+                buttonElement.parentElement.style.opacity = '0';
+                buttonElement.parentElement.style.transform = 'scale(0.95)';
+                buttonElement.parentElement.style.transition = 'all 0.3s';
+                setTimeout(() => buttonElement.parentElement.remove(), 300);
+            }
+        }
+
+        initAdminPanel();
+    </script>
+</body>
+</html>
