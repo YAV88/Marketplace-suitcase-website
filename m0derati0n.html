@@ -29,13 +29,14 @@
         <div class="bg-white p-2 sm:p-6 rounded-[2rem] shadow-sm border border-stone-200 min-h-[500px] flex flex-col">
             
             <div class="flex flex-col md:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
-                <div class="flex bg-stone-100 p-1 rounded-xl w-full md:w-max shrink-0">
-                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2"><i class="fa-solid fa-box-open text-brand-500"></i> Товары</button>
-                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2"><i class="fa-solid fa-users text-indigo-500"></i> Пользователи</button>
+                <div class="flex bg-stone-100 p-1 rounded-xl w-full md:w-max shrink-0 overflow-x-auto custom-scrollbar">
+                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-box-open text-brand-500"></i> Товары</button>
+                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-users text-indigo-500"></i> Пользователи</button>
+                    <!-- НОВАЯ ВКЛАДКА ЖАЛОБ -->
+                    <button onclick="switchTab('reports')" id="tab-reports" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-dumpster-fire text-red-500"></i> Жалобы</button>
                 </div>
                 
                 <div class="flex gap-2 w-full md:w-auto">
-                    <!-- ФИЛЬТР ПО КАТЕГОРИЯМ -->
                     <select id="admin-category-filter" onchange="renderList()" class="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-brand-500 focus:bg-white transition cursor-pointer max-w-[150px]">
                         <option value="">Все категории</option>
                         <option value="Одежда">Одежда</option> <option value="Электроника">Электроника</option> <option value="Интерьер">Интерьер</option>
@@ -58,11 +59,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // КЛЮЧИ
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let adminState = { items: [], profiles: [], currentTab: 'items', isLoading: true };
+        let adminState = { items: [], profiles: [], reports: [], currentTab: 'items', isLoading: true };
 
         async function initAdminPanel() {
             const { data: { user } } = await supabaseClient.auth.getUser();
@@ -80,15 +82,20 @@
 
         async function loadData() {
             try {
-                const [itemsRes, profilesRes] = await Promise.all([
+                // ЗАГРУЖАЕМ ЖАЛОБЫ (reports)
+                const [itemsRes, profilesRes, reportsRes] = await Promise.all([
                     supabaseClient.from('items').select('*').order('created_at', { ascending: false }),
-                    supabaseClient.rpc('get_all_users_for_admin')
+                    supabaseClient.rpc('get_all_users_for_admin'),
+                    supabaseClient.from('reports').select('*').order('created_at', { ascending: false })
                 ]);
+                
                 if (itemsRes.error) throw itemsRes.error;
                 if (profilesRes.error) throw profilesRes.error;
+                if (reportsRes.error && reportsRes.error.code !== '42P01') throw reportsRes.error; // 42P01 - если таблица еще пустая/не создана
 
                 adminState.items = itemsRes.data || [];
                 adminState.profiles = profilesRes.data || [];
+                adminState.reports = reportsRes.data || [];
                 adminState.isLoading = false;
                 renderList();
             } catch (e) { showError(`Ошибка: ${e.message}`); }
@@ -98,20 +105,28 @@
             adminState.currentTab = tab;
             const btnItems = document.getElementById('tab-items');
             const btnUsers = document.getElementById('tab-users');
+            const btnReports = document.getElementById('tab-reports');
             const searchInput = document.getElementById('admin-search');
             const catFilter = document.getElementById('admin-category-filter');
             
+            const activeClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2 shrink-0";
+            const inactiveClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2 shrink-0";
+
+            btnItems.className = tab === 'items' ? activeClass : inactiveClass;
+            btnUsers.className = tab === 'users' ? activeClass : inactiveClass;
+            btnReports.className = tab === 'reports' ? activeClass : inactiveClass;
+
             if (tab === 'items') {
-                btnItems.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2";
-                btnUsers.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2";
                 searchInput.placeholder = "Поиск товаров...";
-                catFilter.style.display = "block"; // Показываем фильтр категорий
-            } else {
-                btnUsers.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2";
-                btnItems.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2";
+                catFilter.style.display = "block"; 
+            } else if (tab === 'users') {
                 searchInput.placeholder = "Поиск по email или ID...";
-                catFilter.style.display = "none"; // Прячем фильтр категорий
-                catFilter.value = ""; // Сбрасываем его
+                catFilter.style.display = "none"; 
+                catFilter.value = ""; 
+            } else {
+                searchInput.placeholder = "Поиск по жалобам...";
+                catFilter.style.display = "none"; 
+                catFilter.value = ""; 
             }
             
             searchInput.value = ''; 
@@ -126,7 +141,7 @@
             list.innerHTML = '';
 
             if (adminState.currentTab === 'items') {
-                // ФИЛЬТРАЦИЯ ТОВАРОВ (с учетом категории)
+                // ФИЛЬТРАЦИЯ ТОВАРОВ
                 const filteredItems = adminState.items.filter(item => {
                     const matchSearch = (item.title || '').toLowerCase().includes(searchTerm) || item.id.toLowerCase().includes(searchTerm);
                     const matchCat = catFilter === "" || (item.category && item.category.startsWith(catFilter));
@@ -154,7 +169,7 @@
                         </div>
                     `);
                 });
-            } else {
+            } else if (adminState.currentTab === 'users') {
                 // ФИЛЬТРАЦИЯ ПОЛЬЗОВАТЕЛЕЙ
                 const filteredUsers = adminState.profiles.filter(user => 
                     (user.full_name || '').toLowerCase().includes(searchTerm) || 
@@ -192,7 +207,6 @@
                             </div>
                             
                             <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 bg-stone-50 p-2 rounded-xl border border-stone-100">
-                                <!-- УПРАВЛЕНИЕ БАЛАНСОМ -->
                                 <div class="flex items-center gap-1">
                                     <span class="text-[10px] font-bold text-stone-500 uppercase tracking-widest mr-1">Поднятия</span>
                                     <input type="number" id="balance-${user.id}" value="${user.wallet_balance || 0}" class="w-16 bg-white border border-stone-200 rounded-lg p-1.5 text-center text-sm font-bold text-brand-600 outline-none focus:border-brand-500">
@@ -207,6 +221,63 @@
                                 <button onclick="deleteUser('${user.id}', this)" class="bg-stone-200 text-stone-400 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center" title="Удалить профиль">
                                     <i class="fa-solid fa-ban"></i>
                                 </button>
+                            </div>
+                        </div>
+                    `);
+                });
+            } else if (adminState.currentTab === 'reports') {
+                // ФИЛЬТРАЦИЯ ЖАЛОБ
+                const filteredReports = adminState.reports.filter(r => 
+                    (r.reason || '').toLowerCase().includes(searchTerm) || 
+                    (r.comment || '').toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredReports.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-check-double text-4xl mb-3 opacity-30 block"></i>Новых жалоб нет</div>';
+
+                filteredReports.forEach(report => {
+                    // Ищем данные пользователей в уже загруженном массиве
+                    const reporter = adminState.profiles.find(p => p.id === report.reporter_id) || { full_name: 'Удаленный', email: 'нет' };
+                    const reported = adminState.profiles.find(p => p.id === report.reported_user_id) || { full_name: 'Удаленный', email: 'нет' };
+                    
+                    const date = new Date(report.created_at).toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    const isNew = report.status === 'new';
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col p-4 bg-white border ${isNew ? 'border-red-300 shadow-md' : 'border-stone-200 opacity-60'} rounded-xl hover:shadow-lg hover:opacity-100 transition gap-3 relative overflow-hidden">
+                            ${isNew ? '<div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>' : ''}
+                            
+                            <div class="flex justify-between items-start pl-2">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest"><i class="fa-solid fa-dumpster-fire mr-1"></i> ${report.reason}</span>
+                                        <span class="text-xs text-stone-400 font-bold">${date}</span>
+                                    </div>
+                                    <div class="text-sm font-medium text-stone-800 mt-2 bg-stone-50 p-3 rounded-lg border border-stone-100">
+                                        ${report.comment ? `«${report.comment}»` : '<span class="text-stone-400 italic">Жалоба отправлена без комментария</span>'}
+                                    </div>
+                                </div>
+                                <div class="flex flex-col sm:flex-row gap-2 shrink-0">
+                                    ${isNew ? `<button onclick="resolveReport('${report.id}', this)" class="bg-emerald-100 text-emerald-600 hover:bg-emerald-500 hover:text-white px-3 py-1.5 rounded-lg font-bold text-xs transition flex items-center justify-center" title="Отметить как решенную"><i class="fa-solid fa-check mr-1"></i> Решено</button>` : ''}
+                                    <button onclick="deleteReport('${report.id}', this)" class="bg-stone-100 text-stone-400 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg font-bold text-xs transition flex items-center justify-center" title="Удалить жалобу"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-4 mt-2 pl-2 border-t border-stone-100 pt-3">
+                                <div class="flex-1">
+                                    <div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest mb-1">Кто жалуется:</div>
+                                    <div class="text-sm font-bold text-stone-700"><i class="fa-solid fa-user text-stone-300 mr-1"></i> ${reporter.full_name}</div>
+                                    <div class="text-xs text-stone-500">${reporter.email}</div>
+                                </div>
+                                <div class="hidden sm:flex items-center text-stone-300"><i class="fa-solid fa-arrow-right"></i></div>
+                                <div class="flex-1 bg-red-50 p-2 rounded-lg border border-red-100 flex flex-col justify-between items-start">
+                                    <div>
+                                        <div class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-1">На кого:</div>
+                                        <div class="text-sm font-bold text-red-700"><i class="fa-solid fa-user-slash text-red-300 mr-1"></i> ${reported.full_name}</div>
+                                        <div class="text-xs text-red-500 mb-2">${reported.email}</div>
+                                    </div>
+                                    <!-- Прямая кнопка бана из карточки жалобы -->
+                                    <button onclick="deleteUser('${report.reported_user_id}', this)" class="w-full sm:w-auto bg-red-500 text-white hover:bg-red-600 px-3 py-1.5 rounded-md font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm"><i class="fa-solid fa-ban"></i> Забанить</button>
+                                </div>
                             </div>
                         </div>
                     `);
@@ -260,6 +331,26 @@
             const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
             if (error) { alert("Ошибка удаления: " + error.message); renderList(); } 
             else { adminState.profiles = adminState.profiles.filter(p => p.id !== userId); btn.parentElement.parentElement.style.opacity = '0'; setTimeout(() => renderList(), 300); }
+        }
+
+        // НОВЫЕ ФУНКЦИИ ДЛЯ ЖАЛОБ
+        async function resolveReport(reportId, btn) {
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const { error } = await supabaseClient.from('reports').update({ status: 'resolved' }).eq('id', reportId);
+            if (error) { alert("Ошибка: " + error.message); renderList(); } 
+            else { 
+                const index = adminState.reports.findIndex(r => r.id === reportId); 
+                if(index > -1) adminState.reports[index].status = 'resolved'; 
+                renderList(); 
+            }
+        }
+
+        async function deleteReport(reportId, btn) {
+            if(!confirm("Окончательно удалить жалобу из базы?")) return;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const { error } = await supabaseClient.from('reports').delete().eq('id', reportId);
+            if (error) { alert("Ошибка: " + error.message); renderList(); } 
+            else { adminState.reports = adminState.reports.filter(r => r.id !== reportId); renderList(); }
         }
 
         initAdminPanel();
