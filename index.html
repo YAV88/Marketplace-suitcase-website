@@ -1142,7 +1142,7 @@
                     });
                 }
             } catch (e) { console.error("Ошибка бейджей", e); }
-
+        };
         // --- ЛОГИКА ОТЗЫВОВ ---
         window.currentSellerId = null;
         window.sellerReviews = [];
@@ -2570,32 +2570,6 @@
                 if(items.length > 0) { grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join(''); } 
                 else { empty.style.display = 'flex'; }
             } catch(e) {}
-        };
-
-        window.openSellerProfile = async (userId) => {
-            if (!userId) return; window.openModal('seller-modal');
-            const grid = document.getElementById('seller-items-grid'); const empty = document.getElementById('seller-empty'); const loader = document.getElementById('seller-loading');
-            grid.style.display = 'none'; empty.style.display = 'none'; loader.style.display = 'flex';
-
-            try {
-                const { data, error } = await supabase.from('items').select('*').eq('user_id', userId).eq('status', 'active').order('created_at', { ascending: false });
-                if (error) throw error;
-                const items = (data || []).map(window.mapItemData).filter(Boolean);
-                loader.style.display = 'none';
-
-                if (items.length > 0) {
-                    const firstItem = items[0]; document.getElementById('seller-name').innerText = firstItem.authorName || 'Пользователь';
-                    const avatarCont = document.getElementById('seller-avatar-container');
-                    if(firstItem.authorAvatar) avatarCont.innerHTML = `<img src="${firstItem.authorAvatar}" class="w-full h-full object-cover">`; else avatarCont.innerHTML = `<i class="fa-solid fa-user"></i>`;
-                    const isPro = items.some(i => i.isHighlighted); const proBadge = document.getElementById('seller-pro-badge');
-                    if (isPro) proBadge.classList.remove('hidden'); else proBadge.classList.add('hidden');
-                    document.getElementById('seller-stats').innerText = `Активных объявлений: ${items.length}`;
-                    grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
-                    items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
-                } else {
-                    empty.style.display = 'flex'; document.getElementById('seller-stats').innerText = `Активных объявлений: 0`; document.getElementById('seller-name').innerText = "Пользователь";
-                }
-            } catch (e) { loader.style.display = 'none'; empty.style.display = 'flex'; window.showToast("Ошибка загрузки профиля", true); }
         };
 
         window.filterProfileItems = (input, gridId) => {
