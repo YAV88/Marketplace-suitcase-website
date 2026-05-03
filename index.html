@@ -438,66 +438,23 @@
     </footer>
 
     <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
-        <p>Команда SVALKA с уважением относится к вашей приватности. В данном документе описано, как мы собираем, используем и защищаем вашу информацию.</p>
-
-        <p class="font-bold text-stone-900 dark:text-white mt-4">1. Какую информацию мы собираем</p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li>Данные профиля: email, имя, номер телефона (если указан) и аватар.</li>
-            <li>Контент: фотографии товаров, описания, цены и сообщения во внутреннем чате платформы.</li>
-            <li>Технические данные: стандартная информация, необходимая для работы и оптимизации сервиса (включая файлы cookie для сохранения сессий).</li>
-        </ul>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">2. Как мы используем данные</p>
-        <p>Ваша информация используется исключительно для:</p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li>Обеспечения работы маркетплейса (публикация объявлений, связь между продавцом и покупателем).</li>
-            <li>Улучшения качества обслуживания и технической поддержки.</li>
-            <li>Защиты пользователей от мошеннических действий и спама.</li>
-        </ul>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">3. Защита и хранение информации</p>
-        <p>Мы применяем современные технологии шифрования и используем надежные закрытые серверные решения для защиты ваших данных от несанкционированного доступа. Ваши пароли хранятся в захэшированном виде и недоступны даже администрации сервиса.</p>
-        <p class="text-brand-600 font-medium">Мы строго заявляем: SVALKA никогда не продает, не сдает в аренду и не передает базы данных пользователей третьим лицам, рекламным агентствам или сторонним компаниям.</p>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">4. Управление вашими данными</p>
-        <p>Вы являетесь полноправным владельцем своих данных. Вы можете в любой момент отредактировать информацию в своем профиле. Если вы хотите полностью и безвозвратно удалить свой аккаунт и все связанные с ним данные, вы можете сделать это через обращение в службу поддержки, либо аккаунт может быть удален по вашему запросу модератором платформы.</p>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">5. Изменения в политике</p>
-        <p>Мы можем периодически обновлять данную политику. Продолжая использовать SVALKA после внесения изменений, вы подтверждаете свое согласие с новыми условиями.</p>
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white">Политика конфиденциальности</h2>
+            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>Мы храним ваши пароли надежно зашифрованными.</p><p>Фотографии загружаются на наши защищенные сервера Supabase.</p>
+            </div>
+        </div>
     </div>
 
     <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
-        <p class="font-bold text-stone-900 dark:text-white">Добро пожаловать на маркетплейс SVALKA!</p>
-        <p>Используя наш сервис, вы соглашаетесь с правилами сообщества. Наша цель — создать безопасную и удобную платформу для каждого.</p>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">1. Размещение объявлений</p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li>Описание и фотографии должны точно соответствовать реальному состоянию товара.</li>
-            <li>Выбирайте наиболее подходящую категорию для вашего объявления.</li>
-            <li>Запрещено дублировать одни и те же объявления (спам).</li>
-            <li>Цена должна быть указана честно. Запрещено указывать цену "1 RSD" для привлечения внимания, если реальная стоимость иная.</li>
-        </ul>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">2. Запрещенные товары и услуги</p>
-        <p>На платформе строго запрещена продажа следующих категорий:</p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li>Оружие, боеприпасы и взрывчатые вещества.</li>
-            <li>Наркотические средства и медицинские препараты, отпускаемые по рецепту.</li>
-            <li>Краденые вещи и контрафактная продукция.</li>
-            <li>Финансовые махинации, криптовалютные пирамиды и сомнительные схемы заработка.</li>
-            <li>Товары и материалы, нарушающие авторские права.</li>
-            <li>Любые предметы, оборот которых запрещен или ограничен законодательством.</li>
-        </ul>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">3. Общение и безопасность</p>
-        <ul class="list-disc pl-5 space-y-1">
-            <li>Уважайте других пользователей. Оскорбления, угрозы и нецензурная лексика в чатах недопустимы.</li>
-            <li>Для вашей безопасности мы настоятельно рекомендуем проводить сделки при личной встрече в людных местах.</li>
-            <li>Никогда не переводите предоплату незнакомым продавцам и не переходите по подозрительным ссылкам для "безопасной сделки".</li>
-        </ul>
-        
-        <p class="font-bold text-stone-900 dark:text-white mt-4">4. Права модераторов</p>
-        <p>Администрация SVALKA оставляет за собой право редактировать, отклонять или удалять объявления, нарушающие данные правила. Аккаунты пользователей, систематически нарушающих правила или подозреваемых в мошенничестве, могут быть заблокированы без права восстановления.</p>
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg rounded-[2rem] shadow-2xl p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white">Правила сайта</h2>
+            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 h-64 overflow-y-auto custom-scrollbar pr-2">
+                <p>1. Запрещена продажа нелегальных предметов.</p><p>2. Запрещен спам.</p><p>3. Встречайтесь с покупателями лично.</p>
+            </div>
+        </div>
     </div>
 
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
