@@ -578,7 +578,7 @@
                     <input type="text" id="auth-name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                     <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
                         <label class="text-sm font-bold text-stone-500 mb-3 block">Выберите аватар</label>
-                        <div class="grid grid-cols-5 gap-3" id="avatar-grid"></div>
+                        <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
                     </div>
                 </div>
                 <input type="email" id="auth-email" placeholder="Email" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
@@ -610,7 +610,7 @@
                 </div>
                 <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border border-transparent dark:border-stone-700 mt-2">
                     <label class="text-sm font-bold text-stone-500 mb-3 block">Аватарка</label>
-                    <div class="grid grid-cols-5 gap-3" id="edit-avatar-grid"></div>
+                    <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="edit-avatar-grid"></div>
                 </div>
                 <button type="submit" id="edit-submit-btn" class="bg-brand-600 text-white w-full mt-4 py-3.5 rounded-xl font-bold text-base transition shadow-md hover:bg-brand-700 cursor-pointer">Сохранить изменения</button>
             </form>
@@ -1484,21 +1484,44 @@
         };
 
         window.openEditProfile = () => {
-            if (!window.currentUser) return;
-            const meta = window.currentUser.user_metadata || {};
-            document.getElementById('edit-name').value = meta.full_name || '';
-            document.getElementById('edit-phone').value = meta.phone || '';
-            
-            const grid = document.getElementById('edit-avatar-grid');
             if(grid) {
                 grid.innerHTML = '';
-                const avatarsList = ["R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron"];
-                avatarsList.forEach((a, i) => {
+                window.avatarsList.forEach((a, i) => {
                     const avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${a}`;
                     const isChecked = meta.avatar_url === avatarUrl || (!meta.avatar_url && i === 0);
-                    grid.innerHTML += `<label class="cursor-pointer"><input type="radio" name="edit_avatar" value="${avatarUrl}" class="peer hidden" ${isChecked?'checked':''}><img src="${avatarUrl}" class="rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 transition hover:scale-105"></label>`;
+                    grid.innerHTML += `
+                    <label class="cursor-pointer shrink-0">
+                        <input type="radio" name="edit_avatar" value="${avatarUrl}" class="peer hidden" ${isChecked?'checked':''}>
+                        <img src="${avatarUrl}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all hover:scale-110 shadow-sm">
+                    </label>`;
                 });
             }
+            
+            // Массив из 20 роботов
+            window.avatarsList = [
+                "R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron", 
+                "Ultron", "Vision", "Data", "Baymax", "Eve", "Johnny5", "Chappie", "BB8", "K2SO", "HAL9000"
+            ];
+            
+            // Функция, которая гарантированно отрисует аватарки при регистрации
+            window.renderRegistrationAvatars = () => {
+                const grid = document.getElementById('avatar-grid');
+                if(grid) {
+                    grid.innerHTML = '';
+                    window.avatarsList.forEach((a, i) => {
+                        grid.innerHTML += `
+                        <label class="cursor-pointer shrink-0">
+                            <input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="peer hidden" ${i===0?'checked':''}>
+                            <img src="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all hover:scale-110 shadow-sm">
+                        </label>`;
+                    });
+                }
+            };
+            
+            // Запускаем отрисовку сразу после того, как браузер построит страницу
+            document.addEventListener('DOMContentLoaded', window.renderRegistrationAvatars);
+            // На всякий случай дублируем прямой вызов (иногда DOMContentLoaded уже прошел)
+            window.renderRegistrationAvatars();
             window.openModal('edit-profile-modal');
         };
 
