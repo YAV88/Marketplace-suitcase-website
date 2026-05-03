@@ -35,23 +35,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ⚠️ ВСТАВЬ СЮДА СВОИ КЛЮЧИ SUPABASE 
+        // Ключи
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function initAdminPanel() {
             // 1. Проверяем авторизацию
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) {
                 showError("Доступ запрещен. Вы не вошли в аккаунт!");
                 return;
             }
 
             // 2. Проверяем наличие короны (is_admin === true)
-            const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+            const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', user.id).single();
             if (!profile || profile.is_admin !== true) {
-                showError("У вас нет прав модератора!");
+                showError("У вас нет прав модератора! Доступ закрыт.");
                 return;
             }
 
@@ -69,7 +70,7 @@
         async function loadItems() {
             const list = document.getElementById('admin-items-list');
             
-            const { data: items, error } = await supabase
+            const { data: items, error } = await supabaseClient
                 .from('items')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -107,18 +108,19 @@
         }
 
         async function deleteItem(itemId, buttonElement) {
-            if(!confirm("Снести этот товар навсегда?")) return;
+            if(!confirm("Снести этот товар навсегда? Вы уверены?")) return;
             
             buttonElement.disabled = true;
             buttonElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
-            const { error } = await supabase.from('items').delete().eq('id', itemId);
+            const { error } = await supabaseClient.from('items').delete().eq('id', itemId);
             
             if (error) {
                 alert("Ошибка: " + error.message);
                 buttonElement.disabled = false;
                 buttonElement.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
             } else {
+                // Красивая анимация исчезновения
                 buttonElement.parentElement.style.opacity = '0';
                 buttonElement.parentElement.style.transform = 'scale(0.95)';
                 buttonElement.parentElement.style.transition = 'all 0.3s';
@@ -126,6 +128,7 @@
             }
         }
 
+        // Запуск
         initAdminPanel();
     </script>
 </body>
