@@ -734,15 +734,15 @@
     </div>
 
     <!-- ПРОФИЛЬ ПРОДАВЦА -->
+    <!-- ПРОФИЛЬ ПРОДАВЦА -->
     <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[85]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
-                <button id="btn-report-seller" onclick="window.openReportModal()" class="bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition shadow-md cursor-pointer" title="Пожаловаться"><i class="fa-solid fa-snowplow text-lg"></i></button>
+                <button id="btn-report-seller" onclick="window.openReportModal()" class="bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition shadow-md cursor-pointer" title="Пожаловаться"><i class="fa-solid fa-dumpster-fire text-lg"></i></button>
                 <button onclick="window.closeModal('seller-modal')" class="bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <!-- Шапка продавца -->
-            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
+            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4 shrink-0">
                 <div class="flex flex-row items-center gap-4">
                     <div id="seller-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-[3px] border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
@@ -752,31 +752,31 @@
                             <h2 id="seller-name" class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">Продавец</h2>
                             <span id="seller-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
                         </div>
+                        <div id="seller-rating-container" class="flex items-center gap-1 text-sm mb-1 hidden"></div>
                         <p id="seller-stats" class="text-xs sm:text-sm text-stone-500 font-bold truncate">Объявлений: 0</p>
                     </div>
+                    <button id="btn-leave-review" class="hidden shrink-0 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm">Оставить отзыв</button>
                 </div>
             </div>
 
-            <!-- Вкладки и Поиск продавца -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
-                <div class="flex font-black text-sm">
-                    <button class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 cursor-default">Все объявления</button>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0 shrink-0">
+                <div class="flex font-black text-sm w-full sm:w-auto overflow-x-auto custom-scrollbar">
+                    <button id="tab-seller-items" onclick="window.switchSellerTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0">Все объявления</button>
+                    <button id="tab-seller-reviews" onclick="window.switchSellerTab('reviews')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Отзывы <span id="seller-reviews-count" class="ml-1 opacity-70"></span></button>
                 </div>
-                <!-- Строка поиска -->
-                <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
+                <div id="seller-search-container" class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
                     <input type="text" id="seller-search-input" oninput="window.filterProfileItems(this, 'seller-items-grid')" placeholder="Поиск по товарам..." class="w-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
                 </div>
             </div>
             
-            <!-- Сетка товаров продавца -->
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
                 <div id="seller-items-grid" class="grid items-stretch view-grid modal-grid" style="display: none;"></div>
+                <div id="seller-reviews-list" class="hidden flex-col gap-4 w-full max-w-3xl mx-auto"></div>
                 
                 <div id="seller-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Нет активных объявлений</span>
                 </div>
-                
                 <div id="seller-loading" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-3 text-brand-500"></i> <span>Загрузка...</span>
                 </div>
@@ -1033,7 +1033,10 @@
                             <div id="modal-author-avatar" class="w-12 h-12 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden flex items-center justify-center text-stone-400 text-2xl shrink-0"><i class="fa-solid fa-user"></i></div>
                             <div class="flex-1 overflow-hidden">
                                 <div id="modal-author" class="font-black text-base text-stone-900 dark:text-white truncate">Пользователь</div>
-                                <div id="modal-author-sub" class="text-xs text-stone-500 font-bold truncate">Продавец SVALKA</div>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <div id="modal-author-sub" class="text-xs text-stone-500 font-bold truncate">Продавец SVALKA</div>
+                                    <div id="modal-author-rating" class="text-[11px] text-amber-500 font-bold bg-amber-50 dark:bg-amber-900/30 px-1.5 py-0.5 rounded hidden items-center gap-1"></div>
+                                </div>
                             </div>
                         </div>
                         <!-- На эту кнопку скрипт сам повесит нужную ссылку -->
@@ -1139,6 +1142,189 @@
                     });
                 }
             } catch (e) { console.error("Ошибка бейджей", e); }
+
+        // --- ЛОГИКА ОТЗЫВОВ ---
+        window.currentSellerId = null;
+        window.sellerReviews = [];
+        window.currentReviewRating = 5;
+
+        window.switchSellerTab = (tab) => {
+            const tabItems = document.getElementById('tab-seller-items');
+            const tabReviews = document.getElementById('tab-seller-reviews');
+            const gridItems = document.getElementById('seller-items-grid');
+            const listReviews = document.getElementById('seller-reviews-list');
+            const emptyState = document.getElementById('seller-empty');
+            const searchContainer = document.getElementById('seller-search-container');
+
+            const activeClass = "profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0";
+            const inactiveClass = "profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0";
+
+            if (tab === 'items') {
+                tabItems.className = activeClass;
+                tabReviews.className = inactiveClass;
+                listReviews.style.display = 'none';
+                searchContainer.style.display = 'block';
+                
+                if (gridItems.innerHTML.trim() !== '') {
+                    gridItems.style.display = 'grid'; emptyState.style.display = 'none';
+                } else {
+                    gridItems.style.display = 'none'; emptyState.style.display = 'flex';
+                    emptyState.innerHTML = '<i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Нет активных объявлений</span>';
+                }
+            } else {
+                tabReviews.className = activeClass;
+                tabItems.className = inactiveClass;
+                gridItems.style.display = 'none';
+                searchContainer.style.display = 'none';
+                
+                if (window.sellerReviews && window.sellerReviews.length > 0) {
+                    listReviews.style.display = 'flex'; emptyState.style.display = 'none';
+                } else {
+                    listReviews.style.display = 'none'; emptyState.style.display = 'flex';
+                    emptyState.innerHTML = '<i class="fa-regular fa-star text-6xl mb-3 opacity-30"></i> <span>Пока нет отзывов</span>';
+                }
+            }
+        };
+
+        window.openReviewModal = (existingReview = null) => {
+            if (!window.currentUser) return;
+            window.currentReviewRating = existingReview ? existingReview.rating : 5;
+            document.getElementById('review-comment').value = existingReview ? existingReview.comment : '';
+            window.updateStarSelection(window.currentReviewRating);
+            window.openModal('review-modal');
+        };
+
+        window.updateStarSelection = (rating) => {
+            window.currentReviewRating = rating;
+            const stars = document.querySelectorAll('.star-btn i');
+            stars.forEach((star, idx) => {
+                star.className = idx < rating ? 'fa-solid fa-star text-amber-500' : 'fa-regular fa-star text-stone-300';
+            });
+        };
+
+        window.submitReview = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-review');
+            const comment = document.getElementById('review-comment').value.trim();
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
+
+            try {
+                // Если отзыв уже был - он обновится (upsert)
+                const { error } = await supabase.from('reviews').upsert({
+                    reviewer_id: window.currentUser.id,
+                    seller_id: window.currentSellerId,
+                    rating: window.currentReviewRating,
+                    comment: comment
+                }, { onConflict: 'reviewer_id, seller_id' });
+
+                if (error) throw error;
+                window.closeModal('review-modal');
+                window.showToast("Отзыв сохранен!");
+                window.openSellerProfile(window.currentSellerId); // Обновляем данные
+            } catch(err) { window.showToast("Ошибка: " + err.message, true); } 
+            finally { btn.disabled = false; btn.innerText = "Отправить отзыв"; }
+        };
+
+        // ПОЛНОСТЬЮ ПЕРЕЗАПИСЫВАЕМ ФУНКЦИЮ ОТКРЫТИЯ ПРОФИЛЯ ПРОДАВЦА
+        window.openSellerProfile = async (userId) => {
+            if (!userId) return; 
+            window.currentSellerId = userId;
+            window.openModal('seller-modal');
+            
+            const grid = document.getElementById('seller-items-grid'); 
+            const listRev = document.getElementById('seller-reviews-list');
+            const empty = document.getElementById('seller-empty'); 
+            const loader = document.getElementById('seller-loading');
+            
+            grid.style.display = 'none'; listRev.style.display = 'none'; empty.style.display = 'none'; loader.style.display = 'flex';
+
+            try {
+                // ПАРАЛЛЕЛЬНО ГРУЗИМ ТОВАРЫ И ОТЗЫВЫ
+                const [itemsRes, reviewsRes] = await Promise.all([
+                    supabase.from('items').select('*').eq('user_id', userId).eq('status', 'active').order('created_at', { ascending: false }),
+                    supabase.rpc('get_seller_reviews', { p_seller_id: userId })
+                ]);
+
+                if (itemsRes.error) throw itemsRes.error;
+                
+                const items = (itemsRes.data || []).map(window.mapItemData).filter(Boolean);
+                window.sellerReviews = reviewsRes.data || [];
+                loader.style.display = 'none';
+
+                // ЗАПОЛНЯЕМ ПРОФИЛЬ
+                const firstItem = items.length > 0 ? items[0] : null;
+                document.getElementById('seller-name').innerText = firstItem ? (firstItem.authorName || 'Пользователь') : 'Продавец SVALKA';
+                const avatarCont = document.getElementById('seller-avatar-container');
+                if(firstItem && firstItem.authorAvatar) avatarCont.innerHTML = `<img src="${firstItem.authorAvatar}" class="w-full h-full object-cover">`; 
+                else avatarCont.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                
+                const isPro = items.some(i => i.isHighlighted); 
+                const proBadge = document.getElementById('seller-pro-badge');
+                if (isPro) proBadge.classList.remove('hidden'); else proBadge.classList.add('hidden');
+                document.getElementById('seller-stats').innerText = `Активных объявлений: ${items.length}`;
+
+                // ОТРИСОВКА РЕЙТИНГА ПРОДАВЦА
+                const ratingEl = document.getElementById('seller-rating-container');
+                const tabRevCount = document.getElementById('seller-reviews-count');
+                tabRevCount.innerText = window.sellerReviews.length > 0 ? window.sellerReviews.length : '';
+
+                if (window.sellerReviews.length > 0) {
+                    const avg = (window.sellerReviews.reduce((sum, r) => sum + r.rating, 0) / window.sellerReviews.length).toFixed(1);
+                    ratingEl.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-white">${avg}</span> <span class="text-stone-400 font-medium ml-1">(${window.sellerReviews.length} отзывов)</span>`;
+                    ratingEl.classList.remove('hidden');
+                } else {
+                    ratingEl.classList.add('hidden');
+                }
+
+                // ЛОГИКА КНОПКИ ОТЗЫВА
+                const btnLeaveRev = document.getElementById('btn-leave-review');
+                if (window.currentUser && window.currentUser.id !== userId) {
+                    btnLeaveRev.classList.remove('hidden');
+                    const myRev = window.sellerReviews.find(r => r.reviewer_id === window.currentUser.id);
+                    if (myRev) {
+                        btnLeaveRev.innerText = "Изменить отзыв";
+                        btnLeaveRev.onclick = () => window.openReviewModal(myRev);
+                    } else {
+                        btnLeaveRev.innerText = "Оставить отзыв";
+                        btnLeaveRev.onclick = () => window.openReviewModal(null);
+                    }
+                } else {
+                    btnLeaveRev.classList.add('hidden');
+                }
+
+                // ОТРИСОВКА ТОВАРОВ
+                if (items.length > 0) {
+                    grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join('');
+                    items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
+                }
+                
+                // ОТРИСОВКА СПИСКА ОТЗЫВОВ
+                if (window.sellerReviews.length > 0) {
+                    listRev.innerHTML = window.sellerReviews.map(r => `
+                        <div class="bg-stone-50 dark:bg-stone-800/50 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-700">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3">
+                                    <img src="${r.reviewer_avatar || 'https://api.dicebear.com/9.x/bottts/svg?seed=user'}" class="w-10 h-10 rounded-full bg-stone-200 object-cover shrink-0 border border-stone-200">
+                                    <div>
+                                        <div class="font-black text-sm text-stone-900 dark:text-white">${r.reviewer_name}</div>
+                                        <div class="text-xs text-stone-400 font-medium">${new Date(r.created_at).toLocaleDateString('ru-RU')}</div>
+                                    </div>
+                                </div>
+                                <div class="text-amber-500 text-xs sm:text-sm flex gap-0.5">
+                                    ${Array(5).fill(0).map((_, i) => `<i class="fa-${i < r.rating ? 'solid' : 'regular'} fa-star"></i>`).join('')}
+                                </div>
+                            </div>
+                            ${r.comment ? `<p class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed font-medium bg-white dark:bg-stone-900/50 p-3 rounded-xl border border-stone-100 dark:border-stone-800">${r.comment}</p>` : ''}
+                        </div>
+                    `).join('');
+                }
+
+                window.switchSellerTab('items'); // Скидываем на базовую вкладку
+
+            } catch (e) { 
+                loader.style.display = 'none'; empty.style.display = 'flex'; 
+                window.showToast("Ошибка загрузки профиля", true); 
+            }  
         };
 
         window.initGlobalChatListener = () => {
@@ -2030,6 +2216,20 @@
                     // Просто обновляем статус продавца (VIP или обычный)
                     authorSubEl.innerHTML = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
                 }
+
+                const ratingEl = document.getElementById('modal-author-rating');
+                if (ratingEl) {
+                    ratingEl.classList.add('hidden');
+                    ratingEl.classList.remove('flex');
+                    supabase.rpc('get_seller_reviews', { p_seller_id: item.userId }).then(({data}) => {
+                        if(data && data.length > 0) {
+                            const avg = (data.reduce((sum, r) => sum + r.rating, 0) / data.length).toFixed(1);
+                            ratingEl.innerHTML = `<i class="fa-solid fa-star"></i> ${avg} <span class="text-amber-600/50 font-medium">(${data.length})</span>`;
+                            ratingEl.classList.remove('hidden');
+                            ratingEl.classList.add('flex');
+                        }
+                    });
+                }
                 
                 const sellerBtn = document.getElementById('modal-seller-btn');
                 if(sellerBtn) {
@@ -2517,5 +2717,30 @@
         };
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
     </script>
+
+    <!-- ОКНО НАПИСАНИЯ ОТЗЫВА -->
+    <div id="review-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[110]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl p-6 sm:p-8 relative border dark:border-stone-800 text-center">
+            <button onclick="window.closeModal('review-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white mb-2">Оцените продавца</h2>
+            <p class="text-sm text-stone-500 font-medium mb-6">Ваш отзыв поможет другим покупателям!</p>
+            
+            <form onsubmit="window.submitReview(event)" class="flex flex-col gap-4">
+                <div class="flex justify-center gap-2 mb-2">
+                    <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(1)"><i class="fa-solid fa-star text-amber-500"></i></button>
+                    <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(2)"><i class="fa-solid fa-star text-amber-500"></i></button>
+                    <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(3)"><i class="fa-solid fa-star text-amber-500"></i></button>
+                    <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(4)"><i class="fa-solid fa-star text-amber-500"></i></button>
+                    <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(5)"><i class="fa-solid fa-star text-amber-500"></i></button>
+                </div>
+                
+                <div class="bg-stone-50 dark:bg-stone-800 p-2 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors text-left">
+                    <textarea id="review-comment" placeholder="Напишите пару слов о сделке (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
+                </div>
+                
+                <button type="submit" id="btn-submit-review" class="bg-brand-600 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer mt-2">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
