@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
     <title>SVALKA - Патруль модерации</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,120 +10,250 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f5f5f4; }
         h1, h2 { font-family: 'Montserrat', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #d6d3d1; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 sm:p-8 text-stone-800">
 
-    <div class="max-w-4xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Шапка -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-shield-halved text-red-600 text-3xl"></i>
-                <h1 class="text-3xl font-black uppercase tracking-tighter">Svalka <span class="text-red-600">Admin</span></h1>
+                <i class="fa-solid fa-shield-halved text-red-600 text-3xl sm:text-4xl drop-shadow-sm"></i>
+                <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tighter">Svalka <span class="text-red-600">Admin</span></h1>
             </div>
-            <a href="index.html" class="text-stone-500 hover:text-stone-800 font-bold transition flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> На сайт</a>
+            <a href="index.html" class="text-stone-500 hover:text-stone-800 font-bold transition flex items-center gap-2 bg-white px-4 py-2 rounded-xl border shadow-sm"><i class="fa-solid fa-arrow-left"></i> На сайт</a>
         </div>
         
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
-            <h2 class="text-xl font-bold mb-4 text-stone-800 border-b pb-4">Все товары на платформе</h2>
+        <div class="bg-white p-2 sm:p-6 rounded-[2rem] shadow-sm border border-stone-200 min-h-[500px] flex flex-col">
             
-            <div id="admin-items-list" class="space-y-3">
-                <div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-stone-300"></i></div>
+            <!-- Панель управления: Вкладки + Поиск -->
+            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
+                <div class="flex bg-stone-100 p-1 rounded-xl w-full md:w-max shrink-0">
+                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2"><i class="fa-solid fa-box-open text-brand-500"></i> Товары</button>
+                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2"><i class="fa-solid fa-users text-indigo-500"></i> Пользователи</button>
+                </div>
+                <div class="relative w-full md:w-96 shrink-0">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                    <input type="text" id="admin-search" oninput="renderList()" placeholder="Поиск по названию или ID..." class="w-full bg-stone-50 border border-stone-200 rounded-xl pl-11 pr-4 py-3 text-sm font-medium outline-none focus:border-brand-500 focus:bg-white transition shadow-inner">
+                </div>
+            </div>
+            
+            <!-- Список -->
+            <div id="admin-list" class="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2 pb-4">
+                <div class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-stone-300"></i></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Ключи
+        // КЛЮЧИ
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
-        
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Глобальное состояние админки
+        let adminState = {
+            items: [],
+            profiles: [],
+            currentTab: 'items',
+            isLoading: true
+        };
+
         async function initAdminPanel() {
-            // 1. Проверяем авторизацию
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) {
-                showError("Доступ запрещен. Вы не вошли в аккаунт!");
-                return;
-            }
+            if (!user) return showError("Доступ запрещен. Вы не вошли в аккаунт!");
 
-            // 2. Проверяем наличие короны (is_admin === true)
             const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', user.id).single();
-            if (!profile || profile.is_admin !== true) {
-                showError("У вас нет прав модератора! Доступ закрыт.");
-                return;
-            }
+            if (!profile || profile.is_admin !== true) return showError("У вас нет прав модератора! Доступ закрыт.");
 
-            // 3. Загружаем товары
-            loadItems();
+            await loadData();
         }
 
         function showError(msg) {
-            document.getElementById('admin-items-list').innerHTML = `
-                <div class="bg-red-50 text-red-600 p-6 rounded-xl font-bold text-center border border-red-200">
-                    <i class="fa-solid fa-hand-paper text-3xl mb-2 block"></i> ${msg}
+            document.getElementById('admin-list').innerHTML = `
+                <div class="bg-red-50 text-red-600 p-8 rounded-2xl font-bold text-center border border-red-200 mt-10 max-w-lg mx-auto">
+                    <i class="fa-solid fa-hand-paper text-5xl mb-4 block opacity-50"></i> ${msg}
                 </div>`;
         }
 
-        async function loadItems() {
-            const list = document.getElementById('admin-items-list');
-            
-            const { data: items, error } = await supabaseClient
-                .from('items')
-                .select('*')
-                .order('created_at', { ascending: false });
-            
-            if (error) {
-                showError(`Ошибка загрузки: ${error.message}`);
-                return;
+        // Загружаем сразу всё: и товары, и пользователей
+        async function loadData() {
+            try {
+                const [itemsRes, profilesRes] = await Promise.all([
+                    supabaseClient.from('items').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('profiles').select('*').order('created_at', { ascending: false })
+                ]);
+                
+                if (itemsRes.error) throw itemsRes.error;
+                if (profilesRes.error) throw profilesRes.error;
+
+                adminState.items = itemsRes.data || [];
+                adminState.profiles = profilesRes.data || [];
+                adminState.isLoading = false;
+                
+                renderList();
+            } catch (e) {
+                showError(`Ошибка загрузки данных: ${e.message}`);
             }
-
-            list.innerHTML = '';
-
-            if (items.length === 0) {
-                list.innerHTML = '<p class="text-stone-500 text-center py-10 font-bold">Товаров пока нет.</p>';
-                return;
-            }
-
-            items.forEach(item => {
-                const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
-                const itemDiv = document.createElement('div');
-                itemDiv.className = "flex justify-between items-center p-3 bg-stone-50 border border-stone-200 rounded-xl hover:bg-stone-100 transition";
-                itemDiv.innerHTML = `
-                    <div class="flex items-center gap-4 overflow-hidden">
-                        <img src="${imgUrl}" class="w-12 h-12 rounded-lg object-cover shrink-0">
-                        <div class="overflow-hidden">
-                            <div class="font-bold text-stone-800 truncate">${item.title || 'Без названия'}</div>
-                            <div class="text-xs text-stone-500 font-medium mt-0.5">ID: ${item.id} | ${item.price} ${item.currency}</div>
-                        </div>
-                    </div>
-                    <button onclick="deleteItem('${item.id}', this)" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 shrink-0 ml-4">
-                        <i class="fa-solid fa-trash"></i> <span class="hidden sm:inline">Удалить</span>
-                    </button>
-                `;
-                list.appendChild(itemDiv);
-            });
         }
 
-        async function deleteItem(itemId, buttonElement) {
-            if(!confirm("Снести этот товар навсегда? Вы уверены?")) return;
+        function switchTab(tab) {
+            adminState.currentTab = tab;
+            const btnItems = document.getElementById('tab-items');
+            const btnUsers = document.getElementById('tab-users');
+            const searchInput = document.getElementById('admin-search');
             
-            buttonElement.disabled = true;
-            buttonElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            if (tab === 'items') {
+                btnItems.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2";
+                btnUsers.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2";
+                searchInput.placeholder = "Поиск товаров...";
+            } else {
+                btnUsers.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm text-stone-900 transition flex items-center justify-center gap-2";
+                btnItems.className = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 font-bold text-sm hover:text-stone-900 transition flex items-center justify-center gap-2";
+                searchInput.placeholder = "Поиск по имени или ID...";
+            }
+            
+            searchInput.value = ''; // Очищаем поиск при переключении
+            renderList();
+        }
+
+        function renderList() {
+            if (adminState.isLoading) return;
+            
+            const list = document.getElementById('admin-list');
+            const searchTerm = document.getElementById('admin-search').value.toLowerCase().trim();
+            list.innerHTML = '';
+
+            if (adminState.currentTab === 'items') {
+                // ФИЛЬТРАЦИЯ ТОВАРОВ
+                const filteredItems = adminState.items.filter(item => 
+                    (item.title || '').toLowerCase().includes(searchTerm) || 
+                    item.id.toLowerCase().includes(searchTerm) ||
+                    (item.author_name || '').toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredItems.length === 0) {
+                    list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-30 block"></i>Товары не найдены</div>';
+                    return;
+                }
+
+                filteredItems.forEach(item => {
+                    const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 border border-stone-200 rounded-xl hover:border-stone-300 transition gap-4">
+                            <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
+                                <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200">
+                                <div class="overflow-hidden">
+                                    <div class="font-black text-stone-800 truncate text-base">${item.is_highlighted ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}${item.title || 'Без названия'}</div>
+                                    <div class="text-xs text-stone-500 font-bold mt-1">Автор: ${item.author_name} | ID: ${item.id.substring(0,8)}...</div>
+                                    <div class="text-sm font-bold text-brand-600 mt-0.5">${item.price} ${item.currency}</div>
+                                </div>
+                            </div>
+                            <button onclick="deleteItem('${item.id}', this)" class="w-full sm:w-auto bg-red-100 text-red-600 hover:bg-red-600 hover:text-white px-5 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shrink-0">
+                                <i class="fa-solid fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    `);
+                });
+
+            } else {
+                // ФИЛЬТРАЦИЯ ПОЛЬЗОВАТЕЛЕЙ
+                const filteredUsers = adminState.profiles.filter(user => 
+                    (user.full_name || '').toLowerCase().includes(searchTerm) || 
+                    user.id.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredUsers.length === 0) {
+                    list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-users text-4xl mb-3 opacity-30 block"></i>Пользователи не найдены</div>';
+                    return;
+                }
+
+                filteredUsers.forEach(user => {
+                    const avatarUrl = user.avatar_url || 'https://via.placeholder.com/150';
+                    const isPro = user.is_pro;
+                    const itemsCount = adminState.items.filter(i => i.user_id === user.id).length;
+                    
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 bg-white border border-stone-200 rounded-xl hover:shadow-md transition gap-4">
+                            <div class="flex items-center gap-4 overflow-hidden w-full lg:w-auto">
+                                <div class="relative shrink-0">
+                                    <img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover bg-stone-100 border-2 border-stone-200">
+                                    ${user.is_admin ? '<div class="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]" title="Модератор"><i class="fa-solid fa-shield"></i></div>' : ''}
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="font-black text-stone-800 truncate text-base flex items-center gap-2">
+                                        ${user.full_name || 'Аноним'} 
+                                        ${isPro ? '<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest">VIP</span>' : ''}
+                                    </div>
+                                    <div class="text-xs text-stone-500 font-mono mt-1">${user.id}</div>
+                                    <div class="text-xs font-bold text-stone-400 mt-0.5">Товаров: <span class="text-stone-700">${itemsCount}</span> | Баланс: <span class="text-brand-600">${user.wallet_balance || 0}</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2 w-full lg:w-auto">
+                                <button onclick="togglePro('${user.id}', ${isPro}, this)" class="flex-1 lg:flex-none ${isPro ? 'bg-amber-100 text-amber-600 hover:bg-stone-100 hover:text-stone-500' : 'bg-stone-100 text-stone-500 hover:bg-amber-400 hover:text-white'} px-4 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-gem"></i> ${isPro ? 'Забрать PRO' : 'Выдать PRO'}
+                                </button>
+                                <button onclick="deleteUser('${user.id}', this)" class="flex-1 lg:flex-none bg-stone-100 text-stone-400 hover:bg-stone-800 hover:text-white px-4 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2" title="Заблокировать (Удалить профиль)">
+                                    <i class="fa-solid fa-ban"></i> Бан
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        // Удаление товара
+        async function deleteItem(itemId, btn) {
+            if(!confirm("Снести этот товар навсегда?")) return;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
             const { error } = await supabaseClient.from('items').delete().eq('id', itemId);
-            
             if (error) {
                 alert("Ошибка: " + error.message);
-                buttonElement.disabled = false;
-                buttonElement.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
+                btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
             } else {
-                // Красивая анимация исчезновения
-                buttonElement.parentElement.style.opacity = '0';
-                buttonElement.parentElement.style.transform = 'scale(0.95)';
-                buttonElement.parentElement.style.transition = 'all 0.3s';
-                setTimeout(() => buttonElement.parentElement.remove(), 300);
+                adminState.items = adminState.items.filter(i => i.id !== itemId); // Удаляем из локального массива
+                btn.parentElement.style.opacity = '0';
+                setTimeout(() => renderList(), 300); // Перерисовываем список
+            }
+        }
+
+        // Выдача/Снятие PRO статуса
+        async function togglePro(userId, currentStatus, btn) {
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const newStatus = !currentStatus;
+
+            const { error } = await supabaseClient.from('profiles').update({ is_pro: newStatus }).eq('id', userId);
+            if (error) {
+                alert("Ошибка выдачи PRO: " + error.message);
+                renderList(); // Возвращаем кнопку в норму
+            } else {
+                // Обновляем статус в локальном массиве
+                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
+                if(userIndex > -1) adminState.profiles[userIndex].is_pro = newStatus;
+                renderList(); // Перерисовываем список
+            }
+        }
+
+        // Удаление (бан) пользователя
+        async function deleteUser(userId, btn) {
+            if(!confirm("Удалить профиль пользователя? Это действие необратимо! (Его товары останутся в БД, но профиль исчезнет)")) return;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+            const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+            if (error) {
+                alert("Ошибка удаления: " + error.message);
+                renderList();
+            } else {
+                adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
+                btn.parentElement.parentElement.style.opacity = '0';
+                setTimeout(() => renderList(), 300);
             }
         }
 
