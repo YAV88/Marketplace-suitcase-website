@@ -1483,7 +1483,41 @@
             if(error) window.showToast(error.message, true); else window.showToast("Ссылка отправлена на почту!");
         };
 
+        // 1. Глобальный массив с 20 роботами (СНАРУЖИ функций, чтобы его видели все)
+        window.avatarsList = [
+            "R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron", 
+            "Ultron", "Vision", "Data", "Baymax", "Eve", "Johnny5", "Chappie", "BB8", "K2SO", "HAL9000"
+        ];
+
+        // 2. Функция, которая гарантированно отрисует аватарки при регистрации
+        window.renderRegistrationAvatars = () => {
+            const grid = document.getElementById('avatar-grid');
+            if(grid) {
+                grid.innerHTML = '';
+                window.avatarsList.forEach((a, i) => {
+                    grid.innerHTML += `
+                    <label class="cursor-pointer shrink-0">
+                        <input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="peer hidden" ${i===0?'checked':''}>
+                        <img src="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all hover:scale-110 shadow-sm">
+                    </label>`;
+                });
+            }
+        };
+
+        // Запускаем отрисовку сразу после того, как браузер построит страницу
+        document.addEventListener('DOMContentLoaded', window.renderRegistrationAvatars);
+        window.renderRegistrationAvatars();
+
+        // 3. Функция редактирования профиля
         window.openEditProfile = () => {
+            if (!window.currentUser) return;
+            const meta = window.currentUser.user_metadata || {};
+            
+            // Заполнение полей имени и телефона
+            document.getElementById('edit-name').value = meta.full_name || '';
+            document.getElementById('edit-phone').value = meta.phone || '';
+            
+            const grid = document.getElementById('edit-avatar-grid');
             if(grid) {
                 grid.innerHTML = '';
                 window.avatarsList.forEach((a, i) => {
@@ -1496,32 +1530,6 @@
                     </label>`;
                 });
             }
-            
-            // Массив из 20 роботов
-            window.avatarsList = [
-                "R2D2", "WallE", "Bender", "Optimus", "GLaDOS", "Terminator", "C3PO", "Dalek", "T800", "Megatron", 
-                "Ultron", "Vision", "Data", "Baymax", "Eve", "Johnny5", "Chappie", "BB8", "K2SO", "HAL9000"
-            ];
-            
-            // Функция, которая гарантированно отрисует аватарки при регистрации
-            window.renderRegistrationAvatars = () => {
-                const grid = document.getElementById('avatar-grid');
-                if(grid) {
-                    grid.innerHTML = '';
-                    window.avatarsList.forEach((a, i) => {
-                        grid.innerHTML += `
-                        <label class="cursor-pointer shrink-0">
-                            <input type="radio" name="avatar" value="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="peer hidden" ${i===0?'checked':''}>
-                            <img src="https://api.dicebear.com/9.x/bottts/svg?seed=${a}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-stone-100 border-2 border-transparent peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all hover:scale-110 shadow-sm">
-                        </label>`;
-                    });
-                }
-            };
-            
-            // Запускаем отрисовку сразу после того, как браузер построит страницу
-            document.addEventListener('DOMContentLoaded', window.renderRegistrationAvatars);
-            // На всякий случай дублируем прямой вызов (иногда DOMContentLoaded уже прошел)
-            window.renderRegistrationAvatars();
             window.openModal('edit-profile-modal');
         };
 
