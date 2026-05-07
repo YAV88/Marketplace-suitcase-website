@@ -1791,16 +1791,23 @@
                     await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
                     window.userFavorites.delete(itemId);
                     if(icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
+                    if(btn) btn.title = "Добавить на склад";
                 } else {
                     await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
                     window.userFavorites.add(itemId);
                     if(icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110';
+                    if(btn) btn.title = "Убрать со склада";
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
                 window.fetchItems(false);
                 if(window.activeModalItemId === itemId) {
+                    const modalFavBtn = document.getElementById('modal-fav-btn');
                     const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                    if(modalFavIcon) modalFavIcon.className = window.userFavorites.has(itemId) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                    if(modalFavIcon) {
+                        const isNowLiked = window.userFavorites.has(itemId);
+                        modalFavIcon.className = isNowLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                        if(modalFavBtn) modalFavBtn.title = isNowLiked ? "Убрать со склада" : "Добавить на склад";
+                    }
                 }
             } catch(e) {}
         };
@@ -2335,9 +2342,12 @@
                 const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                 window.updateSEO(item.title, item.description, coverImg);
                 
+                const modalFavBtn = document.getElementById('modal-fav-btn');
                 const modalFavIcon = document.querySelector('#modal-fav-btn i');
                 if(modalFavIcon && window.userFavorites) {
-                    modalFavIcon.className = window.userFavorites.has(item.id) ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                    const isLiked = window.userFavorites.has(item.id);
+                    modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                    if(modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
                 }
 
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
