@@ -2833,33 +2833,49 @@
         };
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
 
-        // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc и клик вне окна) ---
-
-        // 1. Закрытие по кнопке Esc и перелистывание стрелками
-        document.addEventListener('keydown', (e) => {
-            const openModal = document.querySelector('.modal-overlay.active');
-            if (openModal) {
-                // Закрытие на Esc
-                if (e.key === 'Escape') {
-                    window.closeModal(openModal.id);
-                }
-                
-                // Перелистывание в окне товара
-                if (openModal.id === 'item-modal') {
-                    // Игнорируем, если юзер печатает текст
-                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-                    
-                    if (e.key === 'ArrowLeft') window.navigateItem(-1);
-                    if (e.key === 'ArrowRight') window.navigateItem(1);
-                }
+        // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc, клик вне окна, стрелочки) ---
+        
+        // 1. Закрытие по клику вне окна (используем mousedown для 100% срабатывания)
+        document.addEventListener('mousedown', (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('modal-overlay')) {
+                window.closeModal(e.target.id);
             }
         });
-        
-        // 2. Закрытие по клику на область вокруг окна (overlay)
-        window.addEventListener('click', (e) => {
-            // Если кликнули именно по подложке (элементу с классом modal-overlay), а не по его контенту
-            if (e.target.classList.contains('modal-overlay')) {
-                window.closeModal(e.target.id);
+
+        // 2. Управление с клавиатуры
+        document.addEventListener('keydown', (e) => {
+            // Находим все открытые окна
+            const openModals = Array.from(document.querySelectorAll('.modal-overlay.active'));
+            if (openModals.length === 0) return;
+
+            // Сортируем их по z-index, чтобы найти самое верхнее (то, что видит юзер)
+            openModals.sort((a, b) => {
+                const zA = parseInt(window.getComputedStyle(a).zIndex) || 0;
+                const zB = parseInt(window.getComputedStyle(b).zIndex) || 0;
+                return zB - zA;
+            });
+            const topModal = openModals[0];
+
+            // Закрытие верхнего окна по Esc
+            if (e.key === 'Escape') {
+                window.closeModal(topModal.id);
+                return; 
+            }
+            
+            // Защита: не перелистываем, если пользователь вводит текст (например, пишет в поиске)
+            const activeTag = document.activeElement ? document.activeElement.tagName : '';
+            if (['INPUT', 'TEXTAREA'].includes(activeTag)) return;
+
+            // Перелистывание товаров (если открыта карточка)
+            if (topModal.id === 'item-modal') {
+                if (e.key === 'ArrowLeft') window.navigateItem(-1);
+                if (e.key === 'ArrowRight') window.navigateItem(1);
+            }
+            
+            // Перелистывание фото (если открыт полноэкранный режим просмотра картинки)
+            if (topModal.id === 'lightbox') {
+                if (e.key === 'ArrowLeft') window.lightboxPrev();
+                if (e.key === 'ArrowRight') window.lightboxNext();
             }
         });
         
