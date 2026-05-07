@@ -127,6 +127,16 @@
         #filter-panel-wrapper.active { grid-template-rows: 1fr; }
         #filter-panel { min-height: 0; }
         main { flex: 1; }
+
+        /* Убираем стрелочки (spin buttons) у полей ввода чисел */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type="number"] { 
+            -moz-appearance: textfield; 
+        }
     </style>
 </head>
 <body class="text-stone-800 dark:text-stone-200 antialiased relative pb-[70px] lg:pb-0">
@@ -966,7 +976,7 @@
                 
                 <div class="flex gap-4">
                     <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <input type="number" id="item-price" placeholder="Цена" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                        <input type="number" id="item-price" placeholder="Цена" onkeydown="if(event.key === ',') return false;" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed" required>
                     </div>
                     <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
                         <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
@@ -2072,8 +2082,21 @@
         
         window.handleCategoryChange = (e) => {
             const val = e.target ? e.target.value : e;
-            const reFields = document.getElementById('re-fields'); const condBlock = document.getElementById('add-condition-block'); 
+            const reFields = document.getElementById('re-fields'); const condBlock = document.getElementById('add-condition-block');
             
+            // --- БЛОКИРОВКА ЦЕНЫ ДЛЯ "ОТДАМ ДАРОМ" ---
+            const priceInput = document.getElementById('item-price');
+            if (priceInput) {
+                if (val === 'Другое - Бесплатно') {
+                    priceInput.value = '0';
+                    priceInput.disabled = true;
+                } else {
+                    priceInput.disabled = false;
+                    if (priceInput.value === '0') priceInput.value = ''; // Сбрасываем 0, если передумали
+                }
+            }
+            // ------------------------------------------
+
             if (condBlock) {
                 // Если это питомец, но НЕ зоотовары — прячем выбор "Новое/БУ"
                 const isAnimalNoCond = val && val.startsWith('Животные') && !val.includes('Товары');
