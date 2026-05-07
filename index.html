@@ -1035,7 +1035,7 @@
         </div>
     </div>
 
-    <div id="item-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 pb-safe">    
+    <div id="item-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pb-safe">    
         <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" class="hidden fixed left-2 sm:left-6 top-1/2 -translate-y-1/2 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-12 h-12 rounded-full items-center justify-center shadow-xl hover:bg-brand-600 hover:text-white transition active:scale-95 cursor-pointer border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-chevron-left text-xl -ml-1"></i></button>
         <button id="modal-next-item" onclick="window.navigateItem(1, event)" class="hidden fixed right-2 sm:right-6 top-1/2 -translate-y-1/2 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-12 h-12 rounded-full items-center justify-center shadow-xl hover:bg-brand-600 hover:text-white transition active:scale-95 cursor-pointer border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-chevron-right text-xl -mr-1"></i></button>
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
@@ -1043,15 +1043,10 @@
             <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" title="Добавить на склад" class="absolute top-4 right-16 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
             <button onclick="window.shareCurrentItem()" title="Поделиться" class="absolute top-4 right-28 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>            <!-- ЛЕВАЯ ЧАСТЬ: Фотографии -->
             <div class="w-full md:w-[45%] bg-stone-100 dark:bg-stone-800 min-h-[300px] flex flex-col shrink-0 relative">
-                <!-- Контейнер растягивается, а картинка живет внутри absolute inset-0 -->
                 <div id="modal-img-container" class="flex-1 relative overflow-hidden group">
                     <div class="absolute inset-0 p-4 flex items-center justify-center">
                         <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox(this.src)">
                     </div>
-                    
-                    <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" title="Предыдущий" class="hidden absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100"><i class="fa-solid fa-chevron-left text-lg -ml-0.5"></i></button>
-                    
-                    <button id="modal-next-item" onclick="window.navigateItem(1, event)" title="Следующий" class="hidden absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100"><i class="fa-solid fa-chevron-right text-lg -mr-0.5"></i></button>
                 </div>
                 <!-- Галерея миниатюр -->
                 <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden z-10 border-t border-stone-200 dark:border-stone-700"></div>
