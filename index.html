@@ -635,10 +635,32 @@
                         <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
                     </div>
                 </div>
-                <input type="email" id="auth-email" placeholder="Email" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                
+                <div class="flex flex-col gap-2">
+                    <input type="email" id="auth-email" placeholder="Email" oninput="this.value = this.value.replace(/[А-Яа-яЁё\s]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required list="email-domains">
+                    
+                    <datalist id="email-domains">
+                        <option value="@gmail.com"></option>
+                        <option value="@mail.ru"></option>
+                        <option value="@yandex.ru"></option>
+                        <option value="@bk.ru"></option>
+                    </datalist>
+                    
+                    <div class="flex flex-wrap gap-2 px-1">
+                        <button type="button" onclick="window.appendEmailDomain('@gmail.com')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@gmail.com</button>
+                        <button type="button" onclick="window.appendEmailDomain('@mail.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@mail.ru</button>
+                        <button type="button" onclick="window.appendEmailDomain('@yandex.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@yandex.ru</button>
+                    </div>
+                </div>
+
                 <div>
-                    <input type="password" id="auth-password" placeholder="Пароль" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base mb-2 outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
-                    <p class="text-sm text-stone-400 font-medium" id="auth-hint">Мин. 8 символов: буквы + цифры</p>
+                    <input type="password" id="auth-password" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    
+                    <div id="auth-password-confirm-container" class="hidden mt-4">
+                        <input type="password" id="auth-password-confirm" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    </div>
+
+                    <p class="text-sm text-stone-400 font-medium mt-2" id="auth-hint">Мин. 8 символов: только латиница и цифры</p>
                 </div>
                 <div class="flex justify-between items-center mt-4">
                     <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer">Войти</button>
@@ -1783,15 +1805,32 @@
             else { navigator.clipboard.writeText(url); window.showToast('Ссылка скопирована!'); }
         };
 
+        window.appendEmailDomain = (domain) => {
+            const input = document.getElementById('auth-email');
+            if(!input) return;
+            const val = input.value.split('@')[0]; // Берет логин до @
+            input.value = val + domain;
+            input.focus();
+        };
+
         window.setAuthMode = mode => {
             window.authMode = mode;
-            const fields = document.getElementById('auth-name-field'); const tabL = document.getElementById('tab-login'); const tabR = document.getElementById('tab-register');
+            const fields = document.getElementById('auth-name-field'); 
+            const confirmCont = document.getElementById('auth-password-confirm-container');
+            const confirmInput = document.getElementById('auth-password-confirm');
+            const tabL = document.getElementById('tab-login'); 
+            const tabR = document.getElementById('tab-register');
+            
             if(mode === 'register') { 
                 if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
+                if(confirmCont) { confirmCont.classList.remove('hidden'); confirmCont.classList.add('block'); }
+                if(confirmInput) confirmInput.required = true;
                 if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
                 if(tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
             } else { 
                 if(fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
+                if(confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); }
+                if(confirmInput) confirmInput.required = false;
                 if(tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
                 if(tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
             }
@@ -1799,10 +1838,27 @@
 
         window.submitAuth = async (event) => {
             if(event) event.preventDefault();
-            const btn = document.getElementById('auth-submit-btn'); const emailEl = document.getElementById('auth-email'); const passEl = document.getElementById('auth-password');
-            const email = emailEl ? emailEl.value.trim() : ''; const pass = passEl ? passEl.value : '';
+            const btn = document.getElementById('auth-submit-btn'); 
+            const emailEl = document.getElementById('auth-email'); 
+            const passEl = document.getElementById('auth-password');
+            const email = emailEl ? emailEl.value.trim() : '';
+            const pass = passEl ? passEl.value : '';
+
+            // Финальная проверка на кириллицу (на случай если вставили копипастом)
+            if (/[А-Яа-яЁё]/.test(email) || /[А-Яа-яЁё]/.test(pass)) {
+                window.showToast("Почта и пароль не должны содержать русские буквы!", true);
+                return;
+            }
 
             if (window.authMode === 'register') {
+                const passConfirmEl = document.getElementById('auth-password-confirm');
+                const passConfirm = passConfirmEl ? passConfirmEl.value : '';
+                
+                if (pass !== passConfirm) {
+                    window.showToast("Пароли не совпадают!", true);
+                    return;
+                }
+
                 const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
                 if (!passRegex.test(pass)) { window.showToast("Пароль от 8 символов (буквы + цифры)", true); return; }
             }
