@@ -1042,10 +1042,14 @@
             <button onclick="window.shareCurrentItem()" title="Поделиться" class="absolute top-4 right-28 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>            <!-- ЛЕВАЯ ЧАСТЬ: Фотографии -->
             <div class="w-full md:w-[45%] bg-stone-100 dark:bg-stone-800 min-h-[300px] flex flex-col shrink-0 relative">
                 <!-- Контейнер растягивается, а картинка живет внутри absolute inset-0 -->
-                <div id="modal-img-container" class="flex-1 relative overflow-hidden">
+                <div id="modal-img-container" class="flex-1 relative overflow-hidden group">
                     <div class="absolute inset-0 p-4 flex items-center justify-center">
                         <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox(this.src)">
                     </div>
+                    
+                    <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" title="Предыдущий" class="hidden absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100"><i class="fa-solid fa-chevron-left text-lg -ml-0.5"></i></button>
+                    
+                    <button id="modal-next-item" onclick="window.navigateItem(1, event)" title="Следующий" class="hidden absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100"><i class="fa-solid fa-chevron-right text-lg -mr-0.5"></i></button>
                 </div>
                 <!-- Галерея миниатюр -->
                 <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden z-10 border-t border-stone-200 dark:border-stone-700"></div>
@@ -2199,6 +2203,22 @@
             </div>`;
         }
 
+        window.navigateItem = (direction, e) => {
+            if (e) e.stopPropagation();
+            if (!window.loadedItems || !window.activeModalItemId) return;
+            
+            // Находим индекс текущего товара в массиве отображаемых
+            const currentIndex = window.loadedItems.findIndex(i => i.id === window.activeModalItemId);
+            if (currentIndex === -1) return;
+
+            const newIndex = currentIndex + direction;
+            // Проверяем, есть ли товар в эту сторону
+            if (newIndex >= 0 && newIndex < window.loadedItems.length) {
+                const nextItem = window.loadedItems[newIndex];
+                window.openItemDetails(nextItem.id);
+            }
+        };
+        
         window.openItemDetails = async (id) => {
             try {
                 let item = window.loadedItems.find(i => i.id === id);
@@ -2380,6 +2400,21 @@
                     if(contactBtn) contactBtn.classList.remove('hidden'); 
                     if(ctrl) { ctrl.classList.add('hidden'); ctrl.classList.remove('flex'); }
                 }
+
+                // --- ЛОГИКА КНОПОК ПЕРЕЛИСТЫВАНИЯ ---
+                const currentIndex = window.loadedItems.findIndex(i => i.id === item.id);
+                const prevBtn = document.getElementById('modal-prev-item');
+                const nextBtn = document.getElementById('modal-next-item');
+                
+                if (prevBtn) {
+                    if (currentIndex > 0) { prevBtn.classList.remove('hidden'); prevBtn.classList.add('flex'); }
+                    else { prevBtn.classList.add('hidden'); prevBtn.classList.remove('flex'); }
+                }
+                if (nextBtn) {
+                    if (currentIndex !== -1 && currentIndex < window.loadedItems.length - 1) { nextBtn.classList.remove('hidden'); nextBtn.classList.add('flex'); }
+                    else { nextBtn.classList.add('hidden'); nextBtn.classList.remove('flex'); }
+                }
+                // ------------------------------------
                 
                 window.openModal('item-modal');
                 history.pushState({ modal: true }, '', '?item=' + id);
@@ -2800,17 +2835,26 @@
 
         // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc и клик вне окна) ---
 
-        // 1. Закрытие по кнопке Esc
+        // 1. Закрытие по кнопке Esc и перелистывание стрелками
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                // Ищем любое открытое модальное окно (у которого есть класс active)
-                const openModal = document.querySelector('.modal-overlay.active');
-                if (openModal) {
+            const openModal = document.querySelector('.modal-overlay.active');
+            if (openModal) {
+                // Закрытие на Esc
+                if (e.key === 'Escape') {
                     window.closeModal(openModal.id);
+                }
+                
+                // Перелистывание в окне товара
+                if (openModal.id === 'item-modal') {
+                    // Игнорируем, если юзер печатает текст
+                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+                    
+                    if (e.key === 'ArrowLeft') window.navigateItem(-1);
+                    if (e.key === 'ArrowRight') window.navigateItem(1);
                 }
             }
         });
-
+        
         // 2. Закрытие по клику на область вокруг окна (overlay)
         window.addEventListener('click', (e) => {
             // Если кликнули именно по подложке (элементу с классом modal-overlay), а не по его контенту
