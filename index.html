@@ -428,7 +428,7 @@
             
             <button onclick="if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('Войдите в аккаунт', true); } else { window.switchProfileTab('saved'); window.openModal('profile-modal'); }" class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
                 <i class="fa-solid fa-box-open text-xl mb-1"></i>
-                <span class="text-[10px] font-bold truncate max-w-full">Заначка</span>
+                <span class="text-[10px] font-bold truncate max-w-full">Склад</span>
             </button>
             
             <!-- ЖЕСТКАЯ ШИРИНА w-16 flex-none для кнопки +, чтобы она не сжималась и не пускала другие элементы -->
@@ -758,7 +758,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
                 <div class="flex font-black text-sm w-full sm:w-auto overflow-x-auto custom-scrollbar">
                     <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0">Мои вещи</button>
-                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Заначка</button>
+                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Склад</button>
                 </div>
                 <!-- Строка поиска -->
                 <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
@@ -2649,7 +2649,7 @@
 
             try {
                 const favCount = window.userFavorites ? window.userFavorites.size : 0;
-                const tabSaved = document.getElementById('tab-my-saved'); if(tabSaved) tabSaved.innerText = `Заначка (${favCount})`;
+                const tabSaved = document.getElementById('tab-my-saved'); if(tabSaved) tabSaved.innerText = `Склад (${favCount})`;
 
                 let items = [];
                 if (window.currentProfileTab === 'items') {
