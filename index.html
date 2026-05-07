@@ -2797,6 +2797,28 @@
             if (grid) { grid.classList.remove('view-grid', 'view-list'); grid.classList.add(`view-${mode}`); }
         };
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
+
+        // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc и клик вне окна) ---
+
+        // 1. Закрытие по кнопке Esc
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Ищем любое открытое модальное окно (у которого нет класса hidden)
+                const openModal = document.querySelector('.modal:not(.hidden)');
+                if (openModal) {
+                    window.closeModal(openModal.id);
+                }
+            }
+        });
+
+        // 2. Закрытие по клику на область вокруг окна (overlay)
+        window.addEventListener('click', (e) => {
+            // Если кликнули именно по подложке (элементу с классом modal), а не по его контенту
+            if (e.target.classList.contains('modal')) {
+                window.closeModal(e.target.id);
+            }
+        });
+        
     </script>
 
     <!-- ОКНО НАПИСАНИЯ ОТЗЫВА -->
