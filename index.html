@@ -1045,6 +1045,10 @@
                     <div class="absolute inset-0 p-4 flex items-center justify-center">
                         <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox(this.src)">
                     </div>
+                    
+                    <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" title="Предыдущий товар" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
+                    
+                    <button id="modal-next-item" onclick="window.navigateItem(1, event)" title="Следующий товар" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
                 </div>
                 <!-- Галерея миниатюр -->
                 <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden z-10 border-t border-stone-200 dark:border-stone-700"></div>
