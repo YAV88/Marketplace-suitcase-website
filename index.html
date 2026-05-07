@@ -2803,8 +2803,8 @@
         // 1. Закрытие по кнопке Esc
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                // Ищем любое открытое модальное окно (у которого нет класса hidden)
-                const openModal = document.querySelector('.modal:not(.hidden)');
+                // Ищем любое открытое модальное окно (у которого есть класс active)
+                const openModal = document.querySelector('.modal-overlay.active');
                 if (openModal) {
                     window.closeModal(openModal.id);
                 }
@@ -2813,8 +2813,8 @@
 
         // 2. Закрытие по клику на область вокруг окна (overlay)
         window.addEventListener('click', (e) => {
-            // Если кликнули именно по подложке (элементу с классом modal), а не по его контенту
-            if (e.target.classList.contains('modal')) {
+            // Если кликнули именно по подложке (элементу с классом modal-overlay), а не по его контенту
+            if (e.target.classList.contains('modal-overlay')) {
                 window.closeModal(e.target.id);
             }
         });
