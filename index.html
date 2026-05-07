@@ -1035,7 +1035,9 @@
         </div>
     </div>
 
-    <div id="item-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/85 md:backdrop-blur-md z-[75]">
+    <div id="item-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 pb-safe">    
+        <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" class="hidden fixed left-2 sm:left-6 top-1/2 -translate-y-1/2 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-12 h-12 rounded-full items-center justify-center shadow-xl hover:bg-brand-600 hover:text-white transition active:scale-95 cursor-pointer border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-chevron-left text-xl -ml-1"></i></button>
+        <button id="modal-next-item" onclick="window.navigateItem(1, event)" class="hidden fixed right-2 sm:right-6 top-1/2 -translate-y-1/2 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-12 h-12 rounded-full items-center justify-center shadow-xl hover:bg-brand-600 hover:text-white transition active:scale-95 cursor-pointer border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-chevron-right text-xl -mr-1"></i></button>
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col md:flex-row relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('item-modal')" title="Закрыть" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" title="Добавить на склад" class="absolute top-4 right-16 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
@@ -2878,6 +2880,40 @@
                 if (e.key === 'ArrowRight') window.lightboxNext();
             }
         });
+
+        // --- СВАЙПЫ ПАЛЬЦЕМ ДЛЯ МОБИЛОК ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        const itemModalElement = document.getElementById('item-modal');
+        if (itemModalElement) {
+            // Фиксируем, где палец коснулся экрана
+            itemModalElement.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            // Фиксируем, где палец оторвался от экрана
+            itemModalElement.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                
+                // Проверяем, открыто ли вообще окно товара
+                if (!itemModalElement.classList.contains('active')) return;
+
+                const swipeThreshold = 50; // Минимальная длина свайпа в пикселях (чтобы избежать случайных перелистываний)
+                
+                // Защита: не перелистываем, если свайп был по текстовым полям или кнопкам
+                const targetTag = e.target.tagName;
+                if (['TEXTAREA', 'INPUT', 'BUTTON'].includes(targetTag)) return;
+
+                // Логика направления:
+                if (touchEndX < touchStartX - swipeThreshold) {
+                    window.navigateItem(1); // Свайп влево -> следующий товар
+                }
+                if (touchEndX > touchStartX + swipeThreshold) {
+                    window.navigateItem(-1); // Свайп вправо -> предыдущий товар
+                }
+            }, { passive: true });
+        }
         
     </script>
 
