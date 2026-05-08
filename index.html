@@ -2299,25 +2299,24 @@
             
             const grid = document.getElementById('main-items-grid');
             const vipSection = document.getElementById('vip-section');
-            if (vipSection) vipSection.classList.add('hidden'); // Скрываем VIP при поиске
             
-            // МГНОВЕННЫЙ ОТКЛИК: скрываем/показываем карты прямо в браузере без ожидания сервера
+            // МГНОВЕННЫЙ ОТКЛИК без мигания
             if (grid && window.loadedItems) {
                 const query = window.searchQuery.toLowerCase();
                 if (query !== '') {
-                    // Ищем совпадения локально от 1 буквы
+                    if (vipSection) vipSection.classList.add('hidden'); // Прячем VIP при вводе
                     const localFiltered = window.loadedItems.filter(item => (item.title || '').toLowerCase().includes(query));
                     if (localFiltered.length > 0) {
                         grid.innerHTML = localFiltered.slice(0, 12).map(i => window.createCardHtml(i, false)).join('');
                     } else {
-                        grid.innerHTML = ''; // Очищаем, если совпадений нет
+                        grid.innerHTML = '<div class="col-span-full text-center py-10 text-stone-400 font-bold">Ищем на сервере...</div>';
                     }
                 } else {
-                    grid.innerHTML = ''; // Очищаем сетку при стирании
+                    // Вернули пустую строку - мгновенно возвращаем старые данные без серверной задержки
+                    grid.innerHTML = window.loadedItems.slice(0, 12).map(i => window.createCardHtml(i, i.isHighlighted)).join('');
                 }
             }
 
-            // Отправляем запрос на сервер с задержкой 300мс (чтобы БД выдала точные результаты и пагинацию)
             clearTimeout(window.searchTimeout);
             window.searchTimeout = setTimeout(() => {
                 window.fetchItems(); 
@@ -2721,11 +2720,16 @@
             
             if (!isLoadMore) {
                 window.displayedCount = 12;
-                if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
-                if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
+                
+                // Умное скрытие: НЕ делаем прозрачным, если пользователь сейчас печатает текст
+                if (!window.searchQuery) {
+                    if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
+                    if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
+                    if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
+                }
+                
                 if(emptyState) emptyState.classList.add('hidden');
                 if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-                if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
 
                 const feedTitle = document.getElementById('main-feed-title'); const feedIcon = document.getElementById('main-feed-icon');
                 if(feedTitle && feedIcon) {
@@ -2760,6 +2764,8 @@
                     let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(6);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
+                    // Добавлено: фильтрация VIP-объявлений по поиску
+                    if (window.searchQuery) vq = vq.ilike('title', `%${window.searchQuery}%`);
 
                     const results = await Promise.all([q, vq]);
                     if (results[0].error) throw results[0].error;
