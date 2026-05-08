@@ -2696,11 +2696,11 @@
                     if (window.showUrgentOnly) q = q.gt('highlighted_until', new Date().toISOString());
                     if (window.filterCondition && window.filterCondition !== 'Все') q = q.eq('condition', window.filterCondition);
 
-                    if (window.currentSortMode === 'cheap') q = q.order('price', { ascending: true });
-                    else if (window.currentSortMode === 'exp') q = q.order('price', { ascending: false });
-                    else q = q.order('created_at', { ascending: false });
-
-                    q = q.limit(window.displayedCount + 1);
+                    // Отключаем сортировку по цене на сервере, так как БД не знает курсы валют
+                    if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp') {
+                        q = q.order('created_at', { ascending: false });
+                        q = q.limit(window.displayedCount + 1);
+                    }
 
                     let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(6);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
@@ -2708,6 +2708,27 @@
 
                     const results = await Promise.all([q, vq]);
                     if (results[0].error) throw results[0].error;
+                    
+                    let itemsData = results[0].data || [];
+                    
+                    // --- МУЛЬТИВАЛЮТНАЯ СОРТИРОВКА В БРАУЗЕРЕ ---
+                    if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp') {
+                        const getPriceForSort = (item) => {
+                            const p = Number(item.price) || 0;
+                            return item.currency === 'EUR' ? p * 117 : p; // 1 EUR ≈ 117 RSD
+                        };
+                        
+                        if (window.currentSortMode === 'cheap') {
+                            itemsData.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
+                        } else if (window.currentSortMode === 'exp') {
+                            itemsData.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
+                        }
+                        
+                        // После правильной сортировки отрезаем нужное количество товаров для пагинации
+                        itemsData = itemsData.slice(0, window.displayedCount + 1);
+                    }
+                    
+                    results[0].data = itemsData;
                     res = results[0]; vipRes = results[1];
                 } catch (err) {
                     fallbackMode = true; res = await supabase.from('items').select('*').order('created_at', { ascending: false });
