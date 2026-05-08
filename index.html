@@ -124,17 +124,17 @@
         /* Низ карточки (Геометка и время) */
         .view-list .mt-auto.pt-3.border-t { border-top: none !important; padding-top: 0 !important; font-size: 0.9rem !important; color: #9ca3af; }
 
-        /* === УМНАЯ СЕТКА САЙДБАРА И «БЕСШОВНЫЙ» ФИЛЬТР НА ПК === */
+        /* === УМНАЯ СЕТКА САЙДБАРА (ТЕПЕРЬ ВСЕГДА НА ПК) === */
         @media (min-width: 1024px) {
-            body.is-list-mode main {
+            main {
                 display: grid !important;
-                grid-template-columns: 260px 1fr !important; 
-                gap: 0 3rem !important; 
+                grid-template-columns: 250px 1fr !important; /* Идеальная ширина сайдбара */
+                gap: 0 2.5rem !important; 
                 align-items: start;
             }
-            body.is-list-mode main > * { grid-column: 1 / -1 !important; }
+            main > * { grid-column: 1 / -1 !important; }
             
-            body.is-list-mode #filter-panel-wrapper {
+            #filter-panel-wrapper {
                 position: sticky !important;
                 top: 90px !important; 
                 grid-column: 1 !important;
@@ -143,43 +143,43 @@
                 height: max-content;
                 grid-template-rows: 1fr !important; 
                 overflow: visible !important;
-                margin-top: 0 !important; /* Убираем смещение */
+                margin-top: 0 !important; 
             }
             
-            /* Выравниваем сам текст заголовка в сайдбаре по высоте иконки в ленте */
-            body.is-list-mode #filter-panel h4:first-child {
+            /* Выравниваем текст заголовка в сайдбаре по высоте иконки в ленте */
+            #filter-panel h4:first-child {
                 padding-top: 2px;
                 margin-bottom: 1.5rem !important;
             }
             
-            body.is-list-mode #filter-panel > div { 
+            #filter-panel > div { 
                 background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
                 padding: 0 !important;
             }
             
-            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-            body.is-list-mode #btn-toggle-filters { display: none !important; }
+            #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+            #btn-toggle-filters { display: none !important; }
 
             /* Стильные разделительные линии в тему сайта */
             .sidebar-divider {
-                border-bottom: 1px solid rgba(20, 184, 166, 0.2); /* Цвет brand-500 с прозрачностью */
+                border-bottom: 1px solid rgba(20, 184, 166, 0.2);
                 margin: 1.5rem 0;
             }
             .dark .sidebar-divider { border-color: rgba(20, 184, 166, 0.1); }
             
             /* Кнопки управления */
-            body.is-list-mode #filter-panel .flex.justify-end {
+            #filter-panel .flex.justify-end {
                 flex-direction: column;
                 gap: 0.75rem;
                 border-top: none !important;
                 margin-top: 1rem !important;
             }
-            body.is-list-mode #filter-panel .flex.justify-end button { width: 100%; }
+            #filter-panel .flex.justify-end button { width: 100%; }
 
             /* Новые находки справа */
-            body.is-list-mode #fresh-ads-section {
+            #fresh-ads-section {
                 grid-column: 2 !important;
                 grid-row: 8 !important;
             }
@@ -2196,9 +2196,9 @@
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-brand-600', 'text-white'));
             window.fetchItems(); 
             
-            // На мобилках (или в сетке) закрываем панель после применения, на ПК в списке - оставляем
-            if (window.innerWidth < 1024 || window.currentViewMode !== 'list') {
-                window.toggleFilters(); 
+            // На ПК сайдбар теперь постоянный, поэтому прячем окно фильтров только на мобилках
+            if (window.innerWidth < 1024) {
+                window.toggleFilters();
             }
         };
 
