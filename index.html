@@ -3159,8 +3159,9 @@
 
         window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
 
+        // --- ПЕРЕКЛЮЧЕНИЕ ВИДА (СЕТКА / СПИСОК) ---
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
-        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
+        
         window.setViewMode = (mode) => {
             window.currentViewMode = mode;
             localStorage.setItem('svalka_view_mode', mode);
@@ -3169,8 +3170,8 @@
             if (mode === 'list') { document.body.classList.add('is-list-mode'); } 
             else { document.body.classList.remove('is-list-mode'); }
 
-            const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list'); const grid = document.getElementById('main-items-grid');
-            const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list');
+            const btnGrid = document.getElementById('btn-view-grid'); 
+            const btnList = document.getElementById('btn-view-list');
             const grid = document.getElementById('main-items-grid');
             
             if (btnGrid && btnList) {
@@ -3186,6 +3187,12 @@
                     btnList.className = activeClass;
                     btnGrid.className = inactiveClass; 
                 }
+            }
+            
+            // Восстановили переключение классов самой сетки!
+            if (grid) { 
+                grid.classList.remove('view-grid', 'view-list');
+                grid.classList.add(`view-${mode}`); 
             }
         };
 
