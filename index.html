@@ -75,10 +75,9 @@
         .view-list .view-list-desc { display: none !important; } /* Скрыто на мобилках */
 
         /* 2. PREMIUM СТИЛИ ДЛЯ ПК (Идеальные пропорции) */
+        /* 2. PREMIUM СТИЛИ ДЛЯ ПК (3 Колонки) */
         @media (min-width: 1024px) {
-            .view-list .item-card { height: 190px !important; } /* Продающая высота карточки */
-            
-            /* ИСПРАВЛЕНИЕ: Жестко растягиваем контейнер фото на 100% высоты карточки */
+            .view-list .item-card { height: 190px !important; }
             .view-list .card-img-wrap { 
                 width: 250px !important; 
                 height: 100% !important; 
@@ -87,21 +86,42 @@
                 justify-content: center !important;
             } 
             
-            .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; justify-content: center; }
+            /* Превращаем текстовый блок в строку, чтобы поставить колонки рядом */
+            .view-list .card-body-wrap { 
+                padding: 1.25rem 1.5rem !important; 
+                flex-direction: row !important; 
+                align-items: stretch !important; /* Растягиваем колонки по высоте */
+                gap: 1.5rem;
+            }
+            
+            /* ЧАСТЬ 2: Информация и цена */
+            .view-list .view-list-col-2 {
+                flex: 0 0 35% !important; /* Занимает 35% свободного места */
+                border-right: 1px solid #e7e5e4; /* Элегантный разделитель */
+                padding-right: 1.5rem;
+            }
+            .dark .view-list .view-list-col-2 { border-color: #44403c; }
+            
+            /* ЧАСТЬ 3: Описание */
+            .view-list .view-list-col-3 {
+                flex: 1 !important; /* Занимает всё оставшееся место справа */
+                display: flex !important;
+                flex-direction: column;
+            }
             
             .view-list h4 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; max-height: none; }
             .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
             .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
             
-            /* Описание на ПК */
+            /* Описание теперь вмещает больше текста */
             .view-list .view-list-desc { 
                 display: -webkit-box !important; 
-                -webkit-line-clamp: 2; /* Ровно 2 строки описания */
+                -webkit-line-clamp: 5; /* Помещается целых 5 строк! */
                 -webkit-box-orient: vertical; 
                 overflow: hidden;
                 color: #6b7280;
                 font-size: 0.9rem;
-                line-height: 1.4;
+                line-height: 1.5;
             }
             .view-list .delivery-badges-overlay { bottom: 10px; left: 10px; gap: 6px; }
         }
@@ -2331,7 +2351,8 @@
                 </div>
                 
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col">
-                    <div class="flex-1 flex flex-col">
+                    
+                    <div class="view-list-col-2 flex-1 flex flex-col">
                         <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">
                             ${vipCrown}${i.title || 'Без названия'}
                         </h4>
@@ -2344,9 +2365,12 @@
                         </div>
                         
                         <div class="view-grid-badges items-center mt-1.5 mb-1 flex">${deliveryBadges}</div>
-                        
-                        <p class="view-list-desc mt-1">
-                            ${i.description || ''}
+                    </div>
+                    
+                    <div class="view-list-col-3 hidden">
+                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5">Описание товара</h5>
+                        <p class="view-list-desc">
+                            ${i.description || 'Продавец не добавил описание к этому товару.'}
                         </p>
                     </div>
                     
