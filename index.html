@@ -1488,17 +1488,46 @@
                     ratingEl.classList.add('hidden');
                 }
 
-                // ЛОГИКА КНОПКИ ОТЗЫВА
+                // --- ЛОГИКА КНОПКИ ОТЗЫВА (Антиспам) ---
                 const btnLeaveRev = document.getElementById('btn-leave-review');
                 if (window.currentUser && window.currentUser.id !== userId) {
                     btnLeaveRev.classList.remove('hidden');
                     const myRev = window.sellerReviews.find(r => r.reviewer_id === window.currentUser.id);
+                    
                     if (myRev) {
+                        // Если отзыв уже есть, даем его изменить (он уже прошел проверку ранее)
                         btnLeaveRev.innerText = "Изменить отзыв";
                         btnLeaveRev.onclick = () => window.openReviewModal(myRev);
                     } else {
                         btnLeaveRev.innerText = "Оставить отзыв";
-                        btnLeaveRev.onclick = () => window.openReviewModal(null);
+                        btnLeaveRev.onclick = async () => {
+                            // Визуальный отклик во время проверки
+                            const origText = btnLeaveRev.innerText;
+                            btnLeaveRev.innerText = "Проверка...";
+                            
+                            try {
+                                // Ищем в БД: писал ли текущий юзер этому продавцу
+                                const { data: chatHistory } = await supabase.from('chats')
+                                    .select('id')
+                                    .eq('buyer_id', window.currentUser.id)
+                                    .eq('seller_id', userId)
+                                    .limit(1);
+                                    
+                                btnLeaveRev.innerText = origText;
+
+                                // Если диалогов нет — блокируем открытие окна и показываем Toast
+                                if (!chatHistory || chatHistory.length === 0) {
+                                    window.showToast("Сначала напишите продавцу сообщение по одному из его товаров!", true);
+                                    return;
+                                }
+                                
+                                // Если всё ок, пускаем к оценке
+                                window.openReviewModal(null);
+                            } catch (e) {
+                                btnLeaveRev.innerText = origText;
+                                window.showToast("Ошибка проверки связи с продавцом", true);
+                            }
+                        };
                     }
                 } else {
                     btnLeaveRev.classList.add('hidden');
