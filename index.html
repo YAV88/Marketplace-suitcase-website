@@ -324,27 +324,14 @@
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
                     <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-sm font-bold text-stone-500 mb-2">Категория</label>
-                            <div>
-                            
-                            <div class="relative" id="custom-cat-wrapper">
-                                <input type="hidden" id="filter-category" value="Все">
-                                
-                                <div onclick="window.toggleCustomCat()" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-base outline-none hover:border-brand-500 cursor-pointer text-stone-900 dark:text-white flex justify-between items-center transition-colors shadow-sm">
-                                    <span id="custom-cat-label" class="truncate">Все категории</span>
-                                    <i id="custom-cat-icon" class="fa-solid fa-chevron-down text-stone-400 text-sm transition-transform duration-300"></i>
+                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Категория</label>
+                            <div id="sidebar-categories" class="flex flex-col gap-0.5">
                                 </div>
+                        </div>
 
-                                <div id="custom-cat-dropdown" class="absolute z-50 left-0 right-0 top-[100%] mt-2 bg-white/95 dark:bg-stone-800/95 md:backdrop-blur-xl border border-stone-200 dark:border-stone-700 rounded-2xl shadow-2xl opacity-0 pointer-events-none translate-y-[-10px] transition-all duration-300 max-h-[350px] overflow-y-auto custom-scrollbar hidden">
-                                    <div class="p-2 flex flex-col gap-0.5" id="custom-cat-list">
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
                         <div>
-                            <label class="block text-sm font-bold text-stone-500 mb-2">Город</label>
-                            <select id="filter-city" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
+                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Город</label>
+                            <select id="filter-city" onchange="window.applyFilters()" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white transition-colors">
                                 <option value="Все">Все города</option>
                                 <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
                                 <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
@@ -353,25 +340,44 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-stone-500 mb-2">Состояние</label>
-                            <select id="filter-condition" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
-                                <option value="Все">Любое</option>
-                                <option value="Новое">✨ Только Новое</option>
-                                <option value="Б/У">♻️ Только Б/У</option>
-                            </select>
+                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Состояние</label>
+                            <div class="flex flex-col gap-3">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="filter-cond-radio" value="Все" onchange="window.applyCondition(this.value)" class="hidden peer" checked>
+                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
+                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">Любое</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="filter-cond-radio" value="Новое" onchange="window.applyCondition(this.value)" class="hidden peer">
+                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
+                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">✨ Новое</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="radio" name="filter-cond-radio" value="Б/У" onchange="window.applyCondition(this.value)" class="hidden peer">
+                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
+                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">♻️ Б/У</span>
+                                </label>
+                            </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-bold text-stone-500 mb-2">Цена</label>
+                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Цена</label>
                             <div class="flex gap-2">
-                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
-                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text">
-                                <select id="filter-currency" class="w-24 bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-base outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white">
-                                    <option value="Все">Все</option><option value="RSD">RSD</option><option value="EUR">EUR</option>
-                                </select>
+                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text transition-colors">
+                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text transition-colors">
                             </div>
+                            <select id="filter-currency" onchange="window.applyFilters()" class="w-full mt-2 bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white transition-colors">
+                                <option value="Все">Валюта: Любая</option><option value="RSD">Только RSD</option><option value="EUR">Только EUR</option>
+                            </select>
                         </div>
                     </div>
+                    
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
                         <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
                         <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
@@ -2063,24 +2069,36 @@
         };
 
         window.applyFilters = () => {
-            const elCat = document.getElementById('filter-category'); const elCity = document.getElementById('filter-city');
+            const elCity = document.getElementById('filter-city');
             const elMin = document.getElementById('filter-price-min'); const elMax = document.getElementById('filter-price-max');
-            const elCur = document.getElementById('filter-currency'); const elCond = document.getElementById('filter-condition');
+            const elCur = document.getElementById('filter-currency'); 
             
-            if (elCat) window.currentCategory = elCat.value; if (elCity) window.filterCity = elCity.value;
+            if (elCity) window.filterCity = elCity.value;
             if (elMin) window.filterPriceMin = elMin.value; if (elMax) window.filterPriceMax = elMax.value;
-            if (elCur) window.filterCurrency = elCur.value; if (elCond) window.filterCondition = elCond.value;
+            if (elCur) window.filterCurrency = elCur.value; 
             
-            window.showUrgentOnly = false; window.displayedCount = 12; 
+            window.showUrgentOnly = false; window.displayedCount = 12;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-brand-600', 'text-white'));
-            window.fetchItems(); window.toggleFilters(); 
+            window.fetchItems(); 
+            
+            // На мобилках (или в сетке) закрываем панель после применения, на ПК в списке - оставляем
+            if (window.innerWidth < 1024 || window.currentViewMode !== 'list') {
+                window.toggleFilters(); 
+            }
         };
 
         window.resetFilters = () => {
-            document.getElementById('filter-city').value = 'Все'; document.getElementById('filter-price-min').value = '';
-            document.getElementById('filter-price-max').value = ''; document.getElementById('filter-currency').value = 'Все'; document.getElementById('filter-condition').value = 'Все';
-            if(window.selectCustomCat) window.selectCustomCat('Все', 'Все категории');
-            window.applyFilters();
+            document.getElementById('filter-city').value = 'Все';
+            document.getElementById('filter-price-min').value = '';
+            document.getElementById('filter-price-max').value = ''; 
+            document.getElementById('filter-currency').value = 'Все'; 
+            
+            // Сброс кастомных галочек
+            window.filterCondition = 'Все';
+            const condRadios = document.getElementsByName('filter-cond-radio');
+            if(condRadios) condRadios.forEach(r => { if(r.value === 'Все') r.checked = true; });
+            
+            window.filterByCategory('Все'); // Автоматически обновляет товары и аккордеон
         };
 
         window.subcategoriesMap = {
@@ -2093,7 +2111,7 @@
             'Услуги': [{val: 'Ремонт', label: 'Ремонт техники'}, {val: 'Автосервис'}, {val: 'Стройка', label: 'Ремонт и стройка'}, {val: 'Красота', label: 'Бьюти услуги'}, {val: 'Репетиторы'}, {val: 'Праздники'}],
             'Работа': [{val: 'Вакансии'}, {val: 'Резюме', label: 'Ищу работу'}],
             'Бизнес': [{val: 'Оборудование'}, {val: 'Бизнес', label: 'Готовый бизнес'}, {val: 'Сырье', label: 'Сырье и материалы'}],
-            'Хобби': [{val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Муз. инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}],
+            'Хобби': [{val: 'Спорт'}, {val: 'Туризм', label: 'Туризм и палатки'}, {val: 'Книги'}, {val: 'Музыка', label: 'Музыкальные инструменты'}, {val: 'Игры', label: 'Настольные игры'}, {val: 'Коллекции', label: 'Коллекционирование'}],
             'Животные': [{val: 'Собаки'}, {val: 'Кошки'}, {val: 'Птицы'}, {val: 'Аквариум', label: 'Аквариумистика'}, {val: 'Товары', label: 'Зоотовары'}, {val: 'Другие'}],
             'Жилье': [{val: 'Аренда'}, {val: 'Посуточно', label: 'Аренда (посуточно)'}, {val: 'Покупка', label: 'Продажа'}, {val: 'Коммерция', label: 'Коммерческая'}, {val: 'Дачи', label: 'Дома и дачи'}],
             'Другое': [{val: 'Билеты'}, {val: 'Продукты', label: 'Продукты питания'}, {val: 'Разное'}, {val: 'Бесплатно', label: 'Отдам даром'}, {val: 'Бюро', label: 'Бюро находок'}]
@@ -2127,8 +2145,8 @@
                 if (event && event.currentTarget) event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
             }
             
-            const catInput = document.getElementById('filter-category'); const catLabel = document.getElementById('custom-cat-label');
-            if (catInput && catLabel) { catInput.value = cat; catLabel.innerText = cat === 'Все' ? 'Все категории' : cat; }
+            // Обновляем визуальное выделение в боковом меню
+            if (window.renderSidebarCategories) window.renderSidebarCategories();
             window.fetchItems(); 
         };
 
@@ -2853,24 +2871,53 @@
         supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
         supabase.auth.onAuthStateChange((_e, s) => { if(window.authInitialized) window.handleAuthChange(s); });
 
-        window.renderCustomCategorySelect = () => {
-            const list = document.getElementById('custom-cat-list'); if(!list || !window.subcategoriesMap) return;
-            let html = `<button onclick="window.selectCustomCat('Все', 'Все категории', event)" type="button" class="w-full text-left px-4 py-3.5 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 font-black text-base text-brand-600 dark:text-brand-400 transition cursor-pointer border border-transparent hover:border-brand-100 dark:hover:border-brand-800/50 mb-2 shadow-sm">Все категории</button>`;
+        // --- БОКОВОЙ АККОРДЕОН КАТЕГОРИЙ ---
+        window.renderSidebarCategories = () => {
+            const container = document.getElementById('sidebar-categories');
+            if(!container || !window.subcategoriesMap) return;
+            
+            let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-2 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors border-b border-stone-100 dark:border-stone-800">Все категории</button>`;
+            
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-                html += `<div class="px-4 py-2 mt-4 mb-2 text-lg font-black text-stone-900 dark:text-white uppercase tracking-tight border-b border-stone-100 dark:border-stone-700/50">${mainCat}</div>`;
+                const isActiveMain = window.currentCategory.startsWith(mainCat);
+                html += `
+                <div class="sidebar-cat-group border-b border-stone-100 dark:border-stone-800 py-1">
+                    <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
+                        <button onclick="window.filterByCategory('${mainCat}', event); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+                        <i class="fa-solid fa-chevron-down p-2 text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
+                    </div>
+                    <div class="sidebar-sub-cats pl-3 border-l-2 border-stone-200 dark:border-stone-700 ml-1.5 mt-1 mb-1 flex flex-col gap-1 ${isActiveMain ? '' : 'hidden'}">
+                `;
                 subs.forEach(sub => {
-                    const prefix = sub.prefix || mainCat; const val = `${prefix} - ${sub.val}`; const label = sub.label || sub.val;
-                    html += `<button onclick="window.selectCustomCat('${val}', '${label}', event)" type="button" class="w-full text-left px-4 py-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 font-medium text-base text-stone-600 dark:text-stone-300 transition cursor-pointer border border-transparent hover:border-stone-200 dark:hover:border-stone-700 flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600 shrink-0"></span>${label}</button>`;
+                    const prefix = sub.prefix || mainCat; 
+                    const fullCat = `${prefix} - ${sub.val}`; 
+                    const label = sub.label || sub.val;
+                    const isActiveSub = window.currentCategory === fullCat;
+                    html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${isActiveSub ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${label}</button>`;
                 });
+                html += `</div></div>`;
             }
-            list.innerHTML = html;
+            container.innerHTML = html;
         };
 
-        window.toggleCustomCat = () => {
-            const dd = document.getElementById('custom-cat-dropdown'); const icon = document.getElementById('custom-cat-icon'); if(!dd) return;
-            if (dd.classList.contains('hidden')) { dd.classList.remove('hidden'); setTimeout(() => { dd.classList.remove('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.add('rotate-180'); }, 10); } 
-            else { dd.classList.add('opacity-0', 'translate-y-[-10px]', 'pointer-events-none'); icon.classList.remove('rotate-180'); setTimeout(() => dd.classList.add('hidden'), 300); }
+        window.toggleSidebarCat = (el) => {
+            const icon = el.querySelector('i');
+            const subs = el.nextElementSibling;
+            if(subs.classList.contains('hidden')) {
+                subs.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                subs.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
         };
+
+        window.applyCondition = (val) => {
+            window.filterCondition = val;
+            window.applyFilters(); // Авто-поиск при нажатии на галочку состояния
+        };
+        
+        setTimeout(window.renderSidebarCategories, 200);
 
         window.selectCustomCat = (val, label, e) => {
             if(e) e.stopPropagation(); const input = document.getElementById('filter-category'); const labelEl = document.getElementById('custom-cat-label');
