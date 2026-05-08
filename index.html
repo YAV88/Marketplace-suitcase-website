@@ -2726,8 +2726,17 @@
                         if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
                         return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
                     });
-                    if (window.currentSortMode === 'cheap') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-                    else if (window.currentSortMode === 'exp') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+                    // Умная сортировка: приводим всё к единой валюте для сравнения (1 EUR ≈ 117 RSD)
+                const getPriceForSort = (item) => {
+                    const p = Number(item.price) || 0;
+                    return item.currency === 'EUR' ? p * 117 : p;
+                };
+
+                if (window.currentSortMode === 'cheap') {
+                    filtered.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
+                } else if (window.currentSortMode === 'exp') {
+                    filtered.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
+                }
                     vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6); res.data = filtered.slice(0, window.displayedCount + 1);
                 }
 
@@ -3161,14 +3170,23 @@
             else { document.body.classList.remove('is-list-mode'); }
 
             const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list'); const grid = document.getElementById('main-items-grid');
+            const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list');
+            const grid = document.getElementById('main-items-grid');
+            
             if (btnGrid && btnList) {
-                if (mode === 'grid') { btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; } 
-                else { btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; }
+                // Задаем базовые классы, чтобы кнопки всегда сохраняли центрирование и размер
+                const baseClass = "h-full px-3 rounded-md transition cursor-pointer flex items-center justify-center ";
+                const activeClass = baseClass + "bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400";
+                const inactiveClass = baseClass + "text-stone-400 hover:text-brand-600";
+                
+                if (mode === 'grid') { 
+                    btnGrid.className = activeClass;
+                    btnList.className = inactiveClass; 
+                } else { 
+                    btnList.className = activeClass;
+                    btnGrid.className = inactiveClass; 
+                }
             }
-            if (grid) { grid.classList.remove('view-grid', 'view-list');
-grid.classList.add(`view-${mode}`); }
         };
 
         // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc, клик вне окна, стрелочки) ---
