@@ -53,60 +53,48 @@
         .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
         /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА) === */
-        /* 1. МОБИЛЬНАЯ ВЕРСИЯ */
-        .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
-        .view-list .item-card { 
-            flex-direction: row !important; 
-            min-height: 140px !important; /* Увеличили минимум, чтобы не резало */
-            height: auto !important; 
-            align-items: stretch; 
-        }
-        .view-list .card-img-wrap { 
-            width: 140px !important; 
-            min-height: 140px !important;
-            flex-shrink: 0; 
-            position: relative;
-        }
-        .view-list .card-body-wrap { 
-            padding: 0.75rem !important; 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-        }
-        .view-list h4 { font-size: 0.95rem !important; line-height: 1.3 !important; height: auto !important; max-height: 2.6em; overflow: hidden; margin-bottom: 4px !important; }
-        .view-list .price-text { font-size: 1.2rem !important; font-weight: 900; margin-bottom: 4px; }
         
-        /* Бейджи доставки поверх фото (освобождаем место в тексте) */
-        .view-list .delivery-badges-overlay {
-            position: absolute;
-            bottom: 6px;
-            left: 6px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            z-index: 10;
-        }
+        /* 1. БАЗОВЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ */
+        .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+        .view-list .item-card { flex-direction: row !important; min-height: 140px !important; height: auto !important; align-items: stretch; }
+        .view-list .card-img-wrap { width: 140px !important; min-height: 140px !important; flex-shrink: 0; position: relative; }
+        .view-list .card-body-wrap { padding: 0.75rem !important; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        .view-list h4 { font-size: 0.95rem !important; line-height: 1.3 !important; height: auto !important; max-height: 2.6em; overflow: hidden; margin-bottom: 4px !important; }
+        .view-list .price-text { font-size: 1.2rem !important; font-weight: 900; margin-bottom: 2px !important; }
+        
+        /* Бейджи доставки поверх фото (только для списка) */
+        .view-list .delivery-badges-overlay { position: absolute; bottom: 6px; left: 6px; display: flex; flex-wrap: wrap; gap: 4px; z-index: 10; }
 
-        /* 2. ПК ВЕРСИЯ (Desktop) */
+        /* Логика переключения элементов (Сетка vs Список) */
+        .view-list .view-grid-city, .view-list .view-grid-badges { display: none !important; }
+        .view-grid .view-list-city, .view-grid .delivery-badges-overlay, .view-grid .view-list-desc { display: none !important; }
+        
+        /* Стили города и описания в списке */
+        .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
+        .view-list .view-list-desc { display: none !important; } /* Скрыто на мобилках */
+
+        /* 2. PREMIUM СТИЛИ ДЛЯ ПК (Идеальные пропорции) */
         @media (min-width: 1024px) {
-            .view-list .item-card { height: 230px !important; } /* Чуть выше для солидности */
-            .view-list .card-img-wrap { width: 320px !important; } /* Больше места для фото */
-            .view-list .card-body-wrap { padding: 1.5rem !important; }
+            .view-list .item-card { height: 190px !important; } /* Продающая высота карточки */
+            .view-list .card-img-wrap { width: 250px !important; } /* Идеальное фото */
+            .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; }
             
-            .view-list h4 { font-size: 1.4rem !important; margin-bottom: 0.5rem !important; max-height: none; }
-            .view-list .price-text { font-size: 1.75rem !important; margin-bottom: 0.75rem !important; }
+            .view-list h4 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; max-height: none; }
+            .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
+            .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
             
-            /* Описание теперь занимает все свободное место */
+            /* Описание на ПК */
             .view-list .view-list-desc { 
                 display: -webkit-box !important; 
-                -webkit-line-clamp: 3; /* Больше строк описания */
+                -webkit-line-clamp: 2; /* Ровно 2 строки описания */
                 -webkit-box-orient: vertical; 
                 overflow: hidden;
-                margin-bottom: 1rem;
                 color: #6b7280;
+                font-size: 0.9rem;
+                line-height: 1.4;
             }
-            .view-list .delivery-badges-overlay { bottom: 12px; left: 12px; gap: 6px; }
+            .view-list .delivery-badges-overlay { bottom: 10px; left: 10px; gap: 6px; }
         }
         
         /* Низ карточки (Геометка и время) */
@@ -2328,13 +2316,13 @@
                     ${statusBadge}
                     ${condBadge}
                     
-                    <div class="hidden view-list:flex delivery-badges-overlay">
+                    <div class="delivery-badges-overlay">
                         ${deliveryBadges}
                     </div>
                 </div>
                 
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col">
-                    <div class="flex-1">
+                    <div class="flex-1 flex flex-col">
                         <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">
                             ${vipCrown}${i.title || 'Без названия'}
                         </h4>
@@ -2342,14 +2330,18 @@
                             ${i.price || 0} ${i.currency || 'RSD'}
                         </div>
                         
-                        <div class="view-grid:flex hidden items-center mt-1.5 mb-1">${deliveryBadges}</div>
+                        <div class="view-list-city font-medium">
+                            <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
+                        </div>
                         
-                        <p class="hidden view-list:block view-list-desc text-sm mt-2">
+                        <div class="view-grid-badges items-center mt-1.5 mb-1 flex">${deliveryBadges}</div>
+                        
+                        <p class="view-list-desc mt-1">
                             ${i.description || ''}
                         </p>
                     </div>
                     
-                    <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
+                    <div class="view-grid-city text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
                     </div>
