@@ -309,49 +309,52 @@
     </div>
 
     <nav class="bg-white/90 dark:bg-stone-900/90 md:backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 shadow-sm transition-colors duration-300">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-4 lg:gap-8 flex-1">
-                <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="window.goHome()">
-                    <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
-                        <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[3px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
-                        <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700 overflow-hidden">
-                            <!-- Твоя картинка (w-6 h-6 = 24x24 пикселя) -->
-                            <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-12 h-12 object-contain drop-shadow-sm">
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 pt-1">
-                        <span class="text-2xl font-display font-black tracking-tighter text-stone-900 dark:text-white">SVALKA</span>
+        <div class="container mx-auto px-4 py-3 flex flex-wrap lg:flex-nowrap justify-between items-center gap-3 lg:gap-6">
+            
+            <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="window.goHome()">
+                <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
+                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[3px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
+                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700 overflow-hidden">
+                        <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-12 h-12 object-contain drop-shadow-sm">
                     </div>
                 </div>
-
-                <div class="hidden sm:flex items-center gap-4 ml-auto">
-                    <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
-                    <div class="relative group">
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
-                            <img src="https://flagcdn.com/w20/ru.png" width="18" class="rounded-sm"><span>РУС</span>
-                        </button>
-                    </div>
+                <div class="flex items-center gap-1 pt-1">
+                    <span class="text-2xl font-display font-black tracking-tighter text-stone-900 dark:text-white">SVALKA</span>
                 </div>
             </div>
 
-            <div class="hidden lg:flex items-center gap-4 ml-6 pl-6 border-l border-stone-200 dark:border-stone-800">
-                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
+            <div class="order-3 lg:order-none w-full lg:w-auto lg:flex-1 relative group max-w-3xl">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-stone-400 group-focus-within:text-brand-500 transition-colors"></i>
+                </div>
+                <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск товаров, электроники, услуг..." class="w-full bg-stone-100 dark:bg-stone-800 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium text-stone-900 dark:text-white outline-none transition-all shadow-sm">
+            </div>
+
+            <div class="flex items-center gap-3 lg:gap-4 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 lg:pl-6">
+                <button onclick="window.toggleDarkMode()" class="hidden sm:flex text-stone-400 hover:text-brand-600 transition w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
+                
+                <div class="hidden sm:flex relative group">
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
+                        <img src="https://flagcdn.com/w20/ru.png" class="w-5 h-auto rounded-[2px] object-cover shrink-0"><span class="leading-none mt-[2px]">РУС</span>
+                    </button>
+                </div>
+                
+                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="hidden lg:block px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
                 
                 <div id="nav-user-controls" class="hidden items-center gap-3">
-                    <button onclick="window.openChatListModal()" title="Сообщения" class="relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
+                    <button onclick="window.openChatListModal()" title="Сообщения" class="hidden lg:flex relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
                         <i class="fa-regular fa-envelope"></i>
                         <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
-      
-                    <button onclick="window.openModal('profile-modal')" title="Профиль" class="text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
+                    <button onclick="window.openModal('profile-modal')" title="Профиль" class="hidden lg:flex text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
                 </div>
                 
-                <button id="btn-header-add" onclick="window.openModal('add-modal')" class="hidden md:flex bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-xl font-black transition-colors items-center gap-2 cursor-pointer whitespace-nowrap shrink-0">
-    <i class="fa-solid fa-tag"></i> Пристроить добро</button>
-            </div>
-            <div class="flex items-center gap-2 sm:gap-3 lg:hidden ml-4">
-                <button onclick="window.toggleDarkMode()" class="text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i class="fa-solid fa-moon text-lg"></i></button>
-                <button class="text-2xl text-stone-600 dark:text-stone-300 cursor-pointer w-10 h-10 flex items-center justify-center" onclick="window.toggleMobileMenu()"></button>
+                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" class="hidden md:flex bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-black transition-colors items-center gap-2 cursor-pointer whitespace-nowrap shrink-0">
+                    <i class="fa-solid fa-tag"></i> <span class="hidden xl:inline">Пристроить добро</span><span class="xl:hidden">Продать</span>
+                </button>
+                
+                <button onclick="window.toggleDarkMode()" class="sm:hidden text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i class="fa-solid fa-moon text-lg"></i></button>
+                <button class="lg:hidden text-2xl text-stone-600 dark:text-stone-300 cursor-pointer w-10 h-10 flex items-center justify-center" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
     </nav>
@@ -387,15 +390,9 @@
             </div>
             
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
-                    <i class="fa-solid fa-magnifying-glass text-stone-400 text-base"></i>
-                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск товаров..." class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
-                </div>
-                <div class="flex w-full sm:w-auto gap-3">
-                    <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
-                        <i class="fa-solid fa-sliders"></i> Фильтры
-                    </button>
-                </div>
+                <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="w-full sm:w-auto bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer lg:hidden">
+                    <i class="fa-solid fa-sliders"></i> Фильтры
+                </button>
             </div>
         </div>
 
@@ -2295,16 +2292,36 @@
             window.fetchItems();
         };
 
-        // Умный поиск с задержкой (чтобы не спамить базу при каждой введенной букве)
         window.searchTimeout = null;
         window.handleSearch = (e) => { 
             window.searchQuery = e.target.value.trim(); 
             window.displayedCount = 12; 
             
+            const grid = document.getElementById('main-items-grid');
+            const vipSection = document.getElementById('vip-section');
+            if (vipSection) vipSection.classList.add('hidden'); // Скрываем VIP при поиске
+            
+            // МГНОВЕННЫЙ ОТКЛИК: скрываем/показываем карты прямо в браузере без ожидания сервера
+            if (grid && window.loadedItems) {
+                const query = window.searchQuery.toLowerCase();
+                if (query !== '') {
+                    // Ищем совпадения локально от 1 буквы
+                    const localFiltered = window.loadedItems.filter(item => (item.title || '').toLowerCase().includes(query));
+                    if (localFiltered.length > 0) {
+                        grid.innerHTML = localFiltered.slice(0, 12).map(i => window.createCardHtml(i, false)).join('');
+                    } else {
+                        grid.innerHTML = ''; // Очищаем, если совпадений нет
+                    }
+                } else {
+                    grid.innerHTML = ''; // Очищаем сетку при стирании
+                }
+            }
+
+            // Отправляем запрос на сервер с задержкой 300мс (чтобы БД выдала точные результаты и пагинацию)
             clearTimeout(window.searchTimeout);
             window.searchTimeout = setTimeout(() => {
                 window.fetchItems(); 
-            }, 400); // Сайт ждет 400мс после ввода последней буквы и сам начинает поиск
+            }, 300); 
         };
         
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
