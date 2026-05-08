@@ -80,13 +80,12 @@
         @media (min-width: 1024px) {
             body.is-list-mode main {
                 display: grid !important;
-                grid-template-columns: 260px 1fr !important; /* Левая колонка аккуратная */
-                gap: 0 2.5rem !important; /* Больше воздуха между фильтром и товарами */
+                grid-template-columns: 260px 1fr !important; 
+                gap: 0 3rem !important; 
                 align-items: start;
             }
             body.is-list-mode main > * { grid-column: 1 / -1 !important; }
             
-            /* Делаем фильтр частью страницы и "липким" (едет за вами) */
             body.is-list-mode #filter-panel-wrapper {
                 position: sticky !important;
                 top: 90px !important; 
@@ -96,36 +95,40 @@
                 height: max-content;
                 grid-template-rows: 1fr !important; 
                 overflow: visible !important;
+                /* Выравнивание по верхнему краю заголовка "Свежие объявления" */
+                margin-top: 0.25rem !important; 
             }
             
-            /* УБИРАЕМ КОРОБКУ (фон, рамку, тени) у панели фильтров */
             body.is-list-mode #filter-panel > div { 
                 background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
                 padding: 0 !important;
-                margin-bottom: 0 !important;
             }
             
-            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
             body.is-list-mode #btn-toggle-filters { display: none !important; }
+
+            /* Стильные разделительные линии в тему сайта */
+            .sidebar-divider {
+                border-bottom: 1px solid rgba(20, 184, 166, 0.2); /* Цвет brand-500 с прозрачностью */
+                margin: 1.5rem 0;
+            }
+            .dark .sidebar-divider { border-color: rgba(20, 184, 166, 0.1); }
             
-            /* Кнопки Применить/Сбросить ставим друг под другом для солидности */
+            /* Кнопки управления */
             body.is-list-mode #filter-panel .flex.justify-end {
                 flex-direction: column;
                 gap: 0.75rem;
                 border-top: none !important;
-                margin-top: 1.5rem !important;
+                margin-top: 1rem !important;
             }
-            body.is-list-mode #filter-panel .flex.justify-end button {
-                width: 100%; /* Растягиваем кнопки на всю ширину колонки */
-            }
-            
-            /* Товары справа */
+            body.is-list-mode #filter-panel .flex.justify-end button { width: 100%; }
+
+            /* Свежие объявления справа */
             body.is-list-mode #fresh-ads-section {
                 grid-column: 2 !important;
                 grid-row: 8 !important;
-                min-width: 0;
             }
         }
         
@@ -324,57 +327,39 @@
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
                     <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Категория</label>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Категория</h4>
                             <div id="sidebar-categories" class="flex flex-col gap-0.5">
                                 </div>
                         </div>
 
-                        <div>
-                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Город</label>
-                            <select id="filter-city" onchange="window.applyFilters()" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white transition-colors">
-                                <option value="Все">Все города</option>
-                                <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
-                                <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
-                                <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
-                            </select>
-                        </div>
+                        <div class="sidebar-divider lg:block hidden"></div>
 
                         <div>
-                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Состояние</label>
-                            <div class="flex flex-col gap-3">
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="filter-cond-radio" value="Все" onchange="window.applyCondition(this.value)" class="hidden peer" checked>
-                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
-                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">Любое</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="filter-cond-radio" value="Новое" onchange="window.applyCondition(this.value)" class="hidden peer">
-                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
-                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">✨ Новое</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="radio" name="filter-cond-radio" value="Б/У" onchange="window.applyCondition(this.value)" class="hidden peer">
-                                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
-                                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">♻️ Б/У</span>
-                                </label>
-                            </div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Город</h4>
+                            <div id="sidebar-cities" class="flex flex-col gap-0.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                                </div>
                         </div>
-                        
+
+                        <div class="sidebar-divider lg:block hidden"></div>
+
                         <div>
-                            <label class="block text-base font-black text-stone-900 dark:text-white mb-3">Цена</label>
-                            <div class="flex gap-2">
-                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text transition-colors">
-                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white cursor-text transition-colors">
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Состояние</h4>
+                            <div class="flex flex-col gap-3" id="condition-radios-wrap">
+                                </div>
+                        </div>
+
+                        <div class="sidebar-divider lg:block hidden"></div>
+
+                        <div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Цена</h4>
+                            <div class="flex gap-2 mb-4">
+                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
+                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
                             </div>
-                            <select id="filter-currency" onchange="window.applyFilters()" class="w-full mt-2 bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm outline-none focus:border-brand-500 cursor-pointer text-stone-900 dark:text-white transition-colors">
-                                <option value="Все">Валюта: Любая</option><option value="RSD">Только RSD</option><option value="EUR">Только EUR</option>
-                            </select>
+                            
+                            <label class="block text-xs font-bold text-stone-400 mb-3 uppercase">Валюта</label>
+                            <div class="flex flex-col gap-3" id="currency-radios-wrap">
+                                </div>
                         </div>
                     </div>
                     
@@ -2088,17 +2073,28 @@
         };
 
         window.resetFilters = () => {
-            document.getElementById('filter-city').value = 'Все';
-            document.getElementById('filter-price-min').value = '';
-            document.getElementById('filter-price-max').value = ''; 
-            document.getElementById('filter-currency').value = 'Все'; 
-            
-            // Сброс кастомных галочек
+            // 1. Очищаем поля ввода цены
+            const elMin = document.getElementById('filter-price-min');
+            const elMax = document.getElementById('filter-price-max');
+            if (elMin) elMin.value = '';
+            if (elMax) elMax.value = '';
+
+            // 2. Сбрасываем глобальные переменные фильтров в исходное состояние
+            window.filterCity = 'Все';
+            window.filterPriceMin = '';
+            window.filterPriceMax = '';
+            window.filterCurrency = 'Все';
             window.filterCondition = 'Все';
-            const condRadios = document.getElementsByName('filter-cond-radio');
-            if(condRadios) condRadios.forEach(r => { if(r.value === 'Все') r.checked = true; });
-            
-            window.filterByCategory('Все'); // Автоматически обновляет товары и аккордеон
+            window.currentCategory = 'Все';
+
+            // 3. ПЕРЕРИСОВЫВАЕМ САЙДБАР
+            // Это обновит все кнопки городов, категорий и радио-кнопки (валюта/состояние)
+            if (typeof window.initSidebar === 'function') {
+                window.initSidebar();
+            }
+
+            // 4. Применяем пустые фильтры, чтобы загрузить все товары заново
+            window.applyFilters();
         };
 
         window.subcategoriesMap = {
@@ -2931,6 +2927,72 @@
         });
 
         setTimeout(window.renderCustomCategorySelect, 200);
+
+        // --- ПРОФЕССИОНАЛЬНЫЕ ФИЛЬТРЫ (Авито-стиль) ---
+        
+        // 1. Отрисовка Категорий
+        window.renderSidebarCategories = () => {
+            const container = document.getElementById('sidebar-categories');
+            if(!container || !window.subcategoriesMap) return;
+            let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
+            for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
+                const isActiveMain = window.currentCategory.startsWith(mainCat);
+                html += `
+                <div class="sidebar-cat-group mt-1">
+                    <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
+                        <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform ${isActiveMain ? 'rotate-180' : ''}"></i>
+                    </div>
+                    <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 mt-1 mb-2 flex flex-col gap-1.5 ${isActiveMain ? '' : 'hidden'}">`;
+                subs.forEach(sub => {
+                    const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
+                    html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
+                });
+                html += `</div></div>`;
+            }
+            container.innerHTML = html;
+        };
+
+        // 2. Отрисовка Городов (как категории)
+        window.renderSidebarCities = () => {
+            const container = document.getElementById('sidebar-cities');
+            const cities = ["Все", "Белград", "Нови-Сад", "Ниш", "Крагуевац", "Суботица", "Зренянин", "Панчево", "Чачак", "Кралево", "Нови-Пазар", "Смедерево", "Лесковац", "Вране", "Сомбор"];
+            if(!container) return;
+            container.innerHTML = cities.map(city => `
+                <button onclick="window.filterCity='${city}'; window.applyFilters(); window.renderSidebarCities();" class="text-left w-full py-1.5 text-sm font-bold ${window.filterCity === city ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">
+                    ${city === 'Все' ? 'Вся Сербия' : city}
+                </button>
+            `).join('');
+        };
+
+        // 3. Универсальный рендер Радио-кнопок (для Состояния и Валюты)
+        window.renderCustomRadios = (id, name, options, currentVal, callbackName) => {
+            const container = document.getElementById(id);
+            if(!container) return;
+            container.innerHTML = options.map(opt => `
+                <label class="flex items-center gap-3 cursor-pointer group">
+                    <input type="radio" name="${name}" value="${opt.val}" onchange="window.${callbackName}(this.value)" class="hidden peer" ${currentVal === opt.val ? 'checked' : ''}>
+                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                    </div>
+                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${opt.label}</span>
+                </label>
+            `).join('');
+        };
+
+        window.applyCondition = (val) => { window.filterCondition = val; window.applyFilters(); };
+        window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
+        window.toggleSidebarCat = (el) => { el.nextElementSibling.classList.toggle('hidden'); el.querySelector('i').classList.toggle('rotate-180'); };
+
+        // Инициализация при загрузке
+        window.initSidebar = () => {
+            window.renderSidebarCategories();
+            window.renderSidebarCities();
+            window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], window.filterCondition, 'applyCondition');
+            window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label:'Любая'}, {val:'RSD', label:'RSD (Динары)'}, {val:'EUR', label:'EUR (Евро)'}], window.filterCurrency, 'applyCurrency');
+        };
+        setTimeout(window.initSidebar, 200);
+        
         window.fetchItems();
 
         const urlParams = new URLSearchParams(window.location.search);
