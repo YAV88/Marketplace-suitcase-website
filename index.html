@@ -52,43 +52,76 @@
         .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden !important; margin-bottom: 2px !important; padding-bottom: 2px; }
         .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
-        /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА КАК НА АВИТО) === */
-        .view-list { grid-template-columns: 1fr !important; gap: 1rem !important; }
-        .view-list .item-card { flex-direction: row !important; height: 170px !important; align-items: stretch; }
-        .view-list .card-img-wrap { width: 220px !important; height: 100% !important; flex-shrink: 0; }
-        .view-list .card-body-wrap { padding: 1.25rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        .view-list h4 { font-size: 1.15rem !important; white-space: normal !important; line-height: 1.4 !important; margin-bottom: 0.5rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
-        .view-list .price-text { font-size: 1.5rem !important; margin-top: 0 !important; margin-bottom: 0.5rem !important; }
-        .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: auto !important; color: #9ca3af; display: flex !important; font-size: 0.85rem !important; }
+        /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА PREMIUM) === */
+        .view-list { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+        .view-list .item-card { flex-direction: row !important; height: 210px !important; align-items: stretch; }
+        .view-list .card-img-wrap { width: 260px !important; height: 100% !important; flex-shrink: 0; border-right: 1px solid #f5f5f4; }
+        .dark .view-list .card-img-wrap { border-color: #292524; }
+        
+        .view-list .card-body-wrap { padding: 1.5rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        /* Заголовок и цена */
+        .view-list .flex.justify-between.items-start { margin-bottom: 0.5rem !important; }
+        .view-list h4 { font-size: 1.25rem !important; line-height: 1.4 !important; max-width: 70%; }
+        .view-list .price-text { font-size: 1.5rem !important; }
+        
+        /* Описание товара (включается ТОЛЬКО в режиме списка, заполняя пустоту) */
+        .view-list .view-list-desc { 
+            display: -webkit-box !important; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+        
+        /* Низ карточки (Геометка и время) */
+        .view-list .mt-auto.pt-3.border-t { border-top: none !important; padding-top: 0 !important; font-size: 0.9rem !important; color: #9ca3af; }
 
-        /* === УМНАЯ СЕТКА САЙДБАРА НА ПК === */
+        /* === УМНАЯ СЕТКА САЙДБАРА И «БЕСШОВНЫЙ» ФИЛЬТР НА ПК === */
         @media (min-width: 1024px) {
             body.is-list-mode main {
                 display: grid !important;
-                grid-template-columns: 280px 1fr !important;
-                gap: 0 2rem !important;
+                grid-template-columns: 260px 1fr !important; /* Левая колонка аккуратная */
+                gap: 0 2.5rem !important; /* Больше воздуха между фильтром и товарами */
                 align-items: start;
             }
+            body.is-list-mode main > * { grid-column: 1 / -1 !important; }
             
-            /* Все элементы по умолчанию занимают всю ширину (VIP, Категории и т.д.) */
-            body.is-list-mode main > * {
-                grid-column: 1 / -1 !important;
-            }
-            
-            /* Фильтр ставим строго в левую колонку под верхними блоками */
+            /* Делаем фильтр частью страницы и "липким" (едет за вами) */
             body.is-list-mode #filter-panel-wrapper {
+                position: sticky !important;
+                top: 90px !important; 
                 grid-column: 1 !important;
                 grid-row: 8 !important; 
                 width: 100% !important;
                 height: max-content;
-                grid-template-rows: 1fr !important; /* Открываем фильтр */
+                grid-template-rows: 1fr !important; 
                 overflow: visible !important;
             }
-            body.is-list-mode #filter-panel > div { margin-bottom: 0 !important; }
-            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
-            body.is-list-mode #btn-toggle-filters { display: none !important; } /* Прячем кнопку фильтров */
             
-            /* Свежие объявления ставим в правую колонку */
+            /* УБИРАЕМ КОРОБКУ (фон, рамку, тени) у панели фильтров */
+            body.is-list-mode #filter-panel > div { 
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            
+            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+            body.is-list-mode #btn-toggle-filters { display: none !important; }
+            
+            /* Кнопки Применить/Сбросить ставим друг под другом для солидности */
+            body.is-list-mode #filter-panel .flex.justify-end {
+                flex-direction: column;
+                gap: 0.75rem;
+                border-top: none !important;
+                margin-top: 1.5rem !important;
+            }
+            body.is-list-mode #filter-panel .flex.justify-end button {
+                width: 100%; /* Растягиваем кнопки на всю ширину колонки */
+            }
+            
+            /* Товары справа */
             body.is-list-mode #fresh-ads-section {
                 grid-column: 2 !important;
                 grid-row: 8 !important;
@@ -2224,10 +2257,15 @@
                     ${condBadge}
                 </div>
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col justify-between">
-                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">${vipCrown}${i.title || 'Без названия'}</h4>
-                    <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
-                    <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
-                    <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-2 pt-2">
+                    <div>
+                        <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">${vipCrown}${i.title || 'Без названия'}</h4>
+                        <div class="text-brand-600 price-text ${priceClass} mt-0.5">${i.price || 0} ${i.currency || 'RSD'}</div>
+                        <div class="flex items-center mt-1.5 mb-1">${deliveryBadges}</div>
+                        
+                        <p class="hidden view-list-desc text-sm text-stone-500 dark:text-stone-400 mt-2">${i.description || ''}</p>
+                    </div>
+                    
+                    <div class="text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
                         <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
                         <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
                     </div>
