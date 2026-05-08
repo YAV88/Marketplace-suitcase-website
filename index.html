@@ -52,83 +52,17 @@
         .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden !important; margin-bottom: 2px !important; padding-bottom: 2px; }
         .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
-        /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА КАК НА АВИТО) === */
-        .view-list { 
-            grid-template-columns: 1fr !important; /* Всегда 1 колонка */
-            gap: 0.75rem !important; 
-        }
-        
-        .view-list .item-card { 
-            flex-direction: row !important; 
-            height: 150px !important; 
-            align-items: stretch; 
-        }
-        
-        .view-list .card-img-wrap { 
-            width: 170px !important; 
-            height: 100% !important; 
-            flex-shrink: 0; 
-        }
-        
-        .view-list .card-body-wrap { 
-            padding: 1rem !important; 
-            flex: 1; 
-            min-width: 0; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-        }
-        
-        .view-list h4 { 
-            font-size: 1.1rem !important; 
-            white-space: normal !important; 
-            line-height: 1.3 !important; 
-            display: -webkit-box !important; 
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-        }
-        
-        .view-list .price-text { 
-            font-size: 1.25rem !important; 
-            margin-top: 0 !important; 
-        }
-        
-        .view-list .border-t.text-xs { 
-            border-top: none !important; 
-            padding-top: 0 !important; 
-            margin-top: 0 !important; 
-            color: #9ca3af; 
-            display: flex !important; /* Возвращаем гео-метку */
-        }
+        /* === РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ КАК НА KP) === */
+        .view-list { grid-template-columns: 1fr !important; gap: 0.5rem !important; }
+        @media (min-width: 768px) { .view-list { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+        @media (min-width: 1280px) { .view-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
 
-        /* === ЛОГИКА БОКОВОГО САЙДБАРА НА ПК === */
-        @media (min-width: 1024px) {
-            body.is-list-mode #desktop-layout {
-                flex-direction: row !important; /* Ставим в ряд: слева фильтр, справа контент */
-                gap: 2rem !important;
-            }
-            body.is-list-mode #filter-panel-wrapper {
-                width: 270px !important;
-                flex-shrink: 0;
-                position: sticky;
-                top: 80px; /* Прилипает при скролле */
-                height: max-content;
-                grid-template-rows: 1fr !important; /* Принудительно открыт */
-                overflow: visible !important;
-            }
-            body.is-list-mode #filter-panel > div {
-                margin-bottom: 0 !important;
-            }
-            body.is-list-mode #filter-grid {
-                grid-template-columns: 1fr !important; /* Фильтры друг под другом */
-                gap: 1rem !important;
-            }
-            body.is-list-mode #btn-toggle-filters {
-                display: none !important; /* Прячем кнопку фильтров сверху */
-            }
-        }
-        
+        .view-list .item-card { flex-direction: row !important; height: 130px !important; align-items: stretch; }
+        .view-list .card-img-wrap { width: 130px !important; height: 100% !important; flex-shrink: 0; }
+        .view-list .card-body-wrap { padding: 0.75rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
+        .view-list .price-text { font-size: 1.1rem !important; margin-top: auto !important; margin-bottom: 0.25rem !important; }
+        .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: 0 !important; color: #9ca3af; }
         /* === ОГРАНИЧЕНИЕ СЕТКИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (Профиль и Витрина) === */
         /* Поскольку окна ограничены 1024px, мы останавливаемся на 4 колонках, чтобы карты оставались крупными */
         .modal-grid.view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
@@ -312,19 +246,17 @@
                         </select>
                         <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
                     </div>
-                    <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                    <button onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                         <i class="fa-solid fa-sliders"></i> Фильтры
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="desktop-layout" class="flex flex-col items-start w-full relative">
-            
-            <div id="filter-panel-wrapper" class="w-full">
-                <div id="filter-panel">
-                    <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative transition-all">
-                        <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div id="filter-panel-wrapper">
+            <div id="filter-panel">
+                <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-stone-500 mb-2">Категория</label>
                             <div>
@@ -375,14 +307,14 @@
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
-                            <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                            <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
-                        </div>
+                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
+                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
                     </div>
                 </div>
-            </div> <div id="main-content-column" class="w-full flex-1 min-w-0">
+            </div>
+        </div>
 
-                <div id="main-cats-container" class="mb-3 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-3 pb-2 md:pb-0 snap-x md:snap-none" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div id="main-cats-container" class="mb-3 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-3 pb-2 md:pb-0 snap-x md:snap-none" style="scrollbar-width: none; -ms-overflow-style: none;">
             <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все</button>
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> ТОП</button>
             
@@ -454,8 +386,8 @@
                 <i class="fa-solid fa-box-open text-6xl mb-5 opacity-30"></i>
                 <p class="font-bold text-lg">Ничего не найдено</p>
             </div>
-            
-            </div> </div> </main>
+        </div>
+    </main>
 
     <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
@@ -2889,35 +2821,25 @@
         window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
 
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
-        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
-        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
         window.setViewMode = (mode) => {
-            window.currentViewMode = mode;
-            localStorage.setItem('svalka_view_mode', mode);
-            
-            // Триггер для CSS: перестраиваем каркас
-            if (mode === 'list') { document.body.classList.add('is-list-mode'); } 
-            else { document.body.classList.remove('is-list-mode'); }
-
-            const btnGrid = document.getElementById('btn-view-grid'); 
-            const btnList = document.getElementById('btn-view-list'); 
-            const grid = document.getElementById('main-items-grid');
-            
+            window.currentViewMode = mode; localStorage.setItem('svalka_view_mode', mode);
+            const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list'); const grid = document.getElementById('main-items-grid');
             if (btnGrid && btnList) {
-                if (mode === 'grid') { 
-                    btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; 
-                } else { 
-                    btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
-                    btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; 
-                }
+                if (mode === 'grid') { btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; } 
+                else { btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; }
             }
-            if (grid) { 
-                grid.classList.remove('view-grid', 'view-list');
-                grid.classList.add(`view-${mode}`); 
-            }
+            if (grid) { grid.classList.remove('view-grid', 'view-list'); grid.classList.add(`view-${mode}`); }
         };
         setTimeout(() => window.setViewMode(window.currentViewMode), 300);
+
+        // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc, клик вне окна, стрелочки) ---
+        
+        // 1. Закрытие по клику вне окна (используем mousedown для 100% срабатывания)
+        document.addEventListener('mousedown', (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('modal-overlay')) {
+                window.closeModal(e.target.id);
+            }
+        });
 
         // 2. Управление с клавиатуры
         document.addEventListener('keydown', (e) => {
