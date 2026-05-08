@@ -327,9 +327,13 @@
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-stone-400 group-focus-within:text-brand-500 transition-colors"></i>
                 </div>
-                <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск товаров, недвижимость, услуг..." class="w-full bg-stone-100 dark:bg-stone-800 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium text-stone-900 dark:text-white outline-none transition-all shadow-sm">
+                <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск вещей, услуг..." class="w-full bg-stone-100 dark:bg-stone-800 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 rounded-2xl pl-11 pr-12 py-2.5 text-sm font-medium text-stone-900 dark:text-white outline-none transition-all shadow-sm">
+                
+                <button id="search-clear-btn" onclick="window.clearSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-400 hover:text-brand-600 transition-colors hidden cursor-pointer">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
             </div>
-
+            
             <div class="flex items-center gap-3 lg:gap-4 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 lg:pl-6">
                 <button onclick="window.toggleDarkMode()" class="hidden sm:flex text-stone-400 hover:text-brand-600 transition w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
                 
@@ -2294,9 +2298,16 @@
 
         window.searchTimeout = null;
         window.handleSearch = (e) => { 
-            window.searchQuery = e.target.value.trim(); 
+            window.searchQuery = e.target.value.trim();
             window.displayedCount = 12; 
             
+            // Показываем или скрываем крестик
+            const clearBtn = document.getElementById('search-clear-btn');
+            if (clearBtn) {
+                if (window.searchQuery.length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+
             const grid = document.getElementById('main-items-grid');
             const vipSection = document.getElementById('vip-section');
             
@@ -2320,7 +2331,16 @@
             clearTimeout(window.searchTimeout);
             window.searchTimeout = setTimeout(() => {
                 window.fetchItems(); 
-            }, 300); 
+            }, 300);
+        };
+
+        // ФУНКЦИЯ ДЛЯ КРЕСТИКА ОЧИСТКИ
+        window.clearSearch = () => {
+            const input = document.getElementById('main-search-input');
+            if (input) {
+                input.value = '';
+                window.handleSearch({ target: input }); // Запускаем поиск для пустой строки
+            }
         };
         
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
