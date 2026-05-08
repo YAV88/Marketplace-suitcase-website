@@ -431,23 +431,32 @@
                 <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
                 <h4 id="main-feed-title" class="font-black text-xl text-stone-500">Свежие объявления</h4>
             </div>
-
-            <div class="flex items-center gap-3">
-                <div class="relative hidden md:block">
-                    <select id="sort-select" onchange="window.handleSort()" class="appearance-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-3 pr-8 py-1.5 font-bold text-xs text-stone-600 dark:text-stone-300 outline-none cursor-pointer">
-                        <option value="new">Новые</option>
-                        <option value="cheap">Дешевые</option>
-                        <option value="exp">Дорогие</option>
+            <div class="flex items-center gap-2">
+                <div class="relative hidden md:block" id="custom-sort-wrapper">
+                    <button id="custom-sort-btn" onclick="window.toggleSortMenu()" class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-3 pr-2 h-9 font-bold text-xs text-stone-600 dark:text-stone-300 outline-none cursor-pointer transition-colors hover:border-brand-500 w-[130px]">
+                        <span id="custom-sort-label">Новые</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200" id="custom-sort-icon"></i>
+                    </button>
+                        
+                    <div id="custom-sort-menu" class="absolute right-0 top-full mt-1 w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg shadow-lg overflow-hidden hidden z-50 py-1">
+                        <button onclick="window.selectSort('new', 'Новые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Новые</button>
+                        <button onclick="window.selectSort('cheap', 'Дешевые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Дешевые</button>
+                        <button onclick="window.selectSort('exp', 'Дорогие')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Дорогие</button>
+                     </div>
+                        
+                    <select id="sort-select" class="hidden">
+                        <option value="new">Сначала новые</option>
+                        <option value="cheap">Сначала дешевые</option>
+                        <option value="exp">Сначала дорогие</option>
                     </select>
-                    <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-[10px] pointer-events-none"></i>
                 </div>
 
-                <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-lg border border-stone-200 dark:border-stone-700 shrink-0">
-                    <button id="btn-view-grid" onclick="window.setViewMode('grid')" class="px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer">
-                        <i class="fa-solid fa-table-cells-large"></i>
+                <div class="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700 shrink-0 h-9">
+                    <button id="btn-view-grid" onclick="window.setViewMode('grid')" class="h-full px-3 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer flex items-center justify-center">
+                        <i class="fa-solid fa-table-cells-large text-sm"></i>
                     </button>
-                    <button id="btn-view-list" onclick="window.setViewMode('list')" class="px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer">
-                        <i class="fa-solid fa-list"></i>
+                    <button id="btn-view-list" onclick="window.setViewMode('list')" class="h-full px-3 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer flex items-center justify-center">
+                        <i class="fa-solid fa-list text-sm"></i>
                     </button>
                 </div>
             </div>
@@ -3023,6 +3032,31 @@
             window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], window.filterCondition, 'applyCondition');
             window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label:'Любая'}, {val:'RSD', label:'RSD (Динары)'}, {val:'EUR', label:'EUR (Евро)'}], window.filterCurrency, 'applyCurrency');
         };
+
+        // --- ЛОГИКА КАСТОМНОЙ СОРТИРОВКИ ---
+        window.toggleSortMenu = () => {
+            const menu = document.getElementById('custom-sort-menu');
+            const icon = document.getElementById('custom-sort-icon');
+            if(menu) menu.classList.toggle('hidden');
+            if(icon) icon.classList.toggle('rotate-180');
+        };
+
+        window.selectSort = (val, label) => {
+            document.getElementById('custom-sort-label').innerText = label;
+            document.getElementById('sort-select').value = val;
+            window.toggleSortMenu();
+            if (window.handleSort) window.handleSort(); // Запускаем фильтрацию
+        };
+
+        // Закрываем меню сортировки при клике в любое другое место экрана
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('custom-sort-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('custom-sort-menu')?.classList.add('hidden');
+                document.getElementById('custom-sort-icon')?.classList.remove('rotate-180');
+            }
+        });
+        
         setTimeout(window.initSidebar, 200);
         
         window.fetchItems();
