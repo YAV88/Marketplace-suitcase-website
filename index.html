@@ -1046,6 +1046,7 @@
                             <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
                             <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
                             <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
+                            <option value="Другой">Другой</option>
                         </select>
                     </div>
                 </div>
@@ -2975,7 +2976,7 @@
         // 2. Отрисовка Городов (как категории)
         window.renderSidebarCities = () => {
             const container = document.getElementById('sidebar-cities');
-            const cities = ["Все", "Белград", "Нови-Сад", "Ниш", "Крагуевац", "Суботица", "Зренянин", "Панчево", "Чачак", "Кралево", "Нови-Пазар", "Смедерево", "Лесковац", "Вране", "Сомбор"];
+            const cities = ["Все", "Белград", "Нови-Сад", "Ниш", "Крагуевац", "Суботица", "Зренянин", "Панчево", "Чачак", "Кралево", "Нови-Пазар", "Смедерево", "Лесковац", "Вране", "Сомбор", "Другой"];
             if(!container) return;
             container.innerHTML = cities.map(city => `
                 <button onclick="window.filterCity='${city}'; window.applyFilters(); window.renderSidebarCities();" class="text-left w-full py-1.5 text-sm font-bold ${window.filterCity === city ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">
