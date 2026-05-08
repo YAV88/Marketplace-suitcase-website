@@ -389,7 +389,7 @@
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <div class="w-full sm:w-auto flex-1 relative bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 shadow-sm transition-all flex items-center min-w-[250px] focus-within:border-brand-500">
                     <i class="fa-solid fa-magnifying-glass text-stone-400 text-base"></i>
-                    <input type="text" id="main-search-input" onkeydown="if(event.key === 'Enter') window.handleSearch(event)" placeholder="Поиск (нажмите Enter)..." class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
+                    <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Поиск товаров..." class="bg-transparent border-none outline-none ml-3 w-full text-base font-medium text-stone-800 dark:text-stone-200 cursor-text">
                 </div>
                 <div class="flex w-full sm:w-auto gap-3">
                     <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
@@ -2204,27 +2204,29 @@
         };
 
         window.resetFilters = () => {
-            // 1. Очищаем поля ввода цены
+            // 1. Очищаем поля ввода цены и поиска
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
+            const elSearch = document.getElementById('main-search-input');
             if (elMin) elMin.value = '';
             if (elMax) elMax.value = '';
+            if (elSearch) elSearch.value = '';
 
-            // 2. Сбрасываем глобальные переменные фильтров в исходное состояние
+            // 2. Сбрасываем глобальные переменные фильтров
             window.filterCity = 'Все';
             window.filterPriceMin = '';
             window.filterPriceMax = '';
             window.filterCurrency = 'Все';
             window.filterCondition = 'Все';
             window.currentCategory = 'Все';
+            window.searchQuery = ''; // Сбрасываем память поиска
 
             // 3. ПЕРЕРИСОВЫВАЕМ САЙДБАР
-            // Это обновит все кнопки городов, категорий и радио-кнопки (валюта/состояние)
             if (typeof window.initSidebar === 'function') {
                 window.initSidebar();
             }
 
-            // 4. Применяем пустые фильтры, чтобы загрузить все товары заново
+            // 4. Применяем пустые фильтры
             window.applyFilters();
         };
 
@@ -2293,7 +2295,18 @@
             window.fetchItems();
         };
 
-        window.handleSearch = e => { window.searchQuery = e.target.value.toLowerCase(); window.displayedCount = 12; window.fetchItems(); };
+        // Умный поиск с задержкой (чтобы не спамить базу при каждой введенной букве)
+        window.searchTimeout = null;
+        window.handleSearch = (e) => { 
+            window.searchQuery = e.target.value.trim(); 
+            window.displayedCount = 12; 
+            
+            clearTimeout(window.searchTimeout);
+            window.searchTimeout = setTimeout(() => {
+                window.fetchItems(); 
+            }, 400); // Сайт ждет 400мс после ввода последней буквы и сам начинает поиск
+        };
+        
         window.handleSort = () => { const el = document.getElementById('sort-select'); if(el) window.currentSortMode = el.value; window.displayedCount = 12; window.fetchItems(); };
         window.loadMoreItems = () => { window.displayedCount += 12; window.fetchItems(true); };
 
@@ -2711,7 +2724,10 @@
                     let q = supabase.from('items').select('*');
                     if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
-                    if (window.searchQuery) q = q.textSearch('fts', window.searchQuery, { type: 'websearch' });
+                    
+                    // Ищем точное вхождение даже от 1 буквы (например "iph" найдет "iPhone")
+                    if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
+                    
                     if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
                     if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
                     if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
