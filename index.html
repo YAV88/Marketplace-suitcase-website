@@ -52,17 +52,50 @@
         .view-grid h4 { font-size: 0.8rem !important; line-height: 1.4 !important; white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden !important; margin-bottom: 2px !important; padding-bottom: 2px; }
         .view-grid .price-text { font-size: 0.9rem !important; margin-bottom: 0 !important; }
 
-        /* === РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ КАК НА KP) === */
-        .view-list { grid-template-columns: 1fr !important; gap: 0.5rem !important; }
-        @media (min-width: 768px) { .view-list { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1rem !important; } }
-        @media (min-width: 1280px) { .view-list { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+        /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА КАК НА АВИТО) === */
+        .view-list { grid-template-columns: 1fr !important; gap: 1rem !important; }
+        .view-list .item-card { flex-direction: row !important; height: 170px !important; align-items: stretch; }
+        .view-list .card-img-wrap { width: 220px !important; height: 100% !important; flex-shrink: 0; }
+        .view-list .card-body-wrap { padding: 1.25rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .view-list h4 { font-size: 1.15rem !important; white-space: normal !important; line-height: 1.4 !important; margin-bottom: 0.5rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
+        .view-list .price-text { font-size: 1.5rem !important; margin-top: 0 !important; margin-bottom: 0.5rem !important; }
+        .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: auto !important; color: #9ca3af; display: flex !important; font-size: 0.85rem !important; }
 
-        .view-list .item-card { flex-direction: row !important; height: 130px !important; align-items: stretch; }
-        .view-list .card-img-wrap { width: 130px !important; height: 100% !important; flex-shrink: 0; }
-        .view-list .card-body-wrap { padding: 0.75rem !important; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        .view-list h4 { font-size: 0.9rem !important; white-space: normal !important; line-height: 1.3 !important; margin-bottom: 0.25rem !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-bottom: 0; }
-        .view-list .price-text { font-size: 1.1rem !important; margin-top: auto !important; margin-bottom: 0.25rem !important; }
-        .view-list .border-t.text-xs { border-top: none !important; padding-top: 0 !important; margin-top: 0 !important; color: #9ca3af; }
+        /* === УМНАЯ СЕТКА САЙДБАРА НА ПК === */
+        @media (min-width: 1024px) {
+            body.is-list-mode main {
+                display: grid !important;
+                grid-template-columns: 280px 1fr !important;
+                gap: 0 2rem !important;
+                align-items: start;
+            }
+            
+            /* Все элементы по умолчанию занимают всю ширину (VIP, Категории и т.д.) */
+            body.is-list-mode main > * {
+                grid-column: 1 / -1 !important;
+            }
+            
+            /* Фильтр ставим строго в левую колонку под верхними блоками */
+            body.is-list-mode #filter-panel-wrapper {
+                grid-column: 1 !important;
+                grid-row: 8 !important; 
+                width: 100% !important;
+                height: max-content;
+                grid-template-rows: 1fr !important; /* Открываем фильтр */
+                overflow: visible !important;
+            }
+            body.is-list-mode #filter-panel > div { margin-bottom: 0 !important; }
+            body.is-list-mode #filter-grid { grid-template-columns: 1fr !important; gap: 1.25rem !important; }
+            body.is-list-mode #btn-toggle-filters { display: none !important; } /* Прячем кнопку фильтров */
+            
+            /* Свежие объявления ставим в правую колонку */
+            body.is-list-mode #fresh-ads-section {
+                grid-column: 2 !important;
+                grid-row: 8 !important;
+                min-width: 0;
+            }
+        }
+        
         /* === ОГРАНИЧЕНИЕ СЕТКИ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (Профиль и Витрина) === */
         /* Поскольку окна ограничены 1024px, мы останавливаемся на 4 колонках, чтобы карты оставались крупными */
         .modal-grid.view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
@@ -246,7 +279,7 @@
                         </select>
                         <i class="fa-solid fa-arrow-down-short-wide absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"></i>
                     </div>
-                    <button onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                    <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="flex-1 sm:flex-none bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                         <i class="fa-solid fa-sliders"></i> Фильтры
                     </button>
                 </div>
@@ -256,7 +289,7 @@
         <div id="filter-panel-wrapper">
             <div id="filter-panel">
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-stone-500 mb-2">Категория</label>
                             <div>
@@ -352,7 +385,7 @@
             <button class="bg-white text-brand-600 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-50 transition shadow-sm shrink-0 w-full sm:w-auto">Подключить</button>
         </div>
 
-        <div>
+        <div id="fresh-ads-section" class="w-full">
             <div class="flex justify-between items-center mb-4 pl-1">
                 <div class="flex items-center gap-3">
                     <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
@@ -2821,16 +2854,25 @@
         window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
 
         window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
+        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
         window.setViewMode = (mode) => {
-            window.currentViewMode = mode; localStorage.setItem('svalka_view_mode', mode);
+            window.currentViewMode = mode;
+            localStorage.setItem('svalka_view_mode', mode);
+            
+            // Триггер для CSS: включаем режим сайдбара
+            if (mode === 'list') { document.body.classList.add('is-list-mode'); } 
+            else { document.body.classList.remove('is-list-mode'); }
+
             const btnGrid = document.getElementById('btn-view-grid'); const btnList = document.getElementById('btn-view-list'); const grid = document.getElementById('main-items-grid');
             if (btnGrid && btnList) {
-                if (mode === 'grid') { btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; } 
-                else { btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer"; btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; }
+                if (mode === 'grid') { btnGrid.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+btnList.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; } 
+                else { btnList.className = "px-3 py-1.5 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer";
+btnGrid.className = "px-3 py-1.5 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer"; }
             }
-            if (grid) { grid.classList.remove('view-grid', 'view-list'); grid.classList.add(`view-${mode}`); }
+            if (grid) { grid.classList.remove('view-grid', 'view-list');
+grid.classList.add(`view-${mode}`); }
         };
-        setTimeout(() => window.setViewMode(window.currentViewMode), 300);
 
         // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc, клик вне окна, стрелочки) ---
         
