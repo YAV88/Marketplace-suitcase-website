@@ -77,8 +77,17 @@
         /* 2. PREMIUM СТИЛИ ДЛЯ ПК (Идеальные пропорции) */
         @media (min-width: 1024px) {
             .view-list .item-card { height: 190px !important; } /* Продающая высота карточки */
-            .view-list .card-img-wrap { width: 250px !important; } /* Идеальное фото */
-            .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; }
+            
+            /* ИСПРАВЛЕНИЕ: Жестко растягиваем контейнер фото на 100% высоты карточки */
+            .view-list .card-img-wrap { 
+                width: 250px !important; 
+                height: 100% !important; 
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            } 
+            
+            .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; justify-content: center; }
             
             .view-list h4 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; max-height: none; }
             .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
