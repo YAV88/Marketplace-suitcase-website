@@ -63,12 +63,9 @@
         .view-list h4 { font-size: 0.95rem !important; line-height: 1.3 !important; height: auto !important; max-height: 2.6em; overflow: hidden; margin-bottom: 4px !important; }
         .view-list .price-text { font-size: 1.2rem !important; font-weight: 900; margin-bottom: 2px !important; }
         
-        /* Бейджи доставки поверх фото (только для списка) */
-        .view-list .delivery-badges-overlay { position: absolute; bottom: 6px; left: 6px; display: flex; flex-wrap: wrap; gap: 4px; z-index: 10; }
-
         /* Логика переключения элементов (Сетка vs Список) */
-        .view-list .view-grid-city, .view-list .view-grid-badges { display: none !important; }
-        .view-grid .view-list-city, .view-grid .delivery-badges-overlay, .view-grid .view-list-desc { display: none !important; }
+        .view-list .view-grid-city { display: none !important; }
+        .view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
         
         /* Стили города и описания в списке */
         .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
@@ -122,7 +119,6 @@
                 font-size: 0.9rem;
                 line-height: 1.5;
             }
-            .view-list .delivery-badges-overlay { bottom: 10px; left: 10px; gap: 6px; }
         }
         
         /* Низ карточки (Геометка и время) */
@@ -416,7 +412,7 @@
 
                         <div>
                             <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Город</h4>
-                            <div id="sidebar-cities" class="flex flex-col gap-0.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                            <div id="sidebar-cities" class="flex flex-col gap-0.5">
                                 </div>
                         </div>
 
@@ -2403,10 +2399,6 @@
                     <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     ${statusBadge}
                     ${condBadge}
-                    
-                    <div class="delivery-badges-overlay">
-                        ${deliveryBadges}
-                    </div>
                 </div>
                 
                 <div class="card-body-wrap ${pClass} flex-1 flex flex-col">
@@ -2419,11 +2411,11 @@
                             ${i.price || 0} ${i.currency || 'RSD'}
                         </div>
                         
-                        <div class="view-list-city font-medium">
+                        <div class="view-list-city font-medium mb-1">
                             <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
                         </div>
                         
-                        <div class="view-grid-badges items-center mt-1.5 mb-1 flex">${deliveryBadges}</div>
+                        <div class="view-badges items-center mt-1.5 flex flex-wrap gap-1.5">${deliveryBadges}</div>
                     </div>
                     
                     <div class="view-list-col-3 hidden">
