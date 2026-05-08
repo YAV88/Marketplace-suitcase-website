@@ -3055,26 +3055,41 @@
                 const profileLogoutBtn = document.getElementById('profile-logout-btn');
                 
                 if (window.currentUser) {
-                    loginBtns.forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
-                    userControls.forEach(el => { el.classList.remove('hidden'); el.classList.add('flex'); });
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.remove('hidden'); profileLogoutBtn.classList.add('flex'); }
-                    // ПОКАЗЫВАЕМ КАРАНДАШ
-                    const editBtn = document.getElementById('btn-edit-profile'); if(editBtn) editBtn.classList.remove('hidden');
+                    // Прячем кнопки входа: добавляем hidden и удаляем все варианты display
+                    loginBtns.forEach(el => { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('block', 'flex', 'lg:block'); 
+                    });
+                    
+                    userControls.forEach(el => { 
+                        el.classList.remove('hidden'); 
+                        el.classList.add('flex'); 
+                    });
+                    
+                    if(profileLogoutBtn) { 
+                        profileLogoutBtn.classList.remove('hidden'); 
+                        profileLogoutBtn.classList.add('flex');
+                    }
+                    
+                    const editBtn = document.getElementById('btn-edit-profile');
+                    if(editBtn) editBtn.classList.remove('hidden');
 
                     const meta = window.currentUser.user_metadata || {};
                     document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
                     document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
                     
-                    if(meta.avatar_url) document.querySelectorAll('#profile-avatar-container').forEach(el => { el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`; });
-
+                    if(meta.avatar_url) {
+                        document.querySelectorAll('#profile-avatar-container').forEach(el => { 
+                            el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`; 
+                        });
+                    }
+                    
                     try {
                         const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
-                        
-                        // Проверяем, не истекло ли время PRO
                         const isProActive = profile?.pro_until ? new Date(profile.pro_until) > new Date() : false;
                         
                         window.currentUserData = profile || { wallet_balance: 0 };
-                        window.currentUserData.is_pro = isProActive; // Сохраняем для всего сайта
+                        window.currentUserData.is_pro = isProActive;
                         
                         document.querySelectorAll('#profile-balance').forEach(el => el.innerText = window.currentUserData.wallet_balance || 0);
                         if(isProActive) document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
@@ -3085,14 +3100,28 @@
                         window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                     } catch(e) {}
 
-                    // ЗАПУСКАЕМ СЛУЖАЩЕГО ЗА УВЕДОМЛЕНИЯМИ
                     window.updateChatBadges();
                     window.initGlobalChatListener();
 
                 } else {
-                    loginBtns.forEach(el => { el.classList.remove('hidden'); });
-                    userControls.forEach(el => { el.classList.add('hidden'); userControls.classList.remove('flex'); });
-                    if(profileLogoutBtn) { profileLogoutBtn.classList.add('hidden'); profileLogoutBtn.classList.remove('flex'); }
+                    // Возвращаем видимость кнопок входа
+                    loginBtns.forEach(el => { 
+                        el.classList.remove('hidden'); 
+                        // Для главной кнопки в шапке возвращаем адаптивный класс
+                        if (el.id === 'nav-login-btn') el.classList.add('lg:block');
+                        else el.classList.add('block');
+                    });
+                    
+                    // Скрываем элементы управления пользователя (исправлен цикл)
+                    userControls.forEach(el => { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('flex'); 
+                    });
+                    
+                    if(profileLogoutBtn) { 
+                        profileLogoutBtn.classList.add('hidden'); 
+                        profileLogoutBtn.classList.remove('flex');
+                    }
                     if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
                 }
                 
