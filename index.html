@@ -1331,7 +1331,7 @@
 
         window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = []; 
         window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все'; 
-        window.searchQuery = ''; window.showUrgentOnly = false; window.filterCity = 'Все';
+        window.searchQuery = ''; window.showUrgentOnly = false; window.filterCities = [];
         window.filterPriceMin = ''; window.filterPriceMax = ''; window.filterCurrency = 'Все'; 
         window.currentProfileTab = 'items'; window.activeModalItemId = null; 
         window.editingItemId = null; window.userFavorites = new Set(); 
@@ -2231,7 +2231,7 @@
             if (elSearch) elSearch.value = '';
 
             // 2. Сбрасываем глобальные переменные фильтров
-            window.filterCity = 'Все';
+            window.filterCities = [];
             window.filterPriceMin = '';
             window.filterPriceMax = '';
             window.filterCurrency = 'Все';
@@ -2786,7 +2786,7 @@
                 try {
                     let q = supabase.from('items').select('*');
                     if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCity !== 'Все') q = q.eq('city', window.filterCity);
+                    if (window.filterCities.length > 0) q = q.in('city', window.filterCities);
                     
                     // Ищем точное вхождение даже от 1 буквы (например "iph" найдет "iPhone")
                     if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
@@ -2805,7 +2805,7 @@
 
                     let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(6);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCity !== 'Все') vq = vq.eq('city', window.filterCity);
+                    if (window.filterCities.length > 0) vq = vq.in('city', window.filterCities);
                     // Добавлено: фильтрация VIP-объявлений по поиску
                     if (window.searchQuery) vq = vq.ilike('title', `%${window.searchQuery}%`);
 
@@ -2842,7 +2842,7 @@
                         const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
                         const searchQ = (window.searchQuery || '').toLowerCase(); const titleStr = (i.title || '').toLowerCase();
                         const matchSearch = titleStr.includes(searchQ); const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
-                        const matchCity = window.filterCity === 'Все' || i.city === window.filterCity;
+                        const matchCity = window.filterCities.length === 0 || window.filterCities.includes(i.city);
                         const matchCond = window.filterCondition === 'Все' || i.condition === window.filterCondition;
                         let matchPrice = true; const p = Number(i.price) || 0;
                         if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
@@ -3183,15 +3183,18 @@
             container.innerHTML = html;
         };
 
-        window.toggleSidebarCat = (el) => {
-            const icon = el.querySelector('i');
+        window.toggleSidebarCat = (el) => { 
             const subs = el.nextElementSibling;
-            if(subs.classList.contains('hidden')) {
-                subs.classList.remove('hidden');
-                icon.classList.add('rotate-180');
+            const icon = el.querySelector('i');
+            icon.classList.toggle('rotate-180');
+            
+            // Плавное переключение через max-height
+            if (subs.classList.contains('max-h-0')) {
+                subs.classList.remove('max-h-0', 'opacity-0');
+                subs.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
             } else {
-                subs.classList.add('hidden');
-                icon.classList.remove('rotate-180');
+                subs.classList.add('max-h-0', 'opacity-0');
+                subs.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
             }
         };
 
@@ -3228,9 +3231,9 @@
                 <div class="sidebar-cat-group mt-1">
                     <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
                         <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform ${isActiveMain ? 'rotate-180' : ''}"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
                     </div>
-                    <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 mt-1 mb-2 flex flex-col gap-1.5 ${isActiveMain ? '' : 'hidden'}">`;
+                    <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
                 subs.forEach(sub => {
                     const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
                     html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
@@ -3241,15 +3244,32 @@
         };
 
         // 2. Отрисовка Городов (как категории)
+        // 2. Отрисовка Городов (Чекбоксы с мультивыбором)
         window.renderSidebarCities = () => {
             const container = document.getElementById('sidebar-cities');
-            const cities = ["Все", "Белград", "Нови-Сад", "Ниш", "Крагуевац", "Суботица", "Зренянин", "Панчево", "Чачак", "Кралево", "Нови-Пазар", "Смедерево", "Лесковац", "Вране", "Сомбор", "Другой"];
+            const cities = ["Белград", "Нови-Сад", "Ниш", "Крагуевац", "Суботица", "Зренянин", "Панчево", "Чачак", "Кралево", "Нови-Пазар", "Смедерево", "Лесковац", "Вране", "Сомбор", "Другой"];
             if(!container) return;
-            container.innerHTML = cities.map(city => `
-                <button onclick="window.filterCity='${city}'; window.applyFilters(); window.renderSidebarCities();" class="text-left w-full py-1.5 text-sm font-bold ${window.filterCity === city ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">
-                    ${city === 'Все' ? 'Вся Сербия' : city}
-                </button>
-            `).join('');
+            
+            container.innerHTML = cities.map(city => {
+                const isChecked = window.filterCities.includes(city);
+                return `
+                <label class="flex items-center gap-3 cursor-pointer group py-1">
+                    <input type="checkbox" value="${city}" onchange="window.toggleCity(this.value, this.checked)" class="hidden peer" ${isChecked ? 'checked' : ''}>
+                    <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all shrink-0">
+                        <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                    </div>
+                    <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${city}</span>
+                </label>
+            `}).join('');
+        };
+
+        window.toggleCity = (city, isChecked) => {
+            if (isChecked) {
+                if (!window.filterCities.includes(city)) window.filterCities.push(city);
+            } else {
+                window.filterCities = window.filterCities.filter(c => c !== city);
+            }
+            window.applyFilters();
         };
 
         // 3. Универсальный рендер Радио-кнопок (для Состояния и Валюты)
