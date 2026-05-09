@@ -2692,25 +2692,25 @@
                     if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
 
                     if(actionControls) {
-                        // Переопределяем контейнер: меняем плоскую строку на вертикальную колонку
-                        actionControls.className = "flex flex-col gap-2 mt-2 w-full";
+                        // Контейнер: делаем отступы между кнопками чуть плотнее (gap-1.5)
+                        actionControls.className = "flex flex-col gap-1.5 mt-3 w-full";
                         
                         let html = '';
                         if (item.status === 'sold') {
-                            html += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-stone-200 transition"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
+                            html += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-stone-200 transition shadow-sm"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
                         } else {
                             const isRes = item.status === 'reserved';
-                            // ПЕРВЫЙ УРОВЕНЬ: Главные действия (Продажа и Резерв)
-                            html += `<div class="grid grid-cols-2 gap-2 w-full">
-                                        <button onclick="window.changeItemStatus('sold')" class="bg-emerald-500 hover:bg-emerald-600 text-white h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm"><i class="fa-solid fa-handshake"></i> Продано</button>
-                                        <button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm ${isRes ? 'text-stone-600' : 'text-amber-600 hover:bg-amber-50'}"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять резерв' : 'В резерв'}</button>
+                            // ПЕРВЫЙ УРОВЕНЬ: Элегантные и компактные главные действия (h-9, text-xs)
+                            html += `<div class="grid grid-cols-2 gap-1.5 w-full">
+                                        <button onclick="window.changeItemStatus('sold')" class="bg-emerald-500 hover:bg-emerald-600 text-white h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm"><i class="fa-solid fa-handshake text-sm"></i> Продано</button>
+                                        <button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm ${isRes ? 'text-stone-600' : 'text-amber-600 hover:bg-amber-50'}"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять резерв' : 'В резерв'}</button>
                                      </div>`;
                         }
                         
-                        // ВТОРОЙ УРОВЕНЬ: Второстепенные действия (Редактировать и Удалить)
-                        html += `<div class="grid grid-cols-2 gap-2 w-full">
-                                    <button onclick="window.editItem('${item.id}')" class="bg-white dark:bg-stone-900 text-stone-500 hover:text-brand-600 border border-stone-200 dark:border-stone-700 h-10 rounded-xl font-medium text-xs flex items-center justify-center gap-2 transition"><i class="fa-solid fa-pen"></i> Изменить</button>
-                                    <button onclick="window.deleteItem('${item.id}')" class="bg-white dark:bg-stone-900 text-stone-500 hover:text-red-500 border border-stone-200 dark:border-stone-700 h-10 rounded-xl font-medium text-xs flex items-center justify-center gap-2 transition"><i class="fa-solid fa-trash-can"></i> Удалить</button>
+                        // ВТОРОЙ УРОВЕНЬ: Ультра-компактные сервисные ghost-кнопки (h-8, мелкий капс)
+                        html += `<div class="grid grid-cols-2 gap-1.5 w-full">
+                                    <button onclick="window.editItem('${item.id}')" class="bg-transparent text-stone-400 hover:text-brand-600 border border-stone-200/60 dark:border-stone-700/60 h-8 rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition hover:bg-stone-50 dark:hover:bg-stone-800/50"><i class="fa-solid fa-pen"></i> Изменить</button>
+                                    <button onclick="window.deleteItem('${item.id}')" class="bg-transparent text-stone-400 hover:text-red-500 border border-stone-200/60 dark:border-stone-700/60 h-8 rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition hover:bg-red-50 dark:hover:bg-red-900/20"><i class="fa-solid fa-trash-can"></i> Удалить</button>
                                  </div>`;
                                  
                         actionControls.innerHTML = html;
