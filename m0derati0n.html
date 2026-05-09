@@ -207,11 +207,18 @@
                             </div>
                             
                             <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 bg-stone-50 p-2 rounded-xl border border-stone-100">
-                                <div class="flex items-center gap-1">
-                                    <span class="text-[10px] font-bold text-stone-500 uppercase tracking-widest mr-1">Поднятия</span>
-                                    <input type="number" id="balance-${user.id}" value="${user.wallet_balance || 0}" class="w-16 bg-white border border-stone-200 rounded-lg p-1.5 text-center text-sm font-bold text-brand-600 outline-none focus:border-brand-500">
-                                    <button onclick="updateBalance('${user.id}', this)" class="bg-stone-200 text-stone-600 hover:bg-brand-500 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center transition" title="Сохранить баланс"><i class="fa-solid fa-floppy-disk text-xs"></i></button>
+                                <div class="flex items-center gap-1 bg-amber-50 rounded-lg p-1 border border-amber-100">
+                                    <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mx-1" title="Токены поднятий">BUMP</span>
+                                    <input type="number" id="bump-${user.id}" value="${user.bump_tokens || 0}" class="w-14 bg-white border border-amber-200 rounded p-1 text-center text-sm font-bold text-stone-700 outline-none">
                                 </div>
+                                <div class="flex items-center gap-1 bg-purple-50 rounded-lg p-1 border border-purple-100">
+                                    <span class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mx-1" title="VIP токены">VIP</span>
+                                    <input type="number" id="vip-${user.id}" value="${user.vip_tokens || 0}" class="w-14 bg-white border border-purple-200 rounded p-1 text-center text-sm font-bold text-stone-700 outline-none">
+                                </div>
+                                
+                                <button onclick="updateTokens('${user.id}', this)" class="bg-stone-200 text-stone-700 hover:bg-brand-500 hover:text-white px-3 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition shadow-sm" title="Сохранить токены">
+                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Сохранить
+                                </button>
                                 
                                 <div class="h-6 w-px bg-stone-200 hidden sm:block"></div>
                                 
@@ -285,27 +292,43 @@
             }
         }
 
-        async function updateBalance(userId, btn) {
-            const input = document.getElementById(`balance-${userId}`);
-            const newBalance = parseInt(input.value) || 0;
+        // СОХРАНЕНИЕ ТОКЕНОВ (BUMP и VIP)
+        async function updateTokens(userId, btn) {
+            const bumpInput = document.getElementById(`bump-${userId}`);
+            const vipInput = document.getElementById(`vip-${userId}`);
+            
+            const newBump = parseInt(bumpInput.value) || 0;
+            const newVip = parseInt(vipInput.value) || 0;
+            
             const originalHtml = btn.innerHTML;
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i>';
-            const { error } = await supabaseClient.from('profiles').update({ wallet_balance: newBalance }).eq('id', userId);
+            const { error } = await supabaseClient.from('profiles').update({ 
+                bump_tokens: newBump, 
+                vip_tokens: newVip 
+            }).eq('id', userId);
             
-            if (error) {
-                alert("Ошибка обновления баланса: " + error.message);
-            } else {
-                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
-                if(userIndex > -1) adminState.profiles[userIndex].wallet_balance = newBalance;
-                btn.classList.replace('bg-stone-200', 'bg-emerald-500');
-                btn.classList.replace('text-stone-600', 'text-white');
+            if (error) { 
+                alert("Ошибка: " + error.message); 
+            } else { 
+                const index = adminState.profiles.findIndex(p => p.id === userId); 
+                if(index > -1) {
+                    adminState.profiles[index].bump_tokens = newBump; 
+                    adminState.profiles[index].vip_tokens = newVip;
+                }
+                
+                // Красивая зеленая галочка об успехе
+                btn.classList.remove('bg-stone-200', 'text-stone-700');
+                btn.classList.add('bg-green-500', 'text-white');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
                 setTimeout(() => {
-                    btn.classList.replace('bg-emerald-500', 'bg-stone-200');
-                    btn.classList.replace('text-white', 'text-stone-600');
-                }, 1000);
+                    btn.classList.remove('bg-green-500', 'text-white');
+                    btn.classList.add('bg-stone-200', 'text-stone-700');
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }, 2000);
             }
-            btn.disabled = false; btn.innerHTML = originalHtml;
         }
 
         async function deleteItem(itemId, btn) {
