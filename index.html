@@ -922,6 +922,9 @@
                         <div class="flex items-center">
                             <button onclick="window.closeModal('profile-modal'); window.openModal('share-modal');" class="bg-stone-50 dark:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-600 px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm hover:text-brand-600 transition cursor-pointer">+ Получить</button>
                         </div>
+                        <div class="flex items-center ml-2">
+                            <button onclick="window.buyProSubscription()" class="bg-gradient-to-r from-brand-500 to-brand-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs shadow-md hover:shadow-lg transition cursor-pointer flex items-center gap-1.5"><i class="fa-brands fa-bitcoin"></i> PRO за 5€</button>
+                        </div>
                     </div>
                     
                     <div id="profile-login-wrapper" class="block w-full sm:w-auto">
@@ -2731,6 +2734,36 @@
                 if (item) item.status = newStatus;
                 window.showToast("Статус обновлен!"); window.openItemDetails(window.activeModalItemId); window.fetchItems(false); 
             } catch(e) { window.showToast("Ошибка", true); }
+        };
+
+        // ФУНКЦИЯ ПОКУПКИ PRO ЧЕРЕЗ CRYPTOMUS
+        window.buyProSubscription = async () => {
+            try {
+                window.showToast("Создаем защищенный счет...");
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) return window.openModal('auth-modal');
+
+                // Обращаемся к нашей новой облачной функции в Supabase
+                const res = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ amount: 5.00 }) // Сумма подписки
+                });
+
+                const data = await res.json();
+                if (data.payment_url) {
+                    // Перекидываем пользователя на страницу оплаты Cryptomus
+                    window.location.href = data.payment_url;
+                } else {
+                    window.showToast("Не удалось создать счет: " + (data.error || "неизвестная ошибка"), true);
+                }
+            } catch(e) {
+                console.error("Payment error:", e);
+                window.showToast("Ошибка соединения с сервером", true);
+            }
         };
 
         window.deleteItem = async (id) => {
