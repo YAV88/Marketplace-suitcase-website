@@ -2884,7 +2884,7 @@
                 let res, vipRes = { data: [] }; let fallbackMode = false;
 
                 try {
-                    let q = supabase.from('items').select('*');
+                    let q = supabase.from('items').select('*').neq('status', 'sold');
                     if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCities.length > 0) q = q.in('city', window.filterCities);
                     
@@ -2903,7 +2903,7 @@
                         q = q.limit(window.displayedCount + 1);
                     }
 
-                    let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(8);
+                    let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(8);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCities.length > 0) vq = vq.in('city', window.filterCities);
                     // Добавлено: фильтрация VIP-объявлений по поиску
