@@ -2590,7 +2590,12 @@
                     if (item.phone) {
                         phoneContainer.classList.remove('hidden'); phoneContainer.classList.add('flex');
                         const phoneEl = document.getElementById('modal-phone');
-                        if(phoneEl) { phoneEl.innerText = item.phone; phoneEl.href = `tel:${item.phone}`; }
+                        if(phoneEl) { 
+                            // Возвращаем иконку и подсвечиваем кнопку фирменными цветами
+                            phoneEl.innerHTML = `<i class="fa-solid fa-phone mr-2"></i> ${item.phone}`; 
+                            phoneEl.className = "w-full h-full py-3.5 flex items-center justify-center bg-brand-50 border border-brand-200 dark:bg-brand-900/20 dark:border-brand-800 rounded-xl hover:bg-brand-100 dark:hover:bg-brand-900/40 transition shadow-sm font-bold text-sm text-brand-600 dark:text-brand-400 cursor-pointer";
+                            phoneEl.href = `tel:${item.phone}`; 
+                        }
                     } else { phoneContainer.classList.add('hidden'); phoneContainer.classList.remove('flex'); }
                 }
 
@@ -2689,26 +2694,22 @@
                     if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
 
                     if(actionControls) {
-                        // Контейнер: делаем отступы между кнопками чуть плотнее (gap-1.5)
-                        actionControls.className = "flex flex-col gap-1.5 mt-3 w-full";
+                        // Жесткая сетка: 2 колонки, равные промежутки. Все кнопки будут одного размера.
+                        actionControls.className = "grid grid-cols-2 gap-2 mt-2 w-full";
                         
                         let html = '';
                         if (item.status === 'sold') {
-                            html += `<button onclick="window.changeItemStatus('active')" class="w-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-stone-200 transition shadow-sm"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
+                            // Если товар продан, кнопка возврата занимает всю ширину (2 колонки)
+                            html += `<button onclick="window.changeItemStatus('active')" class="col-span-2 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-stone-200 transition shadow-sm"><i class="fa-solid fa-rotate-left"></i> Вернуть в продажу</button>`;
                         } else {
                             const isRes = item.status === 'reserved';
-                            // ПЕРВЫЙ УРОВЕНЬ: Элегантные и компактные главные действия (h-9, text-xs)
-                            html += `<div class="grid grid-cols-2 gap-1.5 w-full">
-                                        <button onclick="window.changeItemStatus('sold')" class="bg-emerald-500 hover:bg-emerald-600 text-white h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm"><i class="fa-solid fa-handshake text-sm"></i> Продано</button>
-                                        <button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 h-9 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm ${isRes ? 'text-stone-600' : 'text-amber-600 hover:bg-amber-50'}"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять резерв' : 'В резерв'}</button>
-                                     </div>`;
+                            html += `<button onclick="window.changeItemStatus('sold')" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm"><i class="fa-solid fa-handshake"></i> Продано</button>`;
+                            html += `<button onclick="window.changeItemStatus('${isRes ? 'active' : 'reserved'}')" class="bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100 dark:bg-stone-800 dark:border-stone-700 dark:text-stone-300 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm ${isRes ? '' : 'text-amber-600 border-amber-200 hover:bg-amber-50 dark:text-amber-500'}"><i class="fa-solid ${isRes ? 'fa-unlock' : 'fa-clock'}"></i> ${isRes ? 'Снять резерв' : 'В резерв'}</button>`;
                         }
                         
-                        // ВТОРОЙ УРОВЕНЬ: Ультра-компактные сервисные ghost-кнопки (h-8, мелкий капс)
-                        html += `<div class="grid grid-cols-2 gap-1.5 w-full">
-                                    <button onclick="window.editItem('${item.id}')" class="bg-transparent text-stone-400 hover:text-brand-600 border border-stone-200/60 dark:border-stone-700/60 h-8 rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition hover:bg-stone-50 dark:hover:bg-stone-800/50"><i class="fa-solid fa-pen"></i> Изменить</button>
-                                    <button onclick="window.deleteItem('${item.id}')" class="bg-transparent text-stone-400 hover:text-red-500 border border-stone-200/60 dark:border-stone-700/60 h-8 rounded-lg font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition hover:bg-red-50 dark:hover:bg-red-900/20"><i class="fa-solid fa-trash-can"></i> Удалить</button>
-                                 </div>`;
+                        // Служебные кнопки (одинакового размера с верхними)
+                        html += `<button onclick="window.editItem('${item.id}')" class="bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100 dark:bg-stone-800 dark:border-stone-700 dark:text-stone-300 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm"><i class="fa-solid fa-pen"></i> Изменить</button>`;
+                        html += `<button onclick="window.deleteItem('${item.id}')" class="bg-red-50 text-red-500 border border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400 h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm"><i class="fa-solid fa-trash-can"></i> Удалить</button>`;
                                  
                         actionControls.innerHTML = html;
                     }
