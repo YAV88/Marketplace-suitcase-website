@@ -807,18 +807,18 @@
     </div>
 
     <div id="auth-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[80]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[2rem] shadow-2xl p-5 sm:p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('auth-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="flex justify-center gap-8 mb-8 border-b dark:border-stone-800 pb-3 font-black text-lg">
+            <div class="flex justify-center gap-6 mb-6 border-b dark:border-stone-800 pb-3 font-black text-lg mt-2 sm:mt-0">
                 <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer">Вход</button>
                 <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer">Регистрация</button>
             </div>
-            <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
-                <div id="auth-name-field" class="hidden flex-col gap-4">
-                    <input type="text" id="auth-name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
-                    <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                        <label class="text-sm font-bold text-stone-500 mb-3 block">Выберите аватар</label>
-                        <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
+            <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="window.submitAuth(event);">
+                <div id="auth-name-field" class="hidden flex-col gap-3">
+                    <input type="text" id="auth-name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    <div class="bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700">
+                        <label class="text-sm font-bold text-stone-500 mb-2 block">Выберите аватар</label>
+                        <div class="flex flex-wrap justify-center gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
                     </div>
                 </div>
                 
@@ -840,14 +840,15 @@
                 </div>
 
                 <div>
-                    <input type="password" id="auth-password" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    <input type="password" id="auth-password" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                     
-                    <div id="auth-password-confirm-container" class="hidden mt-4">
-                        <input type="password" id="auth-password-confirm" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    <div id="auth-password-confirm-container" class="hidden mt-3">
+                        <input type="password" id="auth-password-confirm" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                     </div>
 
-                    <p class="text-sm text-stone-400 font-medium mt-2" id="auth-hint">Мин. 8 символов: только латиница и цифры</p>
+                    <p class="text-xs sm:text-sm text-stone-400 font-medium mt-2" id="auth-hint">Мин. 8 символов: латиница и цифры</p>
                 </div>
+                
                 <div class="flex justify-between items-center mt-4">
                     <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer">Войти</button>
                     <button type="button" onclick="window.forgotPassword()" class="text-base font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer">Забыли пароль?</button>
