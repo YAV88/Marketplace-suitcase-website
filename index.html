@@ -2743,29 +2743,29 @@
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session) return window.openModal('auth-modal');
 
-                // Обращаемся к нашей новой облачной функции в Supabase
-                const res = await fetch(`${supabaseUrl}/functions/v1/create-payment`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session.access_token}`
-                    },
-                    body: JSON.stringify({ amount: 5.00 }) // Сумма подписки
+                // ИСПОЛЬЗУЕМ ВСТРОЕННЫЙ МЕТОД SUPABASE (он сам подставит все нужные ключи и токены)
+                const { data, error } = await supabase.functions.invoke('create-payment', {
+                    body: { amount: 5.00 }
                 });
 
-                const data = await res.json();
-                if (data.payment_url) {
+                if (error) {
+                    console.error("Ошибка вызова функции:", error);
+                    window.showToast("Ошибка сервера: " + error.message, true);
+                    return;
+                }
+
+                if (data && data.payment_url) {
                     // Перекидываем пользователя на страницу оплаты Cryptomus
                     window.location.href = data.payment_url;
                 } else {
-                    window.showToast("Не удалось создать счет: " + (data.error || "неизвестная ошибка"), true);
+                    window.showToast("Не удалось получить ссылку на оплату", true);
                 }
             } catch(e) {
                 console.error("Payment error:", e);
                 window.showToast("Ошибка соединения с сервером", true);
             }
         };
-
+        
         window.deleteItem = async (id) => {
             if (!window.currentUser) return;
             if (confirm("Удалить это объявление навсегда?")) {
