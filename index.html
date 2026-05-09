@@ -2803,7 +2803,7 @@
                         q = q.limit(window.displayedCount + 1);
                     }
 
-                    let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(6);
+                    let vq = supabase.from('items').select('*').gt('highlighted_until', new Date().toISOString()).limit(8);
                     if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
                     if (window.filterCities.length > 0) vq = vq.in('city', window.filterCities);
                     // Добавлено: фильтрация VIP-объявлений по поиску
