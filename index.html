@@ -2269,31 +2269,28 @@
         };
 
         window.applyFilters = () => {
-            // Читаем значения ЦЕНЫ прямо из элементов
-            const minVal = document.getElementById('filter-price-min')?.value || '';
-            const maxVal = document.getElementById('filter-price-max')?.value || '';
-            
-            window.filterPriceMin = minVal;
-            window.filterPriceMax = maxVal;
+            // Считываем валюту напрямую из активной радиокнопки
+            const selectedCurrency = document.querySelector('input[name="curr"]:checked');
+            window.filterCurrency = selectedCurrency ? selectedCurrency.value : 'Все';
         
-            // Читаем СОСТОЯНИЕ
-            const condEl = document.querySelector('input[name="cond"]:checked');
-            window.filterCondition = condEl ? condEl.value : 'Все';
+            // Считываем цены
+            const minPrice = document.getElementById('filter-price-min');
+            const maxPrice = document.getElementById('filter-price-max');
+            window.filterPriceMin = minPrice ? minPrice.value : '';
+            window.filterPriceMax = maxPrice ? maxPrice.value : '';
         
-            // Читаем ВАЛЮТУ
-            const currEl = document.querySelector('input[name="curr"]:checked');
-            window.filterCurrency = currEl ? currEl.value : 'Все';
+            // Считываем состояние
+            const selectedCond = document.querySelector('input[name="cond"]:checked');
+            window.filterCondition = selectedCond ? selectedCond.value : 'Все';
         
-            console.log("Применяем фильтры:", {
-                price: `${window.filterPriceMin} - ${window.filterPriceMax}`,
-                cond: window.filterCondition,
-                curr: window.filterCurrency
-            });
-        
+            // Сбрасываем пагинацию и обновляем ленту
             window.displayedCount = 12;
             window.fetchItems(); 
-            
-            if (window.innerWidth < 1024) window.toggleFilters();
+        
+            if (window.innerWidth < 1024) {
+                window.toggleFilters();
+            }
+            window.showToast("Фильтры обновлены");
         };
         
         // Кнопка сброса фильтров
@@ -3058,7 +3055,9 @@
                         let matchPrice = true; const p = Number(i.price) || 0;
                         if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
                         if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
-                        if (window.filterCurrency && window.filterCurrency !== 'Все' && i.currency !== window.filterCurrency) matchPrice = false;
+                        if (window.filterCurrency && window.filterCurrency !== 'Все') {
+                            q = q.eq('currency', window.filterCurrency);
+                        }
                         return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
                     });
                     // Умная сортировка: приводим всё к единой валюте для сравнения (1 EUR ≈ 117 RSD)
