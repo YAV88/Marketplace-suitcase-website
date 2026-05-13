@@ -2266,49 +2266,48 @@
         };
 
         window.applyFilters = () => {
-            // Собираем данные из полей цены
+            // 1. Считываем значения цены
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
-            
-            if (elMin) window.filterPriceMin = elMin.value;
-            if (elMax) window.filterPriceMax = elMax.value;
+            window.filterPriceMin = elMin ? elMin.value : '';
+            window.filterPriceMax = elMax ? elMax.value : '';
         
-            // Собираем выбранные города из чекбоксов
+            // 2. Считываем выбранные города (чекбоксы)
             const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
             window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
         
-            // Собираем состояние (радиокнопки)
+            // 3. Считываем состояние (радиокнопки)
             const conditionRadio = document.querySelector('input[name="cond"]:checked');
-            if (conditionRadio) window.filterCondition = conditionRadio.value;
+            window.filterCondition = conditionRadio ? conditionRadio.value : 'Все';
         
-            // Собираем валюту (радиокнопки)
+            // 4. Считываем валюту
             const currencyRadio = document.querySelector('input[name="curr"]:checked');
-            if (currencyRadio) window.filterCurrency = currencyRadio.value;
+            window.filterCurrency = currencyRadio ? currencyRadio.value : 'Все';
         
+            // Сбрасываем пагинацию и категорию "ТОП" при применении новых фильтров
             window.showUrgentOnly = false;
             window.displayedCount = 12;
-            
-            // Вызываем загрузку данных
+        
+            // Запускаем поиск
             window.fetchItems(); 
             
-            // Закрываем панель на мобилках после применения
+            // Закрываем панель на мобильных устройствах
             if (window.innerWidth < 1024) {
                 window.toggleFilters();
             }
-            
-            window.showToast("Фильтры применены");
+            window.showToast("Применено");
         };
         
-        // 2. Исправляем сброс (чтобы визуально всё очищалось)
+        // Кнопка сброса фильтров
         window.resetFilters = () => {
-            // Сброс цены
-            if (document.getElementById('filter-price-min')) document.getElementById('filter-price-min').value = '';
-            if (document.getElementById('filter-price-max')) document.getElementById('filter-price-max').value = '';
-            
-            // Сброс поиска
-            if (document.getElementById('main-search-input')) document.getElementById('main-search-input').value = '';
+            // Очистка визуальных полей
+            const inputs = ['filter-price-min', 'filter-price-max', 'main-search-input'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
         
-            // Сброс глобальных переменных
+            // Сброс глобальных параметров
             window.filterCities = [];
             window.filterPriceMin = '';
             window.filterPriceMax = '';
@@ -2317,25 +2316,29 @@
             window.currentCategory = 'Все';
             window.searchQuery = '';
         
-            // Перерисовываем элементы управления в сайдбаре до дефолтных значений
+            // Перерисовка сайдбара (вернет чекбоксы и радио в дефолт)
             window.initSidebar();
         
-            // Загружаем чистый список
+            // Обновление ленты
             window.fetchItems();
-            window.showToast("Фильтры сброшены");
+            window.showToast("Сброшено");
         };
         
-        // Эти функции просто обновляют UI (если нужно), но не дергают базу
+        // Просто сохраняем выбор в переменную, но не вызываем fetchItems сразу
         window.toggleCity = (city, isChecked) => {
-            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+            if (isChecked) {
+                if (!window.filterCities.includes(city)) window.filterCities.push(city);
+            } else {
+                window.filterCities = window.filterCities.filter(c => c !== city);
+            }
         };
         
-        window.applyCondition = (val) => {
-            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+        window.applyCondition = (val) => { 
+            window.filterCondition = val; 
         };
         
-        window.applyCurrency = (val) => {
-            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+        window.applyCurrency = (val) => { 
+            window.filterCurrency = val; 
         };
         
         // 4. Обновляем инициализацию (чтобы не было авто-применения)
