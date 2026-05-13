@@ -2269,28 +2269,29 @@
         };
 
         window.applyFilters = () => {
-            // Считываем валюту напрямую из активной радиокнопки
+            // 1. Принудительно берем значения валюты и состояния из радио-кнопок
             const selectedCurrency = document.querySelector('input[name="curr"]:checked');
+            const selectedCondition = document.querySelector('input[name="cond"]:checked');
+            
             window.filterCurrency = selectedCurrency ? selectedCurrency.value : 'Все';
+            window.filterCondition = selectedCondition ? selectedCondition.value : 'Все';
         
-            // Считываем цены
-            const minPrice = document.getElementById('filter-price-min');
-            const maxPrice = document.getElementById('filter-price-max');
-            window.filterPriceMin = minPrice ? minPrice.value : '';
-            window.filterPriceMax = maxPrice ? maxPrice.value : '';
+            // 2. Берем цены (удаляем лишние пробелы)
+            const elMin = document.getElementById('filter-price-min');
+            const elMax = document.getElementById('filter-price-max');
+            window.filterPriceMin = elMin ? elMin.value.trim() : '';
+            window.filterPriceMax = elMax ? elMax.value.trim() : '';
         
-            // Считываем состояние
-            const selectedCond = document.querySelector('input[name="cond"]:checked');
-            window.filterCondition = selectedCond ? selectedCond.value : 'Все';
-        
-            // Сбрасываем пагинацию и обновляем ленту
+            // 3. Города (массив уже наполняется через toggleCity)
+            
+            // Сбрасываем пагинацию
             window.displayedCount = 12;
+            
+            // Вызываем загрузку данных
             window.fetchItems(); 
-        
-            if (window.innerWidth < 1024) {
-                window.toggleFilters();
-            }
-            window.showToast("Фильтры обновлены");
+            
+            if (window.innerWidth < 1024) window.toggleFilters();
+            window.showToast("Фильтры применены");
         };
         
         // Кнопка сброса фильтров
@@ -2987,19 +2988,27 @@
                 let res, vipRes = { data: [] }; let fallbackMode = false;
 
                 try {
+                    // Базовый запрос
                     let q = supabase.from('items').select('*').neq('status', 'sold');
-                    if (window.currentCategory !== 'Все') q = q.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCities.length > 0) q = q.in('city', window.filterCities);
                     
-                    // Ищем точное вхождение даже от 1 буквы (например "iph" найдет "iPhone")
-                    if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
+                    // --- СТРОГАЯ ФИЛЬТРАЦИЯ ПО ВАЛЮТЕ ---
+                    if (window.filterCurrency && window.filterCurrency !== 'Все') {
+                        // Этот метод заставит БД вернуть ТОЛЬКО товары с этой валютой
+                        q = q.eq('currency', window.filterCurrency);
+                    }
                     
-                    // Внутри fetchItems, где формируется запрос 'q'
-                    if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
+                    // --- ФИЛЬТР ПО СОСТОЯНИЮ ---
+                    if (window.filterCondition && window.filterCondition !== 'Все') {
+                        q = q.eq('condition', window.filterCondition);
+                    }
                     
-                    // Цена должна быть числом для БД (у тебя тип numeric на скриншоте)
-                    if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
-                    if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
+                    // --- ФИЛЬТР ПО ЦЕНЕ (явное приведение к числу) ---
+                    if (window.filterPriceMin) {
+                        q = q.gte('price', Number(window.filterPriceMin));
+                    }
+                    if (window.filterPriceMax) {
+                        q = q.lte('price', Number(window.filterPriceMax));
+                    }
                     
                     if (window.filterCondition && window.filterCondition !== 'Все') {
                         q = q.eq('condition', window.filterCondition);
