@@ -2266,36 +2266,35 @@
         };
 
         window.applyFilters = () => {
-            // 1. Считываем значения цены
+            // 1. Считываем цену напрямую из инпутов
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
             window.filterPriceMin = elMin ? elMin.value : '';
             window.filterPriceMax = elMax ? elMax.value : '';
         
-            // 2. Считываем выбранные города (чекбоксы)
+            // 2. Считываем выбранные города
             const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
             window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
         
-            // 3. Считываем состояние (радиокнопки)
+            // 3. Считываем СОСТОЯНИЕ (ищем отмеченную радиокнопку в группе 'cond')
             const conditionRadio = document.querySelector('input[name="cond"]:checked');
             window.filterCondition = conditionRadio ? conditionRadio.value : 'Все';
         
-            // 4. Считываем валюту
+            // 4. Считываем ВАЛЮТУ (ищем отмеченную радиокнопку в группе 'curr')
             const currencyRadio = document.querySelector('input[name="curr"]:checked');
             window.filterCurrency = currencyRadio ? currencyRadio.value : 'Все';
         
-            // Сбрасываем пагинацию и категорию "ТОП" при применении новых фильтров
+            // Сбрасываем пагинацию
             window.showUrgentOnly = false;
             window.displayedCount = 12;
         
-            // Запускаем поиск
+            // Выполняем запрос к базе
             window.fetchItems(); 
             
-            // Закрываем панель на мобильных устройствах
             if (window.innerWidth < 1024) {
                 window.toggleFilters();
             }
-            window.showToast("Применено");
+            window.showToast("Фильтры применены");
         };
         
         // Кнопка сброса фильтров
@@ -2324,21 +2323,21 @@
             window.showToast("Сброшено");
         };
         
-        // Просто сохраняем выбор в переменную, но не вызываем fetchItems сразу
-        window.toggleCity = (city, isChecked) => {
-            if (isChecked) {
-                if (!window.filterCities.includes(city)) window.filterCities.push(city);
-            } else {
-                window.filterCities = window.filterCities.filter(c => c !== city);
-            }
-        };
-        
+        // Теперь они просто обновляют переменные, но не трогают ленту товаров
         window.applyCondition = (val) => { 
             window.filterCondition = val; 
         };
         
         window.applyCurrency = (val) => { 
             window.filterCurrency = val; 
+        };
+        
+        window.toggleCity = (city, isChecked) => {
+            if (isChecked) {
+                if (!window.filterCities.includes(city)) window.filterCities.push(city);
+            } else {
+                window.filterCities = window.filterCities.filter(c => c !== city);
+            }
         };
         
         // 4. Обновляем инициализацию (чтобы не было авто-применения)
