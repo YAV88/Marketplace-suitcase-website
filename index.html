@@ -2269,30 +2269,24 @@
         };
 
         window.applyFilters = () => {
-            // 1. Считываем цену напрямую из инпутов
+            // 1. Считываем цену из инпутов прямо сейчас
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
             window.filterPriceMin = elMin ? elMin.value : '';
             window.filterPriceMax = elMax ? elMax.value : '';
         
-            // 2. Считываем выбранные города
-            const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
-            window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
-        
-            // 3. Считываем СОСТОЯНИЕ (ищем отмеченную радиокнопку в группе 'cond')
+            // 2. Считываем состояние (проверка выбранного радио)
             const conditionRadio = document.querySelector('input[name="cond"]:checked');
             window.filterCondition = conditionRadio ? conditionRadio.value : 'Все';
         
-            // 4. Считываем ВАЛЮТУ (ищем отмеченную радиокнопку в группе 'curr')
+            // 3. Считываем валюту
             const currencyRadio = document.querySelector('input[name="curr"]:checked');
             window.filterCurrency = currencyRadio ? currencyRadio.value : 'Все';
         
-            // Сбрасываем пагинацию
-            window.showUrgentOnly = false;
+            // 4. Города уже в массиве filterCities благодаря toggleCity
+            
             window.displayedCount = 12;
-        
-            // Выполняем запрос к базе
-            window.fetchItems(); 
+            window.fetchItems(); // Единственный вызов загрузки
             
             if (window.innerWidth < 1024) {
                 window.toggleFilters();
@@ -3001,12 +2995,17 @@
                     // Ищем точное вхождение даже от 1 буквы (например "iph" найдет "iPhone")
                     if (window.searchQuery) q = q.ilike('title', `%${window.searchQuery}%`);
                     
+                    // Внутри fetchItems, где формируется запрос 'q'
                     if (window.filterCurrency !== 'Все') q = q.eq('currency', window.filterCurrency);
+                    
+                    // Цена должна быть числом для БД (у тебя тип numeric на скриншоте)
                     if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
                     if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
+                    
+                    if (window.filterCondition && window.filterCondition !== 'Все') {
+                        q = q.eq('condition', window.filterCondition);
+                    }
                     if (window.showUrgentOnly) q = q.gt('highlighted_until', new Date().toISOString());
-                    if (window.filterCondition && window.filterCondition !== 'Все') q = q.eq('condition', window.filterCondition);
-
                     // Отключаем сортировку по цене на сервере, так как БД не знает курсы валют
                     if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp') {
                         q = q.order('created_at', { ascending: false });
