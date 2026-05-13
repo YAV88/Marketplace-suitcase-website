@@ -2072,6 +2072,9 @@
                 }
                 if(window.renderProfileTabs) window.renderProfileTabs();
                 window.fetchItems(false);
+                if (window.filterCondition && window.filterCondition !== 'Все') {
+                    q = q.eq('condition', window.filterCondition); 
+                }
                 if(window.activeModalItemId === itemId) {
                     const modalFavBtn = document.getElementById('modal-fav-btn');
                     const modalFavIcon = document.querySelector('#modal-fav-btn i');
