@@ -2295,6 +2295,7 @@
             window.searchState.condition = condRadio ? condRadio.value : 'Все';
             window.searchState.priceMin = minEl ? minEl.value.trim() : '';
             window.searchState.priceMax = maxEl ? maxEl.value.trim() : '';
+            window.searchState.cities = window.filterCities || [];
             
             // Сбрасываем пагинацию для нового поиска
             window.searchState.displayedCount = 12;
@@ -2334,7 +2335,6 @@
         // Теперь они просто обновляют переменные, но не трогают ленту товаров
         window.applyCondition = (val) => { 
             window.filterCondition = val; 
-            // УДАЛЕНО: window.applyFilters();
         };
         
         window.applyCurrency = (val) => { 
@@ -3461,50 +3461,6 @@
         });
         
         setTimeout(window.initSidebar, 200);
-        
-        window.fetchItems();
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
-
-        window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
-
-        // --- ПЕРЕКЛЮЧЕНИЕ ВИДА (СЕТКА / СПИСОК) ---
-        window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
-        
-        window.setViewMode = (mode) => {
-            window.currentViewMode = mode;
-            localStorage.setItem('svalka_view_mode', mode);
-            
-            // Триггер для CSS: включаем режим сайдбара
-            if (mode === 'list') { document.body.classList.add('is-list-mode'); } 
-            else { document.body.classList.remove('is-list-mode'); }
-
-            const btnGrid = document.getElementById('btn-view-grid'); 
-            const btnList = document.getElementById('btn-view-list');
-            const grid = document.getElementById('main-items-grid');
-            
-            if (btnGrid && btnList) {
-                // Задаем базовые классы, чтобы кнопки всегда сохраняли центрирование и размер
-                const baseClass = "h-full px-3 rounded-md transition cursor-pointer flex items-center justify-center ";
-                const activeClass = baseClass + "bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400";
-                const inactiveClass = baseClass + "text-stone-400 hover:text-brand-600";
-                
-                if (mode === 'grid') { 
-                    btnGrid.className = activeClass;
-                    btnList.className = inactiveClass; 
-                } else { 
-                    btnList.className = activeClass;
-                    btnGrid.className = inactiveClass; 
-                }
-            }
-            
-            // Восстановили переключение классов самой сетки!
-            if (grid) { 
-                grid.classList.remove('view-grid', 'view-list');
-                grid.classList.add(`view-${mode}`); 
-            }
-        };
 
         // --- УЛУЧШЕННОЕ УПРАВЛЕНИЕ ОКНАМИ (Esc, клик вне окна, стрелочки) ---
         
