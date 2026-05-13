@@ -2269,29 +2269,32 @@
         };
 
         window.applyFilters = () => {
-            // 1. Считываем цену из инпутов прямо сейчас
+            // 1. ПРИНУДИТЕЛЬНОЕ СЧИТЫВАНИЕ ЦЕНЫ ИЗ DOM
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
-            window.filterPriceMin = elMin ? elMin.value : '';
-            window.filterPriceMax = elMax ? elMax.value : '';
+            
+            // Сохраняем значения в глобальные переменные, которые использует fetchItems
+            window.filterPriceMin = elMin ? elMin.value.trim() : '';
+            window.filterPriceMax = elMax ? elMax.value.trim() : '';
         
-            // 2. Считываем состояние (проверка выбранного радио)
+            // 2. Сбор остальных данных
             const conditionRadio = document.querySelector('input[name="cond"]:checked');
             window.filterCondition = conditionRadio ? conditionRadio.value : 'Все';
         
-            // 3. Считываем валюту
             const currencyRadio = document.querySelector('input[name="curr"]:checked');
             window.filterCurrency = currencyRadio ? currencyRadio.value : 'Все';
         
-            // 4. Города уже в массиве filterCities благодаря toggleCity
-            
+            const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
+            window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
+        
+            // Сброс пагинации и запуск запроса
             window.displayedCount = 12;
-            window.fetchItems(); // Единственный вызов загрузки
+            window.fetchItems(); 
             
             if (window.innerWidth < 1024) {
                 window.toggleFilters();
             }
-            window.showToast("Фильтры применены");
+            window.showToast("Применено");
         };
         
         // Кнопка сброса фильтров
