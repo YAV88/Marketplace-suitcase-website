@@ -56,17 +56,31 @@
                 if (btnMore) btnMore.classList.add('hidden');
     
                 const state = window.searchState;
-                let q = _supabase.from('items').select('*', { count: 'exact' }).neq('status', 'sold');
-    
-                // Применяем фильтры из объекта
-                if (state.category && state.category !== 'Все') q = q.ilike('category', `${state.category}%`);
-                if (state.currency && state.currency !== 'Все') q = q.eq('currency', state.currency);
-                if (state.condition && state.condition !== 'Все') q = q.eq('condition', state.condition);
-                if (state.cities && state.cities.length > 0) q = q.in('city', state.cities);
-                if (state.priceMin) q = q.gte('price', Number(state.priceMin));
-                if (state.priceMax) q = q.lte('price', Number(state.priceMax));
-                if (state.searchQuery) q = q.or(`title.ilike.%${state.searchQuery}%,description.ilike.%${state.searchQuery}%`);
-    
+
+                let q = supabase
+                    .from('items')
+                    .select('*', { count: 'exact' })
+                    .neq('status', 'sold');
+            
+                // ПРИМЕНЯЕМ ФИЛЬТРЫ ИЗ ОБЪЕКТА state
+                if (state.category && state.category !== 'Все') {
+                    q = q.ilike('category', `${state.category}%`);
+                }
+                if (state.currency && state.currency !== 'Все') {
+                    q = q.eq('currency', state.currency);
+                }
+                if (state.condition && state.condition !== 'Все') {
+                    q = q.eq('condition', state.condition);
+                }
+                if (state.cities && state.cities.length > 0) {
+                    q = q.in('city', state.cities);
+                }
+                if (state.priceMin) {
+                    q = q.gte('price', Number(state.priceMin));
+                }
+                if (state.priceMax) {
+                    q = q.lte('price', Number(state.priceMax));
+                }
                 // Пагинация
                 const start = isLoadMore ? window.searchState.displayedCount : 0;
                 const end = start + 11;
@@ -1445,14 +1459,6 @@
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
-
-        window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = []; 
-        window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все'; 
-        window.searchQuery = ''; window.showUrgentOnly = false; window.filterCities = [];
-        window.filterPriceMin = ''; window.filterPriceMax = ''; window.filterCurrency = 'Все'; 
-        window.currentProfileTab = 'items'; window.activeModalItemId = null; 
-        window.editingItemId = null; window.userFavorites = new Set(); 
-        window.displayedCount = 12; window.authMode = 'login'; window.authInitialized = false;
 
         // === ЧАТЫ И УВЕДОМЛЕНИЯ ===
         window.currentChatId = null;
