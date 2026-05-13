@@ -24,6 +24,22 @@
                 } 
             } 
         }
+        // 1. Инициализация Supabase (уже есть у тебя)
+        const { createClient } = supabase;
+        const _supabase = createClient('URL', 'KEY');
+    
+        // 2. ВОТ СЮДА ВСТАВЛЯЙ ОБЪЕКТ СОСТОЯНИЯ
+        // Это глобальная точка правды для всех фильтров
+        window.searchState = {
+            category: 'Все',
+            cities: [],
+            condition: 'Все',
+            currency: 'Все',
+            priceMin: '',
+            priceMax: '',
+            searchQuery: '',
+            displayedCount: 12
+        };
     </script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -2269,57 +2285,50 @@
         };
 
         window.applyFilters = () => {
-            // 1. Собираем ЦЕНУ напрямую из DOM
-            const minEl = document.getElementById('filter-price-min');
-            const maxEl = document.getElementById('filter-price-max');
-            window.filterPriceMin = minEl ? minEl.value.trim() : '';
-            window.filterPriceMax = maxEl ? maxEl.value.trim() : '';
-        
-            // 2. Собираем ВАЛЮТУ и СОСТОЯНИЕ из активных радиокнопок
+            // Считываем значения напрямую из DOM в объект состояния
             const currRadio = document.querySelector('input[name="curr"]:checked');
             const condRadio = document.querySelector('input[name="cond"]:checked');
+            const minEl = document.getElementById('filter-price-min');
+            const maxEl = document.getElementById('filter-price-max');
+        
+            window.searchState.currency = currRadio ? currRadio.value : 'Все';
+            window.searchState.condition = condRadio ? condRadio.value : 'Все';
+            window.searchState.priceMin = minEl ? minEl.value.trim() : '';
+            window.searchState.priceMax = maxEl ? maxEl.value.trim() : '';
             
-            window.filterCurrency = currRadio ? currRadio.value : 'Все';
-            window.filterCondition = condRadio ? condRadio.value : 'Все';
+            // Сбрасываем пагинацию для нового поиска
+            window.searchState.displayedCount = 12;
         
-            // 3. Города уже в window.filterCities (обновляются через toggleCity без запроса)
+            // Вызываем загрузку данных
+            window.fetchItems();
         
-            // Сбрасываем счетчик отображения
-            window.displayedCount = 12;
-            window.showUrgentOnly = false;
-        
-            // ГЛАВНЫЙ ВЫЗОВ
-            window.fetchItems(); 
-        
-            // UI-эффекты
             if (window.innerWidth < 1024) window.toggleFilters();
             window.showToast("Фильтры применены");
         };
         
-        // Кнопка сброса фильтров
         window.resetFilters = () => {
-            // Очистка визуальных полей
-            const inputs = ['filter-price-min', 'filter-price-max', 'main-search-input'];
-            inputs.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
+            // Возвращаем объект к начальному состоянию
+            window.searchState = {
+                category: 'Все',
+                cities: [],
+                condition: 'Все',
+                currency: 'Все',
+                priceMin: '',
+                priceMax: '',
+                searchQuery: '',
+                displayedCount: 12
+            };
         
-            // Сброс глобальных параметров
-            window.filterCities = [];
-            window.filterPriceMin = '';
-            window.filterPriceMax = '';
-            window.filterCurrency = 'Все';
-            window.filterCondition = 'Все';
-            window.currentCategory = 'Все';
-            window.searchQuery = '';
+            // Очищаем визуальные элементы в DOM
+            document.getElementById('filter-price-min').value = '';
+            document.getElementById('filter-price-max').value = '';
+            document.getElementById('main-search-input').value = '';
         
-            // Перерисовка сайдбара (вернет чекбоксы и радио в дефолт)
+            // Переинициализируем боковую панель (снимет галочки и вернет радио-кнопки)
             window.initSidebar();
         
-            // Обновление ленты
+            // Загружаем чистый список
             window.fetchItems();
-            window.showToast("Сброшено");
         };
         
         // Теперь они просто обновляют переменные, но не трогают ленту товаров
@@ -2968,45 +2977,19 @@
                 if (btnMore) btnMore.classList.add('hidden');
         
                 // 2. Инициализация базового запроса к Supabase
-                let q = supabase
-                    .from('items')
-                    .select('*', { count: 'exact' })
-                    .neq('status', 'sold'); // Не показываем проданное
-        
-                // 3. ПРИМЕНЕНИЕ СТРОГИХ ФИЛЬТРОВ (Server-side filtering)
+                let q = supabase.from('items').select('*', { count: 'exact' }).neq('status', 'sold');
+
+                // Берем данные из консолидированного объекта
+                const state = window.searchState;
+            
+                if (state.category !== 'Все') q = q.ilike('category', `${state.category}%`);
+                if (state.currency !== 'Все') q = q.eq('currency', state.currency);
+                if (state.condition !== 'Все') q = q.eq('condition', state.condition);
                 
-                // Категория
-                if (window.currentCategory && window.currentCategory !== 'Все') {
-                    q = q.ilike('category', `${window.currentCategory}%`);
-                }
-        
-                // Поиск по тексту
-                if (window.searchQuery && window.searchQuery.trim() !== '') {
-                    q = q.or(`title.ilike.%${window.searchQuery}%,description.ilike.%${window.searchQuery}%`);
-                }
-        
-                // Города (используем .in для массива)
-                if (window.filterCities && window.filterCities.length > 0) {
-                    q = q.in('city', window.filterCities);
-                }
-        
-                // Состояние (Строгое соответствие)
-                if (window.filterCondition && window.filterCondition !== 'Все') {
-                    q = q.eq('condition', window.filterCondition);
-                }
-        
-                // Валюта (Строгое соответствие)
-                if (window.filterCurrency && window.filterCurrency !== 'Все') {
-                    q = q.eq('currency', window.filterCurrency);
-                }
-        
-                // Цена (Числовое сравнение)
-                if (window.filterPriceMin) {
-                    q = q.gte('price', Number(window.filterPriceMin));
-                }
-                if (window.filterPriceMax) {
-                    q = q.lte('price', Number(window.filterPriceMax));
-                }
+                if (state.priceMin) q = q.gte('price', Number(state.priceMin));
+                if (state.priceMax) q = q.lte('price', Number(state.priceMax));
+                
+                if (state.cities.length > 0) q = q.in('city', state.cities);
         
                 // 4. Сортировка и пагинация
                 q = q.order('created_at', { ascending: false })
