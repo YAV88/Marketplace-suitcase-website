@@ -2269,26 +2269,28 @@
         };
 
         window.applyFilters = () => {
-            // 1. Принудительно берем значения валюты и состояния из радио-кнопок
-            const selectedCurrency = document.querySelector('input[name="curr"]:checked');
-            const selectedCondition = document.querySelector('input[name="cond"]:checked');
+            // Принудительно забираем значения из радиокнопок прямо сейчас
+            const currencyEl = document.querySelector('input[name="curr"]:checked');
+            const conditionEl = document.querySelector('input[name="cond"]:checked');
             
-            window.filterCurrency = selectedCurrency ? selectedCurrency.value : 'Все';
-            window.filterCondition = selectedCondition ? selectedCondition.value : 'Все';
+            window.filterCurrency = currencyEl ? currencyEl.value : 'Все';
+            window.filterCondition = conditionEl ? conditionEl.value : 'Все';
         
-            // 2. Берем цены (удаляем лишние пробелы)
-            const elMin = document.getElementById('filter-price-min');
-            const elMax = document.getElementById('filter-price-max');
-            window.filterPriceMin = elMin ? elMin.value.trim() : '';
-            window.filterPriceMax = elMax ? elMax.value.trim() : '';
+            // Забираем значения цен
+            const minInput = document.getElementById('filter-price-min');
+            const maxInput = document.getElementById('filter-price-max');
+            window.filterPriceMin = minInput ? minInput.value.trim() : '';
+            window.filterPriceMax = maxInput ? maxInput.value.trim() : '';
         
-            // 3. Города (массив уже наполняется через toggleCity)
-            
-            // Сбрасываем пагинацию
+            // Логируем для отладки (в консоли будет видно, что именно улетает в базу)
+            console.log("Отправка фильтров:", {
+                валюта: window.filterCurrency,
+                состояние: window.filterCondition,
+                цена: `${window.filterPriceMin} - ${window.filterPriceMax}`
+            });
+        
             window.displayedCount = 12;
-            
-            // Вызываем загрузку данных
-            window.fetchItems(); 
+            window.fetchItems(); // Выполняем один чистый запрос к БД
             
             if (window.innerWidth < 1024) window.toggleFilters();
             window.showToast("Фильтры применены");
@@ -2990,19 +2992,19 @@
                 try {
                     // Базовый запрос
                     let q = supabase.from('items').select('*').neq('status', 'sold');
-                    
-                    // --- СТРОГАЯ ФИЛЬТРАЦИЯ ПО ВАЛЮТЕ ---
+
+                    // 1. СТРОГАЯ ФИЛЬТРАЦИЯ ПО ВАЛЮТЕ (чтобы убрать евро при выборе RSD и наоборот)
                     if (window.filterCurrency && window.filterCurrency !== 'Все') {
-                        // Этот метод заставит БД вернуть ТОЛЬКО товары с этой валютой
+                        // Оператор .eq гарантирует, что БД вернет ТОЛЬКО выбранную валюту
                         q = q.eq('currency', window.filterCurrency);
                     }
                     
-                    // --- ФИЛЬТР ПО СОСТОЯНИЮ ---
+                    // 2. СТРОГАЯ ФИЛЬТРАЦИЯ ПО СОСТОЯНИЮ
                     if (window.filterCondition && window.filterCondition !== 'Все') {
                         q = q.eq('condition', window.filterCondition);
                     }
                     
-                    // --- ФИЛЬТР ПО ЦЕНЕ (явное приведение к числу) ---
+                    // 3. ФИЛЬТРАЦИЯ ПО ЦЕНЕ
                     if (window.filterPriceMin) {
                         q = q.gte('price', Number(window.filterPriceMin));
                     }
