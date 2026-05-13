@@ -2269,32 +2269,31 @@
         };
 
         window.applyFilters = () => {
-            // 1. ПРИНУДИТЕЛЬНОЕ СЧИТЫВАНИЕ ЦЕНЫ ИЗ DOM
-            const elMin = document.getElementById('filter-price-min');
-            const elMax = document.getElementById('filter-price-max');
+            // Читаем значения ЦЕНЫ прямо из элементов
+            const minVal = document.getElementById('filter-price-min')?.value || '';
+            const maxVal = document.getElementById('filter-price-max')?.value || '';
             
-            // Сохраняем значения в глобальные переменные, которые использует fetchItems
-            window.filterPriceMin = elMin ? elMin.value.trim() : '';
-            window.filterPriceMax = elMax ? elMax.value.trim() : '';
+            window.filterPriceMin = minVal;
+            window.filterPriceMax = maxVal;
         
-            // 2. Сбор остальных данных
-            const conditionRadio = document.querySelector('input[name="cond"]:checked');
-            window.filterCondition = conditionRadio ? conditionRadio.value : 'Все';
+            // Читаем СОСТОЯНИЕ
+            const condEl = document.querySelector('input[name="cond"]:checked');
+            window.filterCondition = condEl ? condEl.value : 'Все';
         
-            const currencyRadio = document.querySelector('input[name="curr"]:checked');
-            window.filterCurrency = currencyRadio ? currencyRadio.value : 'Все';
+            // Читаем ВАЛЮТУ
+            const currEl = document.querySelector('input[name="curr"]:checked');
+            window.filterCurrency = currEl ? currEl.value : 'Все';
         
-            const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
-            window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
+            console.log("Применяем фильтры:", {
+                price: `${window.filterPriceMin} - ${window.filterPriceMax}`,
+                cond: window.filterCondition,
+                curr: window.filterCurrency
+            });
         
-            // Сброс пагинации и запуск запроса
             window.displayedCount = 12;
             window.fetchItems(); 
             
-            if (window.innerWidth < 1024) {
-                window.toggleFilters();
-            }
-            window.showToast("Применено");
+            if (window.innerWidth < 1024) window.toggleFilters();
         };
         
         // Кнопка сброса фильтров
