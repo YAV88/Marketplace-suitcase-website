@@ -2266,49 +2266,85 @@
         };
 
         window.applyFilters = () => {
-            const elCity = document.getElementById('filter-city');
-            const elMin = document.getElementById('filter-price-min'); const elMax = document.getElementById('filter-price-max');
-            const elCur = document.getElementById('filter-currency'); 
+            // Собираем данные из полей цены
+            const elMin = document.getElementById('filter-price-min');
+            const elMax = document.getElementById('filter-price-max');
             
-            if (elCity) window.filterCity = elCity.value;
-            if (elMin) window.filterPriceMin = elMin.value; if (elMax) window.filterPriceMax = elMax.value;
-            if (elCur) window.filterCurrency = elCur.value; 
+            if (elMin) window.filterPriceMin = elMin.value;
+            if (elMax) window.filterPriceMax = elMax.value;
+        
+            // Собираем выбранные города из чекбоксов
+            const cityCheckboxes = document.querySelectorAll('#sidebar-cities input[type="checkbox"]:checked');
+            window.filterCities = Array.from(cityCheckboxes).map(cb => cb.value);
+        
+            // Собираем состояние (радиокнопки)
+            const conditionRadio = document.querySelector('input[name="cond"]:checked');
+            if (conditionRadio) window.filterCondition = conditionRadio.value;
+        
+            // Собираем валюту (радиокнопки)
+            const currencyRadio = document.querySelector('input[name="curr"]:checked');
+            if (currencyRadio) window.filterCurrency = currencyRadio.value;
+        
+            window.showUrgentOnly = false;
+            window.displayedCount = 12;
             
-            window.showUrgentOnly = false; window.displayedCount = 12;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-brand-600', 'text-white'));
+            // Вызываем загрузку данных
             window.fetchItems(); 
             
-            // На ПК сайдбар теперь постоянный, поэтому прячем окно фильтров только на мобилках
+            // Закрываем панель на мобилках после применения
             if (window.innerWidth < 1024) {
                 window.toggleFilters();
             }
+            
+            window.showToast("Фильтры применены");
         };
-
+        
+        // 2. Исправляем сброс (чтобы визуально всё очищалось)
         window.resetFilters = () => {
-            // 1. Очищаем поля ввода цены и поиска
-            const elMin = document.getElementById('filter-price-min');
-            const elMax = document.getElementById('filter-price-max');
-            const elSearch = document.getElementById('main-search-input');
-            if (elMin) elMin.value = '';
-            if (elMax) elMax.value = '';
-            if (elSearch) elSearch.value = '';
-
-            // 2. Сбрасываем глобальные переменные фильтров
+            // Сброс цены
+            if (document.getElementById('filter-price-min')) document.getElementById('filter-price-min').value = '';
+            if (document.getElementById('filter-price-max')) document.getElementById('filter-price-max').value = '';
+            
+            // Сброс поиска
+            if (document.getElementById('main-search-input')) document.getElementById('main-search-input').value = '';
+        
+            // Сброс глобальных переменных
             window.filterCities = [];
             window.filterPriceMin = '';
             window.filterPriceMax = '';
             window.filterCurrency = 'Все';
             window.filterCondition = 'Все';
             window.currentCategory = 'Все';
-            window.searchQuery = ''; // Сбрасываем память поиска
-
-            // 3. ПЕРЕРИСОВЫВАЕМ САЙДБАР
-            if (typeof window.initSidebar === 'function') {
-                window.initSidebar();
-            }
-
-            // 4. Применяем пустые фильтры
-            window.applyFilters();
+            window.searchQuery = '';
+        
+            // Перерисовываем элементы управления в сайдбаре до дефолтных значений
+            window.initSidebar();
+        
+            // Загружаем чистый список
+            window.fetchItems();
+            window.showToast("Фильтры сброшены");
+        };
+        
+        // Эти функции просто обновляют UI (если нужно), но не дергают базу
+        window.toggleCity = (city, isChecked) => {
+            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+        };
+        
+        window.applyCondition = (val) => {
+            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+        };
+        
+        window.applyCurrency = (val) => {
+            // Ничего не делаем, applyFilters соберет данные по клику кнопки
+        };
+        
+        // 4. Обновляем инициализацию (чтобы не было авто-применения)
+        window.initSidebar = () => {
+            window.renderSidebarCategories();
+            window.renderSidebarCities();
+            // Рендерим радио с текущими значениями
+            window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], window.filterCondition, 'applyCondition');
+            window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label:'Любая'}, {val:'RSD', label:'RSD (Динары)'}, {val:'EUR', label:'EUR (Евро)'}], window.filterCurrency, 'applyCurrency');
         };
 
         window.subcategoriesMap = {
@@ -3474,14 +3510,6 @@
             
             const icon = el.querySelector('i.fa-chevron-down');
             if (icon) icon.classList.toggle('rotate-180'); 
-        };
-
-        // Инициализация при загрузке
-        window.initSidebar = () => {
-            window.renderSidebarCategories();
-            window.renderSidebarCities();
-            window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], window.filterCondition, 'applyCondition');
-            window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label:'Любая'}, {val:'RSD', label:'RSD (Динары)'}, {val:'EUR', label:'EUR (Евро)'}], window.filterCurrency, 'applyCurrency');
         };
 
         // --- ЛОГИКА КАСТОМНОЙ СОРТИРОВКИ ---
