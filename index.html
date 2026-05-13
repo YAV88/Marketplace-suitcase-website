@@ -15,21 +15,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <script>
-        tailwind.config = { 
-            darkMode: 'class', 
-            theme: { 
-                extend: { 
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Montserrat', 'sans-serif'] },
-                    colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } }
-                } 
-            } 
-        }
-        // 1. Инициализация Supabase (уже есть у тебя)
+        // 1. Инициализация Supabase
         const { createClient } = supabase;
-        const _supabase = createClient('URL', 'KEY');
+        const _supabase = createClient('URL', 'KEY'); // Подставьте свои данные
     
-        // 2. ВОТ СЮДА ВСТАВЛЯЙ ОБЪЕКТ СОСТОЯНИЯ
-        // Это глобальная точка правды для всех фильтров
+        // 2. Единая точка правды для фильтров
         window.searchState = {
             category: 'Все',
             cities: [],
@@ -40,51 +30,38 @@
             searchQuery: '',
             displayedCount: 12
         };
-
+    
+        // 3. Исправленная функция загрузки товаров
         window.fetchItems = async (isLoadMore = false) => {
             const container = document.getElementById('items-container');
             const btnMore = document.getElementById('load-more-btn');
             const skeleton = document.getElementById('skeleton-loader');
     
             try {
-                // Сброс при новом поиске
                 if (!isLoadMore) {
-                    window.searchState.displayedCount = 0; 
+                    window.searchState.displayedCount = 0;
                     if (container) container.innerHTML = '';
                     if (skeleton) skeleton.classList.remove('hidden');
                 }
                 if (btnMore) btnMore.classList.add('hidden');
     
                 const state = window.searchState;
-
-                let q = supabase
-                    .from('items')
-                    .select('*', { count: 'exact' })
-                    .neq('status', 'sold');
-            
-                // ПРИМЕНЯЕМ ФИЛЬТРЫ ИЗ ОБЪЕКТА state
-                if (state.category && state.category !== 'Все') {
-                    q = q.ilike('category', `${state.category}%`);
+                let q = _supabase.from('items').select('*', { count: 'exact' }).neq('status', 'sold');
+    
+                // Применяем строгие фильтры из объекта state
+                if (state.category && state.category !== 'Все') q = q.ilike('category', `${state.category}%`);
+                if (state.currency && state.currency !== 'Все') q = q.eq('currency', state.currency);
+                if (state.condition && state.condition !== 'Все') q = q.eq('condition', state.condition);
+                if (state.cities && state.cities.length > 0) q = q.in('city', state.cities);
+                if (state.priceMin) q = q.gte('price', Number(state.priceMin));
+                if (state.priceMax) q = q.lte('price', Number(state.priceMax));
+                
+                if (state.searchQuery) {
+                    q = q.or(`title.ilike.%${state.searchQuery}%,description.ilike.%${state.searchQuery}%`);
                 }
-                if (state.currency && state.currency !== 'Все') {
-                    q = q.eq('currency', state.currency);
-                }
-                if (state.condition && state.condition !== 'Все') {
-                    q = q.eq('condition', state.condition);
-                }
-                if (state.cities && state.cities.length > 0) {
-                    q = q.in('city', state.cities);
-                }
-                if (state.priceMin) {
-                    q = q.gte('price', Number(state.priceMin));
-                }
-                if (state.priceMax) {
-                    q = q.lte('price', Number(state.priceMax));
-                }
-                // Пагинация
-                const start = isLoadMore ? window.searchState.displayedCount : 0;
-                const end = start + 11;
-                q = q.order('created_at', { ascending: false }).range(start, end);
+    
+                const start = isLoadMore ? state.displayedCount : 0;
+                q = q.order('created_at', { ascending: false }).range(start, start + 11);
     
                 const { data, error, count } = await q;
                 if (error) throw error;
@@ -93,11 +70,12 @@
     
                 if (data && data.length > 0) {
                     data.forEach(item => {
-                        if (container) container.appendChild(window.createItemCard(item));
+                        const mapped = window.mapItemData(item);
+                        if (container && mapped) container.appendChild(window.createItemCard(mapped));
                     });
                     window.searchState.displayedCount += data.length;
                     if (count > window.searchState.displayedCount && btnMore) btnMore.classList.remove('hidden');
-                } else if (!isLoadMore) {
+                } else if (!isLoadMore && container) {
                     container.innerHTML = '<div class="col-span-full text-center py-10 text-stone-400">Ничего не найдено</div>';
                 }
             } catch (err) {
@@ -105,8 +83,25 @@
                 if (skeleton) skeleton.classList.add('hidden');
             }
         };
+    
+        // 4. Единственная функция применения фильтров
+        window.applyFilters = () => {
+            const state = window.searchState;
+            const curr = document.querySelector('input[name="curr"]:checked');
+            const cond = document.querySelector('input[name="cond"]:checked');
+            
+            state.currency = curr ? curr.value : 'Все';
+            state.condition = cond ? cond.value : 'Все';
+            state.priceMin = document.getElementById('filter-price-min')?.value.trim() || '';
+            state.priceMax = document.getElementById('filter-price-max')?.value.trim() || '';
+            state.cities = window.filterCities || [];
+    
+            window.fetchItems(); 
+            if (window.innerWidth < 1024) window.toggleFilters();
+            window.showToast("Применено");
+        };
     </script>
-
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
