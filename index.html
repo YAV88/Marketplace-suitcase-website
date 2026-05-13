@@ -2954,165 +2954,109 @@
         };
 
         window.fetchItems = async (isLoadMore = false) => {
-            const loader = document.getElementById('loading-placeholder'); const mainGrid = document.getElementById('main-items-grid');
-            const emptyState = document.getElementById('empty-state'); const loadMoreBtn = document.getElementById('load-more-btn');
-            const vipSection = document.getElementById('vip-section'); const vipGrid = document.getElementById('vip-items-grid');
-            const proBanner = document.getElementById('pro-thin-banner');
-            
-            if (!isLoadMore) {
-                window.displayedCount = 12;
-                
-                // Умное скрытие: НЕ делаем прозрачным, если пользователь сейчас печатает текст
-                if (!window.searchQuery) {
-                    if(mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
-                    if(vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
-                    if(loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
-                }
-                
-                if(emptyState) emptyState.classList.add('hidden');
-                if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-
-                const feedTitle = document.getElementById('main-feed-title'); const feedIcon = document.getElementById('main-feed-icon');
-                if(feedTitle && feedIcon) {
-                    if(window.showUrgentOnly) { feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200"; feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl"; } 
-                    else { feedTitle.innerText = "Новые находки"; feedTitle.className = "font-black text-xl text-stone-500"; feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl"; }
-                }
-            }
-
+            const container = document.getElementById('items-container');
+            const btnMore = document.getElementById('load-more-btn');
+            const skeleton = document.getElementById('skeleton-loader');
+        
             try {
-                let res, vipRes = { data: [] }; let fallbackMode = false;
-
-                try {
-                    // Базовый запрос
-                    let q = supabase.from('items').select('*').neq('status', 'sold');
-
-                    // 1. СТРОГАЯ ФИЛЬТРАЦИЯ ПО ВАЛЮТЕ (чтобы убрать евро при выборе RSD и наоборот)
-                    if (window.filterCurrency && window.filterCurrency !== 'Все') {
-                        // Оператор .eq гарантирует, что БД вернет ТОЛЬКО выбранную валюту
-                        q = q.eq('currency', window.filterCurrency);
-                    }
-                    
-                    // 2. СТРОГАЯ ФИЛЬТРАЦИЯ ПО СОСТОЯНИЮ
-                    if (window.filterCondition && window.filterCondition !== 'Все') {
-                        q = q.eq('condition', window.filterCondition);
-                    }
-                    
-                    // 3. ФИЛЬТРАЦИЯ ПО ЦЕНЕ
-                    if (window.filterPriceMin) {
-                        q = q.gte('price', Number(window.filterPriceMin));
-                    }
-                    if (window.filterPriceMax) {
-                        q = q.lte('price', Number(window.filterPriceMax));
-                    }
-                    
-                    if (window.showUrgentOnly) q = q.gt('highlighted_until', new Date().toISOString());
-                    // Отключаем сортировку по цене на сервере, так как БД не знает курсы валют
-                    if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp') {
-                        q = q.order('created_at', { ascending: false });
-                        q = q.limit(window.displayedCount + 1);
-                    }
-
-                    let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(8);
-                    if (window.currentCategory !== 'Все') vq = vq.ilike('category', `${window.currentCategory}%`);
-                    if (window.filterCities.length > 0) vq = vq.in('city', window.filterCities);
-                    // Добавлено: фильтрация VIP-объявлений по поиску
-                    if (window.searchQuery) vq = vq.ilike('title', `%${window.searchQuery}%`);
-
-                    const results = await Promise.all([q, vq]);
-                    if (results[0].error) throw results[0].error;
-                    
-                    let itemsData = results[0].data || [];
-                    
-                    // --- МУЛЬТИВАЛЮТНАЯ СОРТИРОВКА В БРАУЗЕРЕ ---
-                    if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp') {
-                        const getPriceForSort = (item) => {
-                            const p = Number(item.price) || 0;
-                            return item.currency === 'EUR' ? p * 117 : p; // 1 EUR ≈ 117 RSD
-                        };
-                        
-                        if (window.currentSortMode === 'cheap') {
-                            itemsData.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
-                        } else if (window.currentSortMode === 'exp') {
-                            itemsData.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
-                        }
-                        
-                        // После правильной сортировки отрезаем нужное количество товаров для пагинации
-                        itemsData = itemsData.slice(0, window.displayedCount + 1);
-                    }
-                    
-                    results[0].data = itemsData;
-                    res = results[0]; vipRes = results[1];
-                } catch (err) {
-                    fallbackMode = true; res = await supabase.from('items').select('*').order('created_at', { ascending: false });
+                // 1. Управление состоянием интерфейса
+                if (!isLoadMore) {
+                    window.displayedCount = 12; // Сброс пагинации при новом поиске
+                    if (container) container.innerHTML = '';
+                    if (skeleton) skeleton.classList.remove('hidden');
                 }
-
-                if (fallbackMode && res.data) {
-                    let filtered = res.data.filter(i => {
-                        const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                        const searchQ = (window.searchQuery || '').toLowerCase(); const titleStr = (i.title || '').toLowerCase();
-                        const matchSearch = titleStr.includes(searchQ); const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
-                        const matchCity = window.filterCities.length === 0 || window.filterCities.includes(i.city);
-                        const matchCond = window.filterCondition === 'Все' || i.condition === window.filterCondition;
-                        let matchPrice = true; const p = Number(i.price) || 0;
-                        if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
-                        if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
-                        if (window.filterCurrency && window.filterCurrency !== 'Все') {
-                            q = q.eq('currency', window.filterCurrency);
-                        }
-                        return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
-                    });
-                    // Умная сортировка: приводим всё к единой валюте для сравнения (1 EUR ≈ 117 RSD)
-                const getPriceForSort = (item) => {
-                    const p = Number(item.price) || 0;
-                    return item.currency === 'EUR' ? p * 117 : p;
-                };
-
-                if (window.currentSortMode === 'cheap') {
-                    filtered.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
-                } else if (window.currentSortMode === 'exp') {
-                    filtered.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
+                if (btnMore) btnMore.classList.add('hidden');
+        
+                // 2. Инициализация базового запроса к Supabase
+                let q = supabase
+                    .from('items')
+                    .select('*', { count: 'exact' })
+                    .neq('status', 'sold'); // Не показываем проданное
+        
+                // 3. ПРИМЕНЕНИЕ СТРОГИХ ФИЛЬТРОВ (Server-side filtering)
+                
+                // Категория
+                if (window.currentCategory && window.currentCategory !== 'Все') {
+                    q = q.ilike('category', `${window.currentCategory}%`);
                 }
-                    vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6); res.data = filtered.slice(0, window.displayedCount + 1);
+        
+                // Поиск по тексту
+                if (window.searchQuery && window.searchQuery.trim() !== '') {
+                    q = q.or(`title.ilike.%${window.searchQuery}%,description.ilike.%${window.searchQuery}%`);
                 }
-
-                const items = (res.data || []).map(window.mapItemData).filter(Boolean);
-                const hasMore = items.length > window.displayedCount;
-                const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
-
-                if (!isLoadMore) window.loadedItems = itemsToDisplay; else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
-
-                if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                    const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
-                    if (vipMapped.length > 0 && vipGrid && vipSection) {
-                        vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto'; 
-                        vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
-                        vipSection.classList.remove('hidden');
-                        vipMapped.forEach(v => { if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
+        
+                // Города (используем .in для массива)
+                if (window.filterCities && window.filterCities.length > 0) {
+                    q = q.in('city', window.filterCities);
+                }
+        
+                // Состояние (Строгое соответствие)
+                if (window.filterCondition && window.filterCondition !== 'Все') {
+                    q = q.eq('condition', window.filterCondition);
+                }
+        
+                // Валюта (Строгое соответствие)
+                if (window.filterCurrency && window.filterCurrency !== 'Все') {
+                    q = q.eq('currency', window.filterCurrency);
+                }
+        
+                // Цена (Числовое сравнение)
+                if (window.filterPriceMin) {
+                    q = q.gte('price', Number(window.filterPriceMin));
+                }
+                if (window.filterPriceMax) {
+                    q = q.lte('price', Number(window.filterPriceMax));
+                }
+        
+                // 4. Сортировка и пагинация
+                q = q.order('created_at', { ascending: false })
+                     .range(isLoadMore ? window.displayedCount : 0, (isLoadMore ? window.displayedCount + 11 : 11));
+        
+                // 5. Выполнение запроса
+                const { data, error, count } = await q;
+        
+                if (error) throw error;
+        
+                // 6. Рендеринг
+                if (skeleton) skeleton.classList.add('hidden');
+        
+                if (!data || data.length === 0) {
+                    if (!isLoadMore && container) {
+                        container.innerHTML = `
+                            <div class="col-span-full text-center py-20">
+                                <p class="text-stone-400 text-lg">Ничего не найдено по вашим параметрам</p>
+                            </div>`;
                     }
-                } else if (!isLoadMore && vipSection) { vipSection.classList.add('hidden'); }
-
-                if (itemsToDisplay.length > 0) {
-                    let html = ''; itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
-                    if(mainGrid) {
-                        mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; 
-                        if (!isLoadMore) mainGrid.innerHTML = html; else mainGrid.insertAdjacentHTML('beforeend', html);
-                        mainGrid.classList.remove('hidden');
-                    }
-                    if(loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }
-                    if(proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
                 } else {
-                    if (!isLoadMore) {
-                        if(mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
-                        if(emptyState) emptyState.classList.remove('hidden'); if(proBanner) proBanner.classList.add('hidden');
+                    // Отрисовка карточек (используем существующую функцию рендера)
+                    data.forEach(item => {
+                        if (container) {
+                            const card = window.createItemCard(item);
+                            container.appendChild(card);
+                        }
+                    });
+        
+                    // Обновляем счетчик для пагинации
+                    if (isLoadMore) {
+                        window.displayedCount += data.length;
+                    } else {
+                        window.displayedCount = data.length;
                     }
-                    if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
+        
+                    // Показываем кнопку "Загрузить еще", если есть что грузить
+                    if (count > window.displayedCount && btnMore) {
+                        btnMore.classList.remove('hidden');
+                    }
                 }
-            } catch(e) { 
-                if (window.loadedItems.length === 0 && loader) {
-                    loader.style.display = 'block';
-                    loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span></div>`;
-                }
-            } finally { if(loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; }
+        
+            } catch (err) {
+                console.error('Критическая ошибка fetchItems:', err);
+                if (skeleton) skeleton.classList.add('hidden');
+                window.showToast("Ошибка при загрузке данных", "error");
+                
+                // Включаем Fallback режим, если база недоступна (необязательно)
+                if (window.runFallbackMode) window.runFallbackMode(isLoadMore);
+            }
         };
 
         window.submitNewItem = async (event) => {
@@ -3408,11 +3352,6 @@
                 subs.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
             }
         };
-
-        window.applyCondition = (val) => {
-            window.filterCondition = val;
-            window.applyFilters(); // Авто-поиск при нажатии на галочку состояния
-        };
         
         setTimeout(window.renderSidebarCategories, 200);
 
@@ -3496,9 +3435,6 @@
                 </label>
             `).join('');
         };
-
-        window.applyCondition = (val) => { window.filterCondition = val; window.applyFilters(); };
-        window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
 
         window.toggleSidebarCat = (el) => { 
             // Ищем родительский контейнер всей категории
