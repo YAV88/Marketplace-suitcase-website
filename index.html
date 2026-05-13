@@ -40,6 +40,57 @@
             searchQuery: '',
             displayedCount: 12
         };
+
+        window.fetchItems = async (isLoadMore = false) => {
+            const container = document.getElementById('items-container');
+            const btnMore = document.getElementById('load-more-btn');
+            const skeleton = document.getElementById('skeleton-loader');
+    
+            try {
+                // Сброс при новом поиске
+                if (!isLoadMore) {
+                    window.searchState.displayedCount = 0; 
+                    if (container) container.innerHTML = '';
+                    if (skeleton) skeleton.classList.remove('hidden');
+                }
+                if (btnMore) btnMore.classList.add('hidden');
+    
+                const state = window.searchState;
+                let q = _supabase.from('items').select('*', { count: 'exact' }).neq('status', 'sold');
+    
+                // Применяем фильтры из объекта
+                if (state.category && state.category !== 'Все') q = q.ilike('category', `${state.category}%`);
+                if (state.currency && state.currency !== 'Все') q = q.eq('currency', state.currency);
+                if (state.condition && state.condition !== 'Все') q = q.eq('condition', state.condition);
+                if (state.cities && state.cities.length > 0) q = q.in('city', state.cities);
+                if (state.priceMin) q = q.gte('price', Number(state.priceMin));
+                if (state.priceMax) q = q.lte('price', Number(state.priceMax));
+                if (state.searchQuery) q = q.or(`title.ilike.%${state.searchQuery}%,description.ilike.%${state.searchQuery}%`);
+    
+                // Пагинация
+                const start = isLoadMore ? window.searchState.displayedCount : 0;
+                const end = start + 11;
+                q = q.order('created_at', { ascending: false }).range(start, end);
+    
+                const { data, error, count } = await q;
+                if (error) throw error;
+    
+                if (skeleton) skeleton.classList.add('hidden');
+    
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        if (container) container.appendChild(window.createItemCard(item));
+                    });
+                    window.searchState.displayedCount += data.length;
+                    if (count > window.searchState.displayedCount && btnMore) btnMore.classList.remove('hidden');
+                } else if (!isLoadMore) {
+                    container.innerHTML = '<div class="col-span-full text-center py-10 text-stone-400">Ничего не найдено</div>';
+                }
+            } catch (err) {
+                console.error('Ошибка:', err);
+                if (skeleton) skeleton.classList.add('hidden');
+            }
+        };
     </script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -2286,27 +2337,20 @@
 
         window.applyFilters = () => {
             const state = window.searchState;
+            
+            // Собираем валюту и состояние
+            const curr = document.querySelector('input[name="curr"]:checked');
+            const cond = document.querySelector('input[name="cond"]:checked');
+            state.currency = curr ? curr.value : 'Все';
+            state.condition = cond ? cond.value : 'Все';
         
-            // Считываем валюту и состояние
-            const currRadio = document.querySelector('input[name="curr"]:checked');
-            const condRadio = document.querySelector('input[name="cond"]:checked');
-            state.currency = currRadio ? currRadio.value : 'Все';
-            state.condition = condRadio ? condRadio.value : 'Все';
+            // Собираем цены
+            state.priceMin = document.getElementById('filter-price-min')?.value.trim() || '';
+            state.priceMax = document.getElementById('filter-price-max')?.value.trim() || '';
         
-            // Считываем цены
-            const minEl = document.getElementById('filter-price-min');
-            const maxEl = document.getElementById('filter-price-max');
-            state.priceMin = minEl ? minEl.value.trim() : '';
-            state.priceMax = maxEl ? maxEl.value.trim() : '';
-        
-            // Синхронизируем города (важно!)
+            // Синхронизируем города
             state.cities = window.filterCities || [];
-            
-            // Категория уже должна быть в state.category (обновляется при клике на иконки)
         
-            state.displayedCount = 12;
-            
-            console.log("Запуск фильтрации с параметрами:", state); // Для отладки в консоли
             window.fetchItems(); 
         
             if (window.innerWidth < 1024) window.toggleFilters();
