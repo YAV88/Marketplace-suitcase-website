@@ -2102,20 +2102,29 @@
             if(!el) return;
             
             if(el.classList.contains('active')) {
+                // ЛОГИКА ЗАКРЫТИЯ ШТОРКИ
                 el.style.overflow = 'hidden';
                 el.classList.remove('active');
                 const dd = document.getElementById('custom-cat-dropdown'); 
                 if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
+
+                // СЕНЬОР-ОПТИМИЗАЦИЯ: При нажатии кнопки "Показать находки" скроллим к ленте
+                if (window.innerWidth < 1024) {
+                    const feedTitle = document.getElementById('main-feed-title');
+                    if (feedTitle) {
+                        const y = feedTitle.getBoundingClientRect().top + window.scrollY - 80; // 80 - отступ под шапку
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                }
             } else { 
+                // ЛОГИКА ОТКРЫТИЯ ШТОРКИ
                 el.classList.add('active');
                 setTimeout(() => { 
                     el.style.overflow = 'visible'; 
                     
-                    // ИСПРАВЛЕНИЕ: Умный скролл к началу фильтров на мобильных
                     if (window.innerWidth < 1024) {
-                        const filterTitle = document.querySelector('#filter-panel h4'); // Заголовок "Категория"
+                        const filterTitle = document.querySelector('#filter-panel h4'); 
                         if (filterTitle) {
-                            // Прокручиваем к заголовку с небольшим отступом сверху (чтобы не прилипало к шапке)
                             const y = filterTitle.getBoundingClientRect().top + window.scrollY - 100;
                             window.scrollTo({ top: y, behavior: 'smooth' });
                         }
@@ -2368,6 +2377,7 @@
             window.location.reload(); 
         };
 
+        // Принятие фильтров на мобилках
         window.applyFilters = () => {
             const elCity = document.getElementById('filter-city');
             const elMin = document.getElementById('filter-price-min'); 
@@ -2377,21 +2387,12 @@
             if (elMin) window.filterPriceMin = elMin.value; 
             if (elMax) window.filterPriceMax = elMax.value;
 
-            // Валюта и Состояние уже устанавливаются в window.filterCurrency и window.filterCondition через onchange
-
             window.showUrgentOnly = false;
             window.displayedCount = 12;
             
-            // ИСПРАВЛЕНО: Убрано принудительное удаление активного класса категорий (b.classList.remove('active'...))
-            
             window.fetchItems(); 
-            
-            // Скрываем панель фильтров на мобильных после применения
-            if (window.innerWidth < 1024) {
-                window.toggleFilters();
-            }
         };
-
+        
         window.fetchItems = async (isLoadMore = false) => {
             const loader = document.getElementById('loading-placeholder');
             const mainGrid = document.getElementById('main-items-grid');
