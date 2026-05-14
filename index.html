@@ -2514,7 +2514,6 @@
         };
 
         window.resetFilters = () => {
-            // 1. Очищаем поля ввода цены и поиска
             const elMin = document.getElementById('filter-price-min');
             const elMax = document.getElementById('filter-price-max');
             const elSearch = document.getElementById('main-search-input');
@@ -2522,22 +2521,25 @@
             if (elMax) elMax.value = '';
             if (elSearch) elSearch.value = '';
 
-            // 2. Сбрасываем глобальные переменные фильтров
             window.filterCities = [];
             window.filterPriceMin = '';
             window.filterPriceMax = '';
             window.filterCurrency = 'Все';
-            window.filterCondition = 'Все';
             window.currentCategory = 'Все';
-            window.searchQuery = ''; // Сбрасываем память поиска
-
-            // 3. ПЕРЕРИСОВЫВАЕМ САЙДБАР
-            if (typeof window.initSidebar === 'function') {
-                window.initSidebar();
+            window.searchQuery = '';
+            
+            // Жестко восстанавливаем кнопки категорий в шапке и блок состояний
+            document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => b.style.display = '');
+            const condRadios = document.getElementById('condition-radios-wrap');
+            if (condRadios) {
+                const condBlock = condRadios.parentElement;
+                const prevDivider = condBlock.previousElementSibling;
+                condBlock.style.display = 'block';
+                if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
             }
 
-            // 4. Применяем пустые фильтры
-            window.applyFilters();
+            // Используем applyCondition, чтобы перерисовать UI чекбоксов и запустить fetchItems
+            window.applyCondition('Все'); 
         };
 
         window.subcategoriesMap = {
@@ -2557,11 +2559,38 @@
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
-            window.currentCategory = cat; window.showUrgentOnly = false; window.displayedCount = 12; 
+            window.currentCategory = cat;
+            window.showUrgentOnly = false; window.displayedCount = 12; 
             
+            // --- ЛОГИКА СЕНЬОРА: Скрытие блока фильтра "Состояние" ---
+            const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+            const condRadios = document.getElementById('condition-radios-wrap');
+            
+            if (condRadios) {
+                const condBlock = condRadios.parentElement; // Весь блок (заголовок + радио-кнопки)
+                const prevDivider = condBlock.previousElementSibling; // Линия над ним
+                const isNoCondCat = noConditionCats.some(c => cat.startsWith(c));
+                
+                if (isNoCondCat) {
+                    condBlock.style.display = 'none';
+                    if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = 'none';
+                    
+                    // Если была выбрана фильтрация по состоянию, жестко сбрасываем ее
+                    if (window.filterCondition !== 'Все') {
+                        window.filterCondition = 'Все';
+                        window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], 'Все', 'applyCondition');
+                        document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => b.style.display = '');
+                    }
+                } else {
+                    condBlock.style.display = 'block';
+                    if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
+                }
+            }
+            // ---------------------------------------------------------
+
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-
+            
             if (!isSubCat) {
                 document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
@@ -2584,7 +2613,6 @@
                 if (event && event.currentTarget) event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
             }
             
-            // Обновляем визуальное выделение в боковом меню
             if (window.renderSidebarCategories) window.renderSidebarCategories();
             window.fetchItems(); 
         };
@@ -3448,7 +3476,38 @@
 
         window.applyCondition = (val) => {
             window.filterCondition = val;
-            window.applyFilters(); // Авто-поиск при нажатии на галочку состояния
+            
+            // Категории, у которых не бывает "Состояния"
+            const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+            
+            // Если выбрали Б/У или Новое, а текущая категория "безусловная", сбрасываем ее
+            if (val !== 'Все' && noConditionCats.some(c => window.currentCategory.startsWith(c))) {
+                window.currentCategory = 'Все';
+                
+                // Сбрасываем визуально активные кнопки в шапке
+                document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
+                    b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                });
+                
+                const allBtn = document.querySelector('#main-cats-container .cat-btn[data-cat="Все"]');
+                if (allBtn) allBtn.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                
+                const subContainer = document.getElementById('sub-cats-container');
+                if(subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }
+            }
+
+            // Прячем или показываем несовместимые кнопки в верхнем скролле
+            document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => {
+                const catName = b.dataset.cat;
+                if (noConditionCats.includes(catName)) {
+                    b.style.display = (val !== 'Все') ? 'none' : '';
+                }
+            });
+
+            // Перерисовываем сайдбар
+            if (window.renderSidebarCategories) window.renderSidebarCategories();
+            
+            window.applyFilters();
         };
         
         setTimeout(window.renderSidebarCategories, 200);
@@ -3472,8 +3531,17 @@
         window.renderSidebarCategories = () => {
             const container = document.getElementById('sidebar-categories');
             if(!container || !window.subcategoriesMap) return;
+            
             let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
+            
+            const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
+                // ИСКЛЮЧАЕМ категории из сайдбара, если выбран фильтр состояния Б/У или Новое
+                if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) {
+                    continue; 
+                }
+
                 const isActiveMain = window.currentCategory.startsWith(mainCat);
                 html += `
                 <div class="sidebar-cat-group mt-1">
@@ -3491,7 +3559,6 @@
             container.innerHTML = html;
         };
 
-        // 2. Отрисовка Городов (как категории)
         // 2. Отрисовка Городов (Чекбоксы с мультивыбором)
         window.renderSidebarCities = () => {
             const container = document.getElementById('sidebar-cities');
