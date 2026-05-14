@@ -2647,38 +2647,33 @@
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
-            // --- Умное закрытие категорий при повторном клике ---
+            // --- СЕНЬОР-ЛОГИКА: Умное закрытие ---
             if (window.currentCategory === cat && cat !== 'Все') {
-                if (isSubCat) {
-                    // Если повторно кликнули на подкатегорию — откатываемся к главной
+                if (cat.includes(' - ')) {
+                    // Кликнули по активной подкатегории -> Откатываемся к главной
                     cat = cat.split(' - ')[0]; 
                 } else {
-                    // Если повторно кликнули на главную — сбрасываем фильтр полностью (список закроется)
-                    cat = 'Все';
+                    // Кликнули по активной главной -> Закрываем её, сбрасывая всё
+                    cat = 'Все'; 
                 }
             }
-            // -------------------------------------------------------------------
+            // -------------------------------------
 
-            window.currentCategory = cat;
-            window.showUrgentOnly = false; 
-            window.displayedCount = 12;
             window.currentCategory = cat;
             window.showUrgentOnly = false; window.displayedCount = 12; 
             
-            // --- ЛОГИКА СЕНЬОРА: Скрытие блока фильтра "Состояние" ---
             const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
             const condRadios = document.getElementById('condition-radios-wrap');
             
             if (condRadios) {
-                const condBlock = condRadios.parentElement; // Весь блок (заголовок + радио-кнопки)
-                const prevDivider = condBlock.previousElementSibling; // Линия над ним
+                const condBlock = condRadios.parentElement; 
+                const prevDivider = condBlock.previousElementSibling; 
                 const isNoCondCat = noConditionCats.some(c => cat.startsWith(c));
                 
                 if (isNoCondCat) {
                     condBlock.style.display = 'none';
                     if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = 'none';
                     
-                    // Если была выбрана фильтрация по состоянию, жестко сбрасываем ее
                     if (window.filterCondition !== 'Все') {
                         window.filterCondition = 'Все';
                         window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], 'Все', 'applyCondition');
@@ -2689,19 +2684,21 @@
                     if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
                 }
             }
-            // ---------------------------------------------------------
 
             const urgentBtn = document.getElementById('btn-cat-urgent');
             if(urgentBtn) urgentBtn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
             
-            if (!isSubCat) {
+            // Закрашиваем активные кнопки
+            if (!cat.includes(' - ')) {
                 document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
                     b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
-                if (event && event.currentTarget) event.currentTarget.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                
+                const allBtn = document.querySelector(`#main-cats-container .cat-btn[data-cat="${cat}"]`);
+                if(allBtn) allBtn.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 
                 const subContainer = document.getElementById('sub-cats-container');
-                if (cat !== 'Все' && window.subcategoriesMap[cat]) {
+                if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat]) {
                     let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все в «${cat}»</button>`;
                     window.subcategoriesMap[cat].forEach(sub => {
                         const prefix = sub.prefix || cat; const fullCat = `${prefix} - ${sub.val}`;
@@ -2713,7 +2710,9 @@
                 document.querySelectorAll('#sub-cats-container .sub-cat-btn').forEach(b => {
                     b.className = "sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-stone-400 hover:text-stone-800 dark:hover:text-white rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 });
-                if (event && event.currentTarget) event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                if (event && event.currentTarget && event.currentTarget.classList.contains('sub-cat-btn')) {
+                    event.currentTarget.className = "sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition shadow-sm bg-stone-800 dark:bg-stone-100 text-white dark:text-stone-900 border border-stone-800 dark:border-stone-100 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                }
             }
             
             if (window.renderSidebarCategories) window.renderSidebarCategories();
@@ -3573,25 +3572,27 @@
             const container = document.getElementById('sidebar-categories');
             if(!container || !window.subcategoriesMap) return;
             
-            let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-2 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors border-b border-stone-100 dark:border-stone-800">Все категории</button>`;
+            let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
             
+            const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+
             for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
+                if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) {
+                    continue; 
+                }
+
                 const isActiveMain = window.currentCategory.startsWith(mainCat);
+                // ИСПРАВЛЕНИЕ: Убрали иконки (галочки) и лишние обертки. Теперь только чистый текст.
                 html += `
-                <div class="sidebar-cat-group border-b border-stone-100 dark:border-stone-800 py-1">
-                    <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                        <button onclick="window.filterByCategory('${mainCat}', event); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
-                        <i class="fa-solid fa-chevron-down p-2 text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
-                    </div>
-                    <div class="sidebar-sub-cats pl-3 border-l-2 border-stone-200 dark:border-stone-700 ml-1.5 mt-1 mb-1 flex flex-col gap-1 ${isActiveMain ? '' : 'hidden'}">
-                `;
+                <div class="sidebar-cat-group mt-1">
+                    <button onclick="window.filterByCategory('${mainCat}', event)" class="text-left w-full py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+                    <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
+                
                 subs.forEach(sub => {
-                    const prefix = sub.prefix || mainCat; 
-                    const fullCat = `${prefix} - ${sub.val}`; 
-                    const label = sub.label || sub.val;
-                    const isActiveSub = window.currentCategory === fullCat;
-                    html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${isActiveSub ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${label}</button>`;
+                    const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
+                    html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left w-full py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
                 });
+                
                 html += `</div></div>`;
             }
             container.innerHTML = html;
