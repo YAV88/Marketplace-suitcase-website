@@ -163,16 +163,18 @@
                 grid-column: 1 !important;
                 grid-row: 8 !important; 
                 width: 100% !important;
-                /* ИЗМЕНЕНИЯ ЗДЕСЬ: Ограничиваем высоту и разрешаем внутренний скролл */
-                max-height: calc(100vh - 110px) !important; 
+                /* ИСПРАВЛЕНИЕ: Даем жесткую высоту и разрешаем скролл */
+                height: calc(100vh - 120px) !important;
+                max-height: none !important;
                 overflow-y: auto !important;
-                /* Скрываем стандартный скроллбар для эстетики */
-                scrollbar-width: none;
-                -ms-overflow-style: none;
                 margin-top: 0 !important; 
+                /* Убираем страшный системный скроллбар */
+                scrollbar-width: thin;
+                scrollbar-color: #d6d3d1 transparent;
+                display: block !important; /* Убиваем grid-template-rows, который схлопывал блок */
             }
-            #filter-panel-wrapper::-webkit-scrollbar {
-                display: none;
+            .dark #filter-panel-wrapper {
+                scrollbar-color: #44403c transparent;
             }
             
             /* Выравниваем текст заголовка в сайдбаре по высоте иконки в ленте */
@@ -2040,12 +2042,30 @@
         window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
         
         window.toggleFilters = () => { 
-            const el = document.getElementById('filter-panel-wrapper'); 
+            const el = document.getElementById('filter-panel-wrapper');
             if(!el) return;
+            
             if(el.classList.contains('active')) {
-                el.style.overflow = 'hidden'; el.classList.remove('active');
-                const dd = document.getElementById('custom-cat-dropdown'); if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
-            } else { el.classList.add('active'); setTimeout(() => { el.style.overflow = 'visible'; }, 300); }
+                el.style.overflow = 'hidden';
+                el.classList.remove('active');
+                const dd = document.getElementById('custom-cat-dropdown'); 
+                if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
+            } else { 
+                el.classList.add('active');
+                setTimeout(() => { 
+                    el.style.overflow = 'visible'; 
+                    
+                    // ИСПРАВЛЕНИЕ: Умный скролл к началу фильтров на мобильных
+                    if (window.innerWidth < 1024) {
+                        const filterTitle = document.querySelector('#filter-panel h4'); // Заголовок "Категория"
+                        if (filterTitle) {
+                            // Прокручиваем к заголовку с небольшим отступом сверху (чтобы не прилипало к шапке)
+                            const y = filterTitle.getBoundingClientRect().top + window.scrollY - 100;
+                            window.scrollTo({ top: y, behavior: 'smooth' });
+                        }
+                    }
+                }, 300); 
+            }
         };
         
         window.showToast = (msg, err=false) => { 
