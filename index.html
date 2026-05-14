@@ -64,14 +64,13 @@
         .view-list h4 { 
             font-size: 1.15rem !important;
             margin-bottom: 0.5rem !important; 
-            /* ИСПРАВЛЕНИЕ: Создаем слепую зону справа в 110px, чтобы текст никогда не достал до цены */
-            padding-right: 110px !important; 
             display: -webkit-box !important; 
             -webkit-line-clamp: 2 !important; 
             -webkit-box-orient: vertical !important; 
             overflow: hidden !important; 
             white-space: normal !important;
-         }
+            flex-shrink: 0 !important; /* ЗАЩИТА: запрещаем флексу сплющивать заголовок по высоте */
+        }
         .view-list .price-text { font-size: 1.2rem !important; font-weight: 900; margin-bottom: 2px !important; }
         
         /* Логика переключения элементов (Сетка vs Список) */
@@ -84,14 +83,18 @@
 
         /* 2. PREMIUM СТИЛИ ДЛЯ ПК (3 Колонки) */
         @media (min-width: 1024px) {
-            .view-list .item-card { height: 190px !important; }
+            .view-list .item-card { 
+                min-height: 190px !important; 
+                height: auto !important; /* Разрешаем карточке растянуться, если название в 2 строки */
+            }
             .view-list .card-img-wrap { 
-                width: 250px !important; 
+                width: 250px !important;
+                min-height: 190px !important; 
                 height: 100% !important; 
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-            } 
+            }
             
             /* Превращаем текстовый блок в строку, чтобы поставить колонки рядом */
             .view-list .card-body-wrap { 
@@ -124,6 +127,7 @@
                 -webkit-box-orient: vertical !important; 
                 overflow: hidden !important; 
                 white-space: normal !important;
+                flex-shrink: 0 !important; /* ЗАЩИТА: запрещаем флексу сплющивать заголовок по высоте */
             }
             .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
             .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
