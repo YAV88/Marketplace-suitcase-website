@@ -482,7 +482,7 @@
                     
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
                         <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                        <button onclick="window.applyFilters()" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer">Применить</button>
+                        <button type="button" onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm">Погнали искать</button>
                     </div>
                 </div>
             </div>
