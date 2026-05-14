@@ -3245,6 +3245,11 @@
                         itemData.highlighted_until = topDate.toISOString();
                     }
                     itemData.status = 'active'; 
+                    const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+
+                    if (noConditionCats.some(c => itemData.category.startsWith(c))) {
+                        itemData.condition = null;
+                    }
                     res = await supabase.from('items').insert([itemData]); 
                 }
                 
