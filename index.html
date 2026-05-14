@@ -2327,11 +2327,9 @@
                 let fallbackMode = false;
 
                 try {
-                    // Базовые запросы для обычной и VIP ленты
                     let q = supabase.from('items').select('*').neq('status', 'sold');
                     let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(8);
 
-                    // 1. Фильтры Категории, Города и Поиска
                     if (window.currentCategory !== 'Все') {
                         q = q.ilike('category', `${window.currentCategory}%`);
                         vq = vq.ilike('category', `${window.currentCategory}%`);
@@ -2345,7 +2343,7 @@
                         vq = vq.ilike('title', `%${window.searchQuery}%`);
                     }
                     
-                    // 2. ИСПРАВЛЕНО: Фильтр Состояния (Учет NULL для старых товаров)
+                    // --- ЛОГИКА СЕНЬОРА: Исключение несовместимых категорий при поиске по состоянию ---
                     if (window.filterCondition && window.filterCondition !== 'Все') {
                         if (window.filterCondition === 'Б/У') {
                             q = q.or('condition.eq.Б/У,condition.is.null');
@@ -2354,13 +2352,19 @@
                             q = q.eq('condition', window.filterCondition);
                             vq = vq.eq('condition', window.filterCondition);
                         }
-                    }
 
-                    // 3. ИСПРАВЛЕНО: Мультивалютная логика и фильтр цен для VIP
+                        // Жестко вырезаем категории из SQL-запроса
+                        const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+                        noConditionCats.forEach(cat => {
+                            q = q.not('category', 'ilike', `${cat}%`);
+                            vq = vq.not('category', 'ilike', `${cat}%`);
+                        });
+                    }
+                    // -----------------------------------------------------------------------------------
+
                     const needsJsPriceFilter = (window.filterPriceMin || window.filterPriceMax) && window.filterCurrency === 'Все';
 
                     if (window.filterCurrency !== 'Все') {
-                        // Точная фильтрация на сервере по выбранной валюте
                         q = q.eq('currency', window.filterCurrency);
                         vq = vq.eq('currency', window.filterCurrency);
                         
@@ -2378,7 +2382,6 @@
                         q = q.gt('highlighted_until', new Date().toISOString());
                     }
 
-                    // Отменяем лимит БД для JS-махинаций, если выбрана мультивалютная фильтрация цен
                     if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp' && !needsJsPriceFilter) {
                         q = q.order('created_at', { ascending: false });
                         q = q.limit(window.displayedCount + 1);
@@ -2390,7 +2393,6 @@
                     let itemsData = results[0].data || [];
                     let vipData = results[1].data || [];
 
-                    // 4. JS-фильтрация для кросс-валютных цен (если валюта "Все")
                     if (needsJsPriceFilter) {
                         const minRsd = window.filterPriceMin ? Number(window.filterPriceMin) : 0;
                         const maxRsd = window.filterPriceMax ? Number(window.filterPriceMax) : Infinity;
@@ -2404,7 +2406,6 @@
                         vipData = filterByPrice(vipData);
                     }
 
-                    // 5. Кросс-валютная сортировка
                     if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp') {
                         const getPriceForSort = (item) => {
                             const p = Number(item.price) || 0;
@@ -2417,7 +2418,6 @@
                         itemsData.sort(sortFn);
                     }
                     
-                    // Обрезаем массив после всех JS-манипуляций
                     if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp' || needsJsPriceFilter) {
                         itemsData = itemsData.slice(0, window.displayedCount + 1);
                     }
@@ -2440,6 +2440,11 @@
                         
                         const matchCond = window.filterCondition === 'Все' || (window.filterCondition === 'Б/У' ? (i.condition === 'Б/У' || !i.condition) : i.condition === window.filterCondition);
                         
+                        // Защита в fallback: выкидываем Услуги и Животных, если включен фильтр
+                        const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
+                        const isNoCondCat = noConditionCats.some(c => (i.category || '').startsWith(c));
+                        if (window.filterCondition !== 'Все' && isNoCondCat) return false;
+
                         let matchPrice = true; const p = Number(i.price) || 0;
                         const itemRsd = i.currency === 'EUR' ? p * 117 : p;
 
