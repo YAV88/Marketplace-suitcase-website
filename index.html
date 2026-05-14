@@ -1352,7 +1352,7 @@
                                 <i class="fa-solid fa-arrow-up text-xl mb-1"></i>
                                 <span class="text-[9px] font-black uppercase tracking-wider" id="btn-owner-bump-text">В ТОП (PRO)</span>
                             </button>
-                            <button id="btn-owner-share" onclick="window.bumpViaShare()" class="flex flex-col items-center justify-center py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-xl hover:bg-blue-100 transition shadow-sm">
+                            <button id="btn-owner-share" onclick="window.bumpViaShare()" class="flex flex-col items-center justify-center py-2 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-xl hover:bg-brand-100 transition shadow-sm">
                                 <i class="fa-solid fa-share-nodes text-xl mb-1"></i>
                                 <span class="text-[9px] font-black uppercase tracking-wider">Репост</span>
                             </button>
@@ -2908,10 +2908,10 @@
             const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
             const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
-            // СЕНЬОР-ЛОГИКА: Умный подвал карточки
+            // Умный подвал карточки
             const cardFooter = isOwner ? `
                 <div class="view-grid-city text-xs font-bold text-stone-400 mt-auto pt-2 grid grid-cols-2 gap-2">
-                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 py-1.5 rounded transition hover:bg-blue-100 flex items-center justify-center border border-blue-100 dark:border-blue-800"><i class="fa-solid fa-share-nodes mr-1"></i> Поднять</button>
+                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 py-1.5 rounded transition hover:bg-brand-100 flex items-center justify-center border border-brand-100 dark:border-brand-800"><i class="fa-solid fa-share-nodes mr-1"></i> Поднять</button>
                     <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 py-1.5 rounded transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-pen mr-1"></i> Редакт.</button>
                 </div>
             ` : `
@@ -4058,8 +4058,8 @@
 
     <button id="mobile-floating-filter" 
             onclick="if(typeof window.toggleFilters === 'function') window.toggleFilters();" 
-            class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-stone-900/95 backdrop-blur-md text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl flex items-center gap-2 z-[90] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-stone-700">
-        <i class="fa-solid fa-sliders text-brand-500"></i>
+            class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-brand-600 text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-[0_8px_20px_rgba(13,148,136,0.3)] flex items-center gap-2 z-[40] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-brand-500">
+        <i class="fa-solid fa-sliders text-brand-50"></i>
         <span>Фильтры</span>
     </button>
     
