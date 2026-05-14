@@ -3137,11 +3137,9 @@
                 // --- ЛОГИКА ОПИСАНИЯ ---
                 const descEl = document.getElementById('modal-description');
                 if (descEl) {
-                    // Подставляем текст из базы. Если его нет — стандартная фраза.
                     descEl.innerText = item.description || 'Продавец не добавил описание к этому товару.';
                 }
-
-                // Далее у тебя идет проверка владельца:
+                
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
