@@ -1347,11 +1347,13 @@
 
                     <div id="modal-owner-controls" class="hidden flex-col gap-2 mt-2">
                         <div class="flex gap-2">
-                            <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
+                            <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-arrow-up"></i> <span id="btn-owner-bump-text">Поднять в ТОП</span>
                             </button>
+                            <button id="btn-owner-vip" onclick="window.promoteToVip()" class="flex-1 bg-stone-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-stone-800 transition shadow-sm flex items-center justify-center gap-2 border border-stone-700">
+                                <i class="fa-solid fa-crown text-amber-400"></i> <span>В VIP-ленту</span>
+                            </button>
                         </div>
-                        <div id="modal-owner-action-controls" class="flex gap-2 mt-1"></div>
                     </div>
                 </div>
 
@@ -1409,6 +1411,32 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
+
+        window.promoteToVip = async () => {
+            if (!window.currentUser || !window.activeModalItemId) return;
+
+            if (!window.currentUserData || !window.currentUserData.is_pro) {
+                window.showToast("Нужен PRO-статус для VIP-ленты", true);
+                setTimeout(() => window.openModal('crypto-modal'), 1000);
+                return;
+            }
+
+            try {
+                const newVipDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+                const { error } = await supabase
+                    .from('items')
+                    .update({ highlighted_until: newVipDate })
+                    .eq('id', window.activeModalItemId);
+
+                if (error) throw error;
+                window.showToast("Товар залетает в VIP на 7 дней!");
+                window.closeModal('item-modal');
+                window.fetchItems(false);
+            } catch (e) {
+                window.showToast("Ошибка продвижения", true);
+            }
+        };
+        
         window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = []; 
         window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все'; 
         window.searchQuery = ''; window.showUrgentOnly = false; window.filterCities = [];
@@ -2376,7 +2404,7 @@
 
                 try {
                     let q = supabase.from('items').select('*').neq('status', 'sold');
-                    let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(8);
+                    let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(40);
 
                     if (window.currentCategory !== 'Все') {
                         q = q.ilike('category', `${window.currentCategory}%`);
@@ -2531,14 +2559,21 @@
                 else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
 
                 if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                    const vipMapped = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random()).slice(0, 6);
+                    // Перемешиваем массив и берем 8 штук
+                    const vipMapped = vipRes.data
+                        .map(window.mapItemData)
+                        .filter(Boolean)
+                        .sort(() => 0.5 - Math.random()) 
+                        .slice(0, 8);
+
                     if (vipMapped.length > 0 && vipGrid && vipSection) {
                         vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto'; 
                         vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
                         vipSection.classList.remove('hidden');
+                        // Добавляем в общий список загруженных, чтобы открывались модалки
                         vipMapped.forEach(v => { if(!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
                     }
-                } else if (!isLoadMore && vipSection) { vipSection.classList.add('hidden'); }
+                }
 
                 if (itemsToDisplay.length > 0) {
                     let html = '';
