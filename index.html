@@ -3351,23 +3351,24 @@
                     address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr
                 };
 
-                let res;
+                let res; 
                 if (window.editingItemId) { 
-                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId); 
+                    res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
                 } else { 
-                    // Если у юзера активен PRO, даем товару 30 дней ТОПа
-                    if (window.currentUserData?.is_pro) {
-                        const topDate = new Date();
-                        topDate.setDate(topDate.getDate() + 30);
-                        itemData.highlighted_until = topDate.toISOString();
-                    }
+                    // СЕНЬОР-ЛОГИКА: Железобетонная выдача VIP на 7 дней при создании
+                    if (window.currentUserData && window.currentUserData.is_pro) { 
+                        itemData.highlighted_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); 
+                    } 
+                    
                     itemData.status = 'active'; 
+                    
+                    // Защита: принудительно ставим NULL состоянию для нерелевантных категорий
                     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-
-                    if (noConditionCats.some(c => itemData.category.startsWith(c))) {
-                        itemData.condition = null;
-                    }
-                    res = await supabase.from('items').insert([itemData]); 
+                    if (noConditionCats.some(c => itemData.category.startsWith(c))) { 
+                        itemData.condition = null; 
+                    } 
+                    
+                    res = await supabase.from('items').insert([itemData]);
                 }
                 
                 if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
