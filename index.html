@@ -1347,8 +1347,9 @@
 
                     <div id="modal-owner-controls" class="hidden flex-col gap-2 mt-2">
                         <div class="flex gap-2">
-                            <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border border-stone-200 dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up text-brand-600"></i> Поднять в ТОП</button>
-                            <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-gem"></i> <span id="btn-owner-vip-text">PRO</span></button>
+                            <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-up"></i> <span id="btn-owner-bump-text">Поднять в ТОП</span>
+                            </button>
                         </div>
                         <div id="modal-owner-action-controls" class="flex gap-2 mt-1"></div>
                     </div>
@@ -3058,9 +3059,11 @@
                     if(contactBtn) contactBtn.classList.add('hidden'); 
                     if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
                     
-                    const vipBtnText = document.getElementById('btn-owner-vip-text');
-                    if(vipBtnText) vipBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO";
-
+                    const bumpBtnText = document.getElementById('btn-owner-bump-text');
+                    if(bumpBtnText) {
+                        bumpBtnText.innerText = (window.currentUserData && window.currentUserData.is_pro) ? "В ТОП (Бесплатно PRO)" : "Купить PRO для ТОПа";
+                    }
+                    
                     if(actionControls) {
                         // Жесткая сетка: 2 колонки, равные промежутки. Все кнопки будут одного размера.
                         actionControls.className = "grid grid-cols-2 gap-2 mt-2 w-full";
@@ -3154,50 +3157,65 @@
         };
 
         // --- PRO-статус ---
-        window.bumpItem = async (itemId, lastBumpedAt) => {
-            // 1. Проверяем, есть ли у юзера PRO-статус
-            if (!window.currentUser || !window.currentUser.is_pro) {
-                alert('Эта функция доступна только для PRO-пользователей. Оформите подписку!');
-                // Здесь можно сразу открывать модалку покупки PRO через Boosty/USDT
+        window.bumpItem = async () => {
+            if (!window.currentUser || !window.activeModalItemId) return;
+
+            // 1. Предлагаем купить PRO, если статуса нет
+            if (!window.currentUserData || !window.currentUserData.is_pro) {
+                window.showToast("Функция доступна только для PRO-пользователей", true);
+                setTimeout(() => window.openModal('crypto-modal'), 1000);
                 return;
             }
 
-            // 2. Проверяем кулдаун (24 часа)
-            if (lastBumpedAt) {
-                const lastBump = new Date(lastBumpedAt).getTime();
-                const now = new Date().getTime();
-                const hoursPassed = (now - lastBump) / (1000 * 60 * 60);
+            const btnText = document.getElementById('btn-owner-bump-text');
+            const originalText = btnText.innerText;
+            btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
 
-                if (hoursPassed < 24) {
-                    const hoursLeft = Math.ceil(24 - hoursPassed);
-                    alert(`Вы уже поднимали это объявление. Следующее поднятие доступно через ${hoursLeft} ч.`);
-                    return;
-                }
-            }
-
-            // 3. Если всё ок, поднимаем товар
             try {
-                // В Supabase сортировка ленты идет по created_at (по убыванию).
-                // Чтобы поднять товар, мы просто обновляем created_at на текущее время,
-                // а также записываем это время в last_bumped_at для кулдауна.
+                // 2. Получаем актуальные данные товара из БД для проверки кулдауна
+                const { data: itemData, error: fetchError } = await supabase
+                    .from('items')
+                    .select('last_bumped_at')
+                    .eq('id', window.activeModalItemId)
+                    .single();
+
+                if (fetchError) throw fetchError;
+
+                // 3. Проверка кулдауна (24 часа)
+                if (itemData.last_bumped_at) {
+                    const lastBump = new Date(itemData.last_bumped_at).getTime();
+                    const now = new Date().getTime();
+                    const hoursPassed = (now - lastBump) / (1000 * 60 * 60);
+
+                    if (hoursPassed < 24) {
+                        const hoursLeft = Math.ceil(24 - hoursPassed);
+                        window.showToast(`Следующее поднятие доступно через ${hoursLeft} ч.`, true);
+                        btnText.innerText = originalText;
+                        return;
+                    }
+                }
+
+                // 4. Поднимаем товар (обновляем created_at для сортировки и last_bumped_at для кулдауна)
                 const nowIso = new Date().toISOString();
-                
-                const { error } = await supabase
+                const { error: updateError } = await supabase
                     .from('items')
                     .update({ 
                         created_at: nowIso, 
                         last_bumped_at: nowIso 
                     })
-                    .eq('id', itemId);
+                    .eq('id', window.activeModalItemId);
 
-                if (error) throw error;
+                if (updateError) throw updateError;
 
-                alert('Объявление успешно поднято в ТОП ленты!');
-                // Перезагружаем ленту или страницу
-                window.location.reload(); 
+                window.showToast("Объявление успешно поднято в ТОП!");
+                window.closeModal('item-modal');
+                window.fetchItems(false); // Перезагружаем ленту
+
             } catch (error) {
-                console.error('Ошибка при поднятии:', error);
-                alert('Произошла ошибка. Попробуйте позже.');
+                console.error("Ошибка поднятия:", error);
+                window.showToast("Произошла ошибка. Попробуйте позже.", true);
+            } finally {
+                if (btnText.innerText.includes('spinner')) btnText.innerText = originalText;
             }
         };
         
