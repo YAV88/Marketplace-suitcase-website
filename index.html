@@ -1347,7 +1347,7 @@
 
                     <div id="modal-owner-controls" class="hidden flex-col gap-2 mt-2">
                         <div class="flex gap-2">
-                            <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border border-stone-200 dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up text-brand-600"></i> Поднять</button>
+                            <button onclick="window.bumpItem()" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white border border-stone-200 dark:border-stone-700 py-3 rounded-xl font-bold text-sm hover:bg-stone-200 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up text-brand-600"></i> Поднять в ТОП</button>
                             <button id="btn-owner-vip" onclick="window.highlightItem()" class="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex items-center justify-center gap-2"><i class="fa-solid fa-gem"></i> <span id="btn-owner-vip-text">PRO</span></button>
                         </div>
                         <div id="modal-owner-action-controls" class="flex gap-2 mt-1"></div>
@@ -1357,7 +1357,7 @@
                 <div class="item-details-full-desc flex flex-col gap-6">
                     <div>
                         <h3 class="text-xs font-bold uppercase tracking-widest text-stone-400 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-align-left text-brand-400"></i> Описание товара
+                            <i class="fa-solid fa-align-left text-brand-400"></i> Описание находки
                         </h3>
                         <p id="modal-desc" class="text-stone-700 dark:text-stone-300 text-sm leading-relaxed font-medium whitespace-pre-wrap">Описание отсутствует.</p>
                     </div>
@@ -2857,7 +2857,7 @@
                     </div>
                     
                     <div class="view-list-col-3 hidden">
-                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5">Описание товара</h5>
+                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5">Описание находки</h5>
                         <p class="view-list-desc">
                             ${i.description || 'Продавец не добавил описание к этому товару.'}
                         </p>
@@ -3153,41 +3153,54 @@
             }
         };
 
-        // --- ФУНКЦИИ ТРАТЫ ТОКЕНОВ ---
-        window.bumpItem = async () => {
-            if (!window.currentUser || !window.activeModalItemId) return;
-            
-            if (!confirm("Потратить 1 токен поднятия, чтобы переместить объявление вверх ленты?")) return;
-            
-            const btn = document.querySelector('button[onclick="window.bumpItem()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
-            btn.disabled = true;
+        // --- PRO-статус ---
+        window.bumpItem = async (itemId, lastBumpedAt) => {
+            // 1. Проверяем, есть ли у юзера PRO-статус
+            if (!window.currentUser || !window.currentUser.is_pro) {
+                alert('Эта функция доступна только для PRO-пользователей. Оформите подписку!');
+                // Здесь можно сразу открывать модалку покупки PRO через Boosty/USDT
+                return;
+            }
 
-            try {
-                // Вызываем защищенную SQL-функцию
-                const { error } = await supabase.rpc('spend_bump_token', { p_item_id: window.activeModalItemId });
-                if (error) throw error;
-                
-                window.showToast("Объявление поднято наверх!");
-                
-                // Обновляем визуальный баланс
-                if (window.currentUserData && window.currentUserData.bump_tokens > 0) {
-                    window.currentUserData.bump_tokens -= 1;
-                    document.querySelectorAll('#profile-balance').forEach(el => el.innerText = `${window.currentUserData.bump_tokens} шт.`);
+            // 2. Проверяем кулдаун (24 часа)
+            if (lastBumpedAt) {
+                const lastBump = new Date(lastBumpedAt).getTime();
+                const now = new Date().getTime();
+                const hoursPassed = (now - lastBump) / (1000 * 60 * 60);
+
+                if (hoursPassed < 24) {
+                    const hoursLeft = Math.ceil(24 - hoursPassed);
+                    alert(`Вы уже поднимали это объявление. Следующее поднятие доступно через ${hoursLeft} ч.`);
+                    return;
                 }
+            }
+
+            // 3. Если всё ок, поднимаем товар
+            try {
+                // В Supabase сортировка ленты идет по created_at (по убыванию).
+                // Чтобы поднять товар, мы просто обновляем created_at на текущее время,
+                // а также записываем это время в last_bumped_at для кулдауна.
+                const nowIso = new Date().toISOString();
                 
-                window.closeModal('item-modal');
-                window.fetchItems(false); // Перезагружаем ленту товаров
-            } catch (e) {
-                console.error("Bump error:", e);
-                window.showToast(e.message || "Нет доступных токенов", true);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                const { error } = await supabase
+                    .from('items')
+                    .update({ 
+                        created_at: nowIso, 
+                        last_bumped_at: nowIso 
+                    })
+                    .eq('id', itemId);
+
+                if (error) throw error;
+
+                alert('Объявление успешно поднято в ТОП ленты!');
+                // Перезагружаем ленту или страницу
+                window.location.reload(); 
+            } catch (error) {
+                console.error('Ошибка при поднятии:', error);
+                alert('Произошла ошибка. Попробуйте позже.');
             }
         };
-
+        
         window.highlightItem = async () => {
             if (!window.currentUser || !window.activeModalItemId) return;
             
