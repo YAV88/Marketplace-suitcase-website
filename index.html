@@ -2266,20 +2266,17 @@
         };
 
         window.applyFilters = () => {
-            // Считываем состояние напрямую из DOM
             const condRadio = document.querySelector('input[name="cond"]:checked');
             window.filterCondition = condRadio ? condRadio.value : 'Все';
         
-            // Считываем валюту
             const currRadio = document.querySelector('input[name="curr"]:checked');
             window.filterCurrency = currRadio ? currRadio.value : 'Все';
         
-            // Считываем цены
             window.filterPriceMin = document.getElementById('filter-price-min')?.value || '';
             window.filterPriceMax = document.getElementById('filter-price-max')?.value || '';
         
             window.displayedCount = 12;
-            window.fetchItems(); // Запуск чистого поиска
+            window.fetchItems(); 
             
             if (window.innerWidth < 1024) window.toggleFilters();
             window.showToast("Применено");
@@ -2940,43 +2937,31 @@
                 }
                 if (btnMore) btnMore.classList.add('hidden');
         
-                // Базовый запрос: только активные товары
-                let q = supabase
-                    .from('items')
-                    .select('*', { count: 'exact' })
-                    .neq('status', 'sold');
+                // Инициализация запроса
+                let q = supabase.from('items').select('*', { count: 'exact' }).neq('status', 'sold');
         
-                // 1. Фильтр категории
+                // Применяем фильтры (считываем значения прямо перед запросом)
                 if (window.currentCategory && window.currentCategory !== 'Все') {
                     q = q.ilike('category', `${window.currentCategory}%`);
                 }
         
-                // 2. Фильтр поиска
                 if (window.searchQuery) {
                     q = q.or(`title.ilike.%${window.searchQuery}%,description.ilike.%${window.searchQuery}%`);
                 }
         
-                // 3. УМНЫЙ ФИЛЬТР СОСТОЯНИЯ (Решение вашей проблемы)
+                // Исправленный фильтр состояния: не скрывает услуги/работу/жилье
                 if (window.filterCondition && window.filterCondition !== 'Все') {
-                    // Оставляем товары с нужным состоянием ИЛИ категории-исключения (услуги, работа, жилье)
                     const exceptions = "category.ilike.Услуги%,category.ilike.Работа%,category.ilike.Жилье%,category.ilike.Недвижимость%";
                     q = q.or(`condition.eq.${window.filterCondition},${exceptions}`);
                 }
         
-                // 4. Фильтр валюты
                 if (window.filterCurrency && window.filterCurrency !== 'Все') {
                     q = q.eq('currency', window.filterCurrency);
                 }
         
-                // 5. Фильтр цены (с приведением к числу)
-                if (window.filterPriceMin) {
-                    q = q.gte('price', Number(window.filterPriceMin));
-                }
-                if (window.filterPriceMax) {
-                    q = q.lte('price', Number(window.filterPriceMax));
-                }
+                if (window.filterPriceMin) q = q.gte('price', Number(window.filterPriceMin));
+                if (window.filterPriceMax) q = q.lte('price', Number(window.filterPriceMax));
         
-                // 6. Сортировка и пагинация
                 const start = isLoadMore ? window.displayedCount : 0;
                 q = q.order('created_at', { ascending: false }).range(start, start + 11);
         
@@ -2987,35 +2972,18 @@
                 if (container) container.classList.remove('hidden');
         
                 if (data && data.length > 0) {
-                    // Обновляем локальный массив загруженных данных
-                    const mappedData = data.map(window.mapItemData).filter(Boolean);
-                    if (isLoadMore) {
-                        window.loadedItems = [...window.loadedItems, ...mappedData];
-                    } else {
-                        window.loadedItems = mappedData;
-                    }
-        
-                    // Рендеринг карточек
                     data.forEach(item => {
                         const mapped = window.mapItemData(item);
-                        if (container && mapped) {
-                            container.appendChild(window.createItemCard(mapped));
-                        }
+                        if (container && mapped) container.appendChild(window.createItemCard(mapped));
                     });
-        
                     window.displayedCount += data.length;
-        
-                    // Управление кнопкой "Показать еще"
-                    if (count > window.displayedCount && btnMore) {
-                        btnMore.classList.remove('hidden');
-                    }
+                    if (count > window.displayedCount && btnMore) btnMore.classList.remove('hidden');
                 } else if (!isLoadMore && container) {
                     container.innerHTML = '<div class="col-span-full text-center py-20 text-stone-400 font-bold">Ничего не найдено</div>';
                 }
             } catch (err) {
-                console.error('Критическая ошибка fetchItems:', err);
+                console.error('Ошибка:', err);
                 if (placeholder) placeholder.classList.add('hidden');
-                window.showToast("Ошибка загрузки данных", true);
             }
         };
 
