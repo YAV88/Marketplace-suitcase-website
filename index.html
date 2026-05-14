@@ -163,10 +163,16 @@
                 grid-column: 1 !important;
                 grid-row: 8 !important; 
                 width: 100% !important;
-                height: max-content;
-                grid-template-rows: 1fr !important; 
-                overflow: visible !important;
+                /* ИЗМЕНЕНИЯ ЗДЕСЬ: Ограничиваем высоту и разрешаем внутренний скролл */
+                max-height: calc(100vh - 110px) !important; 
+                overflow-y: auto !important;
+                /* Скрываем стандартный скроллбар для эстетики */
+                scrollbar-width: none;
+                -ms-overflow-style: none;
                 margin-top: 0 !important; 
+            }
+            #filter-panel-wrapper::-webkit-scrollbar {
+                display: none;
             }
             
             /* Выравниваем текст заголовка в сайдбаре по высоте иконки в ленте */
@@ -482,8 +488,7 @@
                     
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
                         <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                        <button type="button" onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm">Погнали искать</button>
-                    </div>
+                        <button type="button" onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm">Показать находки</button>                    </div>
                 </div>
             </div>
         </div>
@@ -2651,8 +2656,7 @@
                 if(btn) btn.className = "cat-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 window.currentCategory = 'Все';
                 document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => { 
-    b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start"; 
-});
+                    b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start"; });
                 if(subContainer) subContainer.classList.add('hidden');
             } else {
                 if(btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
@@ -3811,6 +3815,18 @@
                 }
             }, { passive: true });
         }
+
+        // Логика появления плавающей кнопки "Фильтры" на SVALKA
+        window.addEventListener('scroll', () => {
+            const floatBtn = document.getElementById('mobile-floating-filter');
+            if (!floatBtn) return;
+            
+            if (window.scrollY > 400) {
+                floatBtn.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            } else {
+                floatBtn.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }
+        }, { passive: true });
         
     </script>
 
@@ -3838,5 +3854,13 @@
             </form>
         </div>
     </div>
+
+    <button id="mobile-floating-filter" 
+            onclick="if(typeof window.toggleFilters === 'function') window.toggleFilters();" 
+            class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-stone-900/95 backdrop-blur-md text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl flex items-center gap-2 z-[90] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-stone-700">
+        <i class="fa-solid fa-sliders text-brand-500"></i>
+        <span>Фильтры</span>
+    </button>
+    
 </body>
 </html>
