@@ -2647,6 +2647,21 @@
         };
 
         window.filterByCategory = (cat, event, isSubCat = false) => { 
+            // --- Умное закрытие категорий при повторном клике ---
+            if (window.currentCategory === cat && cat !== 'Все') {
+                if (isSubCat) {
+                    // Если повторно кликнули на подкатегорию — откатываемся к главной
+                    cat = cat.split(' - ')[0]; 
+                } else {
+                    // Если повторно кликнули на главную — сбрасываем фильтр полностью (список закроется)
+                    cat = 'Все';
+                }
+            }
+            // -------------------------------------------------------------------
+
+            window.currentCategory = cat;
+            window.showUrgentOnly = false; 
+            window.displayedCount = 12;
             window.currentCategory = cat;
             window.showUrgentOnly = false; window.displayedCount = 12; 
             
