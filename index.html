@@ -1358,9 +1358,9 @@
                         </button>
                     </div>
 
-                    <div id="modal-description-container" class="mt-4 border-t border-stone-100 dark:border-stone-700 pt-4">
-                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2">Описание находки</h5>
-                        <p id="modal-description" class="text-sm leading-relaxed text-stone-600 dark:text-stone-300 whitespace-pre-line"></p>
+                    <div id="modal-description-container" class="mt-6 border-t border-stone-100 dark:border-stone-700 pt-5 w-full text-left">
+                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-3 text-left block">Описание находки</h5>
+                        <p id="modal-description" class="text-sm leading-relaxed text-stone-600 dark:text-stone-300 whitespace-pre-line text-left block w-full"></p>
                     </div>
                     
                     <div id="modal-address-container" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 w-full md:w-2/3">
@@ -2898,10 +2898,10 @@
             const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
             const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
-            // СЕНЬОР-ЛОГИКА: Умный подвал карточки
+            // Умный подвал карточки
             const cardFooter = isOwner ? `
-                <div class="view-grid-city text-[10px] font-bold text-stone-400 mt-auto pt-2 flex gap-2">
-                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-700/50">
+                <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
+                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50">
                         <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП
                     </button>
                     <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700">
@@ -3134,6 +3134,16 @@
                     if(modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
                 }
 
+                // --- ЛОГИКА ОПИСАНИЯ ---
+                const descEl = document.getElementById('modal-description');
+                if (descEl) {
+                    // Подставляем текст из базы. Если его нет — стандартная фраза.
+                    descEl.innerText = item.description || 'Продавец не добавил описание к этому товару.';
+                }
+
+                // Далее у тебя идет проверка владельца:
+                const isOwner = window.currentUser && window.currentUser.id === item.userId;
+                
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
                 const contactBtn = document.getElementById('btn-contact-seller');
