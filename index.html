@@ -3133,13 +3133,6 @@
                     modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
                     if(modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
                 }
-
-                // --- ЛОГИКА ОПИСАНИЯ ---
-                const descEl = document.getElementById('modal-description');
-                if (descEl) {
-                    // Подставляем текст из базы. Если его нет — стандартная фраза.
-                    descEl.innerText = item.description || 'Продавец не добавил описание к этому товару.';
-                }
                 
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
