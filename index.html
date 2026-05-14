@@ -3126,12 +3126,12 @@
                 const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                 window.updateSEO(item.title, item.description, coverImg);
                 
+                // Настройка кнопки избранного (Склада)
+                const isLiked = window.userFavorites && window.userFavorites.has(item.id);
                 const modalFavBtn = document.getElementById('modal-fav-btn');
-                const modalFavIcon = document.querySelector('#modal-fav-btn i');
-                if(modalFavIcon && window.userFavorites) {
-                    const isLiked = window.userFavorites.has(item.id);
-                    modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-                    if(modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
+                if (modalFavBtn) {
+                    modalFavBtn.innerHTML = isLiked ? '<i class="fa-solid fa-box text-brand-500"></i>' : '<i class="fa-solid fa-box-open text-stone-400"></i>';
+                    modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
                 }
 
                 // --- ЛОГИКА ОПИСАНИЯ ---
@@ -3139,9 +3139,20 @@
                 if (descEl) {
                     descEl.innerText = item.description || 'Продавец не добавил описание к этому товару.';
                 }
-                
+
+                // Проверка владельца и вывод кнопок управления
                 const isOwner = window.currentUser && window.currentUser.id === item.userId;
                 const ctrl = document.getElementById('modal-owner-controls');
+                if (ctrl) {
+                    if (isOwner) {
+                        ctrl.classList.remove('hidden');
+                        ctrl.classList.add('grid');
+                    } else {
+                        ctrl.classList.add('hidden');
+                        ctrl.classList.remove('grid');
+                    }
+                }
+                
                 const contactBtn = document.getElementById('btn-contact-seller');
                 const actionControls = document.getElementById('modal-owner-action-controls');
 
