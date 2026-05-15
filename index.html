@@ -28,6 +28,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
 
         /* 1. ЗАГРУЗКА ШРИФТОВ */
@@ -337,9 +338,37 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background-color: #14b8a6;
         }
+
+        /* Горизонтальные карты в профиле на мобилках */
+        @media (max-width: 768px) {
+            #profile-items-grid {
+                grid-template-columns: 1fr !important; /* Одна колонка */
+            }
+            #profile-items-grid .item-card {
+                flex-direction: row !important; /* Горизонтальное направление */
+                height: 140px !important;
+                align-items: center;
+            }
+            #profile-items-grid .card-img-wrap {
+                width: 130px !important; /* Фиксированная ширина фото */
+                height: 100% !important;
+                border-radius: 1rem 0 0 1rem;
+            }
+            #profile-items-grid .card-body-wrap {
+                padding: 12px !important;
+                justify-content: center;
+            }
+            #profile-items-grid .view-grid-city {
+                display: none !important; /* Скрываем нижнюю плашку города для экономии места */
+            }
+            #profile-items-grid .view-list-city {
+                display: block !important; /* Показываем город рядом с ценой */
+            }
+        }
         
     </style>
 </head>
+    
 <body class="text-stone-800 dark:text-stone-200 antialiased relative pb-[70px] lg:pb-0">
     
     <div class="bg-pattern"></div>
@@ -1025,7 +1054,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+                <div id="profile-items-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
                 
                 <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
@@ -2945,7 +2974,7 @@
                     </div>
                     
                     <div class="view-list-col-3 hidden">
-                        <h5 class="text-sm font-black text-stone-900 dark:text-white uppercase tracking-normal mb-3 block">Описание находки</h5>
+                        <h5 class="text-base font-black text-stone-900 dark:text-white uppercase tracking-wider mb-3 block">Описание находки</h5>
                         <p class="view-list-desc">
                             ${i.description || 'Продавец не добавил описание к этому товару.'}
                         </p>
