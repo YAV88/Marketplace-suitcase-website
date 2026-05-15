@@ -959,7 +959,7 @@
     </div>
     
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[70]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-[1400px] h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
                 
@@ -1025,7 +1025,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid" style="display: none;"></div>
+                <div id="profile-items-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
                 
                 <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
@@ -1034,7 +1034,6 @@
         </div>
     </div>
 
-    <!-- ПРОФИЛЬ ПРОДАВЦА -->
     <!-- ПРОФИЛЬ ПРОДАВЦА -->
     <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[85]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
@@ -1346,21 +1345,19 @@
                         </div>
                     </div>
 
-                    <div id="modal-owner-controls" class="hidden mt-4">
-                        <div class="grid grid-cols-3 gap-2">
-                            <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex flex-col items-center justify-center py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-xl hover:bg-amber-100 transition shadow-sm">
-                                <i class="fa-solid fa-arrow-up text-xl mb-1"></i>
-                                <span class="text-[9px] font-black uppercase tracking-wider" id="btn-owner-bump-text">В ТОП (PRO)</span>
-                            </button>
-                            <button id="btn-owner-share" onclick="window.bumpViaShare()" class="flex flex-col items-center justify-center py-2 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-xl hover:bg-brand-100 transition shadow-sm">
-                                <i class="fa-solid fa-share-nodes text-xl mb-1"></i>
-                                <span class="text-[9px] font-black uppercase tracking-wider">Репост</span>
-                            </button>
-                            <button id="btn-owner-vip" onclick="window.promoteToVip()" class="flex flex-col items-center justify-center py-2 bg-stone-900 dark:bg-stone-100 text-amber-400 dark:text-amber-600 border border-stone-800 dark:border-stone-200 rounded-xl hover:bg-stone-800 transition shadow-sm">
-                                <i class="fa-solid fa-crown text-xl mb-1"></i>
-                                <span class="text-[9px] font-black uppercase tracking-wider">В VIP</span>
-                            </button>
-                        </div>
+                    <div id="modal-owner-controls" class="hidden grid grid-cols-3 gap-2 mb-6">
+                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex flex-col items-center justify-center py-3.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-2xl hover:bg-amber-100 transition shadow-sm">
+                            <i class="fa-solid fa-arrow-up text-xl mb-1"></i>
+                            <span class="text-[10px] font-black uppercase tracking-wider" id="btn-owner-bump-text">В ТОП</span>
+                        </button>
+                        <button id="btn-owner-share" onclick="window.bumpViaShare()" class="flex flex-col items-center justify-center py-3.5 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 transition shadow-sm">
+                            <i class="fa-solid fa-share-nodes text-xl mb-1"></i>
+                            <span class="text-[10px] font-black uppercase tracking-wider">Репост</span>
+                        </button>
+                        <button id="btn-owner-vip" onclick="window.promoteToVip()" class="flex flex-col items-center justify-center py-3.5 bg-stone-900 dark:bg-stone-100 text-amber-400 dark:text-amber-600 border border-stone-800 dark:border-stone-200 rounded-2xl hover:bg-stone-800 transition shadow-sm">
+                            <i class="fa-solid fa-crown text-xl mb-1"></i>
+                            <span class="text-[10px] font-black uppercase tracking-wider">В VIP</span>
+                        </button>
                     </div>
                     
                 </div>
@@ -2948,7 +2945,7 @@
                     </div>
                     
                     <div class="view-list-col-3 hidden">
-                        <h5 class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5">Описание находки</h5>
+                        <h5 class="text-sm font-black text-stone-900 dark:text-white uppercase tracking-normal mb-3 block">Описание находки</h5>
                         <p class="view-list-desc">
                             ${i.description || 'Продавец не добавил описание к этому товару.'}
                         </p>
@@ -3147,7 +3144,7 @@
 
                 if (isOwner) {
                     if(contactBtn) contactBtn.classList.add('hidden'); 
-                    if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('flex'); }
+                    if(ctrl) { ctrl.classList.remove('hidden'); ctrl.classList.add('grid'); }
                     
                     const bumpBtnText = document.getElementById('btn-owner-bump-text');
                     if(bumpBtnText) {
