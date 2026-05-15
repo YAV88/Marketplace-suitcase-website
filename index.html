@@ -1442,6 +1442,22 @@
         </div>
     </div>
 
+    <!-- каркас кастомного модального окна -->
+    <div id="confirm-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[200]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 text-center flex flex-col items-center">
+            <div id="confirm-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mb-5 shrink-0 shadow-inner">
+                <i id="confirm-icon" class="text-3xl"></i>
+            </div>
+            <h2 id="confirm-title" class="text-2xl font-display font-black text-stone-900 dark:text-white mb-2">Вы уверены?</h2>
+            <p id="confirm-message" class="text-sm text-stone-500 font-medium mb-8">Это действие нельзя отменить.</p>
+            
+            <div class="flex items-center gap-3 w-full">
+                <button onclick="window.closeConfirmModal(false)" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Отмена</button>
+                <button id="confirm-action-btn" class="flex-1 text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md cursor-pointer">Да, уверен</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- ОКНО ЖАЛОБЫ -->
     <div id="report-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[110]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl p-6 sm:p-8 relative border dark:border-stone-800">
@@ -1479,6 +1495,40 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabase = createClient(supabaseUrl, supabaseKey);
 
+        // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
+        window.customConfirm = (title, message, btnText, colorTheme, iconClass) => {
+            return new Promise((resolve) => {
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-message').innerText = message;
+                
+                const actionBtn = document.getElementById('confirm-action-btn');
+                actionBtn.innerText = btnText;
+                
+                const iconCont = document.getElementById('confirm-icon-container');
+                const iconEl = document.getElementById('confirm-icon');
+                
+                // Настраиваем цвета в зависимости от "опасности" действия
+                if (colorTheme === 'red') {
+                    actionBtn.className = 'flex-1 text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md cursor-pointer bg-red-500 hover:bg-red-600';
+                    iconCont.className = 'w-16 h-16 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-inner bg-red-100 dark:bg-red-900/30 text-red-500';
+                } else if (colorTheme === 'emerald') {
+                    actionBtn.className = 'flex-1 text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md cursor-pointer bg-emerald-500 hover:bg-emerald-600';
+                    iconCont.className = 'w-16 h-16 rounded-full flex items-center justify-center mb-4 shrink-0 shadow-inner bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500';
+                }
+                
+                iconEl.className = `text-3xl ${iconClass}`;
+
+                window.openModal('confirm-modal');
+
+                // Обработчики закрытия (разрешают Promise)
+                window.closeConfirmModal = (result) => {
+                    window.closeModal('confirm-modal');
+                    resolve(result);
+                };
+
+                actionBtn.onclick = () => window.closeConfirmModal(true);
+            });
+        };
 
         window.promoteToVip = async () => {
             if (!window.currentUser || !window.activeModalItemId) return;
@@ -1511,17 +1561,27 @@
             const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
             if (!item) return;
 
-            // Проверяем текущий статус (Резерв можно снять)
             const isCurrentlyReserved = item.status === 'reserved' || item.is_reserved;
             const newStatus = isCurrentlyReserved ? 'active' : 'reserved';
             
+            // Запрашиваем подтверждение только при ПОСТАНОВКЕ в резерв
+            if (newStatus === 'reserved') {
+                const isConfirmed = await window.customConfirm(
+                    "Резерв товара", 
+                    "Скрыть товар из ленты? Покупатели больше не смогут его найти, пока вы не снимете резерв.", 
+                    "В резерв", 
+                    "emerald", 
+                    "fa-solid fa-clock"
+                );
+                if(!isConfirmed) return; // Пользователь нажал "Отмена"
+            }
+            
             try {
-                // Отправляем в БД только безопасную колонку status
                 const { error } = await supabase.from('items').update({ status: newStatus }).eq('id', item.id);
                 if(error) throw error;
                 
                 item.status = newStatus;
-                item.is_reserved = !isCurrentlyReserved; // дублируем локально для старых проверок
+                item.is_reserved = !isCurrentlyReserved;
                 
                 window.showToast(newStatus === 'reserved' ? "Товар успешно скрыт в резерв" : "Резерв снят, товар снова в ленте!");
                 window.openItemDetails(item.id); 
@@ -1535,7 +1595,15 @@
             const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
             if (!item) return;
 
-            if(!confirm("Пометить товар как проданный? Он исчезнет из общей ленты, но останется в вашем профиле.")) return;
+            const isConfirmed = await window.customConfirm(
+                "Подтверждение продажи", 
+                "Пометить товар как проданный? Он исчезнет из общей ленты, но останется в вашем профиле.", 
+                "Да, продано", 
+                "emerald", 
+                "fa-solid fa-check-circle"
+            );
+            if(!isConfirmed) return;
+
             try {
                 const { error } = await supabase.from('items').update({ status: 'sold' }).eq('id', item.id);
                 if(error) throw error;
@@ -1552,7 +1620,15 @@
         window.deleteItemConfirm = async () => {
             if(!window.activeModalItemId) return;
             
-            if(!confirm("Вы уверены, что хотите НАВСЕГДА удалить это объявление? Восстановить его будет невозможно.")) return;
+            const isConfirmed = await window.customConfirm(
+                "Удаление объявления", 
+                "Вы уверены, что хотите НАВСЕГДА удалить это объявление? Восстановить его будет невозможно.", 
+                "Удалить", 
+                "red", 
+                "fa-solid fa-trash-can"
+            );
+            if(!isConfirmed) return;
+
             try {
                 const { error } = await supabase.from('items').delete().eq('id', window.activeModalItemId);
                 if(error) throw error;
@@ -3298,10 +3374,12 @@
 
                 // --- ПАНЕЛЬ ВЛАДЕЛЬЦА: ТАЙМЕРЫ И СТАТУСЫ ---
                 const ownerControls = document.getElementById('modal-owner-controls');
+                const chatBtn = document.getElementById('btn-contact-seller'); // Находим кнопку чата
+
                 if (isOwner) {
                     if(ownerControls) ownerControls.classList.remove('hidden');
+                    if(chatBtn) chatBtn.classList.add('hidden'); // Прячем кнопку чата от себя, чтобы не писать себе же
                     
-                    // 1. Обновляем таймер бесплатного поднятия за репост
                     const shareBadge = document.getElementById('share-bump-badge');
                     const shareTimer = document.getElementById('share-bump-timer');
                     if (shareBadge && shareTimer) {
@@ -3328,6 +3406,7 @@
 
                 } else {
                     if(ownerControls) ownerControls.classList.add('hidden');
+                    if(chatBtn) chatBtn.classList.remove('hidden'); // Показываем чат другим
                 }
 
                 // --- ЛОГИКА КНОПОК ПЕРЕЛИСТЫВАНИЯ ---
