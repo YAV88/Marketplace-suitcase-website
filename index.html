@@ -342,27 +342,41 @@
         /* Горизонтальные карты в профиле на мобилках */
         @media (max-width: 768px) {
             #profile-items-grid {
-                grid-template-columns: 1fr !important; /* Одна колонка */
+                grid-template-columns: 1fr !important;
             }
             #profile-items-grid .item-card {
-                flex-direction: row !important; /* Горизонтальное направление */
-                height: 140px !important;
-                align-items: center;
+                flex-direction: row !important;
+                min-height: 140px !important;
+                height: auto !important;
+                align-items: stretch;
             }
             #profile-items-grid .card-img-wrap {
-                width: 130px !important; /* Фиксированная ширина фото */
-                height: 100% !important;
+                width: 140px !important;
+                height: auto !important;
                 border-radius: 1rem 0 0 1rem;
             }
             #profile-items-grid .card-body-wrap {
-                padding: 12px !important;
-                justify-content: center;
+                padding: 0.75rem !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
-            #profile-items-grid .view-grid-city {
-                display: none !important; /* Скрываем нижнюю плашку города для экономии места */
+            #profile-items-grid h4 {
+                font-size: 1rem !important;
+                margin-bottom: 2px !important;
+            }
+            #profile-items-grid .price-text {
+                font-size: 1.1rem !important;
             }
             #profile-items-grid .view-list-city {
-                display: block !important; /* Показываем город рядом с ценой */
+                display: block !important;
+                margin-bottom: 6px;
+            }
+            /* ИСПРАВЛЕНИЕ: Мы не скрываем подвал (view-grid-city), так как там кнопки управления владельца! */
+            #profile-items-grid .view-grid-city {
+                display: grid !important;
+                margin-top: auto;
+                padding-top: 8px;
             }
         }
         
@@ -988,7 +1002,7 @@
     </div>
     
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[70]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-[1400px] h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-6xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
                 
@@ -1054,7 +1068,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+                <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid gap-4 sm:gap-6"></div>
                 
                 <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
