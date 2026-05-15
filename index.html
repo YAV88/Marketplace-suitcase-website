@@ -1384,31 +1384,41 @@
                         </div>
                     </div>
 
-                    <div id="modal-owner-controls" class="hidden grid grid-cols-3 gap-2 mb-6">
-                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="flex flex-col items-center justify-center py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-2xl hover:bg-amber-100 transition shadow-sm">
-                            <i class="fa-solid fa-arrow-up text-lg mb-1"></i>
-                            <span class="text-[11px] font-bold">В ТОП</span>
-                        </button>
-                        <button id="btn-owner-share" onclick="window.bumpViaShare()" class="flex flex-col items-center justify-center py-3 bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 transition shadow-sm">
-                            <i class="fa-solid fa-share-nodes text-lg mb-1"></i>
-                            <span class="text-[11px] font-bold">Репост</span>
-                        </button>
-                        <button id="btn-owner-vip" onclick="window.promoteToVip()" class="flex flex-col items-center justify-center py-3 bg-stone-900 dark:bg-stone-100 text-amber-400 dark:text-amber-600 border border-stone-800 dark:border-stone-200 rounded-2xl hover:bg-stone-800 transition shadow-sm">
-                            <i class="fa-solid fa-crown text-lg mb-1"></i>
-                            <span class="text-[11px] font-bold">В VIP</span>
+                    <div id="modal-owner-controls" class="hidden grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-6">
+                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="group flex flex-col items-center justify-center p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-2xl hover:bg-amber-100 hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-arrow-up text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold" id="btn-owner-bump-text">Поднять</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">Раз в 24 часа</span>
                         </button>
                         
-                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="flex flex-col items-center justify-center py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 transition shadow-sm">
-                            <i class="fa-solid fa-clock text-lg mb-1"></i>
-                            <span id="btn-reserve-text" class="text-[11px] font-bold">Резерв</span>
+                        <button id="btn-owner-share" onclick="window.bumpViaShare()" class="group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Репост</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">+3 поднятия</span>
                         </button>
-                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="flex flex-col items-center justify-center py-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 transition shadow-sm">
-                            <i class="fa-solid fa-check-circle text-lg mb-1"></i>
-                            <span class="text-[11px] font-bold">Продано</span>
+
+                        <button id="btn-owner-vip" onclick="window.promoteToVip()" class="group flex flex-col items-center justify-center p-3 bg-stone-900 dark:bg-stone-100 text-amber-400 dark:text-amber-600 border border-stone-800 dark:border-stone-200 rounded-2xl hover:bg-stone-800 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-crown text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">В VIP-блок</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">Привлечь внимание</span>
                         </button>
-                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="flex flex-col items-center justify-center py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-2xl hover:bg-red-100 transition shadow-sm">
-                            <i class="fa-solid fa-trash-can text-lg mb-1"></i>
-                            <span class="text-[11px] font-bold">Удалить</span>
+                        
+                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="group flex flex-col items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-clock text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span id="btn-reserve-text" class="text-xs font-bold">В резерв</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">Временно скрыть</span>
+                        </button>
+                        
+                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="group flex flex-col items-center justify-center p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-check-circle text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Продано</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">Завершить сделку</span>
+                        </button>
+                        
+                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="group flex flex-col items-center justify-center p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-2xl hover:bg-red-100 hover:border-red-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
+                            <i class="fa-solid fa-trash-can text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-bold">Удалить</span>
+                            <span class="text-[9px] opacity-70 mt-0.5">Навсегда</span>
                         </button>
                     </div>
                 </div>
@@ -1495,45 +1505,53 @@
 
         // 1. Переключение статуса "В резерве"
         window.toggleReserve = async () => {
-            if(!window.currentOpenItem) return;
-            const newStatus = !window.currentOpenItem.is_reserved;
+            if(!window.activeModalItemId) return;
+            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+            if (!item) return;
+
+            const newStatus = !item.is_reserved;
             try {
-                const { error } = await supabase.from('items').update({ is_reserved: newStatus }).eq('id', window.currentOpenItem.id);
+                const { error } = await supabase.from('items').update({ is_reserved: newStatus }).eq('id', item.id);
                 if(error) throw error;
                 
-                window.currentOpenItem.is_reserved = newStatus;
-                window.showToast(newStatus ? "Товар в резерве" : "Резерв снят");
-                window.openItemDetails(window.currentOpenItem.id); // Перерисовываем модалку
-                if(window.fetchItems) window.fetchItems(); // Обновляем ленту
+                item.is_reserved = newStatus;
+                window.showToast(newStatus ? "Товар перенесен в резерв" : "Резерв снят");
+                window.openItemDetails(item.id); // Перерисовываем карточку
+                if(window.fetchItems) window.fetchItems(false); // Обновляем ленту
             } catch(e) { window.showToast("Ошибка обновления", true); }
         };
 
         // 2. Пометка "Продано"
         window.markAsSold = async () => {
-            if(!window.currentOpenItem) return;
-            if(!confirm("Пометить товар как проданный? Он исчезнет из общей ленты.")) return;
+            if(!window.activeModalItemId) return;
+            const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+            if (!item) return;
+
+            if(!confirm("Пометить товар как проданный? Он исчезнет из общей ленты, но останется в вашем профиле.")) return;
             try {
-                const { error } = await supabase.from('items').update({ status: 'sold' }).eq('id', window.currentOpenItem.id);
+                const { error } = await supabase.from('items').update({ status: 'sold' }).eq('id', item.id);
                 if(error) throw error;
                 
-                window.showToast("Товар продан!");
+                item.status = 'sold';
+                window.showToast("Поздравляем с продажей!");
                 window.closeModal('item-modal');
-                if(window.fetchItems) window.fetchItems(); 
+                if(window.fetchItems) window.fetchItems(false); 
                 if(window.renderProfileTabs) window.renderProfileTabs();
-            } catch(e) { window.showToast("Ошибка", true); }
+            } catch(e) { window.showToast("Ошибка базы данных", true); }
         };
 
         // 3. Удаление товара
         window.deleteItemConfirm = async () => {
-            if(!window.currentOpenItem) return;
-            if(!confirm("Вы уверены, что хотите безвозвратно удалить это объявление?")) return;
+            if(!window.activeModalItemId) return;
+            
+            if(!confirm("Вы уверены, что хотите НАВСЕГДА удалить это объявление? Восстановить его будет невозможно.")) return;
             try {
-                const { error } = await supabase.from('items').delete().eq('id', window.currentOpenItem.id);
+                const { error } = await supabase.from('items').delete().eq('id', window.activeModalItemId);
                 if(error) throw error;
                 
-                window.showToast("Объявление удалено");
+                window.showToast("Объявление успешно удалено");
                 window.closeModal('item-modal');
-                if(window.fetchItems) window.fetchItems();
+                if(window.fetchItems) window.fetchItems(false);
                 if(window.renderProfileTabs) window.renderProfileTabs();
             } catch(e) { window.showToast("Ошибка при удалении", true); }
         };
