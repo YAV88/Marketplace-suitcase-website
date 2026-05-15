@@ -897,7 +897,7 @@
                 </div>
                 
                 <!-- Кликабельная карточка товара -->
-                <div class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-brand-500 transition shadow-sm" onclick="window.closeModal('chat-modal'); window.openItemDetails(window.currentChatItemId)">
+                <div class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-brand-500 transition shadow-sm" onclick="window.chatReturnContext = { id: window.currentChatId, itemId: window.currentChatItemId, isSellerStr: window.currentChatIsSeller, name: window.currentChatInterlocutor }; window.closeModal('chat-modal'); window.openItemDetails(window.currentChatItemId)">
                     <img id="chat-item-img" src="" class="w-12 h-12 rounded-lg object-cover bg-stone-100 shrink-0">
                     <div class="flex-1 overflow-hidden">
                         <div id="chat-item-title" class="font-black text-sm text-stone-900 dark:text-white truncate">Загрузка...</div>
@@ -1925,17 +1925,21 @@
 
                 const chatIds = chats.map(c => c.id);
                 const itemIds = [...new Set(chats.map(c => c.item_id))];
-                // Собираем ID ВСЕХ участников, чтобы найти имена и покупателей, и продавцов
                 const userIds = [...new Set([...chats.map(c => c.buyer_id), ...chats.map(c => c.seller_id)])];
 
-                const [itemsRes, profilesRes, unreadRes] = await Promise.all([
+                // ИЩЕМ ИМЕНА В ТАБЛИЦЕ ITEMS (так как их нет в профилях)
+                const [itemsRes, userItemsRes, unreadRes] = await Promise.all([
                     supabase.from('items').select('id, title, image_url, author_name').in('id', itemIds),
-                    supabase.from('profiles').select('id, full_name').in('id', userIds),
+                    supabase.from('items').select('user_id, author_name').in('user_id', userIds),
                     supabase.from('messages').select('chat_id').in('chat_id', chatIds).eq('is_read', false).neq('sender_id', window.currentUser.id)
                 ]);
 
                 const itemsMap = {}; if(itemsRes.data) itemsRes.data.forEach(i => itemsMap[i.id] = i);
-                const profilesMap = {}; if(profilesRes.data) profilesRes.data.forEach(p => profilesMap[p.id] = p);
+                
+                // Словарь имен на основе других объявлений юзеров
+                const namesMap = {}; 
+                if(userItemsRes.data) userItemsRes.data.forEach(i => { if(i.author_name) namesMap[i.user_id] = i.author_name; });
+                
                 const unreadMap = {}; if(unreadRes.data) unreadRes.data.forEach(m => unreadMap[m.chat_id] = (unreadMap[m.chat_id] || 0) + 1);
 
                 const lastMsgPromises = chats.map(c => supabase.from('messages').select('text').eq('chat_id', c.id).order('created_at', { ascending: false }).limit(1));
@@ -1946,10 +1950,9 @@
                     const item = itemsMap[chat.item_id];
                     const isSeller = chat.seller_id === window.currentUser.id;
                     
-                    // Логика определения собеседника: берем того, кто НЕ является текущим пользователем
                     const partnerId = isSeller ? chat.buyer_id : chat.seller_id;
-                    const partnerProf = profilesMap[partnerId];
-                    const interlocutorName = partnerProf ? partnerProf.full_name : (isSeller ? "Покупатель" : (item ? item.author_name : "Продавец"));
+                    // Подставляем имя из словаря, если его там нет — пишем "Покупатель"
+                    const interlocutorName = namesMap[partnerId] || (isSeller ? "Покупатель" : (item ? item.author_name : "Продавец"));
 
                     const res = lastMsgsResults[index];
                     const lastMsg = (res.data && res.data.length > 0) ? res.data[0].text : 'Нет сообщений...';
@@ -1978,9 +1981,11 @@
         };
 
         window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) => {
-            window.closeModal('chat-list-modal'); 
+            window.closeModal('chat-list-modal');
             window.currentChatId = chatId;
             window.currentChatItemId = itemId;
+            window.currentChatIsSeller = isSellerStr;
+            window.currentChatInterlocutor = interlocutorName;
             
             const isSeller = isSellerStr === 'true';
 
@@ -2102,9 +2107,19 @@
         };
         
         window.closeModal = id => { 
-            const el = document.getElementById(id); if(el) el.classList.remove('active');
+            const el = document.getElementById(id);
+            if(el) el.classList.remove('active');
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
-            if (id === 'item-modal') { history.pushState(null, '', window.location.pathname); window.updateSEO(); }
+            if (id === 'item-modal') { 
+                history.pushState(null, '', window.location.pathname); 
+                window.updateSEO();
+                // Возврат в чат после просмотра товара
+                if (window.chatReturnContext) {
+                    const ctx = window.chatReturnContext;
+                    window.chatReturnContext = null;
+                    setTimeout(() => window.openExistingChat(ctx.id, ctx.itemId, ctx.isSellerStr, ctx.name), 300);
+                }
+            }
             if (id === 'add-modal') {
                 window.editingItemId = null; document.getElementById('add-modal-title').innerText = "Пристроить добро"; document.getElementById('add-submit-btn').innerText = "Опубликовать";
                 const formEl = document.getElementById('add-form'); if(formEl) formEl.reset(); window.tempPhotos = []; window.editExistingImages = [];
