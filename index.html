@@ -339,11 +339,9 @@
             background-color: #14b8a6;
         }
 
-        /* Горизонтальные карты в профиле на мобилках */
+        /* Горизонтальные карты в профиле на мобилках - Финальный вид */
         @media (max-width: 768px) {
-            #profile-items-grid {
-                grid-template-columns: 1fr !important;
-            }
+            #profile-items-grid { grid-template-columns: 1fr !important; }
             #profile-items-grid .item-card {
                 flex-direction: row !important;
                 min-height: 140px !important;
@@ -351,33 +349,31 @@
                 align-items: stretch;
             }
             #profile-items-grid .card-img-wrap {
-                width: 140px !important;
+                width: 130px !important;
                 height: auto !important;
-                border-radius: 1rem 0 0 1rem;
+                border-radius: 1.25rem 0 0 1.25rem;
             }
             #profile-items-grid .card-body-wrap {
-                padding: 0.75rem !important;
+                padding: 12px !important;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                min-width: 0;
             }
-            #profile-items-grid h4 {
-                font-size: 1rem !important;
-                margin-bottom: 2px !important;
+            /* Убираем дублирование города и стрелки в профиле */
+            #profile-items-grid .view-grid-city { 
+                border-top: none !important;
+                padding-top: 0 !important;
             }
-            #profile-items-grid .price-text {
-                font-size: 1.1rem !important;
+            #profile-items-grid .view-grid-city span { 
+                display: none !important; /* Скрываем текст города и стрелку */
             }
             #profile-items-grid .view-list-city {
                 display: block !important;
-                margin-bottom: 6px;
+                font-size: 11px;
+                color: #a8a29e;
             }
-            /* ИСПРАВЛЕНИЕ: Мы не скрываем подвал (view-grid-city), так как там кнопки управления владельца! */
-            #profile-items-grid .view-grid-city {
-                display: grid !important;
-                margin-top: auto;
-                padding-top: 8px;
-            }
+            #profile-items-grid .view-badges { margin-bottom: 4px; }
         }
         
     </style>
@@ -2911,7 +2907,7 @@
             } catch(err) { return null; }
         }
 
-        window.createCardHtml = function(i, isVIP) {
+        window.createCardHtml = function(i, isVIP, isProfileView = false) {
             const isOwner = window.currentUser && window.currentUser.id === i.userId;
             const isService = i.category && i.category.includes('Услуги');
             const isJob = i.category && i.category.includes('Работа');
@@ -2948,11 +2944,15 @@
             const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
             const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
-            // Умный подвал карточки
-            const cardFooter = isOwner ? `
-                <div class="view-grid-city text-xs font-bold text-stone-400 mt-auto pt-2 grid grid-cols-2 gap-2">
-                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 py-1.5 rounded transition hover:bg-brand-100 flex items-center justify-center border border-brand-100 dark:border-brand-800"><i class="fa-solid fa-share-nodes mr-1"></i> Поднять</button>
-                    <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 py-1.5 rounded transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-pen mr-1"></i> Редакт.</button>
+            // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
+            const cardFooter = (isOwner && isProfileView) ? `
+                <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
+                    <button type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50">
+                        <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП
+                    </button>
+                    <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700">
+                        <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
+                    </button>
                 </div>
             ` : `
                 <div class="view-grid-city text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
@@ -3545,7 +3545,7 @@
                 }
 
                 items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
-                if(items.length > 0) { grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted)).join(''); } 
+                if(items.length > 0) { grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted, true)).join(''); } 
                 else { empty.style.display = 'flex'; }
             } catch(e) {}
         };
