@@ -3287,17 +3287,26 @@
                     } 
                 }
                 
-                // --- СТАТУС ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
-                const statusBanner = document.getElementById('modal-status-banner');
-                if (statusBanner) {
+                // --- СТАТУСЫ ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
+                const statusBadge = document.getElementById('modal-status-badge');
+                if (statusBadge) {
+                    // Проверяем оба варианта на всякий случай (и новую логику, и старую)
+                    const isReserved = item.status === 'reserved' || item.is_reserved === true;
+                    
                     if (item.status === 'sold') {
-                        statusBanner.innerHTML = `<div class="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 text-sm font-bold text-center py-2.5 rounded-xl mb-4 border border-red-200 dark:border-red-800/50"><i class="fa-solid fa-check-circle mr-2"></i>Товар продан</div>`;
-                    } else if (item.is_reserved) {
-                        statusBanner.innerHTML = `<div class="bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 text-sm font-bold text-center py-2.5 rounded-xl mb-4 border border-amber-200 dark:border-amber-800/50"><i class="fa-solid fa-clock mr-2"></i>В резерве</div>`;
+                        statusBadge.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> ПРОДАНО';
+                        // Красная плашка для проданного
+                        statusBadge.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg text-white bg-red-500 shadow-sm inline-flex items-center';
+                    } else if (isReserved) {
+                        statusBadge.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> В РЕЗЕРВЕ';
+                        // Желтая/Оранжевая плашка для резерва
+                        statusBadge.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg text-white bg-amber-500 shadow-sm inline-flex items-center';
                     } else {
-                        statusBanner.innerHTML = '';
+                        // Если товар активен — прячем бейдж
+                        statusBadge.className = 'hidden';
                     }
                 }
+                
                 const addrCont = document.getElementById('modal-address-container');
                 if (addrCont) {
                     if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
