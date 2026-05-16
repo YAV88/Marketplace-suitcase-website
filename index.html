@@ -1082,7 +1082,7 @@
     </div>
 
     <!-- ПРОФИЛЬ ПРОДАВЦА -->
-    <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[85]">
+    <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[120]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
             <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
                 <button id="btn-report-seller" onclick="window.openReportModal()" class="bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition shadow-md cursor-pointer" title="Пожаловаться"><i class="fa-solid fa-snowplow text-lg"></i></button>
@@ -3373,14 +3373,15 @@
                             ratingEl.innerHTML = `<i class="fa-solid fa-star text-amber-500 text-base drop-shadow-sm"></i> ${avg} <span class="text-stone-400 dark:text-stone-500 font-medium ml-1">(${data.length})</span>`;
                             ratingEl.classList.remove('hidden');
                             ratingEl.classList.add('flex'); // Возвращаем в общую сетку кнопок
-                            ratingEl.setAttribute('onclick', `event.stopPropagation(); window.closeModal('item-modal'); window.openSellerProfile('${item.userId}', 'reviews');`);
+                            ratingEl.setAttribute('onclick', `event.stopPropagation(); window.openSellerProfile('${item.userId}', 'reviews');`);
                         }
                     });
                 }
                 
                 const sellerBtn = document.getElementById('modal-seller-btn');
-                if(sellerBtn) {
-                    sellerBtn.setAttribute('onclick', `window.closeModal('item-modal'); window.openSellerProfile('${item.userId}')`);
+                if (sellerBtn) {
+                    // Открываем профиль поверх карточки
+                    sellerBtn.onclick = () => { window.openSellerProfile(item.userId); };
                 }
                 
                 const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
