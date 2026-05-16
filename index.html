@@ -461,11 +461,11 @@
         <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
             
             <div class="font-bold text-lg flex flex-col gap-6">
-                <button id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
+                <button id="mob-nav-login" onclick="window.openModal('auth-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
                 
                 <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
-                    <button onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
-                    <button onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
+                    <button onclick="window.openModal('profile-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
+                    <button onclick="window.openChatListModal();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
                     <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> Выйти</button>
                 </div>
             </div>
@@ -473,11 +473,13 @@
             <div class="border-t border-stone-200 dark:border-stone-800 w-full my-2"></div>
 
             <div class="flex flex-col gap-6 text-base font-bold text-stone-500 dark:text-stone-400">
-                <button onclick="window.openModal('rules-modal'); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-book text-stone-300 dark:text-stone-600 w-6 text-center"></i> Правила сайта</button>
-                <button onclick="window.openModal('policy-modal'); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-shield-halved text-stone-300 dark:text-stone-600 w-6 text-center"></i> Политика приватности</button>
+                <button onclick="window.openModal('rules-modal');" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-book text-stone-300 dark:text-stone-600 w-6 text-center"></i> Правила сайта</button>
                 
-                <button onclick="window.showToast('Страница «О проекте» скоро появится', false); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-info text-stone-300 dark:text-stone-600 w-6 text-center"></i> О проекте</button>
-                <button onclick="window.showToast('База знаний в разработке', false); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-question text-stone-300 dark:text-stone-600 w-6 text-center"></i> Помощь / FAQ</button>
+                <button onclick="window.openModal('policy-modal');" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-user-shield text-stone-300 dark:text-stone-600 w-6 text-center"></i> Политика приватности</button>
+                
+                <button onclick="window.openModal('about-modal');" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-info text-stone-300 dark:text-stone-600 w-6 text-center"></i> О проекте</button>
+                
+                <button onclick="window.showToast('База знаний в разработке', false);" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-question text-stone-300 dark:text-stone-600 w-6 text-center"></i> Помощь / FAQ</button>
                 
                 <a href="mailto:support@svalka.trade" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-envelope text-stone-300 dark:text-stone-600 w-6 text-center"></i> Контакты (Support)</a>
             </div>
@@ -756,6 +758,33 @@
         </div>
     </div>
 
+    <div id="about-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl rounded-[2rem] shadow-2xl p-6 sm:p-10 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('about-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl sm:text-3xl font-display font-black mb-6 text-stone-900 dark:text-white">О проекте <span class="text-brand-500">SVALKA</span></h2>
+            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
+                <p class="text-lg font-bold text-stone-900 dark:text-white">SVALKA — это современный маркетплейс, созданный для удобного поиска и продажи вещей в Сербии.</p>
+                <p>Мы знаем, как сложно бывает найти нужную вещь или быстро пристроить то, что больше не нужно. Наша цель — объединить людей, сделать процесс купли-продажи безопасным, быстрым и приятным.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 mb-6">
+                    <div class="bg-stone-50 dark:bg-stone-800/80 p-5 rounded-2xl border border-stone-200 dark:border-stone-700">
+                        <i class="fa-solid fa-bolt text-3xl text-amber-500 mb-3 block drop-shadow-sm"></i>
+                        <h4 class="font-bold text-stone-900 dark:text-white mb-2">Быстрые сделки</h4>
+                        <p class="text-sm">Интуитивный интерфейс, фильтры и встроенный чат помогают договариваться о сделках за считанные минуты.</p>
+                    </div>
+                    <div class="bg-stone-50 dark:bg-stone-800/80 p-5 rounded-2xl border border-stone-200 dark:border-stone-700">
+                        <i class="fa-solid fa-shield-heart text-emerald-500 text-3xl mb-3 block drop-shadow-sm"></i>
+                        <h4 class="font-bold text-stone-900 dark:text-white mb-2">Безопасность</h4>
+                        <p class="text-sm">Система отзывов, модерация и отсутствие спама обеспечивают максимальную честность пользователей.</p>
+                    </div>
+                </div>
+
+                <p>Проект находится в стадии активного развития (BETA). Мы постоянно улучшаем код, добавляем новые функции и прислушиваемся к отзывам нашего комьюнити. Если у вас есть идеи, предложения или вы нашли ошибку — смело пишите нам в поддержку!</p>
+                <p class="font-bold text-stone-900 dark:text-white mt-4 border-l-4 border-brand-500 pl-4 py-1">Присоединяйтесь к SVALKA и давайте делать вторичное потребление нормой!</p>
+            </div>
+        </div>
+    </div>
+    
     <div id="rules-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl rounded-[2rem] shadow-2xl p-6 sm:p-10 relative border dark:border-stone-800">
             <button onclick="window.closeModal('rules-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
