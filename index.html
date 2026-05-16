@@ -843,19 +843,27 @@
         </div>
     </div>
     
-    <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[90]">
+    <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[200]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-4"><i class="fa-solid fa-gift text-3xl"></i></div>
-            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Бесплатные поднятия</h2>
-            <p class="text-base text-stone-500 font-medium mt-2 mb-6">Выбери способ поделиться</p>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="window.completeShareTask('telegram')" class="bg-[#0088cc] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-telegram text-4xl mb-2 block"></i> Telegram</button>
-                <button onclick="window.completeShareTask('whatsapp')" class="bg-[#25D366] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-whatsapp text-4xl mb-2 block"></i> WhatsApp</button>
-                <button onclick="window.completeShareTask('viber')" class="bg-[#7360f2] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-viber text-4xl mb-2 block"></i> Viber</button>
-                <button onclick="window.completeShareTask('facebook')" class="bg-[#1877F2] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-md cursor-pointer"><i class="fa-brands fa-facebook text-4xl mb-2 block"></i> Facebook</button>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-4"><i class="fa-solid fa-share-nodes text-3xl"></i></div>
+            
+            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Поделиться товаром</h2>
+            <p class="text-base text-stone-500 font-medium mt-2 mb-6">Выберите способ отправки ссылки</p>
+            
+            <div id="share-platforms" class="grid grid-cols-2 gap-3 mb-2">
+                <button onclick="window.triggerShare('telegram')" class="bg-[#0088cc] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-telegram text-2xl"></i> Telegram</button>
+                <button onclick="window.triggerShare('whatsapp')" class="bg-[#25D366] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-whatsapp text-2xl"></i> WhatsApp</button>
+                <button onclick="window.triggerShare('viber')" class="bg-[#7360f2] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-viber text-2xl"></i> Viber</button>
+                <button onclick="window.triggerShare('copy')" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 py-3 rounded-xl font-bold text-sm hover:bg-stone-300 dark:hover:bg-stone-600 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-solid fa-link text-2xl"></i> Копировать</button>
             </div>
-            <p class="text-sm text-stone-400 font-bold mt-8 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700">Мы начислим +3 поднятия после проверки!</p>
+            
+            <div id="share-verify-block" class="hidden mt-6 flex-col gap-3">
+                <p class="text-sm text-stone-500 font-bold mb-1">Вы успешно поделились ссылкой?</p>
+                <button onclick="window.completeShareTask()" id="btn-verify-share" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold text-base hover:bg-emerald-600 transition shadow-md flex items-center justify-center gap-2 cursor-pointer"><i class="fa-solid fa-check-double"></i> Да, я поделился!</button>
+            </div>
+            
+            <p id="share-cooldown-text" class="hidden text-xs text-stone-400 font-bold mt-6 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700"></p>
         </div>
     </div>
 
@@ -2423,10 +2431,8 @@
         
         window.toggleFavoriteModal = (event) => { if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId); }
 
-        window.shareCurrentItem = async () => {
-            const url = window.location.href; const title = document.getElementById('modal-title').innerText;
-            if (navigator.share) { try { await navigator.share({ title: 'SVALKA', text: title, url: url }); } catch (e) {} } 
-            else { navigator.clipboard.writeText(url); window.showToast('Ссылка скопирована!'); }
+        window.shareCurrentItem = () => {
+            window.bumpViaShare();
         };
 
         window.appendEmailDomain = (domain) => {
@@ -4217,59 +4223,124 @@
             }
         }, { passive: true });
 
-        // Логика: Бесплатное поднятие за репост в соцсетях
+        // 1. ОТКРЫТИЕ ОКНА И ПРОВЕРКА КУЛДАУНА
         window.bumpViaShare = async (itemId = null) => {
-            if (!window.currentUser) return;
             const targetId = itemId || window.activeModalItemId;
             if (!targetId) return;
             
-            const item = window.loadedItems.find(i => i.id === targetId);
+            window.currentShareItemId = targetId;
             
-            try {
-                // 1. Высчитываем кулдаун (24 часа)
-                let hoursPassed = 25; // по умолчанию разрешаем
-                if (item && item.last_shared_at) {
+            // Сбрасываем внешний вид окна
+            document.getElementById('share-platforms').classList.remove('hidden');
+            const verifyBlock = document.getElementById('share-verify-block');
+            if(verifyBlock) {
+                verifyBlock.classList.add('hidden');
+                verifyBlock.classList.remove('flex');
+            }
+            
+            const cooldownText = document.getElementById('share-cooldown-text');
+            const item = window.loadedItems.find(i => i.id === targetId);
+            const isOwner = window.currentUser && item && item.userId === window.currentUser.id;
+            
+            // Логика таймеров (только для владельца)
+            if (isOwner) {
+                let hoursPassed = 25;
+                if (item.last_shared_at) {
                     hoursPassed = (new Date().getTime() - new Date(item.last_shared_at).getTime()) / (1000 * 60 * 60);
                 }
-
+                
                 if (hoursPassed < 24) {
-                    window.showToast(`Бесплатное поднятие будет доступно через ${Math.ceil(24 - hoursPassed)} ч.`, true);
-                    // Мы не делаем return, разрешаем человеку просто скинуть ссылку другу, но без бонуса.
-                }
-                
-                const shareUrl = `${window.location.origin}?item=${targetId}`;
-                let shared = false;
-                
-                // 2. Вызываем окно "Поделиться"
-                if (navigator.share) {
-                    await navigator.share({ title: 'Нашел классную вещь на SVALKA!', text: 'Зацени, что продают на нашей барахолке:', url: shareUrl });
-                    shared = true;
+                    cooldownText.innerHTML = `<i class="fa-solid fa-clock text-amber-500 mr-1"></i> Следующее бесплатное поднятие через ${Math.ceil(24 - hoursPassed)} ч.`;
+                    cooldownText.classList.remove('hidden');
+                    window.currentShareEligible = false;
                 } else {
-                    await navigator.clipboard.writeText(shareUrl);
-                    window.showToast("Ссылка скопирована! Отправьте её друзьям.", true);
-                    await new Promise(res => setTimeout(res, 2000)); 
-                    shared = true;
+                    cooldownText.innerHTML = `<i class="fa-solid fa-gift text-brand-500 mr-1"></i> Мы автоматически поднимем товар в ТОП!`;
+                    cooldownText.classList.remove('hidden');
+                    window.currentShareEligible = true;
                 }
-                
-                // 3. Если репост состоялся И прошло 24 часа — автоматически поднимаем товар вверх!
-                if (shared && hoursPassed >= 24) {
+            } else {
+                cooldownText.classList.add('hidden');
+                window.currentShareEligible = false;
+            }
+            
+            window.openModal('share-modal');
+        };
+
+        // 2. ОТПРАВКА ССЫЛКИ В СОЦСЕТИ
+        window.triggerShare = (platform) => {
+            const targetId = window.currentShareItemId;
+            if (!targetId) return;
+            
+            const item = window.loadedItems.find(i => i.id === targetId);
+            const title = item ? item.title : 'SVALKA';
+            const shareUrl = `${window.location.origin}?item=${targetId}`;
+            const text = `Смотри, что продают на SVALKA: ${title}`;
+
+            if (platform === 'telegram') {
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`, '_blank');
+            } else if (platform === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + shareUrl)}`, '_blank');
+            } else if (platform === 'viber') {
+                window.open(`viber://forward?text=${encodeURIComponent(text + " " + shareUrl)}`, '_blank');
+            } else if (platform === 'copy') {
+                navigator.clipboard.writeText(shareUrl);
+                window.showToast("Ссылка скопирована!");
+            }
+            
+            // После клика прячем соцсети и показываем кнопку "Я поделился"
+            document.getElementById('share-platforms').classList.add('hidden');
+            const verifyBlock = document.getElementById('share-verify-block');
+            if(verifyBlock) {
+                verifyBlock.classList.remove('hidden');
+                verifyBlock.classList.add('flex');
+            }
+        };
+
+        // 3. ВЕРИФИКАЦИЯ И ВЫДАЧА БОНУСА
+        window.completeShareTask = async () => {
+            const btn = document.getElementById('btn-verify-share');
+            const targetId = window.currentShareItemId;
+            if (!targetId) return;
+            
+            const item = window.loadedItems.find(i => i.id === targetId);
+            const isOwner = window.currentUser && item && item.userId === window.currentUser.id;
+
+            if(btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Проверяем...';
+                btn.disabled = true;
+            }
+            
+            // Имитация серверной задержки (1.5 сек) для создания ощущения проверки
+            await new Promise(res => setTimeout(res, 1500));
+            
+            try {
+                // Выдаем бонус только если это владелец И прошло 24 часа
+                if (isOwner && window.currentShareEligible) {
                     const nowIso = new Date().toISOString();
                     const { error } = await supabase.from('items')
-                        .update({ created_at: nowIso, last_shared_at: nowIso }) // created_at выкидывает товар вверх ленты
+                        .update({ created_at: nowIso, last_shared_at: nowIso })
                         .eq('id', targetId);
                         
                     if (error) throw error;
                     
                     if (item) { item.created_at = nowIso; item.last_shared_at = nowIso; }
                     
-                    window.showToast("🎉 Товар получил бесплатное поднятие и взлетел в ТОП!");
-                    window.openItemDetails(targetId); // Перерисовываем модалку, чтобы обновить таймер
+                    window.showToast("Репост засчитан! Товар поднят в ТОП!");
+                    window.openItemDetails(targetId);
                     if(window.fetchItems) window.fetchItems(false);
-                } else if (shared) {
-                    window.showToast("Спасибо за репост! (Без поднятия, лимит 24 часа)");
+                } else if (isOwner) {
+                    window.showToast("Репост засчитан! (Поднятие недоступно, лимит 24 часа)");
+                } else {
+                    window.showToast("Спасибо, что поделились ссылкой!");
                 }
             } catch (error) {
-                if (error.name !== 'AbortError') window.showToast("Не удалось поделиться объявлением", true);
+                window.showToast("Ошибка при обработке репоста", true);
+            } finally {
+                window.closeModal('share-modal');
+                if(btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Да, я поделился!';
+                    btn.disabled = false;
+                }
             }
         };
         
