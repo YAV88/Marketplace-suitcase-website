@@ -1369,29 +1369,34 @@
                     
                     <div id="modal-delivery-container" class="flex flex-wrap gap-2 mb-6"></div>
                     
-                   <div class="bg-stone-50 dark:bg-stone-800/80 rounded-2xl p-3 flex items-center justify-between border border-stone-200 dark:border-stone-700 mb-5 shadow-sm">
-                        <div class="flex items-center gap-3 overflow-hidden cursor-pointer" id="modal-seller-btn">
-                            <div id="modal-author-avatar" class="w-11 h-11 rounded-full overflow-hidden bg-white dark:bg-stone-700 flex items-center justify-center text-stone-400 text-xl shrink-0 shadow-sm border border-stone-100 dark:border-stone-600"><i class="fa-solid fa-user"></i></div>
-                            <div class="min-w-0">
-                                <div id="modal-author" class="font-bold text-sm text-stone-900 dark:text-white truncate">Пользователь</div>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <div id="modal-author-sub" class="text-[11px] text-stone-500 font-bold truncate">Продавец SVALKA</div>
-                                    <div id="modal-author-rating" class="text-[11px] text-amber-500 font-bold bg-amber-50 dark:bg-amber-900/30 px-1.5 py-0.5 rounded hidden items-center gap-1"></div>
-                                </div>
+                   <div class="bg-stone-50 dark:bg-stone-800/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border border-stone-200 dark:border-stone-700 mb-5 shadow-sm gap-4">
+                        
+                        <div class="flex items-center gap-3 overflow-hidden cursor-pointer group w-full sm:w-auto" id="modal-seller-btn">
+                            <div id="modal-author-avatar" class="w-12 h-12 rounded-full overflow-hidden bg-white dark:bg-stone-700 flex items-center justify-center text-stone-400 text-xl shrink-0 shadow-sm border border-stone-200 dark:border-stone-600 group-hover:border-brand-400 transition-colors"><i class="fa-solid fa-user"></i></div>
+                            <div class="min-w-0 flex-1">
+                                <div id="modal-author" class="font-bold text-base text-stone-900 dark:text-white truncate group-hover:text-brand-600 transition-colors">Пользователь</div>
+                                <div class="text-[11px] text-stone-500 font-bold mt-0.5 truncate">В профиль продавца <i class="fa-solid fa-chevron-right text-[8px] ml-1 opacity-50 group-hover:translate-x-1 transition-transform"></i></div>
                             </div>
                         </div>
-                        <div class="flex gap-2 shrink-0 ml-2">
-                            <button id="btn-contact-seller" onclick="window.openChatModal()" class="bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-200 transition shadow-sm">
-                                <i class="fa-solid fa-comment-dots text-lg"></i>
+
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto shrink-0">
+                            
+                            <button id="modal-author-rating" class="hidden flex-1 sm:flex-none items-center justify-center gap-1.5 px-4 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-600 font-bold text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-stone-300 dark:hover:border-stone-500 hover:shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap">
                             </button>
-                            <div id="modal-phone-container" class="hidden">
-                                <a id="modal-phone" href="#" class="px-4 h-10 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 transition shadow-sm whitespace-nowrap">
-                                    <i class="fa-solid fa-phone"></i> <span id="modal-phone-text" class="text-sm font-bold ml-2"></span>
+                            
+                            <button id="btn-contact-seller" onclick="window.openChatModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap">
+                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline">Чат</span>
+                            </button>
+                            
+                            <div id="modal-phone-container" class="hidden flex-1 sm:flex-none">
+                                <a id="modal-phone" href="#" class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-800/50 font-bold text-sm transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap">
+                                    <i class="fa-solid fa-phone"></i> <span id="modal-phone-text"></span>
                                 </a>
                             </div>
+
                         </div>
                     </div>
-
+                    
                     <div id="modal-owner-controls" class="hidden grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-6">
                         <button id="btn-owner-bump" onclick="window.bumpItem()" class="group flex flex-col items-center justify-center p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-2xl hover:bg-amber-100 hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
                             <i class="fa-solid fa-arrow-up text-lg mb-1 group-hover:scale-110 transition-transform"></i>
@@ -3353,20 +3358,21 @@
                     authorSubEl.innerHTML = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
                 }
 
+                // --- ЛОГИКА КНОПКИ ОТЗЫВОВ ---
                 const ratingEl = document.getElementById('modal-author-rating');
                 if (ratingEl) {
                     ratingEl.classList.add('hidden');
-                    ratingEl.classList.remove('flex', 'cursor-pointer', 'hover:opacity-80');
+                    ratingEl.classList.remove('flex'); // Скрываем, чтобы не ломать сетку при загрузке
                     ratingEl.removeAttribute('onclick');
                     
                     supabase.rpc('get_seller_reviews', { p_seller_id: item.userId }).then(({data}) => {
                         if(data && data.length > 0) {
                             const avg = (data.reduce((sum, r) => sum + r.rating, 0) / data.length).toFixed(1);
-                            ratingEl.innerHTML = `<i class="fa-solid fa-star"></i> ${avg} <span class="text-amber-600/50 font-medium">(${data.length})</span>`;
-                            ratingEl.classList.remove('hidden');
                             
-                            // Добавили классы кликабельности и функцию открытия отзывов
-                            ratingEl.classList.add('flex', 'cursor-pointer', 'hover:opacity-80', 'transition');
+                            // Яркая звезда и контрастный счетчик
+                            ratingEl.innerHTML = `<i class="fa-solid fa-star text-amber-500 text-base drop-shadow-sm"></i> ${avg} <span class="text-stone-400 dark:text-stone-500 font-medium ml-1">(${data.length})</span>`;
+                            ratingEl.classList.remove('hidden');
+                            ratingEl.classList.add('flex'); // Возвращаем в общую сетку кнопок
                             ratingEl.setAttribute('onclick', `event.stopPropagation(); window.closeModal('item-modal'); window.openSellerProfile('${item.userId}', 'reviews');`);
                         }
                     });
