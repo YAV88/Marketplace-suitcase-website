@@ -891,7 +891,7 @@
             </div>
             
             <div class="p-6 sm:px-12 sm:pb-10 sm:pt-6 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 z-10 shrink-0 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
-                <button onclick="window.closeModal('crypto-modal'); window.showToast('Ожидайте! Мы проверим платеж и включим PRO.');" class="bg-brand-600 hover:bg-brand-700 text-white w-full py-4.5 rounded-2xl font-black text-base transition shadow-lg active:scale-[0.98] cursor-pointer">Я ОПЛАТИЛ, ЖДУ АКТИВАЦИЮ</button>
+                <button id="btn-submit-pro" onclick="window.submitProRequest()" class="bg-brand-600 hover:bg-brand-700 text-white w-full py-4.5 rounded-2xl font-black text-base transition shadow-lg active:scale-[0.98] cursor-pointer">Я ОПЛАТИЛ, ЖДУ АКТИВАЦИЮ</button>
             </div>
             
         </div>
@@ -3548,6 +3548,38 @@
             } catch(e) {
                 console.error("Payment error:", e);
                 window.showToast("Ошибка соединения с сервером", true);
+            }
+        };
+
+        // ФУНКЦИЯ ОТПРАВКИ ЗАЯВКИ НА PRO
+        window.submitProRequest = async () => {
+            if (!window.currentUser) {
+                window.showToast("Сначала войдите в аккаунт", true);
+                return;
+            }
+            
+            const btn = document.getElementById('btn-submit-pro');
+            if(btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Отправка заявки...';
+            }
+            
+            try {
+                const { error } = await supabase.from('pro_requests').insert([{ 
+                    user_id: window.currentUser.id, 
+                    status: 'pending' 
+                }]);
+                if (error) throw error;
+                
+                window.closeModal('crypto-modal');
+                window.showToast("Заявка успешно отправлена! Ожидайте активации.");
+            } catch (e) {
+                window.showToast("Ошибка при отправке заявки", true);
+            } finally {
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerText = "Я ОПЛАТИЛ, ЖДУ АКТИВАЦИЮ";
+                }
             }
         };
         
