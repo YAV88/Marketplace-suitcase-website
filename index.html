@@ -450,21 +450,46 @@
     </nav>
 
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
-        <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center">
+        <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50 shrink-0">
             <div class="flex items-center gap-1 pt-1" onclick="window.goHome(); window.toggleMobileMenu();">
                 <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
                 <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
             </div>
             <button onclick="window.toggleMobileMenu()" class="text-3xl text-stone-400 hover:text-brand-600 p-2 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto font-bold text-lg">
-            <button id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
+        
+        <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
             
-            <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
-                <button onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
-                <button onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
-                <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 mt-4 border-t border-stone-200 dark:border-stone-800 pt-6 text-base cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> Выйти</button>
+            <div class="font-bold text-lg flex flex-col gap-6">
+                <button id="mob-nav-login" onclick="window.openModal('auth-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
+                
+                <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
+                    <button onclick="window.openModal('profile-modal'); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
+                    <button onclick="window.openChatListModal(); window.toggleMobileMenu();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
+                    <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> Выйти</button>
+                </div>
             </div>
+
+            <div class="border-t border-stone-200 dark:border-stone-800 w-full my-2"></div>
+
+            <div class="flex flex-col gap-6 text-base font-bold text-stone-500 dark:text-stone-400">
+                <button onclick="window.openModal('rules-modal'); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-book text-stone-300 dark:text-stone-600 w-6 text-center"></i> Правила сайта</button>
+                <button onclick="window.openModal('policy-modal'); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-shield-halved text-stone-300 dark:text-stone-600 w-6 text-center"></i> Политика приватности</button>
+                
+                <button onclick="window.showToast('Страница «О проекте» скоро появится', false); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-info text-stone-300 dark:text-stone-600 w-6 text-center"></i> О проекте</button>
+                <button onclick="window.showToast('База знаний в разработке', false); window.toggleMobileMenu();" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-circle-question text-stone-300 dark:text-stone-600 w-6 text-center"></i> Помощь / FAQ</button>
+                
+                <a href="mailto:support@svalka.trade" class="flex items-center gap-3 hover:text-brand-600 transition cursor-pointer text-left"><i class="fa-solid fa-envelope text-stone-300 dark:text-stone-600 w-6 text-center"></i> Контакты (Support)</a>
+            </div>
+            
+            <div class="mt-auto pt-8 flex flex-col items-center gap-4">
+                <div class="flex gap-4">
+                    <a href="#" onclick="window.showToast('Мы скоро появимся в Instagram')" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#E1306C] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" onclick="window.showToast('Мы скоро запустим Telegram-канал')" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#0088cc] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-telegram text-xl"></i></a>
+                </div>
+                <p class="text-[10px] font-black text-stone-300 dark:text-stone-600 uppercase tracking-widest text-center mt-2">© 2026 SVALKA.</p>
+            </div>
+
         </div>
     </div>
 
