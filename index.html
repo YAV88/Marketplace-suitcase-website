@@ -3563,13 +3563,7 @@
             }
             
             try {
-                // Временно делаем заглушку. 
-                // Этот код мы активируем на следующем шаге, когда создадим функцию в Supabase!
-                await new Promise(res => setTimeout(res, 1500));
-                window.showToast("Интерфейс готов! Теперь нужно настроить Supabase.");
-                
-                /* --- РАСКОММЕНТИРУЕМ НА СЛЕДУЮЩЕМ ШАГЕ ---
-                const supabaseFunctionUrl = 'https://ТВОЙ_ПРОЕКТ.supabase.co/functions/v1/create-plisio-invoice';
+                const supabaseFunctionUrl = 'https://jeinonooelndbtjalnwa.supabase.co/functions/v1/create-plisio-invoice';
                 
                 const response = await fetch(supabaseFunctionUrl, {
                     method: 'POST',
@@ -3578,18 +3572,20 @@
                 });
                 
                 const data = await response.json();
+                
                 if (data.url) {
-                    window.location.href = data.url; // Автоматически перекидываем юзера на оплату
+                    // Перенаправляем пользователя на красивую страницу оплаты Plisio
+                    window.location.href = data.url; 
                 } else {
                     throw new Error(data.error || "Ошибка генерации ссылки");
                 }
-                ------------------------------------------ */
             } catch (e) {
+                console.error("Plisio Error:", e);
                 window.showToast("Ошибка при создании платежа", true);
             } finally {
                 if(btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-wallet"></i> ОПЛАТИТЬ КРИПТОВАЛЮТОЙ';
+                    btn.innerHTML = '<i class="fa-solid fa-wallet text-xl"></i> ПЕРЕЙТИ К ОПЛАТЕ';
                 }
             }
         };
