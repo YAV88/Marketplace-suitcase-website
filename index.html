@@ -3563,25 +3563,27 @@
             }
             
             try {
-                const supabaseFunctionUrl = 'https://jeinonooelndbtjalnwa.supabase.co/functions/v1/create-plisio-invoice';
-                
-                const response = await fetch(supabaseFunctionUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: window.currentUser.id })
+                // Вызываем функцию через встроенный клиент Supabase (он сам подставит все ключи доступа)
+                const { data, error } = await supabase.functions.invoke('create-plisio-invoice', {
+                    body: { userId: window.currentUser.id }
                 });
                 
-                const data = await response.json();
+                if (error) {
+                    throw error;
+                }
                 
-                if (data.url) {
-                    // Перенаправляем пользователя на красивую страницу оплаты Plisio
+                if (data && data.url) {
+                    // Успех! Перенаправляем пользователя на страницу оплаты Plisio
                     window.location.href = data.url; 
+                } else if (data && data.error) {
+                    throw new Error(data.error);
                 } else {
-                    throw new Error(data.error || "Ошибка генерации ссылки");
+                    throw new Error("Неизвестная ошибка генерации ссылки");
                 }
             } catch (e) {
                 console.error("Plisio Error:", e);
-                window.showToast("Ошибка при создании платежа", true);
+                // Теперь уведомление покажет конкретную причину ошибки
+                window.showToast("Ошибка: " + (e.message || "Не удалось создать счет"), true);
             } finally {
                 if(btn) {
                     btn.disabled = false;
