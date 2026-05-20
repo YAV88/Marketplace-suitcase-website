@@ -414,13 +414,41 @@
         }
 
         async function deleteItem(itemId, btn) {
-            if(!confirm("Снести этот товар навсегда?")) return;
+            if(!confirm("Снести этот товар навсегда и очистить хранилище от его фото?")) return;
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // 1. Ищем товар, чтобы достать ссылки на картинки
+            const item = adminState.items.find(i => i.id === itemId);
+            let pathsToRemove = [];
+            
+            if (item) {
+                if (Array.isArray(item.images)) pathsToRemove.push(...item.images);
+                if (item.image_url) pathsToRemove.push(item.image_url);
+            }
+            
+            // 2. Достаем чистое имя файла (всё, что после /item-images/)
+            const files = pathsToRemove.map(url => {
+                const match = url.match(/\/item-images\/(.+)$/);
+                return match ? match[1] : null;
+            }).filter(Boolean);
+
+            // 3. Удаляем файлы из Storage
+            if (files.length > 0) {
+                await supabaseClient.storage.from('item-images').remove(files);
+            }
+
+            // 4. Удаляем сам товар из БД
             const { error } = await supabaseClient.from('items').delete().eq('id', itemId);
-            if (error) { alert("Ошибка: " + error.message); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
-            } 
-            else { adminState.items = adminState.items.filter(i => i.id !== itemId);
-            btn.parentElement.style.opacity = '0'; setTimeout(() => renderList(), 300); }
+            
+            if (error) { 
+                alert("Ошибка: " + error.message); 
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
+            } else { 
+                adminState.items = adminState.items.filter(i => i.id !== itemId);
+                btn.parentElement.style.opacity = '0'; 
+                setTimeout(() => renderList(), 300); 
+            }
         }
 
         async function togglePro(userId, currentStatus, btn) {
@@ -437,12 +465,53 @@
         }
 
         async function deleteUser(userId, btn) {
-            if(!confirm("Удалить профиль пользователя? Это необратимо!")) return;
+            if(!confirm("Удалить пользователя, ВСЕ его товары и картинки из базы? Это необратимо!")) return;
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // 1. Собираем все товары этого пользователя и их картинки
+            const userItems = adminState.items.filter(i => i.user_id === userId);
+            let itemPaths = [];
+            
+            userItems.forEach(item => {
+                let urls = [];
+                if (Array.isArray(item.images)) urls.push(...item.images);
+                if (item.image_url) urls.push(item.image_url);
+                
+                urls.forEach(url => {
+                    const match = url.match(/\/item-images\/(.+)$/);
+                    if (match) itemPaths.push(match[1]);
+                });
+            });
+
+            // 2. Сносим все картинки его товаров из бакета
+            if (itemPaths.length > 0) {
+                await supabaseClient.storage.from('item-images').remove(itemPaths);
+            }
+
+            // 3. Удаляем аватарку спамера (если есть) из бакета assets
+            const user = adminState.profiles.find(p => p.id === userId);
+            if (user && user.avatar_url) {
+                const match = user.avatar_url.match(/\/assets\/(.+)$/);
+                if (match) await supabaseClient.storage.from('assets').remove([match[1]]);
+            }
+
+            // 4. Удаляем все его товары из БД
+            if (userItems.length > 0) {
+                await supabaseClient.from('items').delete().eq('user_id', userId);
+            }
+
+            // 5. Удаляем профиль пользователя
             const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
-            if (error) { alert("Ошибка удаления: " + error.message); renderList(); } 
-            else { adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
-            btn.parentElement.parentElement.style.opacity = '0'; setTimeout(() => renderList(), 300); }
+            
+            if (error) { 
+                alert("Ошибка удаления: " + error.message); 
+                renderList(); 
+            } else { 
+                adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
+                adminState.items = adminState.items.filter(i => i.user_id !== userId);
+                btn.parentElement.parentElement.style.opacity = '0'; 
+                setTimeout(() => renderList(), 300); 
+            }
         }
 
         async function resolveReport(reportId, btn) {
