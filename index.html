@@ -882,7 +882,18 @@
                 <div class="bg-stone-800 dark:bg-black p-5 rounded-3xl border border-stone-700 text-center shadow-inner relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-stone-700/20 to-transparent"></div>
                     <div class="text-stone-300 dark:text-stone-400 font-bold text-sm mb-1 relative">Стоимость на 30 дней:</div>
-                    <div class="text-4xl font-black text-white relative drop-shadow-md">5.00 <span class="text-emerald-400">USDT</span></div>
+                    <div class="text-4xl font-black text-white relative drop-shadow-md">5.00 <span class="text-emerald-400">$</span></div>
+                    
+                    <div class="mt-4 relative z-20 text-left">
+                        <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Выберите сеть для оплаты:</label>
+                        <select id="plisio-currency-select" class="w-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer focus:border-emerald-500 transition-colors appearance-none">
+                            <option value="USDT_BSC">Tether USDT (BEP-20)</option>
+                            <option value="USDT">Tether USDT (ERC-20)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="TON">Toncoin (TON)</option>
+                        </select>
+                    </div>
+                    
                     <div class="text-xs text-stone-400 mt-2 relative">Безопасная оплата криптовалютой</div>
                 </div>
             </div>
@@ -3555,17 +3566,23 @@
                 window.showToast("Сначала войдите в аккаунт", true);
                 return;
             }
-            
+
             const btn = document.getElementById('btn-pay-plisio');
+            const currencySelect = document.getElementById('plisio-currency-select');
+            const selectedCurrency = currencySelect ? currencySelect.value : 'USDT_BSC';
+
             if(btn) {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Создаем платеж...';
             }
-            
+
             try {
-                // Вызываем функцию через встроенный клиент Supabase (он сам подставит все ключи доступа)
-                const { data, error } = await supabase.functions.invoke('create-plisio-invoice', {
-                    body: { userId: window.currentUser.id }
+                // ПЕРЕДАЕМ ВЫБРАННУЮ ВАЛЮТУ В SUPABASE (добавили currency)
+                const { data, error } = await supabase.functions.invoke('create-plisio-invoice', { 
+                    body: { 
+                        userId: window.currentUser.id,
+                        currency: selectedCurrency 
+                    } 
                 });
                 
                 if (error) {
