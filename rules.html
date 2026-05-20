@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVALKA - Правила платформы</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-[#f5f5f4] dark:bg-[#1c1917] transition-colors min-h-screen">
+    
+    <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <a href="index.html" class="text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-white font-bold transition flex items-center gap-2 bg-white dark:bg-stone-800 px-4 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm">
+                <i class="fa-solid fa-arrow-left"></i> Назад на сайт
+            </a>
+            <button onclick="document.documentElement.classList.toggle('dark')" class="bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition w-10 h-10 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm flex items-center justify-center">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-200 dark:border-stone-800">
+            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-stone-900 dark:text-white mb-8">Пользовательское <span class="text-brand-500">Соглашение</span></h1>
+            
+            <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400">
+                
+                <section>
+                    <h2 class="text-xl font-bold text-stone-900 dark:text-white mb-2">1. Статус платформы</h2>
+                    <p>Маркетплейс <strong>SVALKA</strong> является исключительно информационной доской объявлений. Мы предоставляем техническую платформу, позволяющую пользователям размещать информацию о товарах и услугах, а также находить их.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-stone-900 dark:text-white mb-2">2. Отказ от ответственности</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>Администрация платформы не участвует в сделках между пользователями.</li>
+                        <li>Мы не несем ответственности за качество, безопасность, законность продаваемых товаров или услуг, а также за достоверность информации, указанной в объявлениях.</li>
+                        <li><strong>Все расчеты (включая переводы криптовалют) осуществляются пользователями напрямую друг другу на свой страх и риск.</strong> Платформа не является гарантом сделок и не может отменить транзакции в блокчейне.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-stone-900 dark:text-white mb-2">3. Правила публикации</h2>
+                    <p>На платформе строго запрещено размещать:</p>
+                    <ul class="list-disc pl-5 space-y-1 mt-2">
+                        <li>Товары и услуги, оборот которых запрещен действующим законодательством.</li>
+                        <li>Фальсифицированную продукцию и подделки под видом оригинала.</li>
+                        <li>Спам, мошеннические схемы и ссылки на фишинговые ресурсы.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-stone-900 dark:text-white mb-2">4. Права модерации</h2>
+                    <p>Администрация оставляет за собой право в любой момент, без предупреждения и объяснения причин, удалять объявления и блокировать (банить) аккаунты пользователей, нарушающих данные правила или подозреваемых в мошенничестве.</p>
+                </section>
+
+                <div class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl text-amber-800 dark:text-amber-400 text-sm font-bold">
+                    Используя платформу SVALKA, вы автоматически принимаете данные условия.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if(localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+</html>
