@@ -3606,8 +3606,12 @@
                 }
                 
                 if (data && data.url) {
-                    // Успех! Перенаправляем пользователя на страницу оплаты Plisio
-                    window.location.href = data.url; 
+                    // Успех! Пробуем открыть страницу оплаты в новой вкладке (внешнем браузере)
+                    const opened = window.open(data.url, '_blank');
+                    if (!opened) {
+                        // Если браузер телефона заблокировал новую вкладку, открываем в текущей
+                        window.location.href = data.url;
+                    } 
                 } else if (data && data.error) {
                     throw new Error(data.error);
                 } else {
