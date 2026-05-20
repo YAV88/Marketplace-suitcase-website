@@ -61,6 +61,8 @@
         .view-list .item-card { flex-direction: row !important; min-height: 140px !important; height: auto !important; align-items: stretch; }
         .view-list .card-img-wrap { width: 140px !important; min-height: 140px !important; flex-shrink: 0; position: relative; }
         .view-list .card-body-wrap { padding: 0.75rem !important; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+
+        select:focus {box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* Мягкое свечение при выборе */}
         
         .view-list h4 { 
             font-size: 1.15rem !important;
@@ -884,14 +886,28 @@
                     <div class="text-stone-300 dark:text-stone-400 font-bold text-sm mb-1 relative">Стоимость на 30 дней:</div>
                     <div class="text-4xl font-black text-white relative drop-shadow-md">5.00 <span class="text-emerald-400">$</span></div>
                     
-                    <div class="mt-4 relative z-20 text-left">
-                        <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Выберите сеть для оплаты:</label>
-                        <select id="plisio-currency-select" class="w-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer focus:border-emerald-500 transition-colors appearance-none">
-                            <option value="USDT_BSC">Tether USDT (BEP-20)</option>
-                            <option value="USDT">Tether USDT (ERC-20)</option>
-                            <option value="ETH">Ethereum (ETH)</option>
-                            <option value="TON">Toncoin (TON)</option>
-                        </select>
+                    <div class="mt-5 relative z-20 text-left">
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-stone-400 mb-2 block pl-1">Выберите сеть оплаты:</label>
+                        
+                        <div class="relative group">
+                            <select id="plisio-currency-select" 
+                                    class="w-full bg-white dark:bg-stone-800 border-2 border-stone-100 dark:border-stone-700 rounded-xl px-4 py-3.5 
+                                           text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer 
+                                           focus:border-emerald-500 transition-all duration-200 appearance-none shadow-sm">
+                                <option value="USDT_BSC">Tether (USDT) — сеть BEP-20 (BSC)</option>
+                                <option value="USDT">Tether (USDT) — сеть ERC-20</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="TON">Toncoin (TON)</option>
+                            </select>
+                            
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                        
+                        <p class="text-[10px] text-stone-400 mt-2 px-1">
+                            <i class="fa-solid fa-circle-info mr-1"></i> Комиссии сети BEP-20 самые низкие.
+                        </p>
                     </div>
                     
                     <div class="text-xs text-stone-400 mt-2 relative">Безопасная оплата криптовалютой</div>
