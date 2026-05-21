@@ -1,18 +1,55 @@
-<div class="flex items-center gap-4 mb-8">
-    <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-xl"><i class="fa-solid fa-envelope"></i></div>
-    <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Обратная <span class="text-brand-500">связь</span></h1>
-</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SVALKA — Контакты</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-950 transition-colors min-h-screen">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-6 sm:mb-10">
+            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-5 py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
+                <i class="fa-solid fa-arrow-left text-xs"></i> На главную
+            </a>
+            <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+            </button>
+        </div>
 
-<div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
-    <p>Если у вас возникли технические проблемы, вы нашли баг или хотите предложить идею по улучшению маркетплейса — напишите нам.</p>
-    
-    <div class="bg-stone-50 dark:bg-stone-800/40 p-6 rounded-2xl border border-stone-200/60 dark:border-stone-800/80 text-center mt-6">
-        <div class="text-stone-500 dark:text-stone-400 mb-2">Служба поддержки пользователей:</div>
-        <a href="mailto:support@svalka.trade" class="text-xl sm:text-2xl font-black text-stone-900 dark:text-white hover:text-brand-600 transition-colors">support@svalka.trade</a>
+        <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-xl"><i class="fa-solid fa-envelope"></i></div>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Обратная <span class="text-brand-500">связь</span></h1>
+            </div>
+
+            <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
+                <p>Если у вас возникли технические проблемы, вы нашли ошибку или хотите предложить идею по улучшению маркетплейса — напишите нам.</p>
+                
+                <div class="bg-stone-50 dark:bg-stone-800/40 p-6 rounded-2xl border border-stone-200/60 dark:border-stone-800/80 text-center mt-6">
+                    <div class="text-stone-500 dark:text-stone-400 mb-2">Служба поддержки пользователей:</div>
+                    <a href="mailto:support@svalka.trade" class="text-xl sm:text-2xl font-black text-stone-900 dark:text-white hover:text-brand-600 transition-colors">support@svalka.trade</a>
+                </div>
+
+                <section class="mt-8 pt-4 border-t border-stone-100 dark:border-stone-800">
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Как сообщить о мошеннике?</h2>
+                    <p>Если вы заметили подозрительного продавца, не обязательно писать на почту. Вы можете нажать кнопку «Пожаловаться» прямо в карточке пользователя. Наши модераторы проверяют такие жалобы в приоритетном порядке.</p>
+                </section>
+            </div>
+        </div>
     </div>
-
-    <section class="mt-8">
-        <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Как сообщить о мошеннике?</h2>
-        <p>Если вы заметили подозрительного продавца, не обязательно писать на почту. Вы можете нажать кнопку «Пожаловаться» прямо в карточке товара. Наши модераторы проверяют такие жалобы в приоритетном порядке.</p>
-    </section>
-</div>
+    <script src="info-pages.js"></script>
+</body>
+</html>
