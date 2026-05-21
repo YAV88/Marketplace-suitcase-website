@@ -431,22 +431,53 @@
                     </button>
                 </div>
 
-                <div class="hidden lg:flex relative group">
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm text-stone-800 dark:text-stone-200 transition cursor-pointer">
-                        <span class="leading-none mt-[2px]">Инфо</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-70 group-hover:rotate-180 transition-transform mt-[2px]"></i>
+                <div class="hidden lg:flex relative" id="info-dropdown-wrapper">
+                    <button onclick="window.toggleInfoMenu()" class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm text-stone-800 dark:text-stone-200 transition cursor-pointer">
+                        <span class="leading-none mt-[2px]">Инфо</span> 
+                        <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 mt-[2px]"></i>
                     </button>
-                    <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
-                        <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> О проекте</a>
-                        <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> Правила</a>
-                        <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> Безопасность</a>
-                        <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> Помощь / FAQ</a>
-                        <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> Политика</a>
-                        <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> Условия</a>
-                        
-                        <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
-                        <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> Контакты</a>
+                    
+                    <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[100]">
+                        <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
+                            <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> О проекте</a>
+                            <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> Правила</a>
+                            <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> Безопасность</a>
+                            <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> Помощь / FAQ</a>
+                            <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> Политика</a>
+                            <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> Условия</a>
+                            
+                            <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
+                            <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> Контакты</a>
+                        </div>
                     </div>
                 </div>
+
+                <script>
+                    // Функция открытия/закрытия меню "Инфо"
+                    window.toggleInfoMenu = () => {
+                        const menu = document.getElementById('info-dropdown-menu');
+                        const icon = document.getElementById('info-dropdown-icon');
+                        if (menu.classList.contains('hidden')) {
+                            menu.classList.remove('hidden');
+                            icon.classList.add('rotate-180');
+                        } else {
+                            menu.classList.add('hidden');
+                            icon.classList.remove('rotate-180');
+                        }
+                    };
+            
+                    // Закрываем меню, если кликнули в любое другое место сайта
+                    document.addEventListener('click', (e) => {
+                        const wrapper = document.getElementById('info-dropdown-wrapper');
+                        const menu = document.getElementById('info-dropdown-menu');
+                        const icon = document.getElementById('info-dropdown-icon');
+                        
+                        if (wrapper && menu && !wrapper.contains(e.target)) {
+                            menu.classList.add('hidden');
+                            if(icon) icon.classList.remove('rotate-180');
+                        }
+                    });
+                </script>
                 
                 <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="hidden lg:block px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
                 
