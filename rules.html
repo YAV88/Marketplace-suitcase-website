@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVALKA - Правила и Соглашение</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SVALKA — Правила платформы</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { 
@@ -18,97 +18,56 @@
         h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
-<body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-[#f5f5f4] dark:bg-[#1c1917] transition-colors min-h-screen">
-    
+<body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-950 transition-colors min-h-screen">
     <div class="max-w-3xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-            <a href="index.html" class="text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-white font-bold transition flex items-center gap-2 bg-white dark:bg-stone-800 px-4 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm">
-                <i class="fa-solid fa-arrow-left"></i> Назад на сайт
+        <div class="flex items-center justify-between mb-6 sm:mb-10">
+            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-5 py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
+                <i class="fa-solid fa-arrow-left text-xs"></i> На главную
             </a>
-            <button onclick="document.documentElement.classList.toggle('dark')" class="bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition w-10 h-10 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm flex items-center justify-center">
-                <i class="fa-solid fa-moon"></i>
+            <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
             </button>
         </div>
 
-        <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-200 dark:border-stone-800">
-            <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-stone-900 dark:text-white mb-8">Правила <span class="text-brand-500">SVALKA</span></h1>
+        <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-brand-500/10 dark:bg-brand-500/20 flex items-center justify-center text-brand-600 dark:text-brand-400 text-xl"><i class="fa-solid fa-gavel"></i></div>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Правила <span class="text-brand-500">Платформы</span></h1>
+            </div>
             
-            <div class="space-y-8 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400">
-                
-                <p>Добро пожаловать на маркетплейс SVALKA! Используя наш сервис, вы соглашаетесь с правилами сообщества и пользовательским соглашением. Наша цель — создать безопасную и удобную платформу для каждого.</p>
-
-                <div class="bg-stone-50 dark:bg-stone-800/50 p-5 sm:p-6 rounded-2xl border border-stone-200 dark:border-stone-700 space-y-5">
-                    <h2 class="text-xl sm:text-2xl font-black text-stone-900 dark:text-white uppercase tracking-tight flex items-center gap-3"><i class="fa-solid fa-scale-balanced text-brand-500"></i> Пользовательское соглашение</h2>
-                    
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">1. Статус платформы</h3>
-                        <p>Маркетплейс SVALKA является исключительно информационной доской объявлений. Мы предоставляем техническую платформу, позволяющую пользователям размещать информацию о товарах и услугах, а также находить их.</p>
-                    </section>
-
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">2. Отказ от ответственности</h3>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>Администрация платформы не участвует в сделках между пользователями.</li>
-                            <li>Мы не несем ответственности за качество, безопасность, законность продаваемых товаров или услуг, а также за достоверность информации, указанной в объявлениях.</li>
-                            <li><strong class="text-stone-800 dark:text-stone-300">Все расчеты (включая переводы криптовалют) осуществляются пользователями напрямую друг другу на свой страх и риск.</strong> Платформа не является гарантом сделок и не может отменить транзакции в блокчейне.</li>
-                        </ul>
-                    </section>
+            <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
+                <div class="bg-stone-50 dark:bg-stone-800/40 p-5 rounded-2xl border dark:border-stone-800/60 mb-6 text-stone-900 dark:text-stone-300">
+                    <h2 class="text-base font-bold uppercase tracking-wide text-brand-600 dark:text-brand-400 mb-2">Важный юридический дисклеймер</h2>
+                    SVALKA — это бесплатная доска объявлений. Сервис не является участником, гарантом или организатором сделок. Все соглашения, обмены вещами и финансовые переводы (включая оплату криптовалютой P2P) совершаются пользователями напрямую друг другу на личный страх и риск.
                 </div>
 
-                <div class="space-y-6 pt-2">
-                    <h2 class="text-xl sm:text-2xl font-black text-stone-900 dark:text-white uppercase tracking-tight flex items-center gap-3"><i class="fa-solid fa-users text-brand-500"></i> Правила сообщества</h2>
-                    
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">3. Размещение объявлений</h3>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Описание и фотографии должны точно соответствовать реальному состоянию товара.</li>
-                            <li>Выбирайте наиболее подходящую категорию для вашего объявления.</li>
-                            <li>Запрещено дублировать одни и те же объявления (спам).</li>
-                            <li>Цена должна быть указана честно. Запрещено указывать цену "1 RSD" для привлечения внимания, если реальная стоимость иная.</li>
-                        </ul>
-                    </section>
+                <section>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">1. Требования к объявлениям</h2>
+                    <ul class="list-disc pl-5 space-y-1.5">
+                        <li><strong>Честная цена:</strong> Указывайте реальную стоимость. Запрещено писать "1 динар" для привлечения внимания, если вещь стоит дороже.</li>
+                        <li><strong>Реальные фото:</strong> Загружайте фотографии именно того товара, который продаете. Запрещены стоковые картинки из интернета.</li>
+                        <li><strong>Категории:</strong> Публикуйте товары строго в соответствующие разделы меню.</li>
+                    </ul>
+                </section>
 
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">4. Запрещенные товары и услуги</h3>
-                        <p>На платформе строго запрещена продажа следующих категорий:</p>
-                        <ul class="list-disc pl-5 space-y-1 mt-2">
-                            <li>Оружие, боеприпасы и взрывчатые вещества.</li>
-                            <li>Наркотические средства и медицинские препараты, отпускаемые по рецепту.</li>
-                            <li>Краденые вещи и контрафактная продукция.</li>
-                            <li>Финансовые махинации, криптовалютные пирамиды и сомнительные схемы заработка.</li>
-                            <li>Товары и материалы, нарушающие авторские права.</li>
-                            <li>Любые предметы, оборот которых запрещен или ограничен законодательством.</li>
-                        </ul>
-                    </section>
+                <section>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">2. Запрещенные к публикации позиции</h2>
+                    <p>Продажа или дарение данных вещей приведет к мгновенной аннигиляции аккаунта модераторами:</p>
+                    <ul class="list-disc pl-5 space-y-1 mt-2 text-red-500 dark:text-red-400">
+                        <li>Любые виды оружия, боеприпасов, опасных химических веществ.</li>
+                        <li>Лекарства, медицинские препараты, кальяны, вейпы, табачные изделия.</li>
+                        <li>Мошеннические услуги, финансовые пирамиды, схемы быстрого заработка.</li>
+                        <li>Контрафакт, копии брендов под видом оригиналов.</li>
+                    </ul>
+                </section>
 
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">5. Общение и безопасность</h3>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Уважайте других пользователей. Оскорбления, угрозы и нецензурная лексика в чатах недопустимы.</li>
-                            <li>Для вашей безопасности мы настоятельно рекомендуем проводить сделки при личной встрече в людных местах.</li>
-                            <li>Никогда не переводите предоплату незнакомым продавцам и не переходите по подозрительным ссылкам для "безопасной сделки".</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h3 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white mb-2">6. Права модераторов</h3>
-                        <p>Администрация SVALKA оставляет за собой право редактировать, отклонять или удалять объявления, нарушающие данные правила. Аккаунты пользователей, систематически нарушающих правила или подозреваемых в мошенничестве, могут быть заблокированы без права восстановления.</p>
-                    </section>
-                </div>
-
-                <div class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl text-amber-800 dark:text-amber-400 text-sm font-bold flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-xl"></i>
-                    Используя платформу SVALKA, вы автоматически принимаете данные условия.
-                </div>
+                <section>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">3. Безопасность при покупке</h2>
+                    <p>Мы настоятельно советуем встречаться с контрагентами лично в публичных и хорошо освещенных местах Сербии (торговые центры, кафе, центральные площади). Никогда не отправляйте предоплату на карты или криптокошельки незнакомым лицам до получения и личной проверки товара.</p>
+                </section>
             </div>
         </div>
     </div>
-
-    <script>
-        // Поддержка темной темы, как на основном сайте
-        if(localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    <script src="info-pages.js"></script>
 </body>
 </html>
