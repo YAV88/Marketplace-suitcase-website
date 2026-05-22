@@ -2642,11 +2642,6 @@
             }
         };
 
-        // Запускаем отрисовку сразу после того, как браузер построит страницу
-        document.addEventListener('DOMContentLoaded', window.renderRegistrationAvatars);
-            window.checkIncomingShareClick();
-            window.updateAllShareTimers();
-
         // 3. Функция редактирования профиля
         window.openEditProfile = () => {
             if (!window.currentUser) return;
@@ -4438,8 +4433,8 @@
             
             try {
                 if (window.currentShareEligible) {
-                    // Записываем токен в БД, если лимит 24ч прошел
-                    await supabase.from('share_tracking').insert([
+                    // ИСПРАВЛЕНО: используется supabaseClient
+                    await supabaseClient.from('share_tracking').insert([
                         { user_id: window.currentUser.id, item_id: targetId, share_token: shareToken, clicks_count: 0 }
                     ]);
                 }
@@ -4473,11 +4468,12 @@
                 <button onclick="window.closeModal('share-modal')" class="w-full mt-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 py-3 rounded-xl font-bold text-sm hover:bg-stone-300 dark:hover:bg-stone-600 transition">Понятно, закрыть окно</button>
             `;
             
-            // Мгновенно обновляем локальную дату, чтобы таймер запустился не дожидаясь ответа сервера о клике
+            // Мгновенно обновляем локальную дату
             if (window.currentShareEligible && item) {
                 item.last_shared_at = new Date().toISOString();
             }
         };
+        
         // 3. ВЕРИФИКАЦИЯ И ВЫДАЧА БОНУСА
         window.completeShareTask = async () => {
             const btn = document.getElementById('btn-verify-share');
@@ -4529,103 +4525,103 @@
         // --- ГЛОБАЛЬНЫЙ ТАЙМЕР РЕПОСТОВ (ПРЕВРАЩАЕТ КНОПКИ В ЧАСЫ) ---
         window.updateAllShareTimers = () => {
             setInterval(() => {
-                if (!window.currentUser) return;
-                
-                window.loadedItems.forEach(item => {
-                    // Таймер нужен только для владельца карточки
-                    if (item.userId !== window.currentUser.id) return;
+                try {
+                    if (!window.currentUser || !window.loadedItems) return;
                     
-                    let timePassedMs = 25 * 60 * 60 * 1000; // По умолчанию считаем, что прошло > 24 часов
-                    if (item.last_shared_at) {
-                        timePassedMs = Date.now() - new Date(item.last_shared_at).getTime();
-                    }
-                    
-                    const cooldownMs = 24 * 60 * 60 * 1000;
-                    const timeLeft = cooldownMs - timePassedMs;
-                    
-                    // Находим кнопки в интерфейсе (в профиле и в открытом сейчас товаре)
-                    const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
-                    const modalBtn = (window.activeModalItemId === item.id) ? document.getElementById('btn-owner-share') : null;
-                    
-                    if (timeLeft > 0) {
-                        // Высчитываем часы, минуты и секунды
-                        const h = Math.floor(timeLeft / (1000 * 60 * 60));
-                        const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                        const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                        const timeStr = `${h}ч ${m}м ${s}с`;
+                    window.loadedItems.forEach(item => {
+                        // Защита: проверяем и user_id и userId
+                        const itemOwnerId = item.user_id || item.userId;
+                        if (itemOwnerId !== window.currentUser.id) return;
                         
-                        // Блокируем кнопку в маленькой карточке и превращаем в часы
-                        if (cardBtn) {
-                            cardBtn.disabled = true;
-                            cardBtn.className = "px-3 py-1.5 bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500 rounded-lg flex items-center justify-center border border-transparent text-[10px] font-bold cursor-not-allowed";
-                            cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
+                        let timePassedMs = 25 * 60 * 60 * 1000; // По умолчанию > 24 часов
+                        if (item.last_shared_at) {
+                            timePassedMs = Date.now() - new Date(item.last_shared_at).getTime();
                         }
                         
-                        // Блокируем большую кнопку репоста в окне товара
-                        if (modalBtn) {
-                            modalBtn.disabled = true;
-                            modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70";
-                            modalBtn.innerHTML = `<i class="fa-solid fa-clock text-lg mb-1"></i><span class="text-xs font-bold">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
-                        }
-                    } else {
-                        // Разблокируем кнопки, если 24 часа прошли
-                        if (cardBtn && cardBtn.disabled) {
-                            cardBtn.disabled = false;
-                            cardBtn.className = "px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 cursor-pointer";
-                            cardBtn.innerHTML = `<i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП`;
-                        }
+                        const cooldownMs = 24 * 60 * 60 * 1000;
+                        const timeLeft = cooldownMs - timePassedMs;
                         
-                        if (modalBtn && modalBtn.disabled) {
-                            modalBtn.disabled = false;
-                            modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden cursor-pointer";
-                            modalBtn.innerHTML = `<div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div><i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i><span class="text-xs font-bold">Репост</span><span class="text-[9px] opacity-70 mt-0.5 transition-colors">+ Поднятие</span>`;
+                        const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
+                        const modalBtn = (window.activeModalItemId === item.id) ? document.getElementById('btn-owner-share') : null;
+                        
+                        if (timeLeft > 0) {
+                            const h = Math.floor(timeLeft / (1000 * 60 * 60));
+                            const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                            const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                            const timeStr = `${h}ч ${m}м ${s}с`;
+                            
+                            if (cardBtn) {
+                                cardBtn.disabled = true;
+                                cardBtn.className = "px-3 py-1.5 bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500 rounded-lg flex items-center justify-center border border-transparent text-[10px] font-bold cursor-not-allowed";
+                                cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
+                            }
+                            
+                            if (modalBtn) {
+                                modalBtn.disabled = true;
+                                modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70";
+                                modalBtn.innerHTML = `<i class="fa-solid fa-clock text-lg mb-1"></i><span class="text-xs font-bold">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
+                            }
+                        } else {
+                            if (cardBtn && cardBtn.disabled) {
+                                cardBtn.disabled = false;
+                                cardBtn.className = "px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 cursor-pointer";
+                                cardBtn.innerHTML = `<i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП`;
+                            }
+                            
+                            if (modalBtn && modalBtn.disabled) {
+                                modalBtn.disabled = false;
+                                modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden cursor-pointer";
+                                modalBtn.innerHTML = `<div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div><i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i><span class="text-xs font-bold">Репост</span><span class="text-[9px] opacity-70 mt-0.5 transition-colors">+ Поднятие</span>`;
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (e) { console.error("Ошибка в таймере:", e); }
             }, 1000);
         };
-        
-        // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
-        window.checkIncomingShareClick = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const shareToken = urlParams.get('share');
-            const itemId = urlParams.get('item');
-        
-            if (!shareToken || !itemId) return;
-        
-            // Автор не может скликать бонус сам себе
-            const localUser = (await supabase.auth.getUser()).data?.user;
-            if (localUser && shareToken.includes(`sh_${localUser.id}`)) return; 
-        
-            // Защита от дублей в одной вкладке браузера
-            if (sessionStorage.getItem(`processed_share_${shareToken}`)) return;
-        
-            try {
-                const { data: trackingData } = await supabase.from('share_tracking').select('*').eq('share_token', shareToken).single();
-                if (!trackingData || trackingData.clicks_count > 0) return; 
-        
-                // Закрываем токен
-                await supabase.from('share_tracking').update({ clicks_count: 1 }).eq('share_token', shareToken);
-                
-                // Поднимаем товар и записываем время репоста (чтобы запустился таймер на 24 часа)
-                const nowIso = new Date().toISOString();
-                await supabase.from('items').update({ created_at: nowIso, last_shared_at: nowIso }).eq('id', itemId);
-        
-                sessionStorage.setItem(`processed_share_${shareToken}`, 'true');
-            } catch (err) { console.error(err); }
-            document.addEventListener('DOMContentLoaded', () => {
-                
-                // 1. Проверяем, пришел ли по ссылке уникальный покупатель (начисляем бонус)
+
+        // БЕЗОПАСНЫЙ ЗАПУСК ФУНКЦИЙ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
                 if (typeof window.checkIncomingShareClick === 'function') {
                     window.checkIncomingShareClick();
                 }
-                
-                // 2. Запускаем тикающий 24-часовой таймер блокировки для кнопок "В ТОП"
                 if (typeof window.updateAllShareTimers === 'function') {
                     window.updateAllShareTimers();
                 }
+            }, 1000); // Даем 1 секунду на загрузку товаров перед запуском трекеров
+        });
+        
+        // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
+        window.checkIncomingShareClick = async () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const shareToken = urlParams.get('share');
+                const itemId = urlParams.get('item');
+        
+                if (!shareToken || !itemId) return;
+        
+                // ИСПРАВЛЕНО: supabaseClient
+                const localUser = (await supabaseClient.auth.getUser()).data?.user;
+                if (localUser && shareToken.includes(`sh_${localUser.id}`)) return; 
+        
+                // Защита от дублей в одной вкладке браузера
+                if (sessionStorage.getItem(`processed_share_${shareToken}`)) return;
+        
+                // ИСПРАВЛЕНО: supabaseClient
+                const { data: trackingData } = await supabaseClient.from('share_tracking').select('*').eq('share_token', shareToken).single();
+                if (!trackingData || trackingData.clicks_count > 0) return; 
+        
+                // Закрываем токен
+                await supabaseClient.from('share_tracking').update({ clicks_count: 1 }).eq('share_token', shareToken);
                 
-            });
+                // Поднимаем товар и записываем время репоста (чтобы запустился таймер на 24 часа)
+                const nowIso = new Date().toISOString();
+                await supabaseClient.from('items').update({ created_at: nowIso, last_shared_at: nowIso }).eq('id', itemId);
+        
+                sessionStorage.setItem(`processed_share_${shareToken}`, 'true');
+            } catch (err) { 
+                console.error("Ошибка при проверке ссылки:", err); 
+            }
         };
 
     </script>
