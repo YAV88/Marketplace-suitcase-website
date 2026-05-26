@@ -3843,7 +3843,16 @@
                     else res = await supabase.from('items').insert([itemData]);
                 }
 
-                if(res.error) throw new Error(res.error.message);
+                if(res.error) {
+                    // ОТКАТ (ROLLBACK): Если произошла ошибка при создании НОВОГО товара
+                    if (!window.editingItemId && finalImages && finalImages.length > 0) {
+                        // Вытаскиваем имена файлов из ссылок
+                        const fileNamesToDelete = finalImages.map(url => url.substring(url.lastIndexOf('/') + 1));
+                        // Удаляем их из Storage, чтобы не копился мусор
+                        await supabase.storage.from('item-images').remove(fileNamesToDelete).catch(console.error);
+                    }
+                    throw new Error(res.error.message);
+                }
                 
                 window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); window.closeModal('add-modal'); window.fetchItems(false);
             } catch(e) { window.showToast(`Ошибка: ${e.message}`, true); } 
@@ -3937,9 +3946,19 @@
                 if(!window.authInitialized) window.authInitialized = true;
                 window.currentUser = session?.user || null;
                 
-                // === НАЧАЛО ВСТАВКИ (ЗАЩИТА ОТ БАНА В ОНЛАЙНЕ) ===
+                // === НАЧАЛО ВСТАВКИ (ЗАЩИТА ОТ БАНА И УДАЛЕНИЯ) ===
                 if (window.currentUser) {
-                    const { data: banCheck } = await supabase.from('profiles').select('is_banned, ban_reason').eq('id', window.currentUser.id).single();
+                    const { data: banCheck, error: profileError } = await supabase.from('profiles').select('is_banned, ban_reason').eq('id', window.currentUser.id).single();
+                    
+                    // 1. ЕСЛИ ПРОФИЛЬ УДАЛЕН ИЗ БАЗЫ (Осталась только призрачная сессия)
+                    if (profileError || !banCheck) {
+                        await supabase.auth.signOut();
+                        alert("Ваш аккаунт был удален. Сессия завершена.");
+                        window.location.reload();
+                        return;
+                    }
+                    
+                    // 2. ЕСЛИ ПРОФИЛЬ ЗАБЛОКИРОВАН
                     if (banCheck && banCheck.is_banned) {
                         await supabase.auth.signOut();
                         alert(`Доступ к SVALKA ограничен.\n\nВаш аккаунт был заблокирован модератором.\nПричина: ${banCheck.ban_reason || 'Нарушение правил'}`);
