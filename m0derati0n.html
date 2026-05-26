@@ -261,9 +261,13 @@
                                 </button>
                                 
                                 ${isBanned 
-                                    ? `<button onclick="unbanUser('${user.id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-unlock mr-1"></i> Разбан</button>`
-                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-400 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать профиль"><i class="fa-solid fa-ban"></i></button>`
+                                    ? `<button onclick="unbanUser('${user.id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm" title="Разблокировать"><i class="fa-solid fa-unlock"></i></button>`
+                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-orange-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать (Скрывает товары и выкидывает с сайта)"><i class="fa-solid fa-ban"></i></button>`
                                 }
+                                
+                                <button onclick="deleteUser('${user.id}', this)" class="bg-red-50 dark:bg-red-900/20 text-red-500 border border-red-200 dark:border-red-800/50 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Удалить навсегда">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     `);
@@ -519,6 +523,27 @@
                     user.ban_reason = null;
                 }
                 renderList(); 
+            }
+        }
+
+        async function deleteUser(userId, btn) {
+            if(!confirm("ВНИМАНИЕ! Окончательно удалить пользователя и скрыть все его товары? Это действие необратимо!")) return;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // Удаляем профиль (товары и отзывы удалятся автоматически, если настроен CASCADE в БД)
+            const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+            
+            if (error) { 
+                alert("Ошибка при удалении: " + error.message); 
+                renderList(); 
+            } else { 
+                // Убираем из интерфейса админки
+                adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
+                adminState.items = adminState.items.filter(i => i.user_id !== userId);
+                btn.closest('.flex-col').style.opacity = '0'; 
+                setTimeout(() => renderList(), 300); 
             }
         }
         
