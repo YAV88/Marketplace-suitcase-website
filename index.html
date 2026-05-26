@@ -2547,29 +2547,36 @@
             input.focus();
         };
 
-        window.setAuthMode = mode => {
+        window.setAuthMode = mode => { 
             window.authMode = mode;
             const fields = document.getElementById('auth-name-field'); 
-            const confirmCont = document.getElementById('auth-password-confirm-container');
-            const confirmInput = document.getElementById('auth-password-confirm');
+            const confirmCont = document.getElementById('auth-password-confirm-container'); 
+            const confirmInput = document.getElementById('auth-password-confirm'); 
             const tabL = document.getElementById('tab-login'); 
             const tabR = document.getElementById('tab-register');
             
             if(mode === 'register') { 
-                if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
-                if(confirmCont) { confirmCont.classList.remove('hidden'); confirmCont.classList.add('block'); }
+                if(fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); } 
+                if(confirmCont) { confirmCont.classList.remove('hidden'); confirmCont.classList.add('block'); } 
                 if(confirmInput) confirmInput.required = true;
-                if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
+                if(tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer"; 
                 if(tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
+                
+                // === ИСПРАВЛЕНИЕ: Вызываем генерацию аватарок при переключении ===
+                if (typeof window.renderRegistrationAvatars === 'function') {
+                    window.renderRegistrationAvatars();
+                }
+                // ==================================================================
+                
             } else { 
-                if(fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
-                if(confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); }
+                if(fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); } 
+                if(confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); } 
                 if(confirmInput) confirmInput.required = false;
-                if(tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-                if(tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
-            }
+                if(tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer"; 
+                if(tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer"; 
+            } 
         };
-
+        
         window.submitAuth = async (event) => {
             if(event) event.preventDefault();
             const btn = document.getElementById('auth-submit-btn'); 
