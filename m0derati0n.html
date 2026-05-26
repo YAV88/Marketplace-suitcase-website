@@ -434,28 +434,22 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. Собираем точные пути файлов внутри бакета
+                // 1. Вытягиваем точные пути файлов
                 const item = adminState.items.find(i => i.id === itemId);
                 let filesToDelete = [];
                 
                 if (item && item.image_urls && Array.isArray(item.image_urls)) {
                     item.image_urls.forEach(url => {
-                        // Извлекаем всё, что идет после имени бакета 'item-images/'
                         const match = url.match(/item-images\/(.+?)(?:\?|$)/);
-                        if (match && match[1]) {
-                            // decodeURIComponent нужен, если в имени файла есть пробелы или спецсимволы (URL-кодировка)
-                            filesToDelete.push(decodeURIComponent(match[1]));
-                        }
+                        if (match && match[1]) filesToDelete.push(decodeURIComponent(match[1]));
                     });
                 }
                 
-                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ НАШУ НОВУЮ RPC-ФУНКЦИЮ (Режим Бога)
+                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ JAVASCRIPT API
                 if (filesToDelete.length > 0) {
-                    const { error: storageError } = await supabaseClient.rpc('admin_delete_storage_files', {
-                        bucket_name: 'item-images',
-                        file_paths: filesToDelete
-                    });
-                    if (storageError) console.error("Ошибка при удалении файлов:", storageError);
+                    const { data, error: storageError } = await supabaseClient.storage.from('item-images').remove(filesToDelete);
+                    if (storageError) console.error("Ошибка удаления фото:", storageError);
+                    else console.log("Успешно удалены фото:", data);
                 }
 
                 // 3. Удаляем товар из базы
@@ -541,7 +535,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. СОБИРАЕМ КАРТИНКИ ТОВАРОВ ЭТОГО ПОЛЬЗОВАТЕЛЯ
                 const userItems = adminState.items.filter(i => i.user_id === userId);
                 let itemFilesToDelete = [];
                 
@@ -549,43 +542,36 @@
                     if (item.image_urls && Array.isArray(item.image_urls)) {
                         item.image_urls.forEach(url => {
                             const match = url.match(/item-images\/(.+?)(?:\?|$)/);
-                            if (match && match[1]) {
-                                itemFilesToDelete.push(decodeURIComponent(match[1]));
-                            }
+                            if (match && match[1]) itemFilesToDelete.push(decodeURIComponent(match[1]));
                         });
                     }
                 });
 
-                // 2. СОБИРАЕМ АВАТАР ПОЛЬЗОВАТЕЛЯ
                 const user = adminState.profiles.find(p => p.id === userId);
                 let avatarToDelete = null;
                 if (user && user.avatar_url) {
                     const match = user.avatar_url.match(/avatars\/(.+?)(?:\?|$)/);
-                    if (match && match[1]) {
-                        avatarToDelete = decodeURIComponent(match[1]);
+                    if (match && match[1]) avatarToDelete = decodeURIComponent(match[1]);
+                }
+
+                // УДАЛЯЕМ ФОТОГРАФИИ ТОВАРОВ ЧЕРЕЗ JAVASCRIPT API
+                if (itemFilesToDelete.length > 0) {
+                    // Разбиваем на пачки (chunks) по 50 файлов, если у пользователя очень много фото
+                    for (let i = 0; i < itemFilesToDelete.length; i += 50) {
+                        const chunk = itemFilesToDelete.slice(i, i + 50);
+                        await supabaseClient.storage.from('item-images').remove(chunk);
                     }
                 }
-
-                // 3. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ RPC
-                if (itemFilesToDelete.length > 0) {
-                    await supabaseClient.rpc('admin_delete_storage_files', {
-                        bucket_name: 'item-images',
-                        file_paths: itemFilesToDelete
-                    });
-                }
                 
+                // УДАЛЯЕМ АВАТАР ЧЕРЕЗ JAVASCRIPT API
                 if (avatarToDelete) {
-                    await supabaseClient.rpc('admin_delete_storage_files', {
-                        bucket_name: 'avatars',
-                        file_paths: [avatarToDelete]
-                    });
+                    await supabaseClient.storage.from('avatars').remove([avatarToDelete]);
                 }
 
-                // 4. УДАЛЯЕМ САМ АККАУНТ
+                // УДАЛЯЕМ САМ АККАУНТ ИЗ БАЗЫ
                 const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
                 if (error) throw error;
                 
-                // 5. ОЧИЩАЕМ ИНТЕРФЕЙС АДМИНКИ
                 adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
                 adminState.items = adminState.items.filter(i => i.user_id !== userId);
                 btn.closest('.flex-col, .flex, .border').style.opacity = '0'; 
