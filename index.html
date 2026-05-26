@@ -3930,6 +3930,17 @@
                 if(!window.authInitialized) window.authInitialized = true;
                 window.currentUser = session?.user || null;
                 
+                // === НАЧАЛО ВСТАВКИ (ЗАЩИТА ОТ БАНА В ОНЛАЙНЕ) ===
+                if (window.currentUser) {
+                    const { data: banCheck } = await supabase.from('profiles').select('is_banned, ban_reason').eq('id', window.currentUser.id).single();
+                    if (banCheck && banCheck.is_banned) {
+                        await supabase.auth.signOut();
+                        alert(`Доступ к SVALKA ограничен.\n\nВаш аккаунт был заблокирован модератором.\nПричина: ${banCheck.ban_reason || 'Нарушение правил'}`);
+                        window.location.reload();
+                        return;
+                    }
+                }
+
                 const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
                 const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
                 const profileLogoutBtn = document.getElementById('profile-logout-btn');
