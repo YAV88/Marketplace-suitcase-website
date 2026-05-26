@@ -452,7 +452,7 @@
             }
 
             // 4. Удаляем сам товар из БД
-            const { error } = await supabaseClient.from('items').delete().eq('id', itemId);
+            const { error } = await supabaseClient.rpc('admin_delete_item', { target_item_id: itemId });
             
             if (error) { 
                 alert("Ошибка: " + error.message); 
@@ -533,7 +533,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             // Удаляем профиль (товары и отзывы удалятся автоматически, если настроен CASCADE в БД)
-            const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+            const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
             
             if (error) { 
                 alert("Ошибка при удалении: " + error.message); 
