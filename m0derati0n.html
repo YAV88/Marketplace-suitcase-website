@@ -428,40 +428,33 @@
         }
 
         async function deleteItem(itemId, btn) {
-            if(!confirm("Снести этот товар навсегда и очистить хранилище от его фото?")) return;
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            if(!confirm("Удалить это объявление?")) return;
             
-            // 1. Ищем товар, чтобы достать ссылки на картинки
-            const item = adminState.items.find(i => i.id === itemId);
-            let pathsToRemove = [];
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            if (item) {
-                if (Array.isArray(item.images)) pathsToRemove.push(...item.images);
-                if (item.image_url) pathsToRemove.push(item.image_url);
-            }
-            
-            // 2. Достаем чистое имя файла (всё, что после /item-images/)
-            const files = pathsToRemove.map(url => {
-                const match = url.match(/\/item-images\/(.+)$/);
-                return match ? match[1] : null;
-            }).filter(Boolean);
+            try {
+                // 1. Удаляем картинки товара из Storage
+                const item = adminState.items.find(i => i.id === itemId);
+                if (item && item.image_urls && Array.isArray(item.image_urls)) {
+                    const filesToDelete = item.image_urls.map(url => url.split('/').pop()).filter(Boolean);
+                    if (filesToDelete.length > 0) {
+                        await supabaseClient.storage.from('item-images').remove(filesToDelete);
+                    }
+                }
 
-            // 3. Удаляем файлы из Storage
-            if (files.length > 0) {
-                await supabaseClient.storage.from('item-images').remove(files);
-            }
-
-            // 4. Удаляем сам товар из БД
-            const { error } = await supabaseClient.rpc('admin_delete_item', { target_item_id: itemId });
-            
-            if (error) { 
-                alert("Ошибка: " + error.message); 
-                btn.disabled = false; 
-                btn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
-            } else { 
+                // 2. Удаляем товар из базы
+                const { error } = await supabaseClient.rpc('admin_delete_item', { target_item_id: itemId });
+                if (error) throw error;
+                
+                // 3. Обновляем интерфейс
                 adminState.items = adminState.items.filter(i => i.id !== itemId);
-                btn.parentElement.style.opacity = '0'; 
-                setTimeout(() => renderList(), 300); 
+                btn.closest('.border').style.opacity = '0'; 
+                setTimeout(() => renderList(), 300);
+                
+            } catch (err) {
+                alert("Ошибка: " + err.message);
+                renderList();
             }
         }
 
@@ -527,23 +520,43 @@
         }
 
         async function deleteUser(userId, btn) {
-            if(!confirm("ВНИМАНИЕ! Окончательно удалить пользователя и скрыть все его товары? Это действие необратимо!")) return;
+            if(!confirm("ВНИМАНИЕ! Окончательно удалить пользователя и все его товары? Это действие необратимо!")) return;
             
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            // Удаляем профиль (товары и отзывы удалятся автоматически, если настроен CASCADE в БД)
-            const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
-            
-            if (error) { 
-                alert("Ошибка при удалении: " + error.message); 
-                renderList(); 
-            } else { 
-                // Убираем из интерфейса админки
+            try {
+                // 1. СОБИРАЕМ ВСЕ КАРТИНКИ ТОВАРОВ ЭТОГО ПОЛЬЗОВАТЕЛЯ
+                const userItems = adminState.items.filter(i => i.user_id === userId);
+                let filesToDelete = [];
+                
+                userItems.forEach(item => {
+                    if (item.image_urls && Array.isArray(item.image_urls)) {
+                        item.image_urls.forEach(url => {
+                            const fileName = url.split('/').pop(); // Достаем имя файла из ссылки
+                            if (fileName) filesToDelete.push(fileName);
+                        });
+                    }
+                });
+
+                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ ОФИЦИАЛЬНЫЙ STORAGE API
+                if (filesToDelete.length > 0) {
+                    await supabaseClient.storage.from('item-images').remove(filesToDelete);
+                }
+
+                // 3. УДАЛЯЕМ САМ АККАУНТ
+                const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
+                if (error) throw error;
+                
+                // 4. ОЧИЩАЕМ ИНТЕРФЕЙС АДМИНКИ
                 adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
                 adminState.items = adminState.items.filter(i => i.user_id !== userId);
-                btn.closest('.flex-col').style.opacity = '0'; 
+                btn.closest('.flex-col, .flex, .border').style.opacity = '0'; 
                 setTimeout(() => renderList(), 300); 
+                
+            } catch (err) { 
+                alert("Ошибка при удалении: " + err.message); 
+                renderList(); 
             }
         }
         
