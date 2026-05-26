@@ -464,56 +464,56 @@
             if(userIndex > -1) adminState.profiles[userIndex].pro_until = newDate; renderList(); }
         }
 
-        async function deleteUser(userId, btn) {
-            if(!confirm("Удалить пользователя, ВСЕ его товары и картинки из базы? Это необратимо!")) return;
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        // СИСТЕМА БАНОВ (Заменяет старое удаление)        
+        async function banUser(userId, btn) {
+            const reason = prompt("Укажите причину блокировки (пользователь будет выкинут с сайта):");
+            if (reason === null) return; // Если админ нажал "Отмена"
             
-            // 1. Собираем все товары этого пользователя и их картинки
-            const userItems = adminState.items.filter(i => i.user_id === userId);
-            let itemPaths = [];
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            userItems.forEach(item => {
-                let urls = [];
-                if (Array.isArray(item.images)) urls.push(...item.images);
-                if (item.image_url) urls.push(item.image_url);
-                
-                urls.forEach(url => {
-                    const match = url.match(/\/item-images\/(.+)$/);
-                    if (match) itemPaths.push(match[1]);
-                });
-            });
-
-            // 2. Сносим все картинки его товаров из бакета
-            if (itemPaths.length > 0) {
-                await supabaseClient.storage.from('item-images').remove(itemPaths);
-            }
-
-            // 3. Удаляем аватарку спамера (если есть) из бакета assets
-            const user = adminState.profiles.find(p => p.id === userId);
-            if (user && user.avatar_url) {
-                const match = user.avatar_url.match(/\/assets\/(.+)$/);
-                if (match) await supabaseClient.storage.from('assets').remove([match[1]]);
-            }
-
-            // 4. Удаляем все его товары из БД
-            if (userItems.length > 0) {
-                await supabaseClient.from('items').delete().eq('user_id', userId);
-            }
-
-            // 5. Удаляем профиль пользователя
-            const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
+            // Блокируем в базе
+            const { error } = await supabaseClient.from('profiles').update({ 
+                is_banned: true, 
+                ban_reason: reason || 'Нарушение правил платформы' 
+            }).eq('id', userId);
             
             if (error) { 
-                alert("Ошибка удаления: " + error.message); 
+                alert("Ошибка: " + error.message); 
                 renderList(); 
             } else { 
-                adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
-                adminState.items = adminState.items.filter(i => i.user_id !== userId);
-                btn.parentElement.parentElement.style.opacity = '0'; 
-                setTimeout(() => renderList(), 300); 
+                // Обновляем данные на экране без перезагрузки
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user) {
+                    user.is_banned = true;
+                    user.ban_reason = reason;
+                }
+                renderList(); 
             }
         }
-
+        
+        async function unbanUser(userId, btn) {
+            if(!confirm("Разблокировать пользователя? Его товары снова появятся в ленте.")) return;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            const { error } = await supabaseClient.from('profiles').update({ 
+                is_banned: false, 
+                ban_reason: null 
+            }).eq('id', userId);
+            
+            if (error) { 
+                alert("Ошибка: " + error.message); 
+            } else { 
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user) {
+                    user.is_banned = false;
+                    user.ban_reason = null;
+                }
+                renderList(); 
+            }
+        }
         async function resolveReport(reportId, btn) {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
