@@ -213,8 +213,13 @@
                     const regDate = new Date(user.created_at).toLocaleDateString('ru-RU');
                     const phoneDisplay = user.phone ? `<span class="bg-stone-100 dark:bg-stone-700 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-600"><i class="fa-solid fa-phone text-stone-400 text-[10px] mr-1"></i>${user.phone}</span>` : '';
                     
+                    const isBanned = user.is_banned;
+                    const cardClass = isBanned ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900 opacity-75" : "bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700";
+                    const statusBadge = isBanned ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase ml-2">ЗАБЛОКИРОВАН</span>` : '';
+                    const banInfo = isBanned ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-bold">Причина: ${user.ban_reason || 'Не указана'}</div>` : '';
+
                     list.insertAdjacentHTML('beforeend', `
-                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl hover:shadow-md transition gap-4">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 ${cardClass} border rounded-xl hover:shadow-md transition gap-4">
                             <div class="flex items-center gap-4 overflow-hidden w-full lg:w-auto flex-1">
                                 <div class="relative shrink-0">
                                     <img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover bg-stone-100 border-2 border-stone-200 dark:border-stone-700">
@@ -224,12 +229,14 @@
                                     <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center gap-2 mb-1">
                                         ${user.full_name || 'Без имени'} 
                                         ${isPro ? '<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest">VIP</span>' : ''}
+                                        ${statusBadge}
                                     </div>
                                     <div class="flex flex-wrap gap-2 text-xs text-stone-500 font-bold items-center mb-1">
                                         <span><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</span>
                                         ${phoneDisplay}
                                     </div>
                                     <div class="text-xs font-medium text-stone-400">Регистрация: ${regDate} • Товаров: <span class="text-stone-700 dark:text-stone-300 font-bold">${itemsCount}</span></div>
+                                    ${banInfo}
                                 </div>
                             </div>
                             
@@ -252,13 +259,16 @@
                                 <button onclick="togglePro('${user.id}', ${isPro}, this)" class="flex-1 sm:flex-none ${isPro ? 'bg-amber-100 text-amber-600 hover:bg-stone-200 dark:bg-amber-900/30' : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400 hover:bg-amber-500 hover:text-white'} px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-gem"></i> ${isPro ? '- VIP' : '+ VIP'}
                                 </button>
-                                <button onclick="deleteUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-400 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center" title="Удалить профиль">
-                                    <i class="fa-solid fa-ban"></i>
-                                </button>
+                                
+                                ${isBanned 
+                                    ? `<button onclick="unbanUser('${user.id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-unlock mr-1"></i> Разбан</button>`
+                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-400 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать профиль"><i class="fa-solid fa-ban"></i></button>`
+                                }
                             </div>
                         </div>
                     `);
                 });
+                
             } else if (adminState.currentTab === 'reports') {
                 const filteredReports = adminState.reports.filter(r => 
                     (r.reason || '').toLowerCase().includes(searchTerm) || 
@@ -464,7 +474,6 @@
             if(userIndex > -1) adminState.profiles[userIndex].pro_until = newDate; renderList(); }
         }
 
-        // СИСТЕМА БАНОВ (Заменяет старое удаление)        
         async function banUser(userId, btn) {
             const reason = prompt("Укажите причину блокировки (пользователь будет выкинут с сайта):");
             if (reason === null) return; // Если админ нажал "Отмена"
@@ -472,7 +481,6 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            // Блокируем в базе
             const { error } = await supabaseClient.from('profiles').update({ 
                 is_banned: true, 
                 ban_reason: reason || 'Нарушение правил платформы' 
@@ -482,7 +490,6 @@
                 alert("Ошибка: " + error.message); 
                 renderList(); 
             } else { 
-                // Обновляем данные на экране без перезагрузки
                 const user = adminState.profiles.find(p => p.id === userId);
                 if (user) {
                     user.is_banned = true;
@@ -491,7 +498,7 @@
                 renderList(); 
             }
         }
-        
+
         async function unbanUser(userId, btn) {
             if(!confirm("Разблокировать пользователя? Его товары снова появятся в ленте.")) return;
             
@@ -514,6 +521,7 @@
                 renderList(); 
             }
         }
+        
         async function resolveReport(reportId, btn) {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
