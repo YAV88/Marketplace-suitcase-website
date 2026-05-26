@@ -434,14 +434,20 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. Вытягиваем точные пути файлов
+                // 1. Вытягиваем точные пути файлов из ПРАВИЛЬНЫХ переменных
                 const item = adminState.items.find(i => i.id === itemId);
                 let filesToDelete = [];
                 
-                if (item && item.image_urls && Array.isArray(item.image_urls)) {
-                    item.image_urls.forEach(url => {
-                        const match = url.match(/item-images\/(.+?)(?:\?|$)/);
-                        if (match && match[1]) filesToDelete.push(decodeURIComponent(match[1]));
+                if (item) {
+                    let urls = [];
+                    if (Array.isArray(item.images)) urls.push(...item.images);
+                    if (item.image_url) urls.push(item.image_url);
+                    
+                    urls.forEach(url => {
+                        if (typeof url === 'string' && url.includes('item-images/')) {
+                            const match = url.match(/item-images\/(.+?)(?:\?|$)/);
+                            if (match && match[1]) filesToDelete.push(decodeURIComponent(match[1]));
+                        }
                     });
                 }
                 
@@ -466,7 +472,7 @@
                 renderList();
             }
         }
-
+        
         async function togglePro(userId, currentStatus, btn) {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
@@ -535,40 +541,44 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
+                // 1. СОБИРАЕМ КАРТИНКИ ИЗ ПРАВИЛЬНЫХ ПЕРЕМЕННЫХ
                 const userItems = adminState.items.filter(i => i.user_id === userId);
                 let itemFilesToDelete = [];
                 
                 userItems.forEach(item => {
-                    if (item.image_urls && Array.isArray(item.image_urls)) {
-                        item.image_urls.forEach(url => {
+                    let urls = [];
+                    if (Array.isArray(item.images)) urls.push(...item.images);
+                    if (item.image_url) urls.push(item.image_url);
+                    
+                    urls.forEach(url => {
+                        if (typeof url === 'string' && url.includes('item-images/')) {
                             const match = url.match(/item-images\/(.+?)(?:\?|$)/);
                             if (match && match[1]) itemFilesToDelete.push(decodeURIComponent(match[1]));
-                        });
-                    }
+                        }
+                    });
                 });
 
                 const user = adminState.profiles.find(p => p.id === userId);
                 let avatarToDelete = null;
-                if (user && user.avatar_url) {
+                if (user && typeof user.avatar_url === 'string' && user.avatar_url.includes('avatars/')) {
                     const match = user.avatar_url.match(/avatars\/(.+?)(?:\?|$)/);
                     if (match && match[1]) avatarToDelete = decodeURIComponent(match[1]);
                 }
 
-                // УДАЛЯЕМ ФОТОГРАФИИ ТОВАРОВ ЧЕРЕЗ JAVASCRIPT API
+                // 2. УДАЛЯЕМ ФОТОГРАФИИ ТОВАРОВ
                 if (itemFilesToDelete.length > 0) {
-                    // Разбиваем на пачки (chunks) по 50 файлов, если у пользователя очень много фото
                     for (let i = 0; i < itemFilesToDelete.length; i += 50) {
                         const chunk = itemFilesToDelete.slice(i, i + 50);
                         await supabaseClient.storage.from('item-images').remove(chunk);
                     }
                 }
                 
-                // УДАЛЯЕМ АВАТАР ЧЕРЕЗ JAVASCRIPT API
+                // 3. УДАЛЯЕМ АВАТАР
                 if (avatarToDelete) {
                     await supabaseClient.storage.from('avatars').remove([avatarToDelete]);
                 }
 
-                // УДАЛЯЕМ САМ АККАУНТ ИЗ БАЗЫ
+                // 4. УДАЛЯЕМ САМ АККАУНТ ИЗ БАЗЫ
                 const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
                 if (error) throw error;
                 
