@@ -434,13 +434,22 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. Удаляем картинки товара из Storage
+                // 1. Правильно собираем пути картинок товара
                 const item = adminState.items.find(i => i.id === itemId);
+                let filesToDelete = [];
+                
                 if (item && item.image_urls && Array.isArray(item.image_urls)) {
-                    const filesToDelete = item.image_urls.map(url => url.split('/').pop()).filter(Boolean);
-                    if (filesToDelete.length > 0) {
-                        await supabaseClient.storage.from('item-images').remove(filesToDelete);
-                    }
+                    item.image_urls.forEach(url => {
+                        if (url.includes('item-images/')) {
+                            const filePath = url.split('item-images/')[1].split('?')[0];
+                            if (filePath) filesToDelete.push(filePath);
+                        }
+                    });
+                }
+                
+                // Удаляем файлы
+                if (filesToDelete.length > 0) {
+                    await supabaseClient.storage.from('item-images').remove(filesToDelete);
                 }
 
                 // 2. Удаляем товар из базы
@@ -533,15 +542,27 @@
                 userItems.forEach(item => {
                     if (item.image_urls && Array.isArray(item.image_urls)) {
                         item.image_urls.forEach(url => {
-                            const fileName = url.split('/').pop(); // Достаем имя файла из ссылки
-                            if (fileName) filesToDelete.push(fileName);
+                            // ИСПРАВЛЕНИЕ: Вытягиваем точный путь внутри бакета и отрезаем параметры (?t=...)
+                            if (url.includes('item-images/')) {
+                                const filePath = url.split('item-images/')[1].split('?')[0];
+                                if (filePath) filesToDelete.push(filePath);
+                            }
                         });
                     }
                 });
 
-                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ ОФИЦИАЛЬНЫЙ STORAGE API
+                // 2. УДАЛЯЕМ ФАЙЛЫ ТОВАРОВ ЧЕРЕЗ STORAGE API
                 if (filesToDelete.length > 0) {
                     await supabaseClient.storage.from('item-images').remove(filesToDelete);
+                }
+
+                // 2.1 УДАЛЯЕМ АВАТАР ПОЛЬЗОВАТЕЛЯ (ЕСЛИ ОН ЕСТЬ)
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user && user.avatar_url && user.avatar_url.includes('avatars/')) {
+                    const avatarPath = user.avatar_url.split('avatars/')[1].split('?')[0];
+                    if (avatarPath) {
+                        await supabaseClient.storage.from('avatars').remove([avatarPath]);
+                    }
                 }
 
                 // 3. УДАЛЯЕМ САМ АККАУНТ
