@@ -87,6 +87,21 @@
             flex-direction: column !important;
             justify-content: space-between !important;
         }
+
+        /* === ЭФФЕКТЫ (Микроанимации и Блики) === */
+        .vip-card { position: relative; overflow: hidden; }
+        .vip-card::after {
+            content: '';
+            position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shimmer 4s infinite;
+            z-index: 10; pointer-events: none;
+        }
+        @keyframes shimmer { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
+
+        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f43f5e; } 100% { transform: scale(1); } }
+        .animate-pop { animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
         
         /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА) === */
         
@@ -684,6 +699,18 @@
                             <div class="flex flex-col gap-3" id="currency-radios-wrap">
                                 </div>
                         </div>
+                        
+                        <div class="sidebar-divider lg:block hidden"></div>
+                        
+                        <div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Оплата</h4>
+                            <div class="flex flex-col gap-3">
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Boosty" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🔥 Boosty</span></label>
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="USDT TRC-20" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 USDT TRC-20</span></label>
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Перевод" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Карта / Перевод</span></label>
+                            </div>
+                        </div>
+                        
                     </div>
                     
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
@@ -787,10 +814,22 @@
                 <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Показать еще</button>
             </div>
 
-            <div id="empty-state" class="w-full text-center py-24 text-stone-400 hidden">
-                <i class="fa-solid fa-box-open text-6xl mb-5 opacity-30"></i>
-                <p class="font-bold text-lg">Ничего не найдено</p>
+            <div id="empty-state" class="w-full flex flex-col justify-center items-center py-20 text-stone-400 hidden">
+                <div class="relative w-48 h-48 mb-6 drop-shadow-md opacity-80 hover:opacity-100 transition-opacity">
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 160L40 120V60L100 20L160 60V120L100 160Z" fill="#f5f5f4" class="dark:fill-stone-800"/>
+                        <path d="M100 160V90M100 90L40 50M100 90L160 50" stroke="#d6d3d1" class="dark:stroke-stone-600" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M70 140L130 140" stroke="#a8a29e" class="dark:stroke-stone-500" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 8"/>
+                        <circle cx="100" cy="100" r="15" fill="#d6d3d1" class="dark:fill-stone-600"/>
+                        <path d="M92 105Q100 112 108 105" stroke="#78716c" class="dark:stroke-stone-400" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="95" cy="95" r="2" fill="#78716c" class="dark:stroke-stone-400"/>
+                        <circle cx="105" cy="95" r="2" fill="#78716c" class="dark:stroke-stone-400"/>
+                    </svg>
+                </div>
+                <h3 class="font-display font-black text-2xl text-stone-800 dark:text-stone-200 mb-2">Тут пока пусто</h3>
+                <p class="font-medium text-sm text-stone-500 max-w-xs text-center leading-relaxed">Попробуйте изменить фильтры поиска или загляните позже. Новые находки появляются каждый день!</p>
             </div>
+            
         </div>
     </main>
 
@@ -1460,6 +1499,16 @@
                     <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                 </div>
 
+                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1">Оплата (Можно несколько)</span>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-cash" value="Наличные" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💵 Наличные</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-card" value="Перевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Перевод</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-boosty" value="Boosty" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🔥 Boosty</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-crypto" value="USDT TRC-20" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 USDT TRC-20</span></label>
+                    </div>
+                </div>
+                
                 <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
                     <span class="text-sm font-bold text-stone-500 mb-1">Способ передачи <span class="text-brand-500">*</span></span>
                     <div class="flex flex-wrap gap-4">
@@ -2617,6 +2666,10 @@
         window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
 
         window.toggleFavorite = async (btn, event, itemId) => {
+            if (window.userFavorites.has(id)) {
+                icon.className = 'fa-solid fa-box text-brand-500 drop-shadow-sm transition-transform animate-pop';
+                setTimeout(() => icon.classList.remove('animate-pop'), 300);
+            }
             if(event) event.stopPropagation();
             if (!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
             if (!itemId) return;
@@ -3427,7 +3480,7 @@
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.highlighted_until ? new Date(i.highlighted_until) > new Date() : false, category: i.category || 'Другое', createdAt: i.created_at,
                     status: i.status || 'active', phone: i.phone || '',
-                    address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча']
+                    address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'] payment: Array.isArray(i.payment) ? i.payment : ['Наличные'],
                 };
             } catch(err) { return null; }
         }
@@ -3454,6 +3507,13 @@
             if (!isService && !isEstate) {
                 if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 border border-brand-200 dark:border-brand-800/50" title="Отправка PostExpress"><i class="fa-solid fa-box"></i> PostExpress</span>`;
                 if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
+            }
+            
+            let paymentBadges = '';
+            if (i.payment) {
+                if (i.payment.includes('Boosty')) paymentBadges += `<span class="bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-orange-200 dark:border-orange-800/50">🔥 Boosty</span>`;
+                if (i.payment.includes('USDT TRC-20')) paymentBadges += `<span class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-emerald-200 dark:border-emerald-800/50">🪙 USDT TRC-20</span>`;
+                if (i.payment.includes('Перевод')) paymentBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-stone-200 dark:border-stone-700">💳 Перевод</span>`;
             }
             
             let condBadge = '';
@@ -3507,7 +3567,7 @@
                             <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
                         </div>
                         
-                        <div class="view-badges items-center mt-1.5 flex flex-wrap gap-1.5">${deliveryBadges}</div>
+                        <div class="view-badges items-center mt-1.5 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
                     </div>
                     
                     <div class="view-list-col-3 hidden">
@@ -4003,6 +4063,15 @@
 
                 const delMeet = document.getElementById('del-meet')?.checked; const delPost = document.getElementById('del-post')?.checked;
                 const deliveryArr = []; if(delMeet) deliveryArr.push('Личная встреча'); if(delPost) deliveryArr.push('PostExpress');
+                const payCash = document.getElementById('pay-cash')?.checked;
+                const payCard = document.getElementById('pay-card')?.checked;
+                const payBoosty = document.getElementById('pay-boosty')?.checked;
+                const payCrypto = document.getElementById('pay-crypto')?.checked;
+                const paymentArr = [];
+                if(payCash) paymentArr.push('Наличные');
+                if(payCard) paymentArr.push('Перевод');
+                if(payBoosty) paymentArr.push('Boosty');
+                if(payCrypto) paymentArr.push('USDT TRC-20');
                 
                 let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
                 
@@ -4038,6 +4107,7 @@
                     author_avatar: window.currentUser.user_metadata?.avatar_url || '', image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
                     currency: currencyEl ? currencyEl.value : 'RSD', phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
                     address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr
+                    payment: paymentArr
                 };
 
                 let res; 
@@ -4502,6 +4572,7 @@
         
         window.fetchItems();
 
+        const selectedPayments = Array.from(document.querySelectorAll('.filter-payment:checked')).map(cb => cb.value); и если массив не пуст, сделай q = q.contains('payment', selectedPayments);
         const urlParams = new URLSearchParams(window.location.search);
         const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
