@@ -1740,7 +1740,6 @@
         // 3. Удаление товара
         window.deleteItemConfirm = async () => {
             if(!window.activeModalItemId) return;
-            
             const isConfirmed = await window.customConfirm(
                 "Удаление объявления", 
                 "Вы уверены, что хотите НАВСЕГДА удалить это объявление? Восстановить его будет невозможно.", 
@@ -1749,8 +1748,33 @@
                 "fa-solid fa-trash-can"
             );
             if(!isConfirmed) return;
-
+            
             try {
+                // 1. Ищем удаляемый товар и собираем точные пути его картинок
+                const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
+                let filesToDelete = [];
+                
+                if (item) {
+                    let urls = [];
+                    if (Array.isArray(item.images)) urls.push(...item.images);
+                    if (item.image_url) urls.push(item.image_url);
+                    if (item.imageUrl) urls.push(item.imageUrl);
+                    
+                    urls.forEach(url => {
+                        if (typeof url === 'string' && url.includes('item-images/')) {
+                            const match = url.match(/item-images\/(.+?)(?:\?|$)/);
+                            if (match && match[1]) filesToDelete.push(decodeURIComponent(match[1]));
+                        }
+                    });
+                }
+                
+                // 2. СНАЧАЛА УДАЛЯЕМ ФАЙЛЫ ИЗ ХРАНИЛИЩА (STORAGE)
+                if (filesToDelete.length > 0) {
+                    const { error: storageError } = await supabase.storage.from('item-images').remove(filesToDelete);
+                    if (storageError) console.error("Ошибка удаления фото:", storageError);
+                }
+
+                // 3. ЗАТЕМ УДАЛЯЕМ ТОВАР ИЗ БАЗЫ ДАННЫХ
                 const { error } = await supabase.from('items').delete().eq('id', window.activeModalItemId);
                 if(error) throw error;
                 
@@ -1758,7 +1782,10 @@
                 window.closeModal('item-modal');
                 if(window.fetchItems) window.fetchItems(false);
                 if(window.renderProfileTabs) window.renderProfileTabs();
-            } catch(e) { window.showToast("Ошибка при удалении", true); }
+            } catch(e) { 
+                window.showToast("Ошибка при удалении", true);
+                console.error("Delete Error:", e);
+            }
         };
         
         window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = []; 
