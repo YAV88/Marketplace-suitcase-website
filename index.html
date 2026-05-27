@@ -471,7 +471,7 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <nav id="main-header" class="relative bg-white/60 dark:bg-stone-900/80 backdrop-blur-2xl border-b border-brand-500/20 sticky top-0 z-50 shadow-[0_10px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)] transition-all duration-300 overflow-hidden">
+    <nav id="main-header" class="relative bg-white/60 dark:bg-stone-900/80 backdrop-blur-2xl border-b border-brand-500/20 sticky top-0 z-50 shadow-[0_10px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)] transition-all duration-300">
         
         <div class="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-brand-200/40 via-white/30 to-teal-200/40 dark:from-brand-800/20 dark:via-stone-900/0 dark:to-emerald-800/20"></div>
         
@@ -1641,7 +1641,6 @@
                         <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="group flex flex-col items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
                             <i class="fa-solid fa-clock text-lg mb-1 group-hover:scale-110 transition-transform"></i>
                             <span id="btn-reserve-text" class="text-xs font-bold">В резерв</span>
-                            <span class="text-[9px] opacity-70 mt-0.5">Временно скрыть</span>
                         </button>
                         
                         <button id="btn-owner-sold" onclick="window.markAsSold()" class="group flex flex-col items-center justify-center p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
@@ -2607,39 +2606,22 @@
 
         window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
         
-        window.toggleFilters = () => { 
+        window.toggleFilters = () => {
             const el = document.getElementById('filter-panel-wrapper');
             if(!el) return;
             
             if(el.classList.contains('active')) {
-                // ЛОГИКА ЗАКРЫТИЯ ШТОРКИ
+                // ЛОГИКА ЗАКРЫТИЯ ШТОРКИ (Теперь без скроллинга)
                 el.style.overflow = 'hidden';
                 el.classList.remove('active');
-                const dd = document.getElementById('custom-cat-dropdown'); 
+                const dd = document.getElementById('custom-cat-dropdown');
                 if(dd && !dd.classList.contains('hidden')) window.toggleCustomCat();
-
-                // СЕНЬОР-ОПТИМИЗАЦИЯ: При нажатии кнопки "Показать находки" скроллим к ленте
-                if (window.innerWidth < 1024) {
-                    const feedTitle = document.getElementById('main-feed-title');
-                    if (feedTitle) {
-                        const y = feedTitle.getBoundingClientRect().top + window.scrollY - 80; // 80 - отступ под шапку
-                        window.scrollTo({ top: y, behavior: 'smooth' });
-                    }
-                }
-            } else { 
+            } else {
                 // ЛОГИКА ОТКРЫТИЯ ШТОРКИ
                 el.classList.add('active');
-                setTimeout(() => { 
-                    el.style.overflow = 'visible'; 
-                    
-                    if (window.innerWidth < 1024) {
-                        const filterTitle = document.querySelector('#filter-panel h4'); 
-                        if (filterTitle) {
-                            const y = filterTitle.getBoundingClientRect().top + window.scrollY - 100;
-                            window.scrollTo({ top: y, behavior: 'smooth' });
-                        }
-                    }
-                }, 300); 
+                setTimeout(() => {
+                    el.style.overflow = 'visible';
+                }, 300);
             }
         };
         
@@ -3520,19 +3502,16 @@
             const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
             let deliveryBadges = '';
-            if (!isService && !isEstate) {
-                if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 border border-brand-200 dark:border-brand-800/50" title="Отправка PostExpress"><i class="fa-solid fa-box"></i> PostExpress</span>`;
-                if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700" title="Личная встреча"><i class="fa-solid fa-handshake"></i> Встреча</span>`;
-            }
+            if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
+            if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
             
             let paymentBadges = '';
             if (i.payment) {
-                // Поддерживаем и новые, и старые тестовые значения в БД
                 const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
                 const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
 
-                if (hasCrypto) paymentBadges += `<span class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-emerald-200 dark:border-emerald-800/50">🪙 Криптоперевод</span>`;
-                if (hasCard) paymentBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-stone-200 dark:border-stone-700">💳 Перевод на карту</span>`;
+                if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help" title="Оплата криптовалютой">🪙</span>`;
+                if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help" title="Перевод на карту">💳</span>`;
             }
             
             let condBadge = '';
@@ -3586,7 +3565,7 @@
                             <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
                         </div>
                         
-                        <div class="view-badges items-center mt-1.5 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
+                        <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
                     </div>
                     
                     <div class="view-list-col-3 hidden">
