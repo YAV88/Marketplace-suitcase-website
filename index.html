@@ -2947,6 +2947,13 @@
                     let q = supabase.from('items').select('*').neq('status', 'sold');
                     let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(40);
 
+                    // Фильтр по способам оплаты (если выбран хотя бы один чекбокс)
+                    const selectedPayments = Array.from(document.querySelectorAll('.filter-payment:checked')).map(cb => cb.value);
+                    if (selectedPayments.length > 0) {
+                        q = q.overlaps('payment', selectedPayments);
+                        vq = vq.overlaps('payment', selectedPayments);
+                    }
+
                     if (window.currentCategory !== 'Все') {
                         q = q.ilike('category', `${window.currentCategory}%`);
                         vq = vq.ilike('category', `${window.currentCategory}%`);
@@ -3480,7 +3487,7 @@
                     city: i.city || 'Сербия', imageUrl: i.image_url, images: Array.isArray(i.images) ? i.images : [], authorName: i.author_name || 'Пользователь',
                     authorAvatar: i.author_avatar, userId: i.user_id, isHighlighted: i.highlighted_until ? new Date(i.highlighted_until) > new Date() : false, category: i.category || 'Другое', createdAt: i.created_at,
                     status: i.status || 'active', phone: i.phone || '',
-                    address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'] payment: Array.isArray(i.payment) ? i.payment : ['Наличные'],
+                    address: i.address || '', condition: i.condition || 'Б/У', coords: Array.isArray(i.coords) ? i.coords : [0,0], delivery: Array.isArray(i.delivery) ? i.delivery : ['Личная встреча'], payment: Array.isArray(i.payment) ? i.payment : ['Наличные'],
                 };
             } catch(err) { return null; }
         }
@@ -4106,8 +4113,7 @@
                     condition: itemCondition, author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
                     author_avatar: window.currentUser.user_metadata?.avatar_url || '', image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
                     currency: currencyEl ? currencyEl.value : 'RSD', phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
-                    address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr
-                    payment: paymentArr
+                    address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr, payment: paymentArr
                 };
 
                 let res; 
@@ -4568,11 +4574,8 @@
             }
         });
         
-        setTimeout(window.initSidebar, 200);
-        
+        setTimeout(window.initSidebar, 200); 
         window.fetchItems();
-
-        const selectedPayments = Array.from(document.querySelectorAll('.filter-payment:checked')).map(cb => cb.value); и если массив не пуст, сделай q = q.contains('payment', selectedPayments);
         const urlParams = new URLSearchParams(window.location.search);
         const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
