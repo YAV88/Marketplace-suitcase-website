@@ -705,9 +705,9 @@
                         <div>
                             <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Оплата</h4>
                             <div class="flex flex-col gap-3">
-                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Boosty" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🔥 Boosty</span></label>
-                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="USDT TRC-20" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 USDT TRC-20</span></label>
-                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Перевод" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Карта / Перевод</span></label>
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Наличные" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💵 Наличные</span></label>
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Перевод на карту" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Перевод на карту</span></label>
+                                <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" value="Криптоперевод" class="filter-payment w-5 h-5 accent-brand-500 rounded"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 Криптоперевод</span></label>
                             </div>
                         </div>
                         
@@ -1503,9 +1503,8 @@
                     <span class="text-sm font-bold text-stone-500 mb-1">Оплата (Можно несколько)</span>
                     <div class="flex flex-wrap gap-4">
                         <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-cash" value="Наличные" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💵 Наличные</span></label>
-                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-card" value="Перевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Перевод</span></label>
-                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-boosty" value="Boosty" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🔥 Boosty</span></label>
-                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-crypto" value="USDT TRC-20" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 USDT TRC-20</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-card" value="Перевод на карту" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">💳 Перевод на карту</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-crypto" value="Криптоперевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🪙 Криптоперевод</span></label>
                     </div>
                 </div>
                 
@@ -3518,9 +3517,12 @@
             
             let paymentBadges = '';
             if (i.payment) {
-                if (i.payment.includes('Boosty')) paymentBadges += `<span class="bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-orange-200 dark:border-orange-800/50">🔥 Boosty</span>`;
-                if (i.payment.includes('USDT TRC-20')) paymentBadges += `<span class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-emerald-200 dark:border-emerald-800/50">🪙 USDT TRC-20</span>`;
-                if (i.payment.includes('Перевод')) paymentBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-stone-200 dark:border-stone-700">💳 Перевод</span>`;
+                // Поддерживаем и новые, и старые тестовые значения в БД
+                const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
+                const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
+
+                if (hasCrypto) paymentBadges += `<span class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-emerald-200 dark:border-emerald-800/50">🪙 Криптоперевод</span>`;
+                if (hasCard) paymentBadges += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1 border border-stone-200 dark:border-stone-700">💳 Перевод на карту</span>`;
             }
             
             let condBadge = '';
@@ -4072,13 +4074,11 @@
                 const deliveryArr = []; if(delMeet) deliveryArr.push('Личная встреча'); if(delPost) deliveryArr.push('PostExpress');
                 const payCash = document.getElementById('pay-cash')?.checked;
                 const payCard = document.getElementById('pay-card')?.checked;
-                const payBoosty = document.getElementById('pay-boosty')?.checked;
                 const payCrypto = document.getElementById('pay-crypto')?.checked;
                 const paymentArr = [];
                 if(payCash) paymentArr.push('Наличные');
-                if(payCard) paymentArr.push('Перевод');
-                if(payBoosty) paymentArr.push('Boosty');
-                if(payCrypto) paymentArr.push('USDT TRC-20');
+                if(payCard) paymentArr.push('Перевод на карту');
+                if(payCrypto) paymentArr.push('Криптоперевод');
                 
                 let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
                 
