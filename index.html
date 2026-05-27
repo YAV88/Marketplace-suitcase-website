@@ -471,18 +471,24 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <nav id="main-header" class="bg-white/70 dark:bg-stone-900/70 backdrop-blur-2xl border-b border-brand-500/30 sticky top-0 z-50 shadow-[0_10px_30px_rgba(20,184,166,0.08)] transition-all duration-300">
-        <div id="header-container" class="container mx-auto px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-3 lg:gap-6 transition-all duration-300">
+    <nav id="main-header" class="relative bg-white/80 dark:bg-stone-900/80 backdrop-blur-2xl border-b border-brand-500/30 sticky top-0 z-50 shadow-[0_10px_40px_rgba(20,184,166,0.1)] transition-all duration-300 overflow-hidden">
+        
+        <div class="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-brand-50/50 via-transparent to-emerald-50/50 dark:from-brand-900/20 dark:via-transparent dark:to-emerald-900/20"></div>
+        <div class="absolute inset-0 pointer-events-none z-0 opacity-[0.03] dark:opacity-[0.05]" style="background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');"></div>
+        <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-400/50 to-transparent z-0"></div>
+
+        <div id="header-container" class="relative z-10 container mx-auto px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-3 lg:gap-6 transition-all duration-300">
             
-            <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="window.goHome()">
-                <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
-                    <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[3px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
-                    <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700 overflow-hidden">
-                        <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-12 h-12 object-contain drop-shadow-sm">
+            <div class="flex items-center gap-3 lg:gap-4 group cursor-pointer shrink-0" onclick="window.goHome()">
+                <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center shrink-0">
+                    <div class="absolute inset-0 bg-brand-500 rounded-full blur-md opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
+                    
+                    <div class="relative w-full h-full bg-white dark:bg-stone-800 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.2)] group-hover:shadow-[0_0_25px_rgba(20,184,166,0.4)] flex items-center justify-center border-2 border-brand-100 dark:border-brand-900/50 overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                        <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110">
                     </div>
                 </div>
                 <div class="flex items-center gap-1 pt-1">
-                    <span class="text-2xl font-display font-black tracking-tighter text-stone-900 dark:text-white">SVALKA</span>
+                    <span class="text-2xl sm:text-3xl font-display font-black tracking-tighter text-stone-900 dark:text-white group-hover:text-brand-600 transition-colors duration-300">SVALKA</span>
                 </div>
             </div>
 
@@ -4699,16 +4705,26 @@
         }
 
         // Логика появления плавающей кнопки "Фильтры" на SVALKA
+        // 1. Адаптивная sticky-шапка (сжимается при скролле)
         window.addEventListener('scroll', () => {
-            const floatBtn = document.getElementById('mobile-floating-filter');
-            if (!floatBtn) return;
-            
-            if (window.scrollY > 400) {
-                floatBtn.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            const headerContainer = document.getElementById('header-container');
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 20) {
+                if(headerContainer) headerContainer.classList.replace('sm:py-4', 'sm:py-2');
+                if(headerContainer) headerContainer.classList.replace('py-3', 'py-2');
+                if(header) {
+                    header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                    header.classList.remove('bg-white/80', 'dark:bg-stone-900/80', 'shadow-[0_10px_40px_rgba(20,184,166,0.1)]');
+                }
             } else {
-                floatBtn.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                if(headerContainer) headerContainer.classList.replace('sm:py-2', 'sm:py-4');
+                if(headerContainer) headerContainer.classList.replace('py-2', 'py-3');
+                if(header) {
+                    header.classList.add('bg-white/80', 'dark:bg-stone-900/80', 'shadow-[0_10px_40px_rgba(20,184,166,0.1)]');
+                    header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                }
             }
-        }, { passive: true });
+        });
 
         // 1. ОТКРЫТИЕ ОКНА И ПРОВЕРКА КУЛДАУНА
         window.bumpViaShare = async (itemId = null) => {
