@@ -60,17 +60,15 @@
         .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
         .view-list .item-card { 
             flex-direction: row !important; 
-            height: 140px !important; /* Жестко фиксируем высоту всей карточки */
+            height: auto !important; /* Разрешаем карточке тянуться вниз */
             min-height: 140px !important; 
-            max-height: 140px !important; 
             align-items: stretch; 
-            overflow: hidden !important; /* Прячем все, что вылезает */
+            overflow: hidden !important; 
         }
         .view-list .card-img-wrap { 
             width: 140px !important; 
-            height: 140px !important; /* Жестко фиксируем высоту контейнера фото */
+            height: auto !important; /* Изображение будет тянуться за текстом */
             min-height: 140px !important; 
-            max-height: 140px !important;
             flex-shrink: 0; 
             position: relative; 
             overflow: hidden !important;
@@ -78,10 +76,12 @@
         .view-list .card-img-wrap img {
             width: 100% !important;
             height: 100% !important;
-            object-fit: cover !important; /* Обрезаем вертикальные фото */
+            object-fit: cover !important; 
             object-position: center !important;
+            position: absolute !important; /* Гарантирует заполнение всей высоты */
+            top: 0; left: 0;
         }
-
+        
         select:focus {box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* Мягкое свечение при выборе */}
         
         .view-list h4 { 
@@ -107,16 +107,14 @@
         /* 2. PREMIUM СТИЛИ ДЛЯ ПК (3 Колонки) */
         @media (min-width: 1024px) {
             .view-list .item-card { 
-                height: 190px !important; /* Жестко фиксируем высоту на ПК */
+                height: auto !important; 
                 min-height: 190px !important;
-                max-height: 190px !important;
             }
             .view-list .card-img-wrap { 
                 width: 250px !important;
-                height: 190px !important; /* Идеально ровный блок фото */
+                height: auto !important;
                 min-height: 190px !important; 
-                max-height: 190px !important;
-                display: block !important; /* Убираем flex, чтобы cover работал корректно */
+                display: block !important; 
             }
             
             /* Превращаем текстовый блок в строку, чтобы поставить колонки рядом */
@@ -362,26 +360,30 @@
         }
 
         /* Горизонтальные карты в профиле на мобилках - Финальный вид */
+        /* Горизонтальные карты в профиле на мобилках - Финальный вид */
         @media (max-width: 768px) {
             #profile-items-grid { grid-template-columns: 1fr !important; }
             #profile-items-grid .item-card {
                 flex-direction: row !important;
-                height: 140px !important; /* Фиксируем высоту */
+                height: auto !important; /* Карточка может расти */
                 min-height: 140px !important;
-                max-height: 140px !important;
                 align-items: stretch;
                 overflow: hidden !important;
             }
             #profile-items-grid .card-img-wrap {
                 width: 130px !important;
-                height: 140px !important; /* Фиксируем высоту */
+                height: auto !important; /* Тянется за карточкой */
+                min-height: 140px !important;
                 border-radius: 1.25rem 0 0 1.25rem;
                 flex-shrink: 0;
+                position: relative;
             }
             #profile-items-grid .card-img-wrap img {
                 width: 100% !important;
                 height: 100% !important;
                 object-fit: cover !important;
+                position: absolute !important;
+                top: 0; left: 0;
             }
             
             /* Убираем дублирование города и стрелки в профиле */
@@ -1772,7 +1774,7 @@
             if(!isConfirmed) return;
             
             try {
-                // 1. Ищем удаляемый товар и собираем точные пути всех его картинок
+                // 1. Ищем удаляемый товар
                 const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
                 let filesToDelete = [];
                 
@@ -1782,6 +1784,9 @@
                     if (item.image_url) urls.push(item.image_url);
                     if (item.imageUrl) urls.push(item.imageUrl);
                     
+                    // СЕНЬОР-ОПТИМИЗАЦИЯ: Убираем дубликаты, чтобы API хранилища не выдал ошибку!
+                    urls = [...new Set(urls)];
+                    
                     urls.forEach(url => {
                         if (typeof url === 'string' && url.includes('item-images/')) {
                             const match = url.match(/item-images\/(.+?)(?:\?|$)/);
@@ -1790,16 +1795,17 @@
                     });
                 }
                 
-                // 2. СНАЧАЛА УДАЛЯЕМ ТОВАР ИЗ БАЗЫ ДАННЫХ
+                // 2. СНАЧАЛА ОЧИЩАЕМ STORAGE ОТ ФОТОГРАФИЙ
+                if (filesToDelete.length > 0) {
+                    const { data: storageData, error: storageError } = await supabase.storage.from('item-images').remove(filesToDelete);
+                    if (storageError) console.error("Ошибка очистки корзины Storage:", storageError);
+                    else console.log("Успешно удалены фото:", storageData);
+                }
+
+                // 3. ЗАТЕМ УДАЛЯЕМ ТОВАР ИЗ БАЗЫ ДАННЫХ
                 const { error } = await supabase.from('items').delete().eq('id', window.activeModalItemId);
                 if(error) throw error;
                 
-                // 3. ПОСЛЕ УСПЕШНОГО УДАЛЕНИЯ КАРТОЧКИ ОЧИЩАЕМ STORAGE ОТ МУСОРНЫХ ФОТОГРАФИЙ
-                if (filesToDelete.length > 0) {
-                    const { error: storageError } = await supabase.storage.from('item-images').remove(filesToDelete);
-                    if (storageError) console.error("Ошибка очистки корзины Storage:", storageError);
-                }
-
                 window.showToast("Объявление успешно удалено");
                 window.closeModal('item-modal');
                 if(window.fetchItems) window.fetchItems(false);
