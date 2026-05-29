@@ -476,10 +476,9 @@
         
         <!-- Многослойный градиентный фон -->
         <!-- Светлая тема: чистый, прозрачный фон с мягкими переливами. Тёмная тема: графит с глубоким изумрудным свечением -->
-        <div class="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-brand-100/50 via-transparent to-amber-50/50 dark:from-brand-800/20 dark:via-stone-900/0 dark:to-emerald-800/20"></div>
+        <div class="absolute inset-0 pointer-events-none z-0 bg-white/20 dark:bg-stone-900/30"></div>
         
-        <!-- Эффект внутреннего свечения снизу шапки (дает объем стеклу) -->
-        <div class="absolute -bottom-1/2 left-1/4 right-1/4 h-full pointer-events-none z-0 bg-brand-400/20 dark:bg-brand-500/10 blur-3xl rounded-full"></div>
+        <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-brand-400/50 via-brand-100/10 to-transparent dark:from-brand-500/40 dark:via-brand-900/20 dark:to-transparent opacity-90"></div>
 
         <!-- Легкая текстура шума/бетона для атмосферы -->
         <div class="absolute inset-0 pointer-events-none z-0 opacity-[0.03] dark:opacity-[0.04]" style="background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');"></div>
@@ -3298,41 +3297,22 @@
         };
 
         window.searchTimeout = null;
-        window.handleSearch = (e) => { 
-            window.searchQuery = e.target.value.trim();
-            window.displayedCount = 12; 
-            
-            // Показываем или скрываем крестик
-            const clearBtn = document.getElementById('search-clear-btn');
-            if (clearBtn) {
-                if (window.searchQuery.length > 0) clearBtn.classList.remove('hidden');
-                else clearBtn.classList.add('hidden');
-            }
 
-            const grid = document.getElementById('main-items-grid');
-            const vipSection = document.getElementById('vip-section');
-            
-            // МГНОВЕННЫЙ ОТКЛИК без мигания
-            if (grid && window.loadedItems) {
-                const query = window.searchQuery.toLowerCase();
-                if (query !== '') {
-                    if (vipSection) vipSection.classList.add('hidden'); // Прячем VIP при вводе
-                    const localFiltered = window.loadedItems.filter(item => (item.title || '').toLowerCase().includes(query));
-                    if (localFiltered.length > 0) {
-                        grid.innerHTML = localFiltered.slice(0, 12).map(i => window.createCardHtml(i, false)).join('');
-                    } else {
-                        grid.innerHTML = '<div class="col-span-full text-center py-10 text-stone-400 font-bold">Ищем на сервере...</div>';
-                    }
-                } else {
-                    // Вернули пустую строку - мгновенно возвращаем старые данные без серверной задержки
-                    grid.innerHTML = window.loadedItems.slice(0, 12).map(i => window.createCardHtml(i, i.isHighlighted)).join('');
-                }
+        window.handleSearch = (e) => {
+            const btn = document.getElementById('search-clear-btn');
+            if(e.target.value) {
+                if(btn) btn.classList.remove('hidden');
+            } else {
+                if(btn) btn.classList.add('hidden');
             }
-
-            clearTimeout(window.searchTimeout);
+            
+            // Очищаем предыдущий таймер
+            if (window.searchTimeout) clearTimeout(window.searchTimeout);
+            
+            // Ждем 400 мс после последнего нажатия клавиши, прежде чем отправлять запрос
             window.searchTimeout = setTimeout(() => {
-                window.fetchItems(); 
-            }, 300);
+                window.fetchItems();
+            }, 400);
         };
 
         // ФУНКЦИЯ ДЛЯ КРЕСТИКА ОЧИСТКИ
@@ -3572,7 +3552,7 @@
             <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
                 ${favHtml}
                 <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
-                    <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
+                    <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                     ${statusBadge}
                     ${condBadge}
                 </div>
