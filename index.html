@@ -471,15 +471,21 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <nav id="main-header" class="relative bg-white/60 dark:bg-stone-900/80 backdrop-blur-2xl border-b border-brand-500/20 sticky top-0 z-50 shadow-[0_10px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)] transition-all duration-300">
+    <!-- ОБНОВЛЕННАЯ ШАПКА (Чистый Glassmorphism для светлой темы и глубокий для тёмной) -->
+    <nav id="main-header" class="relative bg-white/40 dark:bg-stone-900/70 backdrop-blur-2xl border-b border-white/50 dark:border-brand-500/20 sticky top-0 z-50 shadow-[0_4px_30px_rgba(20,184,166,0.08)] dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)] transition-all duration-300">
         
-        <div class="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-brand-200/40 via-white/30 to-teal-200/40 dark:from-brand-800/20 dark:via-stone-900/0 dark:to-emerald-800/20"></div>
+        <!-- Многослойный градиентный фон -->
+        <!-- Светлая тема: чистый, прозрачный фон с мягкими переливами. Тёмная тема: графит с глубоким изумрудным свечением -->
+        <div class="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-brand-100/50 via-transparent to-amber-50/50 dark:from-brand-800/20 dark:via-stone-900/0 dark:to-emerald-800/20"></div>
         
+        <!-- Эффект внутреннего свечения снизу шапки (дает объем стеклу) -->
         <div class="absolute -bottom-1/2 left-1/4 right-1/4 h-full pointer-events-none z-0 bg-brand-400/20 dark:bg-brand-500/10 blur-3xl rounded-full"></div>
 
-        <div class="absolute inset-0 pointer-events-none z-0 opacity-[0.04] dark:opacity-[0.04]" style="background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');"></div>
+        <!-- Легкая текстура шума/бетона для атмосферы -->
+        <div class="absolute inset-0 pointer-events-none z-0 opacity-[0.03] dark:opacity-[0.04]" style="background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');"></div>
         
-        <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/50 dark:via-brand-400/20 to-transparent z-0"></div>
+        <!-- Светящаяся неоновая полоска сверху -->
+        <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/30 dark:via-brand-400/20 to-transparent z-0"></div>
 
         <div id="header-container" class="relative z-10 container mx-auto px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-3 lg:gap-6 transition-all duration-300">
             
@@ -3502,16 +3508,18 @@
             const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
             let deliveryBadges = '';
-            if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
-            if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
+            // Выравниваем иконки точно по центру через flex items-center justify-center
+            if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
+            if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
             
             let paymentBadges = '';
             if (i.payment) {
                 const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
                 const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
 
-                if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help" title="Оплата криптовалютой">🪙</span>`;
-                if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help" title="Перевод на карту">💳</span>`;
+                // Используем векторные иконки FontAwesome (fa-brands fa-bitcoin для крипты и fa-regular fa-credit-card для карты)
+                if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help transition-transform hover:scale-110" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
+                if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
             }
             
             let condBadge = '';
@@ -4696,15 +4704,15 @@
                 if(headerContainer) headerContainer.classList.replace('sm:py-4', 'sm:py-2');
                 if(headerContainer) headerContainer.classList.replace('py-3', 'py-2');
                 if(header) {
-                    header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
-                    header.classList.remove('bg-white/60', 'dark:bg-stone-900/80', 'shadow-[0_10px_40px_rgba(20,184,166,0.15)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                    header.classList.add('bg-white/80', 'dark:bg-stone-900/90', 'shadow-md');
+                    header.classList.remove('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
                 }
             } else {
                 if(headerContainer) headerContainer.classList.replace('sm:py-2', 'sm:py-4');
                 if(headerContainer) headerContainer.classList.replace('py-2', 'py-3');
                 if(header) {
-                    header.classList.add('bg-white/60', 'dark:bg-stone-900/80', 'shadow-[0_10px_40px_rgba(20,184,166,0.15)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
-                    header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                    header.classList.add('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                    header.classList.remove('bg-white/80', 'dark:bg-stone-900/90', 'shadow-md');
                 }
             }
         });
