@@ -43,24 +43,35 @@ window.t = (key) => {
 };
 
 // 3. Функция смены языка (без перезагрузки)
+// Основная функция переключения
 window.changeLanguage = (lang) => {
     window.currentLang = lang;
     localStorage.setItem('svalka_lang', lang);
     
-    // Обновляем иконку и текст в шапке
+    // 1. Закрываем выпадающее меню после выбора
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+    
+    // 2. Обновляем иконку и код в самой кнопке
     const flagEl = document.getElementById('lang-flag');
     const codeEl = document.getElementById('lang-code');
-    if(flagEl && codeEl) {
-        if(lang === 'ru') { flagEl.innerText = '🇷🇺'; codeEl.innerText = 'RU'; }
-        if(lang === 'sr') { flagEl.innerText = '🇷🇸'; codeEl.innerText = 'SR'; }
-        if(lang === 'en') { flagEl.innerText = '🇬🇧'; codeEl.innerText = 'EN'; }
+    
+    if (flagEl) {
+        if(lang === 'ru') flagEl.innerText = '🇷🇺';
+        if(lang === 'sr') flagEl.innerText = '🇷🇸';
+        if(lang === 'en') flagEl.innerText = '🇬🇧';
+    }
+    
+    if (codeEl) {
+        if(lang === 'ru') codeEl.innerText = 'RU';
+        if(lang === 'sr') codeEl.innerText = 'SR';
+        if(lang === 'en') codeEl.innerText = 'EN';
     }
 
-    // Проходим по всему HTML и заменяем текст
+    // 3. Подменяем тексты на странице
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (window.i18n[lang][key]) {
-            // Если это поле ввода — меняем placeholder, иначе меняем текст
+        if (window.i18n[lang] && window.i18n[lang][key]) {
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                 el.placeholder = window.i18n[lang][key];
             } else {
@@ -68,14 +79,14 @@ window.changeLanguage = (lang) => {
             }
         }
     });
-
-    // Опционально: если открыты товары, их нужно перерендерить (чтобы применился язык к бейджикам)
-    if(typeof window.fetchItems === 'function') window.fetchItems(false);
 };
 
-// Инициализация языка при первой загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    window.changeLanguage(window.currentLang);
+// 4. Закрываем меню при клике в любое пустое место на экране
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('lang-dropdown');
+    if (dropdown && !e.target.closest('#lang-dropdown') && !e.target.closest('[onclick*="lang-dropdown"]')) {
+        dropdown.classList.add('hidden');
+    }
 });
 
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
