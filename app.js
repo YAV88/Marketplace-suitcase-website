@@ -2310,27 +2310,19 @@ window.editItem = async (id) => {
 window.submitNewItem = async (event) => {
     if(event) event.preventDefault();
     const btn = document.getElementById('add-submit-btn'); 
-    if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
+    const progCont = document.getElementById('submit-progress-container');
+    const progBar = document.getElementById('submit-progress-bar');
+    const progText = document.getElementById('submit-progress-text');
+    const progPerc = document.getElementById('submit-progress-percent');
+    
+    if(btn) { btn.style.display = 'none'; }
+    if(progCont) { progCont.classList.remove('hidden'); progCont.classList.add('flex'); }
+    if(progBar) progBar.style.width = '0%';
     
     try {
         if(!window.currentUser) throw new Error("Войдите в аккаунт");
 
-        const conditionEl = document.querySelector('input[name="item-condition"]:checked'); const itemCondition = conditionEl ? conditionEl.value : 'Б/У';
-        const titleEl = document.getElementById('item-title'); const catEl = document.getElementById('item-category'); const cityEl = document.getElementById('item-city');
-        const priceEl = document.getElementById('item-price'); const descEl = document.getElementById('item-desc');
-        const currencyEl = document.getElementById('item-currency'); const phoneEl = document.getElementById('item-phone');
-        
-        if(!titleEl || !catEl || !priceEl) throw new Error("Заполните обязательные поля");
-
-        const delMeet = document.getElementById('del-meet')?.checked; const delPost = document.getElementById('del-post')?.checked;
-        const deliveryArr = []; if(delMeet) deliveryArr.push('Личная встреча'); if(delPost) deliveryArr.push('PostExpress');
-        const payCash = document.getElementById('pay-cash')?.checked;
-        const payCard = document.getElementById('pay-card')?.checked;
-        const payCrypto = document.getElementById('pay-crypto')?.checked;
-        const paymentArr = [];
-        if(payCash) paymentArr.push('Наличные');
-        if(payCard) paymentArr.push('Перевод на карту');
-        if(payCrypto) paymentArr.push('Криптоперевод');
+        // ... (оставь тут сбор данных из полей: conditionEl, titleEl, priceEl, paymentArr, deliveryArr и т.д.) ...
         
         let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
         
@@ -2341,73 +2333,53 @@ window.submitNewItem = async (event) => {
             return new Blob([ab], {type: mimeString});
         }
 
+        // ЗАГРУЗКА ФОТО С ПРОГРЕССОМ
         if (window.tempPhotos.length > 0) {
             finalImages = [];
-            for (let i = 0; i < window.tempPhotos.length; i++) {
+            const totalPhotos = window.tempPhotos.length;
+            
+            for (let i = 0; i < totalPhotos; i++) {
                 const dataUrl = window.tempPhotos[i];
-                if (dataUrl.startsWith('http')) { finalImages.push(dataUrl); } 
-                else {
+                if (dataUrl.startsWith('http')) { 
+                    finalImages.push(dataUrl); 
+                } else {
+                    if(progText) progText.innerText = `Обработка фото ${i + 1} из ${totalPhotos}...`;
                     const blob = dataURItoBlob(dataUrl);
                     const fileName = `${window.currentUser.id}_${Date.now()}_${i}.jpg`;
+                    
                     const { error } = await supabase.storage.from('item-images').upload(fileName, blob, { contentType: 'image/jpeg' });
                     if (error) throw error;
+                    
                     const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
                     if (data && data.publicUrl) finalImages.push(data.publicUrl);
                 }
+                
+                // Обновляем прогресс-бар
+                const progress = Math.round(((i + 1) / totalPhotos) * 90); // 90% выделяем на фото, 10% на базу
+                if(progBar) progBar.style.width = `${progress}%`;
+                if(progPerc) progPerc.innerText = `${progress}%`;
             }
         }
         
-        const addressEl = document.getElementById('item-address');
-        
-        const itemData = {
-            title: titleEl.value.trim(), category: catEl.value, city: cityEl ? cityEl.value : 'Белград', 
-            price: Number(priceEl.value), description: descEl ? descEl.value.trim() : '', user_id: window.currentUser.id, 
-            condition: itemCondition, author_name: window.currentUser.user_metadata?.full_name || 'Пользователь', 
-            author_avatar: window.currentUser.user_metadata?.avatar_url || '', image_url: finalImages.length > 0 ? finalImages[0] : '', images: finalImages,
-            currency: currencyEl ? currencyEl.value : 'RSD', phone: phoneEl && phoneEl.value.trim() !== '' ? phoneEl.value.trim() : '',
-            address: addressEl ? addressEl.value.trim() : '', coords: window.itemCoords, delivery: deliveryArr, payment: paymentArr
-        };
+        if(progText) progText.innerText = `Сохранение данных...`;
+        if(progBar) progBar.style.width = `95%`;
+        if(progPerc) progPerc.innerText = `95%`;
 
-        let res; 
-        if (window.editingItemId) { 
-            res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-        } else { 
-            // СЕНЬОР-ЛОГИКА: Железобетонная выдача VIP на 7 дней при создании
-            if (window.currentUserData && window.currentUserData.is_pro) { 
-                itemData.highlighted_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); 
-            } 
-            
-            itemData.status = 'active'; 
-            
-            // Защита: принудительно ставим NULL состоянию для нерелевантных категорий
-            const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-            if (noConditionCats.some(c => itemData.category.startsWith(c))) { 
-                itemData.condition = null; 
-            } 
-            
-            res = await supabase.from('items').insert([itemData]);
-        }
-        
-        if (res.error && (res.error.message.includes('status') || res.error.message.includes('phone') || res.error.code === '42703')) {
-            delete itemData.delivery; delete itemData.status; delete itemData.phone; delete itemData.condition;
-            if (window.editingItemId) res = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
-            else res = await supabase.from('items').insert([itemData]);
-        }
+        // ... (оставь тут формирование itemData и отправку в Supabase) ...
 
-        if(res.error) {
-            // ОТКАТ (ROLLBACK): Если произошла ошибка при создании НОВОГО товара
-            if (!window.editingItemId && finalImages && finalImages.length > 0) {
-                // Вытаскиваем имена файлов из ссылок
-                const fileNamesToDelete = finalImages.map(url => url.substring(url.lastIndexOf('/') + 1));
-                // Удаляем их из Storage, чтобы не копился мусор
-                await supabase.storage.from('item-images').remove(fileNamesToDelete).catch(console.error);
-            }
-            throw new Error(res.error.message);
-        }
-        
-        window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); window.closeModal('add-modal'); window.fetchItems(false);
-    } catch(e) { window.showToast(`Ошибка: ${e.message}`, true); } 
-    finally { if(btn) { btn.disabled = false; btn.innerHTML = window.editingItemId ? `Сохранить` : `Опубликовать`; } }
+        if(progBar) progBar.style.width = `100%`;
+        if(progPerc) progPerc.innerText = `100%`;
+
+        window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); 
+        window.closeModal('add-modal'); 
+        window.fetchItems(false);
+    } catch(e) { 
+        window.showToast(`Ошибка: ${e.message}`, true); 
+    } finally { 
+        // Возвращаем кнопку
+        if(progCont) { progCont.classList.add('hidden'); progCont.classList.remove('flex'); }
+        if(btn) { btn.style.display = 'block'; btn.innerHTML = window.editingItemId ? `Сохранить` : `Опубликовать`; } 
+    }
 };
 
 window.renderPhotoPreviews = () => {
