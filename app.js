@@ -1606,6 +1606,9 @@ window.toggleUrgentFilter = () => {
 window.searchTimeout = null;
 
 window.handleSearch = (e) => {
+    // ВОТ ЭТОЙ СТРОКИ НЕ ХВАТАЛО: Запоминаем то, что ввел пользователь!
+    window.searchQuery = e.target.value; 
+
     const btn = document.getElementById('search-clear-btn');
     if(e.target.value) {
         if(btn) btn.classList.remove('hidden');
