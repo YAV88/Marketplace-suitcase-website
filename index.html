@@ -86,7 +86,7 @@
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                     <i class="fa-solid fa-magnifying-glass text-stone-400 group-focus-within:text-brand-500 group-focus-within:drop-shadow-[0_0_5px_rgba(20,184,166,0.8)] transition-all duration-300 text-lg"></i>
                 </div>
-                <input type="text" id="main-search-input" oninput="window.handleSearch(event)" placeholder="Я ищу..." class="w-full bg-stone-50/80 dark:bg-stone-800/80 border-2 border-stone-200 dark:border-stone-700 focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 focus:shadow-[0_0_20px_rgba(20,184,166,0.15)] rounded-2xl pl-12 pr-12 py-2.5 sm:py-3 text-sm font-bold text-stone-900 dark:text-white outline-none transition-all placeholder-stone-400 dark:placeholder-stone-500 backdrop-blur-md">
+                <input type="text" id="main-search-input" data-i18n="search_placeholder" oninput="window.handleSearch(event)" placeholder="Я ищу..." class="w-full bg-stone-50/80 dark:bg-stone-800/80 border-2 border-stone-200 dark:border-stone-700 focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 focus:shadow-[0_0_20px_rgba(20,184,166,0.15)] rounded-2xl pl-12 pr-12 py-2.5 sm:py-3 text-sm font-bold text-stone-900 dark:text-white outline-none transition-all placeholder-stone-400 dark:placeholder-stone-500 backdrop-blur-md">
                 
                 <button id="search-clear-btn" onclick="window.clearSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-400 hover:text-brand-600 transition-colors hidden cursor-pointer z-10">
                     <i class="fa-solid fa-circle-xmark text-lg"></i>
@@ -111,7 +111,7 @@
 
                 <div class="hidden lg:flex relative" id="info-dropdown-wrapper">
                     <button onclick="window.toggleInfoMenu()" class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm text-stone-800 dark:text-stone-200 transition cursor-pointer">
-                        <span class="leading-none mt-[2px]">Инфо</span> 
+                        <span class="leading-none mt-[2px]" data-i18n="nav_info">Инфо</span> 
                         <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 mt-[2px]"></i>
                     </button>
                     
@@ -157,7 +157,7 @@
                     });
                 </script>
                 
-                <button id="nav-login-btn" onclick="window.openModal('auth-modal')" class="hidden lg:block px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
+                <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')" class="hidden lg:block px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
                 
                 <div id="nav-user-controls" class="hidden items-center gap-3">
                     <button onclick="window.openChatListModal()" title="Сообщения" class="hidden lg:flex relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
@@ -168,7 +168,7 @@
                 </div>
                 
                 <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" class="hidden md:flex bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-black transition-colors items-center gap-2 cursor-pointer whitespace-nowrap shrink-0">
-                    <i class="fa-solid fa-tag"></i> <span class="hidden xl:inline">Пристроить добро</span><span class="xl:hidden">Продать</span>
+                    <i class="fa-solid fa-tag"></i> <span class="hidden xl:inline" data-i18n="btn_publish">Пристроить добро</span><span class="xl:hidden" data-i18n="btn_publish_mob">Продать</span>
                 </button>
                 
                 <button onclick="window.toggleDarkMode()" class="sm:hidden text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i class="fa-solid fa-moon text-lg"></i></button>
