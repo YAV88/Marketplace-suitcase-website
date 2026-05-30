@@ -945,10 +945,12 @@
             <h2 id="add-modal-title" class="text-3xl font-display font-black mb-8 uppercase text-stone-900 dark:text-white">Пристроить добро</h2>
             <form id="add-form" class="flex flex-col gap-5" onsubmit="window.submitNewItem(event);">
                 <div class="flex gap-3 overflow-x-auto pb-2" id="photo-preview-list"></div>
-                <label class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
+                
+                <label id="drop-zone" class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
                     <i class="fa-solid fa-camera-retro text-5xl mb-3 text-stone-300 dark:text-stone-600"></i>
-                    <span class="font-bold text-lg">Добавить фото</span>
-                    <input type="file" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
+                    <span class="font-bold text-lg pointer-events-none">Перетащите фото сюда</span>
+                    <span class="text-xs mt-1 pointer-events-none">Или нажмите для выбора</span>
+                    <input type="file" id="file-input" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
                 </label>
                 
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
