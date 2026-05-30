@@ -2942,6 +2942,18 @@ window.addEventListener('scroll', () => {
             header.classList.remove('bg-white/80', 'dark:bg-stone-900/90', 'shadow-md');
         }
     }
+    if (!document.body.classList.contains('modal-open')) {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        // Если кнопка есть и она не скрыта (значит есть еще товары)
+        if (loadMoreBtn && !loadMoreBtn.classList.contains('hidden')) {
+            // Если до конца страницы осталось меньше 500 пикселей
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                // Чтобы не отправить 100 запросов подряд, временно прячем кнопку
+                loadMoreBtn.classList.add('hidden');
+                window.loadMoreItems();
+            }
+        }
+    }
 });
 
 // 1. ОТКРЫТИЕ ОКНА И ПРОВЕРКА КУЛДАУНА
