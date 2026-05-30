@@ -4,6 +4,78 @@ const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// ==========================================
+// ДВИЖОК МУЛЬТИЯЗЫЧНОСТИ (i18n)
+// ==========================================
+window.currentLang = localStorage.getItem('svalka_lang') || 'ru';
+
+// 1. Глобальный словарь (Будем пополнять его по мере работы)
+window.i18n = {
+    ru: {
+        'search_placeholder': 'Поиск вещей, брендов, электроники...',
+        'btn_login': 'Войти',
+        'btn_publish': 'Пристроить добро',
+        'filter_title': 'Фильтры',
+        'city_all': 'Вся Сербия',
+        // Добавлять ключи сюда...
+    },
+    en: {
+        'search_placeholder': 'Search for items, brands, electronics...',
+        'btn_login': 'Log in',
+        'btn_publish': 'Post an Ad',
+        'filter_title': 'Filters',
+        'city_all': 'All Serbia',
+    },
+    sr: {
+        'search_placeholder': 'Pretraga stvari, brendova, elektronike...',
+        'btn_login': 'Prijavi se',
+        'btn_publish': 'Objavi oglas',
+        'filter_title': 'Filteri',
+        'city_all': 'Cela Srbija',
+    }
+};
+
+// 2. Функция для использования переводов внутри JS кода (например в Toast или Modal)
+window.t = (key) => {
+    return window.i18n[window.currentLang][key] || key; // Если перевода нет, вернет сам ключ
+};
+
+// 3. Функция смены языка (без перезагрузки)
+window.changeLanguage = (lang) => {
+    window.currentLang = lang;
+    localStorage.setItem('svalka_lang', lang);
+    
+    // Обновляем иконку и текст в шапке
+    const flagEl = document.getElementById('lang-flag');
+    const codeEl = document.getElementById('lang-code');
+    if(flagEl && codeEl) {
+        if(lang === 'ru') { flagEl.innerText = '🇷🇺'; codeEl.innerText = 'RU'; }
+        if(lang === 'sr') { flagEl.innerText = '🇷🇸'; codeEl.innerText = 'SR'; }
+        if(lang === 'en') { flagEl.innerText = '🇬🇧'; codeEl.innerText = 'EN'; }
+    }
+
+    // Проходим по всему HTML и заменяем текст
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (window.i18n[lang][key]) {
+            // Если это поле ввода — меняем placeholder, иначе меняем текст
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = window.i18n[lang][key];
+            } else {
+                el.innerHTML = window.i18n[lang][key];
+            }
+        }
+    });
+
+    // Опционально: если открыты товары, их нужно перерендерить (чтобы применился язык к бейджикам)
+    if(typeof window.fetchItems === 'function') window.fetchItems(false);
+};
+
+// Инициализация языка при первой загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    window.changeLanguage(window.currentLang);
+});
+
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
 window.customConfirm = (title, message, btnText, colorTheme, iconClass) => {
     return new Promise((resolve) => {
