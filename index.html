@@ -1194,13 +1194,17 @@
             
             <div class="p-5 md:p-8 item-details-grid mt-12 md:mt-0">
                 
-                <div class="relative flex flex-col gap-3">
-                    <div id="modal-img-container" class="relative rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800 shadow-inner h-[300px] md:h-[450px] group flex items-center justify-center">
-                        <img id="modal-img" src="" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox(this.src)">
-                        <button id="modal-prev-item" onclick="window.navigateItem(-1, event)" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
-                        <button id="modal-next-item" onclick="window.navigateItem(1, event)" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
+                <div class="relative flex flex-col gap-3 w-full">
+                    <div id="modal-img-container" class="relative rounded-2xl overflow-hidden bg-stone-100/50 dark:bg-stone-900/50 shadow-inner h-[300px] md:h-[450px] group flex items-center justify-center w-full">
+                        
+                        <div id="modal-carousel" class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
+                            </div>
+                
+                        <button id="modal-prev-photo" onclick="window.navigatePhoto(-1, event)" class="hidden absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
+                        <button id="modal-next-photo" onclick="window.navigatePhoto(1, event)" class="hidden absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
+                        
+                        <div id="modal-pagination-dots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 hidden"></div>
                     </div>
-                    <div id="modal-thumbs-container" class="h-20 bg-stone-200/50 dark:bg-stone-900/50 flex items-center gap-2 px-4 overflow-x-auto custom-scrollbar shrink-0 hidden rounded-xl border border-stone-200 dark:border-stone-700"></div>
                 </div>
 
                 <div class="item-details-sticky-side flex flex-col pt-2 md:pt-8">
