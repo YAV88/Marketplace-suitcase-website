@@ -1911,18 +1911,54 @@ window.openItemDetails = async (id) => {
         
         window.activeModalItemId = item.id;
 
-        const imgContainer = document.getElementById('modal-img-container');
-        const thumbsContainer = document.getElementById('modal-thumbs-container');
-        
-        if (imgContainer && thumbsContainer) {
-            const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-            imgContainer.innerHTML = `<div class="absolute inset-0 p-4 flex items-center justify-center"><img id="modal-img" src="${coverImg}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${coverImg}')"></div>`;
+        // ВАУ-ЭФФЕКТ: Свайп-карусель изображений
+        const carousel = document.getElementById('modal-carousel');
+        const dotsContainer = document.getElementById('modal-pagination-dots');
+        const btnPrev = document.getElementById('modal-prev-photo');
+        const btnNext = document.getElementById('modal-next-photo');
 
-            if (Array.isArray(item.images) && item.images.length > 1) {
-                thumbsContainer.innerHTML = item.images.map((src, idx) => `<img src="${src}" onclick="event.stopPropagation(); document.getElementById('modal-img').src='${src}'; window.currentLightboxIndex=${idx};" class="w-14 h-14 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-brand-500 transition shadow-sm shrink-0">`).join('');
-                thumbsContainer.classList.remove('hidden');
+        if (carousel && dotsContainer) {
+            let images = Array.isArray(item.images) && item.images.length > 0 
+                ? item.images 
+                : [item.imageUrl || item.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'];
+            
+            window.currentLightboxImages = images;
+
+            // Генерируем слайды
+            carousel.innerHTML = images.map((src) => `
+                <div class="w-full h-full shrink-0 flex items-center justify-center snap-center relative">
+                    <img src="${src}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${src}')">
+                </div>
+            `).join('');
+
+            // Генерируем точки
+            if (images.length > 1) {
+                dotsContainer.innerHTML = images.map((_, idx) => `
+                    <div class="carousel-dot w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-white scale-125 shadow-sm' : 'bg-white/50'}"></div>
+                `).join('');
+                dotsContainer.classList.remove('hidden');
+                if(btnPrev) btnPrev.classList.replace('hidden', 'md:flex');
+                if(btnNext) btnNext.classList.replace('hidden', 'md:flex');
+
+                // Синхронизация скролла с точками
+                carousel.onscroll = () => {
+                    const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
+                    const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                    dots.forEach((dot, i) => {
+                        dot.className = i === index 
+                            ? "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white scale-125 shadow-sm" 
+                            : "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white/50";
+                    });
+                    window.currentLightboxIndex = index;
+                };
+                
+                // Прокрутка в начало при открытии нового товара
+                carousel.scrollLeft = 0;
             } else {
-                thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden');
+                dotsContainer.innerHTML = '';
+                dotsContainer.classList.add('hidden');
+                if(btnPrev) btnPrev.classList.replace('md:flex', 'hidden');
+                if(btnNext) btnNext.classList.replace('md:flex', 'hidden');
             }
         }
 
@@ -3318,3 +3354,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, false);
     }
 });
+
+window.navigatePhoto = (direction, event) => {
+    if (event) event.stopPropagation();
+    const carousel = document.getElementById('modal-carousel');
+    if (carousel) {
+        const itemWidth = carousel.clientWidth;
+        carousel.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
+    }
+};
