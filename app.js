@@ -795,7 +795,17 @@ initPWA();
 
 const updateThemeIcons = (isDark) => {
     document.querySelectorAll('button[onclick="window.toggleDarkMode()"] i').forEach(icon => {
-        icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-lg' : 'fa-solid fa-moon text-lg';
+        // 1. Анимация исчезновения и вращения старой иконки
+        icon.style.transform = 'rotate(-180deg) scale(0.5)';
+        icon.style.opacity = '0';
+        
+        setTimeout(() => {
+            // 2. Меняем иконку (Луна/Солнце)
+            icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-lg transition-all duration-300' : 'fa-solid fa-moon text-lg transition-all duration-300';
+            // 3. Плавное появление новой иконки
+            icon.style.transform = 'rotate(0deg) scale(1)';
+            icon.style.opacity = '1';
+        }, 150); // Ждем половину анимации перед сменой
     });
 };
 
