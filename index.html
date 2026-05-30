@@ -96,10 +96,17 @@
             <div class="flex items-center gap-3 lg:gap-4 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 lg:pl-6">
                 <button onclick="window.toggleDarkMode()" class="hidden sm:flex text-stone-400 hover:text-brand-600 transition w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
                 
-                <div class="hidden sm:flex relative group">
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm transition cursor-pointer">
-                        <img src="https://flagcdn.com/w20/ru.png" class="w-5 h-auto rounded-[2px] object-cover shrink-0"><span class="leading-none mt-[2px]">РУС</span>
+                <div class="relative group z-[110]">
+                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold shadow-sm">
+                        <span class="lang-flag">🇷🇺</span>
+                        <span class="lang-code text-stone-700 dark:text-stone-300 uppercase hidden sm:block">RU</span>
+                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
                     </button>
+                    <div class="absolute right-0 mt-1 w-36 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 Русский</button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 Srpski</button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 English</button>
+                    </div>
                 </div>
 
                 <div class="hidden lg:flex relative" id="info-dropdown-wrapper">
