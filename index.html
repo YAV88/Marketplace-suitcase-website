@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SVALKA — Маркетплейс вещей в Сербии</title>
+    <title data-i18n="page_title">SVALKA — Маркетплейс вещей в Сербии</title>
     <meta name="description" content="SVALKA — первый удобный маркетплейс для поиска и продажи вещей в Сербии.">
     <meta property="og:type" content="website">
     <meta property="og:title" id="og-title" content="SVALKA — Маркетплейс вещей в Сербии">
-    <meta property="og:description" id="og-desc" content="Отличные находки и быстрые продажи в Белграде, Нови-Саде и по всей Сербии.">
+    <meta property="og:description" id="og-desc" content="Отличные находки и быстрые продажи в Сербии.">
     <meta property="og:image" id="og-image" content="https://svalka.trade/svalka-banner.jpg">
     <meta name="twitter:card" content="summary_large_image">
     
@@ -15,32 +15,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script>
-        tailwind.config = { 
-            darkMode: 'class', 
-            theme: { 
-                extend: { 
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Montserrat', 'sans-serif'] },
-                    colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } }
-                } 
-            } 
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Montserrat', 'sans-serif'] }, colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } } } } }
     </script>
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <link rel="stylesheet" href="style.css">
-
     <script type="module" src="app.js"></script>
-    
 </head>
-    
 <body class="text-stone-800 dark:text-stone-200 antialiased relative pb-[70px] lg:pb-0">
-    
     <div class="bg-pattern"></div>
     <div class="fixed inset-0 pointer-events-none z-[-1] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-500/10 via-transparent to-transparent"></div>
     
-
     <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-[0.03] dark:opacity-5 text-brand-600 dark:text-white text-4xl md:text-6xl">
         <i class="fa-solid fa-box-open absolute top-[10%] left-[5%] -rotate-12"></i>
         <i class="fa-solid fa-shirt absolute top-[25%] right-[8%] rotate-12"></i>
@@ -52,27 +37,16 @@
         <i class="fa-solid fa-headphones absolute top-[40%] left-[15%] rotate-12"></i>
     </div>
 
-    <!-- ОБНОВЛЕННАЯ ШАПКА (Чистый Glassmorphism для светлой темы и глубокий для тёмной) -->
     <nav id="main-header" class="relative bg-white/40 dark:bg-stone-900/70 backdrop-blur-2xl border-b border-white/50 dark:border-brand-500/20 sticky top-0 z-50 shadow-[0_4px_30px_rgba(20,184,166,0.08)] dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)] transition-all duration-300">
-        
-        <!-- Многослойный градиентный фон -->
-        <!-- Светлая тема: чистый, прозрачный фон с мягкими переливами. Тёмная тема: графит с глубоким изумрудным свечением -->
         <div class="absolute inset-0 pointer-events-none z-0 bg-white/20 dark:bg-stone-900/30"></div>
-        
         <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-brand-400/50 via-brand-100/10 to-transparent dark:from-brand-500/40 dark:via-brand-900/20 dark:to-transparent opacity-90"></div>
-
-        <!-- Легкая текстура шума/бетона для атмосферы -->
         <div class="absolute inset-0 pointer-events-none z-0 opacity-[0.03] dark:opacity-[0.04]" style="background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');"></div>
-        
-        <!-- Светящаяся неоновая полоска сверху -->
         <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/30 dark:via-brand-400/20 to-transparent z-0"></div>
 
         <div id="header-container" class="relative z-10 container mx-auto px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-3 lg:gap-6 transition-all duration-300">
-            
             <div class="flex items-center gap-3 lg:gap-4 group cursor-pointer shrink-0" onclick="window.goHome()">
                 <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center shrink-0">
                     <div class="absolute inset-0 bg-brand-500 rounded-full blur-md opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
-                    
                     <div class="relative w-full h-full bg-white dark:bg-stone-800 rounded-full shadow-[0_0_15px_rgba(20,184,166,0.2)] group-hover:shadow-[0_0_25px_rgba(20,184,166,0.4)] flex items-center justify-center border-2 border-brand-100 dark:border-brand-900/50 overflow-hidden transition-transform duration-300 group-hover:scale-105">
                         <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-md transition-transform duration-500 group-hover:scale-110">
                     </div>
@@ -84,13 +58,10 @@
 
             <div class="order-3 lg:order-none w-full lg:w-auto lg:flex-1 relative group max-w-3xl">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                    <i class="fa-solid fa-magnifying-glass text-stone-400 group-focus-within:text-brand-500 group-focus-within:drop-shadow-[0_0_5px_rgba(20,184,166,0.8)] transition-all duration-300 text-lg"></i>
+                    <i class="fa-solid fa-magnifying-glass text-stone-400 group-focus-within:text-brand-500 transition-all duration-300 text-lg"></i>
                 </div>
                 <input type="text" id="main-search-input" data-i18n="search_placeholder" oninput="window.handleSearch(event)" placeholder="Я ищу..." class="w-full bg-stone-50/80 dark:bg-stone-800/80 border-2 border-stone-200 dark:border-stone-700 focus:border-brand-500 focus:bg-white dark:focus:bg-stone-900 focus:shadow-[0_0_20px_rgba(20,184,166,0.15)] rounded-2xl pl-12 pr-12 py-2.5 sm:py-3 text-sm font-bold text-stone-900 dark:text-white outline-none transition-all placeholder-stone-400 dark:placeholder-stone-500 backdrop-blur-md">
-                
-                <button id="search-clear-btn" onclick="window.clearSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-400 hover:text-brand-600 transition-colors hidden cursor-pointer z-10">
-                    <i class="fa-solid fa-circle-xmark text-lg"></i>
-                </button>
+                <button id="search-clear-btn" onclick="window.clearSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-400 hover:text-brand-600 transition-colors hidden cursor-pointer z-10"><i class="fa-solid fa-circle-xmark text-lg"></i></button>
             </div>
             
             <div class="flex items-center gap-3 lg:gap-4 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 lg:pl-6">
@@ -98,11 +69,9 @@
                 
                 <div class="relative z-[110]">
                     <button onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold shadow-sm">
-                        <span id="lang-flag">🇷🇺</span>
-                        <span id="lang-code" class="text-stone-700 dark:text-stone-300 uppercase hidden sm:block">RU</span>
+                        <span id="lang-indicator" class="text-stone-700 dark:text-stone-300 tracking-wider uppercase">RU</span>
                         <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
                     </button>
-                    
                     <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-36 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg transition-all duration-200 overflow-hidden origin-top-right">
                         <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 Русский</button>
                         <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 Srpski</button>
@@ -115,46 +84,32 @@
                         <span class="leading-none mt-[2px]" data-i18n="nav_info">Инфо</span> 
                         <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 mt-[2px]"></i>
                     </button>
-                    
                     <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[100]">
                         <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
-                            <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> О проекте</a>
-                            <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> Правила</a>
-                            <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> Безопасность</a>
-                            <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> Помощь / FAQ</a>
-                            <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> Политика</a>
-                            <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> Условия</a>
-                            
+                            <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> <span data-i18n="nav_about">О проекте</span></a>
+                            <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> <span data-i18n="nav_rules">Правила</span></a>
+                            <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> <span data-i18n="nav_security">Безопасность</span></a>
+                            <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> <span data-i18n="nav_faq">Помощь / FAQ</span></a>
+                            <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> <span data-i18n="nav_privacy">Политика</span></a>
+                            <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> <span data-i18n="nav_terms">Условия</span></a>
                             <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
-                            <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> Контакты</a>
+                            <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> <span data-i18n="nav_contacts">Контакты</span></a>
                         </div>
                     </div>
                 </div>
 
                 <script>
-                    // Функция открытия/закрытия меню "Инфо"
                     window.toggleInfoMenu = () => {
                         const menu = document.getElementById('info-dropdown-menu');
                         const icon = document.getElementById('info-dropdown-icon');
-                        if (menu.classList.contains('hidden')) {
-                            menu.classList.remove('hidden');
-                            icon.classList.add('rotate-180');
-                        } else {
-                            menu.classList.add('hidden');
-                            icon.classList.remove('rotate-180');
-                        }
+                        if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); icon.classList.add('rotate-180');
+                        } else { menu.classList.add('hidden'); icon.classList.remove('rotate-180'); }
                     };
-            
-                    // Закрываем меню, если кликнули в любое другое место сайта
                     document.addEventListener('click', (e) => {
                         const wrapper = document.getElementById('info-dropdown-wrapper');
                         const menu = document.getElementById('info-dropdown-menu');
                         const icon = document.getElementById('info-dropdown-icon');
-                        
-                        if (wrapper && menu && !wrapper.contains(e.target)) {
-                            menu.classList.add('hidden');
-                            if(icon) icon.classList.remove('rotate-180');
-                        }
+                        if (wrapper && menu && !wrapper.contains(e.target)) { menu.classList.add('hidden'); if(icon) icon.classList.remove('rotate-180'); }
                     });
                 </script>
                 
@@ -162,8 +117,7 @@
                 
                 <div id="nav-user-controls" class="hidden items-center gap-3">
                     <button onclick="window.openChatListModal()" title="Сообщения" class="hidden lg:flex relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
-                        <i class="fa-regular fa-envelope"></i>
-                        <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
+                        <i class="fa-regular fa-envelope"></i><span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
                     <button onclick="window.openModal('profile-modal')" title="Профиль" class="hidden lg:flex text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
                 </div>
@@ -181,21 +135,19 @@
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
         <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50 shrink-0">
             <div class="flex items-center gap-1 pt-1" onclick="window.goHome(); window.toggleMobileMenu();">
-                <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
+                <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter">SVALKA</span>
                 <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
             </div>
             <button onclick="window.toggleMobileMenu()" class="text-3xl text-stone-400 hover:text-brand-600 p-2 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
         <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
-            
             <div class="font-bold text-lg flex flex-col gap-6">
-                <button id="mob-nav-login" onclick="window.openModal('auth-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> Войти</button>
-                
+                <button id="mob-nav-login" onclick="window.openModal('auth-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> <span data-i18n="btn_login">Войти</span></button>
                 <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
-                    <button onclick="window.openModal('profile-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-user text-brand-600 w-6"></i> Профиль</button>
-                    <button onclick="window.openChatListModal();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> Сообщения</button>
-                    <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> Выйти</button>
+                    <button onclick="window.openModal('profile-modal');" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-user text-brand-600 w-6"></i> <span data-i18n="nav_profile">Профиль</span></button>
+                    <button onclick="window.openChatListModal();" class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i class="fa-regular fa-envelope text-brand-600 w-6"></i> <span data-i18n="nav_messages">Сообщения</span></button>
+                    <button onclick="window.logout();" class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i class="fa-solid fa-right-from-bracket w-6"></i> <span data-i18n="nav_logout">Выйти</span></button>
                 </div>
             </div>
 
@@ -204,62 +156,53 @@
             <div class="flex flex-col gap-4">
                 <div class="grid grid-cols-2 gap-3 w-full">
                     <a href="about.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-sm shrink-0"><i class="fa-solid fa-circle-info"></i></div>
-                        <span class="truncate">О проекте</span>
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-sm shrink-0"><i class="fa-solid fa-circle-info"></i></div><span class="truncate" data-i18n="nav_about">О проекте</span>
                     </a>
                     <a href="rules.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-sm shrink-0"><i class="fa-solid fa-list-check"></i></div>
-                        <span class="truncate">Правила</span>
+                        <div class="w-8 h-8 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-sm shrink-0"><i class="fa-solid fa-list-check"></i></div><span class="truncate" data-i18n="nav_rules">Правила</span>
                     </a>
                     <a href="security.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 text-sm shrink-0"><i class="fa-solid fa-user-shield"></i></div>
-                        <span class="truncate">Безопасность</span>
+                        <div class="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 text-sm shrink-0"><i class="fa-solid fa-user-shield"></i></div><span class="truncate" data-i18n="nav_security">Безопасность</span>
                     </a>
                     <a href="faq.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-sm shrink-0"><i class="fa-solid fa-circle-question"></i></div>
-                        <span class="truncate">FAQ</span>
+                        <div class="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-sm shrink-0"><i class="fa-solid fa-circle-question"></i></div><span class="truncate" data-i18n="nav_faq">FAQ</span>
                     </a>
                     <a href="privacy.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-sm shrink-0"><i class="fa-solid fa-shield-halved"></i></div>
-                        <span class="truncate">Политика</span>
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-sm shrink-0"><i class="fa-solid fa-shield-halved"></i></div><span class="truncate" data-i18n="nav_privacy">Политика</span>
                     </a>
                     <a href="terms.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div class="w-8 h-8 rounded-xl bg-stone-500/10 flex items-center justify-center text-stone-500 text-sm shrink-0"><i class="fa-solid fa-file-contract"></i></div>
-                        <span class="truncate">Условия</span>
+                        <div class="w-8 h-8 rounded-xl bg-stone-500/10 flex items-center justify-center text-stone-500 text-sm shrink-0"><i class="fa-solid fa-file-contract"></i></div><span class="truncate" data-i18n="nav_terms">Условия</span>
                     </a>
                 </div>
                 
                 <a href="contacts.html" class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm mt-2">
-                    <div class="w-8 h-8 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-sm shrink-0"><i class="fa-solid fa-envelope"></i></div>
-                    <span>Служба поддержки</span>
+                    <div class="w-8 h-8 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-sm shrink-0"><i class="fa-solid fa-envelope"></i></div><span data-i18n="footer_support">Служба поддержки</span>
                 </a>
             </div>
             
             <div class="mt-auto pt-8 flex flex-col items-center gap-4">
                 <div class="flex gap-4">
-                    <a href="#" onclick="window.showToast('Мы скоро появимся в Instagram')" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#E1306C] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-instagram text-xl"></i></a>
-                    <a href="#" onclick="window.showToast('Мы скоро запустим Telegram-канал')" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#0088cc] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-telegram text-xl"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#E1306C] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#0088cc] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i class="fa-brands fa-telegram text-xl"></i></a>
                 </div>
-                <p class="text-[10px] font-black text-stone-300 dark:text-stone-600 uppercase tracking-widest text-center mt-2">© 2026 SVALKA.</p>
+                <p class="text-[10px] font-black text-stone-300 dark:text-stone-600 uppercase tracking-widest text-center mt-2" data-i18n="footer_rights">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
             </div>
-
         </div>
     </div>
 
     <main class="container mx-auto px-4 py-8 max-w-[1400px] relative">
-        
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-1">
                     <i class="fa-solid fa-box-open text-brand-500 text-3xl md:text-4xl drop-shadow-sm"></i>
-                    <h3 class="text-3xl md:text-4xl font-display font-black text-stone-900 dark:text-white tracking-tight uppercase">Находки</h3>
+                    <h3 class="text-3xl md:text-4xl font-display font-black text-stone-900 dark:text-white tracking-tight uppercase" data-i18n="feed_title">Находки</h3>
                 </div>
-                <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base">Самые свежие объявления Сербии</p>
+                <p class="text-stone-500 dark:text-stone-400 font-medium text-sm md:text-base" data-i18n="feed_desc">Самые свежие объявления Сербии</p>
             </div>
             
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 <button id="btn-toggle-filters" onclick="window.toggleFilters()" class="w-full sm:w-auto bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-sm cursor-pointer lg:hidden">
-                    <i class="fa-solid fa-sliders"></i> Фильтры
+                    <i class="fa-solid fa-sliders"></i> <span data-i18n="filter_btn">Фильтры</span>
                 </button>
             </div>
         </div>
@@ -269,102 +212,86 @@
                 <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
                     <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
-                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400">Категория</h4>
-                            <div id="sidebar-categories" class="flex flex-col gap-0.5">
-                                </div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400" data-i18n="filter_cat">Категория</h4>
+                            <div id="sidebar-categories" class="flex flex-col gap-0.5"></div>
                         </div>
-
                         <div class="sidebar-divider lg:block hidden"></div>
-
                         <div>
-                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Город</h4>
-                            <div id="sidebar-cities" class="flex flex-col gap-0.5">
-                                </div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight" data-i18n="filter_city">Город</h4>
+                            <div id="sidebar-cities" class="flex flex-col gap-0.5"></div>
                         </div>
-
                         <div class="sidebar-divider lg:block hidden"></div>
-
                         <div>
-                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Состояние</h4>
-                            <div class="flex flex-col gap-3" id="condition-radios-wrap">
-                                </div>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight" data-i18n="filter_condition">Состояние</h4>
+                            <div class="flex flex-col gap-3" id="condition-radios-wrap"></div>
                         </div>
-
                         <div class="sidebar-divider lg:block hidden"></div>
-
                         <div>
-                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Цена</h4>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight" data-i18n="filter_price">Цена</h4>
                             <div class="flex gap-2 mb-4">
-                                <input type="number" id="filter-price-min" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
-                                <input type="number" id="filter-price-max" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
+                                <input type="number" id="filter-price-min" data-i18n="filter_price_from" placeholder="От" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
+                                <input type="number" id="filter-price-max" data-i18n="filter_price_to" placeholder="До" class="w-full bg-stone-50 dark:bg-stone-900 p-3.5 rounded-xl border border-stone-200 dark:border-stone-700 font-medium text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-all">
                             </div>
-                            
-                            <label class="block text-xs font-bold text-stone-400 mb-3 uppercase">Валюта</label>
-                            <div class="flex flex-col gap-3" id="currency-radios-wrap">
-                                </div>
+                            <label class="block text-xs font-bold text-stone-400 mb-3 uppercase" data-i18n="filter_currency">Валюта</label>
+                            <div class="flex flex-col gap-3" id="currency-radios-wrap"></div>
                         </div>
-                        
                         <div class="sidebar-divider lg:block hidden"></div>
-                        
                         <div>
-                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight">Оплата</h4>
+                            <h4 class="font-black text-xl text-stone-500 dark:text-stone-400 mb-4 uppercase tracking-tight" data-i18n="filter_payment">Оплата</h4>
                             <div class="flex flex-col gap-3">
                                 <label class="flex items-center gap-2.5 cursor-pointer group">
                                     <input type="checkbox" value="Наличные" class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                                        <i class="fa-solid fa-money-bill-wave text-emerald-500 w-4 text-center"></i> Наличные
+                                        <i class="fa-solid fa-money-bill-wave text-emerald-500 w-4 text-center"></i> <span data-i18n="pay_cash">Наличные</span>
                                     </span>
                                 </label>
                                 <label class="flex items-center gap-2.5 cursor-pointer group">
                                     <input type="checkbox" value="Перевод на карту" class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                                        <i class="fa-regular fa-credit-card text-indigo-500 w-4 text-center"></i> Перевод на карту
+                                        <i class="fa-regular fa-credit-card text-indigo-500 w-4 text-center"></i> <span data-i18n="pay_card">Перевод на карту</span>
                                     </span>
                                 </label>
                                 <label class="flex items-center gap-2.5 cursor-pointer group">
                                     <input type="checkbox" value="Криптоперевод" class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                                        <i class="fa-brands fa-bitcoin text-emerald-600 w-4 text-center"></i> Криптоперевод
+                                        <i class="fa-brands fa-bitcoin text-emerald-600 w-4 text-center"></i> <span data-i18n="pay_crypto">Криптоперевод</span>
                                     </span>
                                 </label>
                             </div>
                         </div>
-                        
                     </div>
-                    
                     <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-stone-100 dark:border-stone-700">
-                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer">Сбросить</button>
-                        <button type="button" onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm">Показать находки</button>                    </div>
+                        <button onclick="window.resetFilters()" class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer" data-i18n="btn_reset">Сбросить</button>
+                        <button type="button" onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm" data-i18n="btn_show_results">Показать находки</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="main-cats-container" class="mb-3 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-3 pb-2 md:pb-0 snap-x md:snap-none" style="scrollbar-width: none; -ms-overflow-style: none;">
-            <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start">Все</button>
-            <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> ТОП</button>
-            
-            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Одежда</button>
-            <button data-cat="Детям" onclick="window.filterByCategory('Детям', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Детям</button>
-            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Электроника</button>
-            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Интерьер</button>
-            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Транспорт</button>
-            <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Красота</button>
-            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Услуги</button>
-            <button data-cat="Работа" onclick="window.filterByCategory('Работа', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Работа</button>
-            <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Бизнес</button>
-            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Хобби</button>
-            <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Животные</button>
-            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Жилье</button>
-            <button data-cat="Другое" onclick="window.filterByCategory('Другое', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start">Другое</button>
+            <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_all">Все</button>
+            <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> <span data-i18n="cat_top">ТОП</span></button>
+            <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_clothes">Одежда</button>
+            <button data-cat="Детям" onclick="window.filterByCategory('Детям', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_kids">Детям</button>
+            <button data-cat="Электроника" onclick="window.filterByCategory('Электроника', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_electro">Электроника</button>
+            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_interior">Интерьер</button>
+            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_transport">Транспорт</button>
+            <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_beauty">Красота</button>
+            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_services">Услуги</button>
+            <button data-cat="Работа" onclick="window.filterByCategory('Работа', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_job">Работа</button>
+            <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_business">Бизнес</button>
+            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_hobby">Хобби</button>
+            <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_animals">Животные</button>
+            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_home">Жилье</button>
+            <button data-cat="Другое" onclick="window.filterByCategory('Другое', event)" class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_other">Другое</button>
         </div>
         
-        <div id="sub-cats-container" class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-2 pb-2 md:pb-0 snap-x md:snap-none hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
-        </div>
+        <div id="sub-cats-container" class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-2 pb-2 md:pb-0 snap-x md:snap-none hidden" style="scrollbar-width: none; -ms-overflow-style: none;"></div>
 
         <div id="vip-section" class="mb-6 hidden">
             <div class="flex items-center gap-3 mb-4 pl-1">
                 <i class="fa-solid fa-crown text-amber-500 text-2xl"></i>
-                <h4 class="font-black text-xl text-stone-800 dark:text-stone-200">ТОП Находки</h4>
+                <h4 class="font-black text-xl text-stone-800 dark:text-stone-200" data-i18n="vip_title">ТОП Находки</h4>
             </div>
             <div id="vip-items-grid" class="grid items-stretch view-grid"></div>
         </div>
@@ -372,10 +299,10 @@
         <div class="mb-4 sm:mb-6 rounded-[2rem] bg-gradient-to-r from-brand-500 to-brand-600 p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4 group" onclick="window.openModal('crypto-modal')">
             <div class="flex items-center gap-4 w-full sm:w-auto">
                 <span class="bg-white/20 backdrop-blur text-white px-3 py-1 rounded text-xs font-black uppercase tracking-widest shrink-0 shadow-sm border border-white/20">PRO</span>
-                <span class="font-bold text-sm sm:text-base line-clamp-1">Получи VIP-статус и продавай вещи быстрее!</span>
+                <span class="font-bold text-sm sm:text-base line-clamp-1" data-i18n="vip_promo">Получи VIP-статус и продавай вещи быстрее!</span>
             </div>
             <button class="bg-white text-brand-600 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-100 hover:scale-105 active:scale-95 transition-all shadow-sm shrink-0 w-full sm:w-auto cursor-pointer flex items-center justify-center gap-2 group-hover:shadow-md">
-                Подключить <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                <span data-i18n="btn_connect">Подключить</span> <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
             </button>
         </div>
 
@@ -383,20 +310,20 @@
             <div class="flex justify-between items-center mb-4 pl-1">
             <div class="flex items-center gap-3">
                 <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
-                <h4 id="main-feed-title" class="font-black text-xl text-stone-500">Свежие объявления</h4>
+                <h4 id="main-feed-title" class="font-black text-xl text-stone-500" data-i18n="fresh_title">Свежие объявления</h4>
             </div>
             <div class="flex items-center gap-2">
                 <div class="relative hidden md:block" id="custom-sort-wrapper">
                     <button id="custom-sort-btn" onclick="window.toggleSortMenu()" class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-3 pr-2 h-9 font-bold text-xs text-stone-600 dark:text-stone-300 outline-none cursor-pointer transition-colors hover:border-brand-500 w-[130px]">
-                        <span id="custom-sort-label">Новые</span>
+                        <span id="custom-sort-label" data-i18n="sort_new">Новые</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200" id="custom-sort-icon"></i>
                     </button>
                         
                     <div id="custom-sort-menu" class="absolute right-0 top-full mt-1 w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg shadow-lg overflow-hidden hidden z-50 py-1">
-                        <button onclick="window.selectSort('new', 'Новые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Новые</button>
-                        <button onclick="window.selectSort('cheap', 'Дешевые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Дешевые</button>
-                        <button onclick="window.selectSort('exp', 'Дорогие')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">Дорогие</button>
-                     </div>
+                        <button onclick="window.selectSort('new', 'Новые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors" data-i18n="sort_new">Новые</button>
+                        <button onclick="window.selectSort('cheap', 'Дешевые')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors" data-i18n="sort_cheap">Дешевые</button>
+                        <button onclick="window.selectSort('exp', 'Дорогие')" class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors" data-i18n="sort_exp">Дорогие</button>
+                    </div>
                         
                     <select id="sort-select" class="hidden">
                         <option value="new">Сначала новые</option>
@@ -430,7 +357,7 @@
             <div id="main-items-grid" class="grid items-stretch hidden view-grid"></div>
             
             <div class="flex justify-center mt-10 mb-6">
-                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Подгружаем...</button>
+                <button id="load-more-btn" onclick="window.loadMoreItems()" class="hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> <span data-i18n="btn_loading">Подгружаем...</span></button>
             </div>
 
             <div id="empty-state" class="w-full flex flex-col justify-center items-center py-20 text-stone-400 hidden">
@@ -445,8 +372,8 @@
                         <circle cx="105" cy="95" r="2" fill="#78716c" class="dark:stroke-stone-400"/>
                     </svg>
                 </div>
-                <h3 class="font-display font-black text-2xl text-stone-800 dark:text-stone-200 mb-2">Тут пока пусто</h3>
-                <p class="font-medium text-sm text-stone-500 max-w-xs text-center leading-relaxed">Попробуйте изменить фильтры поиска или загляните позже. Новые находки появляются каждый день!</p>
+                <h3 class="font-display font-black text-2xl text-stone-800 dark:text-stone-200 mb-2" data-i18n="empty_title">Тут пока пусто</h3>
+                <p class="font-medium text-sm text-stone-500 max-w-xs text-center leading-relaxed" data-i18n="empty_desc">Попробуйте изменить фильтры поиска или загляните позже.</p>
             </div>
             
         </div>
@@ -455,71 +382,62 @@
     <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pt-12 pb-8 transition-colors duration-300 mt-auto z-10 relative">
         <div class="container mx-auto px-4 flex flex-col items-center">
             <div class="flex items-center gap-3 mb-8 opacity-80 hover:opacity-100 transition cursor-pointer group" onclick="window.goHome()">
-                <!-- Добавлен hover:grayscale-0 чтобы матрёшка становилась цветной при наведении -->
                 <div class="relative w-14 h-14 flex items-center justify-center shrink-0 grayscale opacity-80 group-hover:grayscale-0 transition-all duration-300">
                     <div class="absolute inset-0 bg-brand-50 dark:bg-brand-900/40 rounded-full border-[2px] border-dashed border-brand-500 animate-[spin_15s_linear_infinite] opacity-70"></div>
                     <div class="absolute inset-1 bg-white dark:bg-stone-800 rounded-full shadow-sm flex items-center justify-center border border-stone-100 dark:border-stone-700 overflow-hidden">
-                        <!-- Твоя картинка чуть больше (w-7 h-7 = 28x28 пикселей) -->
                         <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png" class="w-12 h-12 object-contain drop-shadow-sm">
                     </div>
                 </div>
-                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter ">SVALKA</span>
+                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter">SVALKA</span>
             </div>
             <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-4">
-                    <a href="about.html" class="hover:text-brand-600 transition cursor-pointer">О проекте</a>
-                    <a href="rules.html" class="hover:text-brand-600 transition cursor-pointer">Правила</a>
-                    <a href="security.html" class="hover:text-brand-600 transition cursor-pointer">Безопасность</a>
-                    <a href="faq.html" class="hover:text-brand-600 transition cursor-pointer">FAQ</a>
-                    <a href="privacy.html" class="hover:text-brand-600 transition cursor-pointer">Политика</a>
-                    <a href="terms.html" class="hover:text-brand-600 transition cursor-pointer">Условия</a>
+                    <a href="about.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_about">О проекте</a>
+                    <a href="rules.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_rules">Правила</a>
+                    <a href="security.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_security">Безопасность</a>
+                    <a href="faq.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_faq">FAQ</a>
+                    <a href="privacy.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_privacy">Политика</a>
+                    <a href="terms.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_terms">Условия</a>
                 </div>
                 
                 <div class="hidden sm:block w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-700 mx-2"></div>
                 
                 <div class="flex items-center gap-2 mt-2 sm:mt-0">
-                    <span>Поддержка:</span>
+                    <span data-i18n="footer_support">Поддержка:</span>
                     <a href="contacts.html" class="text-brand-600 hover:text-brand-700 dark:hover:text-brand-400 transition cursor-pointer bg-brand-50 dark:bg-brand-900/30 px-3 py-1.5 rounded-lg border border-brand-100 dark:border-brand-800/50 shadow-sm">
-                        <i class="fa-regular fa-envelope mr-1"></i> Контакты
+                        <i class="fa-regular fa-envelope mr-1"></i> <span data-i18n="nav_contacts">Контакты</span>
                     </a>
                 </div>
             </div>
-            <p class="text-stone-400 dark:text-stone-600 text-xs font-bold text-center">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
+            <p class="text-stone-400 dark:text-stone-600 text-xs font-bold text-center" data-i18n="footer_rights">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
         </div>
 
         <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 z-[100] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
         <div class="flex justify-between items-center h-[60px] px-2 relative gap-1">
-            
             <button onclick="window.goHome();" class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
                 <i class="fa-solid fa-house text-xl mb-1"></i>
-                <span class="text-[10px] font-bold truncate max-w-full">Главная</span>
+                <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_home">Главная</span>
             </button>
-            
             <button onclick="if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('Войдите в аккаунт', true); } else { window.switchProfileTab('saved'); window.openModal('profile-modal'); }" class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
                 <i class="fa-solid fa-box-open text-xl mb-1"></i>
-                <span class="text-[10px] font-bold truncate max-w-full">Склад</span>
+                <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_saved">Склад</span>
             </button>
-            
-            <!-- ЖЕСТКАЯ ШИРИНА w-16 flex-none для кнопки +, чтобы она не сжималась и не пускала другие элементы -->
             <div class="relative w-16 h-full flex justify-center shrink-0 flex-none z-10">
                 <button onclick="window.checkAuthAndOpenAddModal()" class="absolute -top-5 flex items-center justify-center w-14 h-14 bg-brand-500 text-stone-900 border-4 border-white dark:border-stone-900 rounded-full shadow-lg hover:scale-105 transition-transform cursor-pointer">
                     <i class="fa-solid fa-plus text-2xl font-black"></i>
                 </button>
             </div>
-            
             <button onclick="window.openChatListModal()" class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer relative min-w-0">
                 <div class="relative">
                     <i class="fa-solid fa-comment-dots text-xl mb-1"></i>
                     <span id="nav-chat-badge" class="hidden absolute -top-1 -right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                 </div>
-                <span class="text-[10px] font-bold truncate max-w-full">Чат</span>
+                <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_chat">Чат</span>
             </button>
-            
             <button onclick="window.openModal('profile-modal')" class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
                 <i class="fa-solid fa-user text-xl mb-1"></i>
-                <span class="text-[10px] font-bold truncate max-w-full">Профиль</span>
+                <span class="text-[10px] font-bold truncate max-w-full" data-i18n="nav_profile">Профиль</span>
             </button>
-
         </div>
     </nav>
     </footer>
@@ -527,63 +445,19 @@
     <div id="policy-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl rounded-[2rem] shadow-2xl p-6 sm:p-10 relative border dark:border-stone-800">
             <button onclick="window.closeModal('policy-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl sm:text-3xl font-display font-black mb-6 text-stone-900 dark:text-white">Политика конфиденциальности</h2>
-            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
-                <p>Команда SVALKA с уважением относится к вашей приватности. В данном документе описано, как мы собираем, используем и защищаем вашу информацию.</p>
-                <p class="font-bold text-stone-900 dark:text-white mt-4">1. Какую информацию мы собираем</p>
-                <ul class="list-disc pl-5 space-y-1">
-                    <li>Данные профиля: email, имя, номер телефона (если указан) и аватар.</li>
-                    <li>Контент: фотографии товаров, описания, цены и сообщения во внутреннем чате платформы.</li>
-                    <li>Технические данные: стандартная информация, необходимая для работы и оптимизации сервиса (включая файлы cookie для сохранения сессий).</li>
-                </ul>
-                <p class="font-bold text-stone-900 dark:text-white mt-4">2. Как мы используем данные</p>
-                <p>Ваша информация используется исключительно для:</p>
-                <ul class="list-disc pl-5 space-y-1">
-                    <li>Обеспечения работы маркетплейса (публикация объявлений, связь между продавцом и покупателем).</li>
-                    <li>Улучшения качества обслуживания и технической поддержки.</li>
-                    <li>Защиты пользователей от мошеннических действий и спама.</li>
-                </ul>
-                <p class="font-bold text-stone-900 dark:text-white mt-4">3. Защита и хранение информации</p>
-                <p>Мы применяем современные технологии шифрования и используем надежные закрытые серверные решения для защиты ваших данных от несанкционированного доступа. Ваши пароли хранятся в захэшированном виде и недоступны даже администрации сервиса.</p>
-                <p class="text-brand-600 font-medium">Мы строго заявляем: SVALKA никогда не продает, не сдает в аренду и не передает базы данных пользователей третьим лицам, рекламным агентствам или сторонним компаниям.</p>
-                <p class="font-bold text-stone-900 dark:text-white mt-4">4. Управление вашими данными</p>
-                <p>Вы являетесь полноправным владельцем своих данных. Вы можете в любой момент отредактировать информацию в своем профиле. Если вы хотите полностью и безвозвратно удалить свой аккаунт и все связанные с ним данные, вы можете сделать это через обращение в службу поддержки, либо аккаунт может быть удален по вашему запросу модератором платформы.</p>
-                <p class="font-bold text-stone-900 dark:text-white mt-4">5. Изменения в политики</p>
-                <p>Мы можем периодически обновлять данную политику. Продолжая использовать SVALKA после внесения изменений, вы подтверждаете свое согласие с новыми условиями.</p>
+            <h2 class="text-2xl sm:text-3xl font-display font-black mb-6 text-stone-900 dark:text-white" data-i18n="nav_privacy">Политика конфиденциальности</h2>
             </div>
-        </div>
     </div>
 
     <div id="about-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-3xl rounded-[2rem] shadow-2xl p-6 sm:p-10 relative border dark:border-stone-800">
             <button onclick="window.closeModal('about-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl sm:text-3xl font-display font-black mb-6 text-stone-900 dark:text-white">О проекте <span class="text-brand-500">SVALKA</span></h2>
-            <div class="text-base text-stone-600 dark:text-stone-400 leading-relaxed space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-4">
-                <p class="text-lg font-bold text-stone-900 dark:text-white">SVALKA — это современный маркетплейс, созданный для удобного поиска и продажи вещей в Сербии.</p>
-                <p>Мы знаем, как сложно бывает найти нужную вещь или быстро пристроить то, что больше не нужно. Наша цель — объединить людей, сделать процесс купли-продажи безопасным, быстрым и приятным.</p>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 mb-6">
-                    <div class="bg-stone-50 dark:bg-stone-800/80 p-5 rounded-2xl border border-stone-200 dark:border-stone-700">
-                        <i class="fa-solid fa-bolt text-3xl text-amber-500 mb-3 block drop-shadow-sm"></i>
-                        <h4 class="font-bold text-stone-900 dark:text-white mb-2">Быстрые сделки</h4>
-                        <p class="text-sm">Интуитивный интерфейс, фильтры и встроенный чат помогают договариваться о сделках за считанные минуты.</p>
-                    </div>
-                    <div class="bg-stone-50 dark:bg-stone-800/80 p-5 rounded-2xl border border-stone-200 dark:border-stone-700">
-                        <i class="fa-solid fa-shield-heart text-emerald-500 text-3xl mb-3 block drop-shadow-sm"></i>
-                        <h4 class="font-bold text-stone-900 dark:text-white mb-2">Безопасность</h4>
-                        <p class="text-sm">Система отзывов, модерация и отсутствие спама обеспечивают максимальную честность пользователей.</p>
-                    </div>
-                </div>
-
-                <p>Проект находится в стадии активного развития (BETA). Мы постоянно улучшаем код, добавляем новые функции и прислушиваемся к отзывам нашего комьюнити. Если у вас есть идеи, предложения или вы нашли ошибку — смело пишите нам в поддержку!</p>
-                <p class="font-bold text-stone-900 dark:text-white mt-4 border-l-4 border-brand-500 pl-4 py-1">Присоединяйтесь к SVALKA и давайте делать вторичное потребление нормой!</p>
-            </div>
+            <h2 class="text-2xl sm:text-3xl font-display font-black mb-6 text-stone-900 dark:text-white" data-i18n="nav_about">О проекте</h2>
         </div>
     </div>
 
     <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
         <button id="lightbox-prev" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
-        <!-- Магия здесь: w-full h-full заставит фото заполнить экран, а object-contain сохранит пропорции -->
         <img id="lightbox-img" src="" class="w-full h-full object-contain rounded-lg" onclick="event.stopPropagation()">
         <button id="lightbox-next" class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer" onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
         <button class="absolute top-6 right-6 text-white text-3xl md:text-4xl hover:scale-110 transition z-50 cursor-pointer" onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
@@ -591,160 +465,102 @@
 
     <div id="toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 opacity-0 pointer-events-none"><i id="toast-icon" class="fa-solid fa-circle-check text-brand-400 text-lg"></i> <span id="toast-msg">Готово!</span></div>
 
-    <div id="crypto-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden relative border dark:border-stone-800 flex flex-col max-h-[90vh]">
-            
-            <button onclick="window.closeModal('crypto-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 dark:hover:text-white transition text-2xl z-20 drop-shadow-sm"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="p-8 pb-6 text-center bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 text-amber-500/20 dark:text-amber-500/10 text-9xl rotate-12 drop-shadow-sm"><i class="fa-solid fa-crown"></i></div>
-                
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white mb-4 relative shadow-[0_10px_20px_-5px_rgba(245,158,11,0.5)] border border-amber-300 dark:border-amber-600">
-                    <i class="fa-solid fa-crown text-3xl drop-shadow-md"></i>
+    <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[80]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-10 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 text-stone-400 text-3xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="add-modal-title" class="text-3xl font-display font-black mb-8 uppercase text-stone-900 dark:text-white" data-i18n="add_title">Пристроить добро</h2>
+            <form id="add-form" class="flex flex-col gap-5" onsubmit="window.submitNewItem(event);">
+                <div class="flex gap-3 overflow-x-auto pb-2" id="photo-preview-list"></div>
+                <label id="drop-zone" class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
+                    <i class="fa-solid fa-camera-retro text-5xl mb-3 text-stone-300 dark:text-stone-600"></i>
+                    <span class="font-bold text-lg pointer-events-none" data-i18n="add_drop_title">Перетащите фото сюда</span>
+                    <span class="text-xs mt-1 pointer-events-none" data-i18n="add_drop_sub">Или нажмите для выбора</span>
+                    <input type="file" id="file-input" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
+                </label>
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="text" id="item-title" data-i18n="add_item_title" placeholder="Название" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 </div>
-                
-                <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white relative">SVALKA <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">PRO</span></h2>
-                <p class="text-stone-600 dark:text-stone-400 font-bold mt-2 relative">Получи максимум внимания к своим товарам</p>
-            </div>
-
-            <div class="p-8 space-y-6 overflow-y-auto custom-scrollbar">
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4 bg-white dark:bg-stone-800 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm">
-                        <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 border border-brand-200 dark:border-brand-800"><i class="fa-solid fa-bolt"></i></div>
-                        <div><div class="font-bold text-stone-900 dark:text-white">Бесплатные поднятия</div><div class="text-xs text-stone-500">Каждый день 1 поднятие в ТОП</div></div>
-                    </div>
-                    <div class="flex items-center gap-4 bg-white dark:bg-stone-800 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm">
-                        <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-800"><i class="fa-solid fa-gem"></i></div>
-                        <div><div class="font-bold text-stone-900 dark:text-white">VIP-бейдж</div><div class="text-xs text-stone-500">Выделяет вас среди других продавцов</div></div>
-                    </div>
-                </div>
-
-                <div class="bg-stone-800 dark:bg-black p-5 rounded-3xl border border-stone-700 text-center shadow-inner relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-stone-700/20 to-transparent"></div>
-                    <div class="text-stone-300 dark:text-stone-400 font-bold text-sm mb-1 relative">Стоимость на 30 дней:</div>
-                    <div class="text-4xl font-black text-white relative drop-shadow-md">5.00 <span class="text-emerald-400">$</span></div>
-                    
-                    <div class="mt-5 relative z-20 text-left">
-                        <label class="text-[11px] uppercase tracking-wider font-bold text-stone-400 mb-2 block pl-1">Выберите сеть оплаты:</label>
-                        
-                        <div class="relative group">
-                            <select id="plisio-currency-select" 
-                                    class="w-full bg-white dark:bg-stone-800 border-2 border-stone-100 dark:border-stone-700 rounded-xl px-4 py-3.5 
-                                           text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer 
-                                           focus:border-emerald-500 transition-all duration-200 appearance-none shadow-sm">
-                                <option value="USDT_BSC">Tether (USDT) — сеть BEP-20 (BSC)</option>
-                                <option value="USDT">Tether (USDT) — сеть ERC-20</option>
-                                <option value="ETH">Ethereum (ETH)</option>
-                                <option value="TON">Toncoin (TON)</option>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             </select>
-                            
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
-                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                        </div>
-                        
-                        <p class="text-[10px] text-stone-400 mt-2 px-1">
-                            <i class="fa-solid fa-circle-info mr-1"></i> Комиссии сети BEP-20 самые низкие.
-                        </p>
                     </div>
-                    
-                    <div class="text-xs text-stone-400 mt-2 relative">Безопасная оплата криптовалютой</div>
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-city" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            </select>
+                    </div>
                 </div>
-            </div>
-
-            <div class="p-6 bg-stone-50 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800">
-                <button id="btn-pay-plisio" onclick="window.payWithPlisio()" class="bg-emerald-500 hover:bg-emerald-600 text-white w-full py-4 rounded-2xl font-black text-base transition shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer border border-emerald-400 dark:border-emerald-600">
-                    <i class="fa-solid fa-wallet text-xl"></i> ПЕРЕЙТИ К ОПЛАТЕ
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="share-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[200]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative border dark:border-stone-800 text-center">
-            <button onclick="window.closeModal('share-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 mb-4"><i class="fa-solid fa-share-nodes text-3xl"></i></div>
-            
-            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Поделиться товаром</h2>
-            <p class="text-base text-stone-500 font-medium mt-2 mb-6">Выберите способ отправки ссылки</p>
-            
-            <div id="share-platforms" class="grid grid-cols-2 gap-3 mb-2">
-                <button onclick="window.triggerShare('telegram')" class="bg-[#0088cc] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-telegram text-2xl"></i> Telegram</button>
-                <button onclick="window.triggerShare('whatsapp')" class="bg-[#25D366] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-whatsapp text-2xl"></i> WhatsApp</button>
-                <button onclick="window.triggerShare('viber')" class="bg-[#7360f2] text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-brands fa-viber text-2xl"></i> Viber</button>
-                <button onclick="window.triggerShare('copy')" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 py-3 rounded-xl font-bold text-sm hover:bg-stone-300 dark:hover:bg-stone-600 transition shadow-sm cursor-pointer flex flex-col items-center justify-center gap-1"><i class="fa-solid fa-link text-2xl"></i> Копировать</button>
-            </div>
-            
-            <div id="share-verify-block" class="hidden mt-6 flex-col gap-3">
-                <p class="text-sm text-stone-500 font-bold mb-1">Вы успешно поделились ссылкой?</p>
-                <button onclick="window.completeShareTask()" id="btn-verify-share" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold text-base hover:bg-emerald-600 transition shadow-md flex items-center justify-center gap-2 cursor-pointer"><i class="fa-solid fa-check-double"></i> Да, я поделился!</button>
-            </div>
-            
-            <p id="share-cooldown-text" class="hidden text-xs text-stone-400 font-bold mt-6 bg-stone-50 dark:bg-stone-800 p-3 rounded-xl border dark:border-stone-700"></p>
-        </div>
-    </div>
-
-    <div id="chat-list-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50 shrink-0">
-                <div class="font-black text-xl text-stone-900 dark:text-white">Сообщения</div>
-                <button onclick="window.closeModal('chat-list-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <!-- Добавили id="chat-list-container" и убрали p-6, чтобы карточки были от края до края -->
-            <div id="chat-list-container" class="flex-1 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col custom-scrollbar min-h-0">
-                <div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20">
-                    <i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i>
-                    <div class="text-base font-bold">У вас пока нет активных диалогов</div>
+                <div class="flex gap-4">
+                    <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <input type="number" id="item-price" data-i18n="add_price" placeholder="Цена" onkeydown="if(event.key === ',') return false;" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed" required>
+                    </div>
+                    <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
+                        <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
+                    </div>
                 </div>
-            </div>
+                <div id="re-fields" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="add_address_title">Точный адрес и локация</span></div>
+                    <div class="relative z-[400] w-full">
+                        <input type="text" id="item-address" autocomplete="off" oninput="window.handleAddressInput(event)" data-i18n="add_address_ph" placeholder="Улица и номер дома..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
+                        <div id="address-suggestions" class="absolute w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl mt-2 hidden max-h-60 overflow-y-auto custom-scrollbar overflow-x-hidden divide-y divide-stone-100 dark:divide-stone-700/50"></div>
+                    </div>
+                    <div id="add-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden"></div>
+                </div>
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="tel" id="item-phone" data-i18n="add_phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                </div>
+                <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_pay_title">Оплата (Можно несколько)</span>
+                <div class="flex flex-wrap gap-4">
+                    <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-cash" value="Наличные" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> <span data-i18n="pay_cash">Наличные</span></span></label>
+                    <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-card" value="Перевод на карту" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2"><i class="fa-regular fa-credit-card text-indigo-500"></i> <span data-i18n="pay_card">Перевод на карту</span></span></label>
+                    <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="pay-crypto" value="Криптоперевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2"><i class="fa-brands fa-bitcoin text-emerald-600"></i> <span data-i18n="pay_crypto">Криптоперевод</span></span></label>
+                </div>
+                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_del_title">Способ передачи</span>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="del-meet" value="Личная встреча" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition" data-i18n="del_meet">Личная встреча</span></label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" id="del-post" value="PostExpress" class="w-5 h-5 accent-brand-500 rounded cursor-pointer"><span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition" data-i18n="del_post">PostExpress</span></label>
+                    </div>
+                </div>
+                <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_cond_title">Состояние</span>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="item-condition" value="Новое" class="peer hidden"><div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition shadow-sm" data-i18n="cond_new">Новое</div></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="item-condition" value="Б/У" class="peer hidden" checked><div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-stone-200 dark:peer-checked:bg-stone-700 peer-checked:border-stone-400 peer-checked:text-stone-800 dark:peer-checked:text-white transition shadow-sm" data-i18n="cond_used">Б/У</div></label>
+                    </div>
+                </div>
+                <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
+                    <div class="flex justify-between items-center mb-2 px-2 pt-1"><span class="text-sm font-bold text-stone-500" data-i18n="add_desc_title">Описание</span></div>
+                    <textarea id="item-desc" data-i18n="add_desc_ph" placeholder="Описание..." rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
+                </div>
+                <div id="submit-progress-container" class="hidden flex-col gap-2 mt-2">
+                    <div class="flex justify-between text-xs font-bold text-stone-500 dark:text-stone-400"><span id="submit-progress-text">Загрузка...</span><span id="submit-progress-percent">0%</span></div>
+                    <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2.5 overflow-hidden"><div id="submit-progress-bar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div></div>
+                </div>
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer" data-i18n="btn_publish_item">Опубликовать</button>
+            </form>
         </div>
     </div>
 
-    <div id="chat-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 md:backdrop-blur-sm z-[100]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg h-[600px] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 shrink-0">
-                <div class="flex justify-between items-start mb-3 gap-2">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <button onclick="window.closeModal('chat-modal'); window.openChatListModal();" class="text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer flex items-center justify-center p-1 -ml-1 shrink-0"><i class="fa-solid fa-arrow-left"></i></button>
-                        
-                        <div class="flex flex-wrap items-center gap-1.5 min-w-0">
-                            <!-- Динамическая плашка -->
-                            <span id="chat-role-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white shrink-0">РОЛЬ</span>
-                            <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-400 min-w-0">
-                                <i class="fa-solid fa-user text-xs shrink-0"></i>
-                                <span id="chat-author-name" class="font-bold text-sm truncate max-w-[100px] sm:max-w-[200px]">Собеседник</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Кнопка закрытия (крестик) -->
-                    <button onclick="window.closeModal('chat-modal')" class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center -mr-2 -mt-2 shrink-0"><i class="fa-solid fa-xmark"></i></button>
+    <div id="edit-profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[105]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
+            <button onclick="window.closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white" data-i18n="edit_title">Настройки</h2>
+            <form id="edit-profile-form" class="flex flex-col gap-4 text-left" onsubmit="window.saveProfile(event);">
+                <div>
+                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1" data-i18n="edit_name">Ваше Имя</label>
+                    <input type="text" id="edit-name" data-i18n="auth_name" placeholder="Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white" required>
                 </div>
-                
-                <!-- Кликабельная карточка товара -->
-                <div class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-brand-500 transition shadow-sm" onclick="window.chatReturnContext = { id: window.currentChatId, itemId: window.currentChatItemId, isSellerStr: window.currentChatIsSeller, name: window.currentChatInterlocutor }; window.closeModal('chat-modal'); window.openItemDetails(window.currentChatItemId)">
-                    <img id="chat-item-img" src="" class="w-12 h-12 rounded-lg object-cover bg-stone-100 shrink-0">
-                    <div class="flex-1 overflow-hidden">
-                        <div id="chat-item-title" class="font-black text-sm text-stone-900 dark:text-white truncate">Загрузка...</div>
-                        <div id="chat-item-price" class="font-bold text-brand-600 text-sm mt-0.5"></div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-stone-300 mr-2"></i>
+                <div>
+                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1" data-i18n="edit_phone">Телефон (для объявлений)</label>
+                    <input type="tel" id="edit-phone" placeholder="+381..." class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white">
                 </div>
-            </div>
-            <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar min-h-0" id="chat-messages">
-                <div class="text-center text-sm font-bold text-stone-400 my-2">Сегодня</div>
-                <div class="flex items-end gap-2 max-w-[85%]">
-                    <div class="bg-stone-100 dark:bg-stone-800 p-4 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium">
-                        Здравствуйте! Вещь еще актуальна?
-                    </div>
+                <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border border-transparent dark:border-stone-700 mt-2">
+                    <label class="text-sm font-bold text-stone-500 mb-3 block" data-i18n="auth_avatar">Аватарка</label>
+                    <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="edit-avatar-grid"></div>
                 </div>
-            </div>
-            <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-full border border-stone-200 dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="text" id="chat-input-field" placeholder="Написать сообщение..." class="flex-1 bg-transparent border-none outline-none px-4 text-base font-medium text-stone-900 dark:text-white cursor-text caret-brand-600">
-                    <button type="submit" class="w-12 h-12 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer"><i class="fa-solid fa-paper-plane text-lg -ml-0.5"></i></button>
-                </form>
-            </div>
+                <button type="submit" id="edit-submit-btn" class="bg-brand-600 text-white w-full mt-4 py-3.5 rounded-xl font-bold text-base transition shadow-md hover:bg-brand-700 cursor-pointer" data-i18n="btn_save">Сохранить изменения</button>
+            </form>
         </div>
     </div>
 
@@ -752,625 +568,66 @@
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[2rem] shadow-2xl p-5 sm:p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('auth-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex justify-center gap-6 mb-6 border-b dark:border-stone-800 pb-3 font-black text-lg mt-2 sm:mt-0">
-                <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer">Вход</button>
-                <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer">Регистрация</button>
+                <button onclick="window.setAuthMode('login')" id="tab-login" class="text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer" data-i18n="auth_tab_login">Вход</button>
+                <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 pb-1 transition cursor-pointer" data-i18n="auth_tab_reg">Регистрация</button>
             </div>
             <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="window.submitAuth(event);">
                 <div id="auth-name-field" class="hidden flex-col gap-3">
-                    <input type="text" id="auth-name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    <input type="text" id="auth-name" data-i18n="auth_name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text text-stone-900 dark:text-white">
                     <div class="bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700">
-                        <label class="text-sm font-bold text-stone-500 mb-2 block">Выберите аватар</label>
+                        <label class="text-sm font-bold text-stone-500 mb-2 block" data-i18n="auth_avatar">Выберите аватар</label>
                         <div class="flex flex-wrap justify-center gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
                     </div>
                 </div>
-                
                 <div class="flex flex-col gap-2">
-                    <input type="email" id="auth-email" placeholder="Email" oninput="this.value = this.value.replace(/[А-Яа-яЁё\s]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required list="email-domains">
-                    
-                    <datalist id="email-domains">
-                        <option value="@gmail.com"></option>
-                        <option value="@mail.ru"></option>
-                        <option value="@yandex.ru"></option>
-                        <option value="@bk.ru"></option>
-                    </datalist>
-                    
-                    <div class="flex flex-wrap gap-2 px-1">
-                        <button type="button" onclick="window.appendEmailDomain('@gmail.com')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@gmail.com</button>
-                        <button type="button" onclick="window.appendEmailDomain('@mail.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@mail.ru</button>
-                        <button type="button" onclick="window.appendEmailDomain('@yandex.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@yandex.ru</button>
-                    </div>
+                    <input type="email" id="auth-email" placeholder="Email" oninput="this.value = this.value.replace(/[А-Яа-яЁё\s]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text text-stone-900 dark:text-white" required list="email-domains">
+                    <datalist id="email-domains"><option value="@gmail.com"></option><option value="@mail.ru"></option><option value="@yandex.ru"></option><option value="@bk.ru"></option></datalist>
                 </div>
-
                 <div>
-                    <input type="password" id="auth-password" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
-                    
+                    <input type="password" id="auth-password" data-i18n="auth_pass" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text text-stone-900 dark:text-white" required>
                     <div id="auth-password-confirm-container" class="hidden mt-3">
-                        <input type="password" id="auth-password-confirm" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                        <input type="password" id="auth-password-confirm" data-i18n="auth_pass_conf" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text text-stone-900 dark:text-white">
                     </div>
-
-                    <p class="text-xs sm:text-sm text-stone-400 font-medium mt-2" id="auth-hint">Мин. 8 символов: латиница и цифры</p>
+                    <p class="text-xs sm:text-sm text-stone-400 font-medium mt-2" id="auth-hint" data-i18n="auth_hint">Мин. 8 символов: латиница и цифры</p>
                 </div>
-                
                 <div class="flex justify-between items-center mt-4">
-                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer">Войти</button>
-                    <button type="button" onclick="window.forgotPassword()" class="text-base font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer">Забыли пароль?</button>
+                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer" data-i18n="btn_login">Войти</button>
+                    <button type="button" onclick="window.forgotPassword()" class="text-base font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer" data-i18n="auth_forgot">Забыли пароль?</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- ОКНО РЕДАКТИРОВАНИЯ ПРОФИЛЯ -->       
-    <div id="edit-profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[105]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-6 sm:p-8 relative border dark:border-stone-800">
-            <button onclick="window.closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black mb-6 text-stone-900 dark:text-white">Настройки</h2>
-            <form id="edit-profile-form" class="flex flex-col gap-4 text-left" onsubmit="window.saveProfile(event);">
-                <div>
-                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Ваше Имя</label>
-                    <input type="text" id="edit-name" placeholder="Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white" required>
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-stone-400 mb-1.5 block pl-1">Телефон (для объявлений)</label>
-                    <input type="tel" id="edit-phone" placeholder="+381..." class="w-full bg-stone-50 dark:bg-stone-800 p-3.5 rounded-xl border border-transparent dark:border-stone-700 font-medium text-base outline-none focus:border-brand-500 cursor-text text-stone-900 dark:text-white">
-                </div>
-                <div class="bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border border-transparent dark:border-stone-700 mt-2">
-                    <label class="text-sm font-bold text-stone-500 mb-3 block">Аватарка</label>
-                    <div class="flex flex-wrap justify-center gap-3 max-h-40 overflow-y-auto custom-scrollbar p-1" id="edit-avatar-grid"></div>
-                </div>
-                <button type="submit" id="edit-submit-btn" class="bg-brand-600 text-white w-full mt-4 py-3.5 rounded-xl font-bold text-base transition shadow-md hover:bg-brand-700 cursor-pointer">Сохранить изменения</button>
-            </form>
-        </div>
-    </div>
     
-    <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[70]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-6xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <button onclick="window.closeModal('profile-modal')" class="absolute top-5 right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
-                
-                <div class="flex justify-between items-start gap-2">
-                    <div class="flex flex-row items-center gap-4 min-w-0">
-                        <div id="profile-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-[3px] border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        
-                        <div class="flex-1 overflow-hidden">
-                            <div class="flex items-center gap-2 mb-0.5 pr-2">
-                                <h2 id="profile-name" class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">Гость</h2>
-                                <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
-                                
-                                <div class="flex items-center gap-2 ml-2 shrink-0">
-                                    <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 dark:text-stone-400 hover:text-brand-600 hover:border-brand-300 dark:hover:border-brand-700 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:shadow-sm transition-all cursor-pointer shrink-0" title="Редактировать профиль">
-                                        <i class="fa-solid fa-pen text-xs"></i>
-                                    </button>
-                                    
-                                    <button id="profile-logout-btn" onclick="window.logout()" class="hidden items-center gap-1.5 px-3 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-xs font-bold text-stone-500 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-200 dark:hover:border-red-800/50 hover:shadow-sm transition-all cursor-pointer shrink-0" title="Выйти из аккаунта">
-                                        <i class="fa-solid fa-right-from-bracket"></i> Выйти
-                                    </button>
-                                </div>
-                            </div>
-                            <p id="profile-email" class="text-xs sm:text-sm text-stone-500 truncate">Не авторизован</p>
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-                
-                <div class="w-full flex justify-start">
-                    <!-- Заменили w-full на w-full sm:w-max и добавили отступ gap-8 -->
-                    <div id="profile-economy-section" class="hidden flex-row justify-between items-center w-full sm:w-max gap-4 sm:gap-6 bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm">
-                        <div class="flex items-center gap-2 pl-2">
-                            <span class="text-sm font-bold text-stone-500">Статус:</span>
-                            <span class="text-sm font-black text-stone-700 dark:text-stone-300" id="profile-account-status">Базовый</span>
-                        </div>
-                        <div class="flex items-center ml-auto">
-                            <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="bg-gradient-to-r from-[#F15F2C] to-amber-500 text-white px-4 py-1.5 rounded-lg font-bold text-xs shadow-md hover:shadow-lg transition cursor-pointer flex items-center gap-1.5">
-                                <i class="fa-solid fa-crown"></i> Купить PRO ($5)
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div id="profile-login-wrapper" class="block w-full sm:w-auto">
-                        <button onclick="window.closeModal('profile-modal'); window.openModal('auth-modal');" class="w-full sm:w-64 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-bold text-sm shadow-md transition cursor-pointer">Войти</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Вкладки и Поиск -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
-                <div class="flex font-black text-sm w-full sm:w-auto overflow-x-auto custom-scrollbar">
-                    <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0">Мои вещи</button>
-                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Склад</button>
-                </div>
-                <!-- Строка поиска -->
-                <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
-                    <input type="text" id="profile-search-input" oninput="window.filterProfileItems(this, 'profile-items-grid')" placeholder="Поиск по профилю..." class="w-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
-                </div>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid gap-4 sm:gap-6"></div>
-                
-                <div id="profile-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
-                    <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Пусто</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ПРОФИЛЬ ПРОДАВЦА -->
-    <div id="seller-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[120]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
-                <button id="btn-report-seller" onclick="window.openReportModal()" class="bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition shadow-md cursor-pointer" title="Пожаловаться"><i class="fa-solid fa-snowplow text-lg"></i></button>
-                <button onclick="window.closeModal('seller-modal')" class="bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            
-            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-4 shrink-0">
-                <!-- Верхняя строка: Аватар и инфа (pr-24 не дает тексту залезть под крестик) -->
-                <div class="flex flex-row items-center gap-4 pr-24">
-                    <div id="seller-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-stone-200 dark:bg-stone-700 rounded-full border-[3px] border-white dark:border-stone-800 shadow-sm flex items-center justify-center text-2xl overflow-hidden shrink-0">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <div class="flex items-center gap-2 mb-0.5">
-                            <h2 id="seller-name" class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">Продавец</h2>
-                            <span id="seller-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
-                        </div>
-                        <div id="seller-rating-container" class="flex items-center gap-1 text-sm mb-1 hidden"></div>
-                        <p id="seller-stats" class="text-xs sm:text-sm text-stone-500 font-bold truncate">Объявлений: 0</p>
-                    </div>
-                </div>
-                
-                <!-- Нижняя строка: Кнопка отзыва -->
-                <div>
-                    <button id="btn-leave-review" class="hidden w-full sm:w-max bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm">Оставить отзыв</button>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0 shrink-0">
-                <div class="flex font-black text-sm w-full sm:w-auto overflow-x-auto custom-scrollbar">
-                    <button id="tab-seller-items" onclick="window.switchSellerTab('items')" class="profile-tab active py-3.5 px-4 border-b-2 border-brand-600 text-brand-600 transition cursor-pointer shrink-0">Все объявления</button>
-                    <button id="tab-seller-reviews" onclick="window.switchSellerTab('reviews')" class="profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 transition cursor-pointer shrink-0">Отзывы <span id="seller-reviews-count" class="ml-1 opacity-70"></span></button>
-                </div>
-                <div id="seller-search-container" class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm"></i>
-                    <input type="text" id="seller-search-input" oninput="window.filterProfileItems(this, 'seller-items-grid')" placeholder="Поиск по товарам..." class="w-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
-                </div>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
-                <div id="seller-items-grid" class="grid items-stretch view-grid modal-grid" style="display: none;"></div>
-                <div id="seller-reviews-list" class="hidden flex-col gap-4 w-full max-w-3xl mx-auto"></div>
-                
-                <div id="seller-empty" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
-                    <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span>Нет активных объявлений</span>
-                </div>
-                <div id="seller-loading" class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg">
-                    <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-3 text-brand-500"></i> <span>Загрузка...</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[80]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-10 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
-            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 text-stone-400 text-3xl hover:text-brand-600 transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title" class="text-3xl font-display font-black mb-8 uppercase text-stone-900 dark:text-white">Пристроить добро</h2>
-            <form id="add-form" class="flex flex-col gap-5" onsubmit="window.submitNewItem(event);">
-                <div class="flex gap-3 overflow-x-auto pb-2" id="photo-preview-list"></div>
-                
-                <label id="drop-zone" class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 transition bg-stone-50/50 dark:bg-stone-800/30">
-                    <i class="fa-solid fa-camera-retro text-5xl mb-3 text-stone-300 dark:text-stone-600"></i>
-                    <span class="font-bold text-lg pointer-events-none">Перетащите фото сюда</span>
-                    <span class="text-xs mt-1 pointer-events-none">Или нажмите для выбора</span>
-                    <input type="file" id="file-input" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
-                </label>
-                
-                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="text" id="item-title" placeholder="Название" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                            <option value="" disabled selected>Категория...</option>
-                            
-                            <optgroup label="Одежда и Обувь">
-                                <option value="Одежда - Женская">Женская</option>
-                                <option value="Одежда - Мужская">Мужская</option>
-                                <option value="Одежда - Обувь">Обувь</option>
-                                <option value="Одежда - Сумки">Сумки</option>
-                                <option value="Одежда - Аксессуары">Аксессуары</option>
-                                <option value="Одежда - Спецодежда">Спецодежда</option>
-                            </optgroup>
-                            
-                            <optgroup label="Детям">
-                                <option value="Детям - Игрушки">Игрушки</option>
-                                <option value="Детям - Коляски">Коляски</option>
-                                <option value="Детям - Одежда">Одежда</option>
-                                <option value="Детям - Обувь">Обувь</option>
-                                <option value="Детям - Автокресла">Автокресла</option>
-                                <option value="Детям - Мебель">Детская мебель</option>
-                            </optgroup>
-
-                            <optgroup label="Электроника">
-                                <option value="Электроника - Телефоны">Смартфоны</option>
-                                <option value="Электроника - ПК">Компьютеры / ПК</option>
-                                <option value="Электроника - Ноутбуки">Ноутбуки</option>
-                                <option value="Электроника - Планшеты">Планшеты</option>
-                                <option value="Электроника - ТВ">ТВ и Видео</option>
-                                <option value="Электроника - Аудио">Аудио</option>
-                                <option value="Электроника - Консоли">Игры / Консоли</option>
-                                <option value="Электроника - Бытовая">Бытовая техника</option>
-                                <option value="Электроника - Фото">Фототехника</option>
-                            </optgroup>
-
-                            <optgroup label="Дом и Интерьер">
-                                <option value="Интерьер - Мебель">Мебель</option>
-                                <option value="Интерьер - Декор">Декор</option>
-                                <option value="Интерьер - Посуда">Посуда</option>
-                                <option value="Интерьер - Текстиль">Текстиль</option>
-                                <option value="Интерьер - Ремонт">Стройматериалы</option>
-                                <option value="Интерьер - Инструменты">Инструменты</option>
-                                <option value="Интерьер - Сад">Сад и Огород</option>
-                            </optgroup>
-
-                            <optgroup label="Транспорт">
-                                <option value="Транспорт - Авто">Автомобили</option>
-                                <option value="Транспорт - Мото">Мото</option>
-                                <option value="Транспорт - Вело">Велосипеды</option>
-                                <option value="Транспорт - Самокаты">Самокаты</option>
-                                <option value="Транспорт - Запчасти">Запчасти</option>
-                                <option value="Транспорт - Шины">Шины и диски</option>
-                            </optgroup>
-
-                            <optgroup label="Красота и Здоровье">
-                                <option value="Красота - Косметика">Косметика</option>
-                                <option value="Красота - Парфюмерия">Парфюмерия</option>
-                                <option value="Красота - Уход">Уход за собой</option>
-                                <option value="Красота - Приборы">Фены и стайлеры</option>
-                            </optgroup>
-
-                            <optgroup label="Услуги">
-                                <option value="Услуги - Ремонт">Ремонт техники</option>
-                                <option value="Услуги - Автосервис">Автосервис</option>
-                                <option value="Услуги - Стройка">Ремонт и стройка</option>
-                                <option value="Услуги - Красота">Бьюти услуги</option>
-                                <option value="Услуги - Репетиторы">Репетиторы</option>
-                                <option value="Услуги - Праздники">Праздники</option>
-                            </optgroup>
-
-                            <optgroup label="Работа">
-                                <option value="Работа - Вакансии">Вакансии</option>
-                                <option value="Работа - Резюме">Ищу работу (Резюме)</option>
-                            </optgroup>
-
-                            <optgroup label="Для Бизнеса">
-                                <option value="Бизнес - Оборудование">Оборудование</option>
-                                <option value="Бизнес - Бизнес">Готовый бизнес</option>
-                                <option value="Бизнес - Сырье">Сырье и материалы</option>
-                            </optgroup>
-
-                            <optgroup label="Хобби и Отдых">
-                                <option value="Хобби - Спорт">Спорт</option>
-                                <option value="Хобби - Туризм">Туризм и палатки</option>
-                                <option value="Хобби - Книги">Книги</option>
-                                <option value="Хобби - Музыка">Муз. инструменты</option>
-                                <option value="Хобби - Игры">Настольные игры</option>
-                                <option value="Хобби - Коллекции">Коллекционирование</option>
-                            </optgroup>
-
-                            <optgroup label="Животные">
-                                <option value="Животные - Собаки">Собаки</option>
-                                <option value="Животные - Кошки">Кошки</option>
-                                <option value="Животные - Птицы">Птицы</option>
-                                <option value="Животные - Аквариум">Аквариумистика</option>
-                                <option value="Животные - Товары">Зоотовары</option>
-                                <option value="Животные - Другие">Другие</option>
-                            </optgroup>
-
-                            <optgroup label="Недвижимость">
-                                <option value="Жилье - Аренда">Аренда жилья</option>
-                                <option value="Жилье - Посуточно">Аренда (посуточно)</option>
-                                <option value="Жилье - Покупка">Продажа</option>
-                                <option value="Жилье - Коммерция">Коммерческая</option>
-                                <option value="Жилье - Дачи">Дома и дачи</option>
-                            </optgroup>
-
-                            <optgroup label="Другое">
-                                <option value="Другое - Билеты">Билеты</option>
-                                <option value="Другое - Продукты">Продукты питания</option>
-                                <option value="Другое - Разное">Разное</option>
-                                <option value="Другое - Бесплатно">Отдам даром</option>
-                                <option value="Другое - Бюро">Бюро находок</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-city" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                            <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
-                            <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
-                            <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
-                            <option value="Другой">Другой</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="flex gap-4">
-                    <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <input type="number" id="item-price" placeholder="Цена" onkeydown="if(event.key === ',') return false;" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed" required>
-                    </div>
-                    <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
-                        <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
-                    </div>
-                </div>
-
-                <div id="re-fields" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                    <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-location-dot"></i> Точный адрес и локация</div>
-                    <div class="relative z-[400] w-full">
-                        <input type="text" id="item-address" autocomplete="off" oninput="window.handleAddressInput(event)" placeholder="Улица и номер дома (например: Knez Mihailova 1)..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
-                        <div id="address-suggestions" class="absolute w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl mt-2 hidden max-h-60 overflow-y-auto custom-scrollbar overflow-x-hidden divide-y divide-stone-100 dark:divide-stone-700/50"></div>
-                    </div>
-                    <div id="add-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden"></div>
-                    <p class="text-xs text-stone-400 font-bold">Перетащите маркер или кликните по карте, чтобы указать дом</p>
-                </div>
-                
-                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="tel" id="item-phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
-                </div>
-
-                <span class="text-sm font-bold text-stone-500 mb-1">Оплата (Можно несколько)</span>
-                <div class="flex flex-wrap gap-4">
-                    <label class="flex items-center gap-2.5 cursor-pointer group">
-                        <input type="checkbox" id="pay-cash" value="Наличные" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked>
-                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                            <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> Наличные
-                        </span>
-                    </label>
-                    <label class="flex items-center gap-2.5 cursor-pointer group">
-                        <input type="checkbox" id="pay-card" value="Перевод на карту" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
-                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                            <i class="fa-regular fa-credit-card text-indigo-500"></i> Перевод на карту
-                        </span>
-                    </label>
-                    <label class="flex items-center gap-2.5 cursor-pointer group">
-                        <input type="checkbox" id="pay-crypto" value="Криптоперевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
-                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
-                            <i class="fa-brands fa-bitcoin text-emerald-600"></i> Криптоперевод
-                        </span>
-                    </label>
-                </div>
-                
-                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                    <span class="text-sm font-bold text-stone-500 mb-1">Способ передачи <span class="text-brand-500">*</span></span>
-                    <div class="flex flex-wrap gap-4">
-                        <label class="flex items-center gap-2.5 cursor-pointer group">
-                            <input type="checkbox" id="del-meet" value="Личная встреча" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked>
-                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🤝 Личная встреча</span>
-                        </label>
-                        <label class="flex items-center gap-2.5 cursor-pointer group">
-                            <input type="checkbox" id="del-post" value="PostExpress" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
-                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">📦 PostExpress</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- СОСТОЯНИЕ ВЕЩИ -->
-                <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                    <span class="text-sm font-bold text-stone-500 mb-1">Состояние <span class="text-brand-500">*</span></span>
-                    <div class="flex gap-3">
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="item-condition" value="Новое" class="peer hidden">
-                            <div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition shadow-sm">✨ Новое</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="item-condition" value="Б/У" class="peer hidden" checked>
-                            <div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-stone-200 dark:peer-checked:bg-stone-700 peer-checked:border-stone-400 peer-checked:text-stone-800 dark:peer-checked:text-white transition shadow-sm">♻️ Б/У</div>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
-                    <div class="flex justify-between items-center mb-2 px-2 pt-1">
-                        <span class="text-sm font-bold text-stone-500">Описание</span> 
-                    </div>
-                    <textarea id="item-desc" placeholder="Описание..." rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
-                </div>
-
-                <div id="submit-progress-container" class="hidden flex-col gap-2 mt-2">
-                    <div class="flex justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
-                        <span id="submit-progress-text">Загрузка фото...</span>
-                        <span id="submit-progress-percent">0%</span>
-                    </div>
-                    <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2.5 overflow-hidden">
-                        <div id="submit-progress-bar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
-                
-            </form>
-        </div>
-    </div>
-
-    <div id="item-modal" class="modal-overlay fixed inset-0 z-[85] flex items-center justify-center p-4 sm:p-6 pb-safe">    
-        <div id="item-details-modal-content" class="modal-content bg-white dark:bg-stone-900 w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
-            
-            <button onclick="window.closeModal('item-modal')" title="Закрыть" class="absolute top-4 right-4 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" title="Добавить на склад" class="absolute top-4 right-16 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
-            <button onclick="window.shareCurrentItem()" title="Поделиться" class="absolute top-4 right-28 z-20 bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 transition shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>            
-            
-            <div class="p-5 md:p-8 item-details-grid mt-12 md:mt-0">
-                
-                <div class="relative flex flex-col gap-3 w-full">
-                    <div id="modal-img-container" class="relative rounded-2xl overflow-hidden bg-stone-100/50 dark:bg-stone-900/50 shadow-inner h-[300px] md:h-[450px] group flex items-center justify-center w-full">
-                        
-                        <div id="modal-carousel" class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
-                            </div>
-                
-                        <button id="modal-prev-photo" onclick="window.navigatePhoto(-1, event)" class="hidden absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
-                        <button id="modal-next-photo" onclick="window.navigatePhoto(1, event)" class="hidden absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
-                        
-                        <div id="modal-pagination-dots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 hidden"></div>
-                    </div>
-                </div>
-
-                <div class="item-details-sticky-side flex flex-col pt-2 md:pt-8">
-                    <div class="flex flex-wrap items-center gap-1.5 mb-3">
-                        <div id="modal-status-badge" class="hidden text-[11px] font-bold px-2.5 py-1 rounded-lg text-white"></div>
-                        <span id="modal-condition-badge" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300">Б/У</span>
-                        <span id="modal-city-text" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300"><i class="fa-solid fa-location-dot"></i> БЕЛГРАД</span>
-                    </div>
-                    
-                    <h2 id="modal-title" class="text-xl md:text-2xl font-black mb-1.5 leading-snug text-stone-800 dark:text-stone-100">Название...</h2>
-                    <div id="modal-price" class="text-2xl md:text-3xl font-black tracking-tight price-text text-brand-600 mb-5">0 RSD</div>
-                    
-                    <div id="modal-delivery-container" class="flex flex-wrap gap-2 mb-6"></div>
-                    
-                   <div class="bg-stone-50 dark:bg-stone-800/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border border-stone-200 dark:border-stone-700 mb-5 shadow-sm gap-4">
-                        
-                        <div class="flex items-center gap-3 overflow-hidden cursor-pointer group w-full sm:w-auto" id="modal-seller-btn">
-                            <div id="modal-author-avatar" class="w-12 h-12 rounded-full overflow-hidden bg-white dark:bg-stone-700 flex items-center justify-center text-stone-400 text-xl shrink-0 shadow-sm border border-stone-200 dark:border-stone-600 group-hover:border-brand-400 transition-colors"><i class="fa-solid fa-user"></i></div>
-                            <div class="min-w-0 flex-1">
-                                <div id="modal-author" class="font-bold text-base text-stone-900 dark:text-white truncate group-hover:text-brand-600 transition-colors">Пользователь</div>
-                                <div class="text-[11px] text-stone-500 font-bold mt-0.5 truncate">В профиль продавца <i class="fa-solid fa-chevron-right text-[8px] ml-1 opacity-50 group-hover:translate-x-1 transition-transform"></i></div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto shrink-0">
-                            
-                            <button id="modal-author-rating" class="hidden flex-1 sm:flex-none items-center justify-center gap-1.5 px-4 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-600 font-bold text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-stone-300 dark:hover:border-stone-500 hover:shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap">
-                            </button>
-                            
-                            <button id="btn-contact-seller" onclick="window.openChatModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap">
-                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline">Чат</span>
-                            </button>
-                            
-                            <div id="modal-phone-container" class="hidden flex-1 sm:flex-none">
-                                <a id="modal-phone" href="#" class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-800/50 font-bold text-sm transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap">
-                                    <i class="fa-solid fa-phone"></i> <span id="modal-phone-text"></span>
-                                </a>
-                            </div>
-
-                        </div>
-                    </div>
-                    
-                    <div id="modal-owner-controls" class="hidden grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-6">
-                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="group flex flex-col items-center justify-center p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 rounded-2xl hover:bg-amber-100 hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
-                            <i class="fa-solid fa-arrow-up text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-bold" id="btn-owner-bump-text">Поднять</span>
-                            <span class="text-[9px] opacity-70 mt-0.5">Раз в 24 часа</span>
-                        </button>
-                        
-                        <button id="btn-owner-share" onclick="window.bumpViaShare()" class="group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden">
-                            <div id="share-bump-badge" class="hidden absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div>
-                            
-                            <i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-bold">Репост</span>
-                            <span id="share-bump-timer" class="text-[9px] opacity-70 mt-0.5 transition-colors">+ Поднятие</span>
-                        </button>
-
-                        <button id="btn-owner-vip" onclick="window.promoteToVip()" class="group flex flex-col items-center justify-center p-3 bg-stone-900 dark:bg-stone-100 text-amber-400 dark:text-amber-600 border border-stone-800 dark:border-stone-200 rounded-2xl hover:bg-stone-800 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
-                            <i class="fa-solid fa-crown text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-bold">В VIP-блок</span>
-                            <span class="text-[9px] opacity-70 mt-0.5">Привлечь внимание</span>
-                        </button>
-                        
-                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="group flex flex-col items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-2xl hover:bg-blue-100 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
-                            <i class="fa-solid fa-clock text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span id="btn-reserve-text" class="text-xs font-bold">В резерв</span>
-                        </button>
-                        
-                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="group flex flex-col items-center justify-center p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
-                            <i class="fa-solid fa-check-circle text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-bold">Продано</span>
-                            <span class="text-[9px] opacity-70 mt-0.5">Завершить сделку</span>
-                        </button>
-                        
-                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="group flex flex-col items-center justify-center p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-2xl hover:bg-red-100 hover:border-red-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all">
-                            <i class="fa-solid fa-trash-can text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-bold">Удалить</span>
-                            <span class="text-[9px] opacity-70 mt-0.5">Навсегда</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="item-details-full-desc flex flex-col gap-6">
-                    <div class="mt-2 mb-2">
-                        <h3 class="text-[15px] font-black text-stone-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400 shadow-sm border border-brand-100 dark:border-brand-800/50">
-                                <i class="fa-solid fa-align-left text-sm"></i>
-                            </div>
-                            Описание находки
-                        </h3>
-                        
-                        <div class="bg-stone-50/80 dark:bg-stone-800/40 rounded-2xl p-5 md:p-6 border border-stone-200/60 dark:border-stone-700/50 shadow-inner">
-                            <p id="modal-desc" class="text-[15px] text-stone-700 dark:text-stone-300 leading-8 font-medium whitespace-pre-line block w-full">Описание отсутствует.</p>
-                        </div>
-                    </div>
-                    
-                    <div id="modal-address-container" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 w-full md:w-2/3">
-                        <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-pin text-brand-500 mr-1"></i> Точный адрес: <span id="modal-address" class="text-stone-900 dark:text-white ml-1">Адрес</span></div>
-                        <div id="view-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden z-10"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- каркас кастомного модального окна -->
-    <div id="confirm-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[200]">
-        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-sm rounded-[2rem] shadow-2xl p-6 md:p-8 relative border dark:border-stone-800 text-center flex flex-col items-center">
-            <div id="confirm-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mb-5 shrink-0 shadow-inner">
-                <i id="confirm-icon" class="text-3xl"></i>
-            </div>
-            <h2 id="confirm-title" class="text-2xl font-display font-black text-stone-900 dark:text-white mb-2">Вы уверены?</h2>
-            <p id="confirm-message" class="text-sm text-stone-500 font-medium mb-8">Это действие нельзя отменить.</p>
-            
-            <div class="flex items-center gap-3 w-full">
-                <button onclick="window.closeConfirmModal(false)" class="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer">Отмена</button>
-                <button id="confirm-action-btn" class="flex-1 text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md cursor-pointer">Да, уверен</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ОКНО ЖАЛОБЫ -->
     <div id="report-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[110]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl p-6 sm:p-8 relative border dark:border-stone-800">
             <button onclick="window.closeModal('report-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-red-500 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex items-center gap-3 mb-6">
                 <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl"></i>
-                <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white">Жалоба</h2>
+                <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white" data-i18n="report_title">Жалоба</h2>
             </div>
-            
             <form onsubmit="window.submitReport(event)" class="flex flex-col gap-4">
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
                     <select id="report-reason" required class="bg-transparent p-3 w-full font-bold text-sm outline-none cursor-pointer text-stone-900 dark:text-white">
-                        <option value="" disabled selected>Выберите причину...</option>
-                        <option value="Мошенничество">Мошенничество / Обман</option>
-                        <option value="Спам">Спам / Дубликаты</option>
-                        <option value="Неадекватное поведение">Оскорбления / Неадекватное поведение</option>
-                        <option value="Запрещенный товар">Продажа запрещенных вещей</option>
-                        <option value="Другое">Другое</option>
+                        <option value="Мошенничество" data-i18n="rep_fraud">Мошенничество / Обман</option>
+                        <option value="Спам" data-i18n="rep_spam">Спам / Дубликаты</option>
+                        <option value="Неадекватное поведение" data-i18n="rep_toxic">Оскорбления / Неадекватное поведение</option>
+                        <option value="Запрещенный товар" data-i18n="rep_illegal">Продажа запрещенных вещей</option>
+                        <option value="Другое" data-i18n="rep_other">Другое</option>
                     </select>
                 </div>
-                
                 <div class="bg-stone-50 dark:bg-stone-800 p-2 rounded-xl border dark:border-stone-700 focus-within:border-red-500 transition-colors">
-                    <textarea id="report-comment" placeholder="Опишите проблему подробнее (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
+                    <textarea id="report-comment" data-i18n="report_ph" placeholder="Опишите проблему подробнее (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
                 </div>
-                
-                <button type="submit" id="btn-submit-report" class="bg-red-500 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-red-600 transition cursor-pointer mt-2">Отправить жалобу</button>
+                <button type="submit" id="btn-submit-report" class="bg-red-500 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-red-600 transition cursor-pointer mt-2" data-i18n="btn_send_report">Отправить жалобу</button>
             </form>
         </div>
     </div>
 
-    <!-- ОКНО НАПИСАНИЯ ОТЗЫВА -->
     <div id="review-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[110]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] shadow-2xl p-6 sm:p-8 relative border dark:border-stone-800 text-center">
             <button onclick="window.closeModal('review-modal')" class="absolute top-5 right-5 text-stone-400 hover:text-brand-600 transition text-2xl cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white mb-2">Оцените продавца</h2>
-            <p class="text-sm text-stone-500 font-medium mb-6">Ваш отзыв поможет другим покупателям!</p>
-            
+            <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white mb-2" data-i18n="review_title">Оцените продавца</h2>
+            <p class="text-sm text-stone-500 font-medium mb-6" data-i18n="review_sub">Ваш отзыв поможет другим покупателям!</p>
             <form onsubmit="window.submitReview(event)" class="flex flex-col gap-4">
                 <div class="flex justify-center gap-2 mb-2">
                     <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(1)"><i class="fa-solid fa-star text-amber-500"></i></button>
@@ -1379,21 +636,17 @@
                     <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(4)"><i class="fa-solid fa-star text-amber-500"></i></button>
                     <button type="button" class="star-btn text-4xl cursor-pointer hover:scale-110 transition-transform" onclick="window.updateStarSelection(5)"><i class="fa-solid fa-star text-amber-500"></i></button>
                 </div>
-                
                 <div class="bg-stone-50 dark:bg-stone-800 p-2 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors text-left">
-                    <textarea id="review-comment" placeholder="Напишите пару слов о сделке (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
+                    <textarea id="review-comment" data-i18n="review_ph" placeholder="Напишите пару слов о сделке (необязательно)..." rows="3" class="bg-transparent p-2 w-full font-medium text-sm outline-none cursor-text text-stone-900 dark:text-white resize-none"></textarea>
                 </div>
-                
-                <button type="submit" id="btn-submit-review" class="bg-brand-600 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer mt-2">Отправить отзыв</button>
+                <button type="submit" id="btn-submit-review" class="bg-brand-600 text-white py-3.5 rounded-xl font-bold text-base shadow-md hover:bg-brand-700 transition cursor-pointer mt-2" data-i18n="btn_send_review">Отправить отзыв</button>
             </form>
         </div>
     </div>
 
-    <button id="mobile-floating-filter" 
-            onclick="if(typeof window.toggleFilters === 'function') window.toggleFilters();" 
-            class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-brand-600 text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-[0_8px_20px_rgba(13,148,136,0.3)] flex items-center gap-2 z-[40] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-brand-500">
+    <button id="mobile-floating-filter" onclick="if(typeof window.toggleFilters === 'function') window.toggleFilters();" class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-brand-600 text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-[0_8px_20px_rgba(13,148,136,0.3)] flex items-center gap-2 z-[40] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-brand-500">
         <i class="fa-solid fa-sliders text-brand-50"></i>
-        <span>Фильтры</span>
+        <span data-i18n="filter_btn">Фильтры</span>
     </button>
     
 </body>
