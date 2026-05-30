@@ -459,17 +459,48 @@ window.initGlobalChatListener = () => {
     if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
     
     const channelName = 'global_chats_' + (window.currentUser?.id || 'guest');
+    
+    // Запрашиваем права на уведомления (если еще не запрашивали)
+    if (window.currentUser && "Notification" in window) {
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+    }
+
     window.globalChatSubscription = supabase.channel(channelName)
-        // ИСПРАВЛЕНИЕ: Слушаем все события (*) - и INSERT (новое), и UPDATE (прочитано)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, payload => {
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
             if (window.currentUser) {
-                // Запускаем пересчет бейджей
-                window.updateChatBadges(); 
+                const newMsg = payload.new;
                 
-                // Если открыто окно со списком чатов — обновляем карточки внутри него
-                const listModal = document.getElementById('chat-list-modal');
-                if (listModal && listModal.classList.contains('active')) {
-                     window.openChatListModal(true); 
+                // Если сообщение написали НАМ (а не мы сами)
+                if (newMsg.sender_id !== window.currentUser.id) {
+                    window.updateChatBadges(); 
+                    
+                    const listModal = document.getElementById('chat-list-modal');
+                    if (listModal && listModal.classList.contains('active')) {
+                         window.openChatListModal(true); 
+                    }
+
+                    // ОТПРАВКА PUSH УВЕДОМЛЕНИЯ
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        // Не показываем Push, если мы уже находимся внутри этого чата
+                        if (window.currentChatId !== newMsg.chat_id) {
+                            const notification = new Notification("SVALKA: Новое сообщение!", {
+                                body: newMsg.text,
+                                icon: "https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png"
+                            });
+                            
+                            notification.onclick = function() {
+                                window.focus(); // Возвращаем фокус на вкладку
+                                window.openChatListModal(); // Открываем чаты
+                            };
+                        }
+                    } else {
+                        // Фолбэк: если системные Push запрещены, показываем внутренний Toast
+                        if (window.currentChatId !== newMsg.chat_id) {
+                            window.showToast("У вас новое сообщение!");
+                        }
+                    }
                 }
             }
         }).subscribe();
