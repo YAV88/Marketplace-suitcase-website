@@ -1265,9 +1265,19 @@ window.fetchItems = async (isLoadMore = false) => {
                 q = q.in('city', window.filterCities);
                 vq = vq.in('city', window.filterCities);
             }
+            // ==========================================
+            // ГЛОБАЛЬНЫЙ ПОИСК ПО ВСЕЙ КАРТОЧКЕ ТОВАРА
+            // ==========================================
             if (window.searchQuery) {
-                q = q.ilike('title', `%${window.searchQuery}%`);
-                vq = vq.ilike('title', `%${window.searchQuery}%`);
+                const sq = window.searchQuery.trim();
+                
+                // Формируем мульти-поиск: ищем совпадение текста (без учета регистра) 
+                // в названии ИЛИ описании ИЛИ городе ИЛИ категории ИЛИ подкатегории
+                const orQuery = `title.ilike.%${sq}%,description.ilike.%${sq}%,city.ilike.%${sq}%,category.ilike.%${sq}%,subcategory.ilike.%${sq}%`;
+                
+                // Применяем расширенный поиск к обычным и VIP товарам
+                q = q.or(orQuery);
+                vq = vq.or(orQuery);
             }
             
             // --- ЛОГИКА СЕНЬОРА: Исключение несовместимых категорий при поиске по состоянию ---
