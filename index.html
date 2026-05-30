@@ -1149,7 +1149,17 @@
                     <textarea id="item-desc" placeholder="Описание..." rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
                 </div>
 
+                <div id="submit-progress-container" class="hidden flex-col gap-2 mt-2">
+                    <div class="flex justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
+                        <span id="submit-progress-text">Загрузка фото...</span>
+                        <span id="submit-progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2.5 overflow-hidden">
+                        <div id="submit-progress-bar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
                 <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
+                
             </form>
         </div>
     </div>
