@@ -3240,3 +3240,40 @@ setInterval(() => {
         phraseIndex = (phraseIndex + 1) % searchPhrases.length;
     }
 }, 3500);
+
+// DRAG AND DROP ДЛЯ ФОТОГРАФИЙ
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+
+    if (dropZone && fileInput) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/20');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/20');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            // Искусственно создаем событие для функции previewPhotos
+            fileInput.files = files;
+            window.previewPhotos({ target: fileInput });
+        }, false);
+    }
+});
