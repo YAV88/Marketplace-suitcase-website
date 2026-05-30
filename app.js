@@ -1271,9 +1271,8 @@ window.fetchItems = async (isLoadMore = false) => {
             if (window.searchQuery) {
                 const sq = window.searchQuery.trim();
                 
-                // Формируем мульти-поиск: ищем совпадение текста (без учета регистра) 
-                // в названии ИЛИ описании ИЛИ городе ИЛИ категории ИЛИ подкатегории
-                const orQuery = `title.ilike.%${sq}%,description.ilike.%${sq}%,city.ilike.%${sq}%,category.ilike.%${sq}%,subcategory.ilike.%${sq}%`;
+                // Убрали несуществующую subcategory. Ищем только по реальным колонкам!
+                const orQuery = `title.ilike.%${sq}%,description.ilike.%${sq}%,city.ilike.%${sq}%,category.ilike.%${sq}%`;
                 
                 // Применяем расширенный поиск к обычным и VIP товарам
                 q = q.or(orQuery);
