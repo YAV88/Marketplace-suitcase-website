@@ -74,6 +74,20 @@ body {
 @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f43f5e; } 100% { transform: scale(1); } }
 .animate-pop { animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
 
+/* РАСШИРЕННЫЙ GLASSMORPHISM ДЛЯ ВСЕХ ОКОН */
+.modal-content, 
+#info-dropdown-menu > div, 
+#filter-panel > div {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+}
+.dark .modal-content, 
+.dark #info-dropdown-menu > div, 
+.dark #filter-panel > div {
+    background-color: rgba(28, 25, 23, 0.85) !important; /* Глубокий темный (stone-900) */
+}
+
 /* === ГОРИЗОНТАЛЬНЫЕ КАРТЫ (РЕЖИМ СПИСКА) === */
 
 /* 1. БАЗОВЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ */
