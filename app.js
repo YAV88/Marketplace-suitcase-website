@@ -12,26 +12,28 @@ window.currentLang = localStorage.getItem('svalka_lang') || 'ru';
 // 1. Глобальный словарь (Будем пополнять его по мере работы)
 window.i18n = {
     ru: {
-        'search_placeholder': 'Поиск вещей, брендов, электроники...',
+        'search_placeholder': 'Я ищу...',
         'btn_login': 'Войти',
         'btn_publish': 'Пристроить добро',
-        'filter_title': 'Фильтры',
-        'city_all': 'Вся Сербия',
-        // Добавлять ключи сюда...
+        'btn_publish_mob': 'Продать',
+        'nav_info': 'Инфо',
+        'filter_title': 'Фильтры'
     },
     en: {
-        'search_placeholder': 'Search for items, brands, electronics...',
+        'search_placeholder': 'I am looking for...',
         'btn_login': 'Log in',
         'btn_publish': 'Post an Ad',
-        'filter_title': 'Filters',
-        'city_all': 'All Serbia',
+        'btn_publish_mob': 'Sell',
+        'nav_info': 'Info',
+        'filter_title': 'Filters'
     },
     sr: {
-        'search_placeholder': 'Pretraga stvari, brendova, elektronike...',
+        'search_placeholder': 'Tražim...',
         'btn_login': 'Prijavi se',
         'btn_publish': 'Objavi oglas',
-        'filter_title': 'Filteri',
-        'city_all': 'Cela Srbija',
+        'btn_publish_mob': 'Prodaj',
+        'nav_info': 'Info',
+        'filter_title': 'Filteri'
     }
 };
 
