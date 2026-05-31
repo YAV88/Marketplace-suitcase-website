@@ -2693,7 +2693,7 @@ window.submitNewItem = async (event) => {
     try {
         if(!window.currentUser) throw new Error(window.t ? window.t('auth_hint') : "Войдите в аккаунт");
 
-        // 1. СБОР ДАННЫХ ИЗ ФОРМЫ (Здесь мы забираем все, что ввел пользователь)
+        // 1. СБОР ДАННЫХ ИЗ ФОРМЫ
         const titleEl = document.getElementById('item-title').value.trim();
         const categoryEl = document.getElementById('item-category').value;
         const cityEl = document.getElementById('item-city').value;
@@ -2759,7 +2759,7 @@ window.submitNewItem = async (event) => {
         if(progBar) progBar.style.width = `95%`;
         if(progPerc) progPerc.innerText = `95%`;
 
-        // 3. ФОРМИРОВАНИЕ ОБЪЕКТА ДЛЯ БАЗЫ ДАННЫХ
+        // 3. ФОРМИРОВАНИЕ ОБЪЕКТА ДЛЯ БАЗЫ ДАННЫХ (ИСправлены названия колонок!)
         const itemData = {
             title: titleEl,
             category: categoryEl,
@@ -2770,10 +2770,10 @@ window.submitNewItem = async (event) => {
             phone: phoneEl,
             description: descEl,
             condition: conditionEl,
-            payment_methods: paymentArr,
-            delivery_methods: deliveryArr,
+            payment: paymentArr,    // Было payment_methods
+            delivery: deliveryArr,  // Было delivery_methods
             images: finalImages,
-            image_url: finalImages[0] || '', // Главное фото для превью
+            image_url: finalImages[0] || '', 
             user_id: window.currentUser.id,
             author_name: window.currentUser.user_metadata?.name || window.currentUser.user_metadata?.full_name || 'Продавец',
             author_avatar: window.currentUser.user_metadata?.avatar_url || '',
@@ -2796,22 +2796,20 @@ window.submitNewItem = async (event) => {
         window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); 
         window.closeModal('add-modal'); 
         
-        // Очищаем форму, чтобы при следующем открытии она была пустой
         document.getElementById('add-form').reset();
         window.tempPhotos = [];
         const photoList = document.getElementById('photo-preview-list');
         if (photoList) photoList.innerHTML = '';
         
-        // Перезагружаем ленту товаров, чтобы новый товар сразу появился на главной
+        // Правильный перезапуск ленты товаров
         if (typeof window.fetchItems === 'function') {
-            window.fetchItems(true); // true означает "очистить старые товары и загрузить заново"
+            window.fetchItems(false); 
         }
         
     } catch(e) { 
         console.error("Ошибка публикации:", e);
         window.showToast(`Ошибка: ${e.message}`, true); 
     } finally { 
-        // Возвращаем кнопку на место
         if(progCont) { progCont.classList.add('hidden'); progCont.classList.remove('flex'); }
         if(btn) { 
             btn.style.display = 'block'; 
