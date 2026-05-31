@@ -2839,11 +2839,9 @@ window.handleAuthChange = async (session) => {
         if(!window.authInitialized) window.authInitialized = true;
         window.currentUser = session?.user || null;
         
-        // === НАЧАЛО ВСТАВКИ (ЗАЩИТА ОТ БАНА И УДАЛЕНИЯ) ===
+        // === ЗАЩИТА ОТ БАНА И УДАЛЕНИЯ ===
         if (window.currentUser) {
             const { data: banCheck, error: profileError } = await supabase.from('profiles').select('is_banned, ban_reason').eq('id', window.currentUser.id).single();
-            
-            // 1. ЕСЛИ ПРОФИЛЬ УДАЛЕН ИЗ БАЗЫ (Осталась только призрачная сессия)
             if (profileError || !banCheck) {
                 await supabase.auth.signOut();
                 alert("Ваш аккаунт был удален. Сессия завершена.");
@@ -2851,7 +2849,6 @@ window.handleAuthChange = async (session) => {
                 return;
             }
             
-            // 2. ЕСЛИ ПРОФИЛЬ ЗАБЛОКИРОВАН
             if (banCheck && banCheck.is_banned) {
                 await supabase.auth.signOut();
                 alert(`Доступ к SVALKA ограничен.\n\nВаш аккаунт был заблокирован модератором.\nПричина: ${banCheck.ban_reason || 'Нарушение правил'}`);
@@ -2863,20 +2860,23 @@ window.handleAuthChange = async (session) => {
         const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
         const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
         const profileLogoutBtn = document.getElementById('profile-logout-btn');
-        
+
         if (window.currentUser) {
-            // Прячем кнопки входа: добавляем hidden и удаляем все варианты display
+            // 1. ЖЕСТКО ПРЯЧЕМ КНОПКИ ВХОДА (Побеждаем Tailwind lg:flex)
             loginBtns.forEach(el => { 
+                el.style.display = 'none'; 
                 el.classList.add('hidden'); 
-                el.classList.remove('block', 'flex', 'lg:block'); 
+                el.classList.remove('block', 'flex', 'lg:block', 'lg:flex'); 
             });
             
+            // 2. ПОКАЗЫВАЕМ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ
             userControls.forEach(el => { 
+                el.style.display = '';
                 el.classList.remove('hidden'); 
                 el.classList.add('flex'); 
             });
-            
             if(profileLogoutBtn) { 
+                profileLogoutBtn.style.display = '';
                 profileLogoutBtn.classList.remove('hidden'); 
                 profileLogoutBtn.classList.add('flex');
             }
@@ -2914,21 +2914,22 @@ window.handleAuthChange = async (session) => {
             window.initGlobalChatListener();
 
         } else {
-            // Возвращаем видимость кнопок входа
+            // 3. ЕСЛИ НЕ АВТОРИЗОВАН — ВОЗВРАЩАЕМ КНОПКИ ВХОДА
             loginBtns.forEach(el => { 
+                el.style.display = ''; 
                 el.classList.remove('hidden'); 
-                // Для главной кнопки в шапке возвращаем адаптивный класс
-                if (el.id === 'nav-login-btn') el.classList.add('lg:block');
-                else el.classList.add('block');
+                if (el.id === 'nav-login-btn') el.classList.add('lg:flex'); 
+                else el.classList.add('flex');
             });
             
-            // Скрываем элементы управления пользователя (исправлен цикл)
+            // 4. ПРЯЧЕМ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ
             userControls.forEach(el => { 
+                el.style.display = 'none';
                 el.classList.add('hidden'); 
                 el.classList.remove('flex'); 
             });
-            
             if(profileLogoutBtn) { 
+                profileLogoutBtn.style.display = 'none';
                 profileLogoutBtn.classList.add('hidden'); 
                 profileLogoutBtn.classList.remove('flex');
             }
@@ -2936,59 +2937,16 @@ window.handleAuthChange = async (session) => {
         }
         
         if(window.currentUser) window.switchProfileTab(window.currentProfileTab);
-    } catch(e) {}
+    } catch(e) { console.error("Ошибка авторизации:", e); }
 };
 
+// Проверяем сессию при загрузке страницы
 supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
 
 // === ОТСЛЕЖИВАНИЕ СТАТУСА АВТОРИЗАЦИИ ===
 supabase.auth.onAuthStateChange((event, session) => {
-    const loginBtn = document.getElementById('nav-login-btn');
-    const userControls = document.getElementById('nav-user-controls');
-    const mobLogin = document.getElementById('mob-nav-login');
-    const mobControls = document.getElementById('mob-user-controls');
-
-    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-        window.currentUser = session ? session.user : null;
-        window.loadUserProfile();
-
-        // ЖЕСТКОЕ СОКРЫТИЕ (побеждаем Tailwind lg:flex)
-        if (loginBtn) {
-            loginBtn.style.display = 'none'; 
-            loginBtn.classList.remove('lg:flex'); 
-        }
-        if (mobLogin) mobLogin.style.display = 'none';
-
-        if (userControls) {
-            userControls.classList.remove('hidden');
-            userControls.classList.add('flex');
-        }
-        if (mobControls) {
-            mobControls.classList.remove('hidden');
-            mobControls.classList.add('flex');
-        }
-        window.closeModal('auth-modal');
-    } else if (event === 'SIGNED_OUT') {
-        window.currentUser = null;
-        window.currentUserData = null;
-        if(window.userFavorites) window.userFavorites.clear();
-        
-        // ВОЗВРАЩАЕМ КНОПКУ ВОЙТИ
-        if (loginBtn) {
-            loginBtn.style.display = ''; 
-            loginBtn.classList.add('lg:flex'); 
-        }
-        if (mobLogin) mobLogin.style.display = '';
-
-        if (userControls) {
-            userControls.classList.add('hidden');
-            userControls.classList.remove('flex');
-        }
-        if (mobControls) {
-            mobControls.classList.add('hidden');
-            mobControls.classList.remove('flex');
-        }
-    }
+    // Вызываем рабочую функцию вместо той опечатки
+    if (window.authInitialized) window.handleAuthChange(session);
 });
 
 // --- БОКОВОЙ АККОРДЕОН КАТЕГОРИЙ ---
