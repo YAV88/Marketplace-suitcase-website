@@ -445,27 +445,27 @@ window.switchSellerTab = (tabName) => {
     const tabReviews = document.getElementById('tab-seller-reviews');
 
     if (tabName === 'items') {
-        if(tabItems) { tabItems.classList.add('active', 'border-brand-600', 'text-brand-600'); tabItems.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabReviews) { tabReviews.classList.remove('active', 'border-brand-600', 'text-brand-600'); tabReviews.classList.add('border-transparent', 'text-stone-400'); }
+        if(tabItems) { tabItems.classList.add('border-brand-600', 'text-brand-600'); tabItems.classList.remove('border-transparent', 'text-stone-400'); }
+        if(tabReviews) { tabReviews.classList.remove('border-brand-600', 'text-brand-600'); tabReviews.classList.add('border-transparent', 'text-stone-400'); }
         
-        if(reviewsList) reviewsList.style.display = 'none';
-        if(searchInput) searchInput.style.display = 'block';
+        if(reviewsList) { reviewsList.classList.add('hidden'); reviewsList.style.display = 'none'; }
+        if(searchInput) { searchInput.classList.remove('hidden'); searchInput.style.display = 'block'; }
         
         if (itemsGrid && itemsGrid.innerHTML.trim() === '') {
-            if(itemsGrid) itemsGrid.style.display = 'none';
-            if(emptyState) emptyState.style.display = 'flex';
+            if(itemsGrid) { itemsGrid.classList.add('hidden'); itemsGrid.style.display = 'none'; }
+            if(emptyState) { emptyState.classList.remove('hidden'); emptyState.style.display = 'flex'; }
         } else {
-            if(itemsGrid) itemsGrid.style.display = 'grid';
-            if(emptyState) emptyState.style.display = 'none';
+            if(itemsGrid) { itemsGrid.classList.remove('hidden'); itemsGrid.style.display = 'grid'; }
+            if(emptyState) { emptyState.classList.add('hidden'); emptyState.style.display = 'none'; }
         }
     } else if (tabName === 'reviews') {
-        if(tabReviews) { tabReviews.classList.add('active', 'border-brand-600', 'text-brand-600'); tabReviews.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabItems) { tabItems.classList.remove('active', 'border-brand-600', 'text-brand-600'); tabItems.classList.add('border-transparent', 'text-stone-400'); }
+        if(tabReviews) { tabReviews.classList.add('border-brand-600', 'text-brand-600'); tabReviews.classList.remove('border-transparent', 'text-stone-400'); }
+        if(tabItems) { tabItems.classList.remove('border-brand-600', 'text-brand-600'); tabItems.classList.add('border-transparent', 'text-stone-400'); }
         
-        if(itemsGrid) itemsGrid.style.display = 'none';
-        if(emptyState) emptyState.style.display = 'none';
-        if(searchInput) searchInput.style.display = 'none';
-        if(reviewsList) reviewsList.style.display = 'flex';
+        if(itemsGrid) { itemsGrid.classList.add('hidden'); itemsGrid.style.display = 'none'; }
+        if(emptyState) { emptyState.classList.add('hidden'); emptyState.style.display = 'none'; }
+        if(searchInput) { searchInput.classList.add('hidden'); searchInput.style.display = 'none'; }
+        if(reviewsList) { reviewsList.classList.remove('hidden'); reviewsList.style.display = 'flex'; }
     }
 };
 
@@ -523,40 +523,26 @@ window.submitReview = async (event) => {
         window.switchSellerTab('reviews');
 
     } catch (error) {
-        console.error(error);
+        console.error("Ошибка при отправке отзыва:", error);
         window.showToast("Ошибка при отправке отзыва", true);
     } finally {
         const btn = document.getElementById('btn-submit-review');
-        if(btn) { btn.disabled = false; btn.innerText = window.t ? window.t('btn_send_review') : 'Отправить отзыв'; }
+        if(btn) { btn.disabled = false; btn.innerText = 'Отправить отзыв'; }
     }
 };
 
 // ПОЛНОСТЬЮ ПЕРЕЗАПИСЫВАЕМ ФУНКЦИЮ ОТКРЫТИЯ ПРОФИЛЯ ПРОДАВЦА
 window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
     window.currentSellerId = sellerId;
-    
-    // 1. Устанавливаем имя и аватар в шапке профиля
-    const nameEl = document.getElementById('seller-name');
-    const avatarContainer = document.getElementById('seller-avatar-container');
-    
-    if (nameEl) nameEl.innerText = sellerName || 'Продавец';
-    if (avatarContainer) {
-        if (sellerAvatar) {
-            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover rounded-full">`;
-        } else {
-            avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
-        }
-    }
-    
     window.openModal('seller-modal');
-    window.switchSellerTab('items'); // Сначала показываем товары
+    window.switchSellerTab('items');
 
-    // 2. Загружаем товары
+    document.getElementById('seller-loading').style.display = 'flex';
+    if(document.getElementById('seller-items-grid')) document.getElementById('seller-items-grid').style.display = 'none';
+    if(document.getElementById('seller-empty')) document.getElementById('seller-empty').style.display = 'none';
+
     try {
-        document.getElementById('seller-loading').style.display = 'flex';
-        document.getElementById('seller-items-grid').style.display = 'none';
-        document.getElementById('seller-empty').style.display = 'none';
-
+        // 1. Загрузка товаров
         const { data: items, error } = await supabase
             .from('items')
             .select('*')
@@ -565,27 +551,49 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
 
         if (error) throw error;
 
+        // УМНОЕ ВОССТАНОВЛЕНИЕ ИМЕНИ И АВАТАРА (Если потерялись при переходе)
+        let finalName = sellerName;
+        let finalAvatar = sellerAvatar;
+        if ((!finalName || finalName === 'Продавец') && items && items.length > 0) {
+            finalName = items[0].author_name;
+            finalAvatar = items[0].author_avatar;
+        }
+
+        // Вставляем имя и аватар
+        const nameEl = document.getElementById('seller-name');
+        const avatarContainer = document.getElementById('seller-avatar-container');
+        if (nameEl) nameEl.innerText = finalName || 'Продавец';
+        if (avatarContainer) {
+            if (finalAvatar) {
+                avatarContainer.innerHTML = `<img src="${finalAvatar}" class="w-full h-full object-cover rounded-full">`;
+            } else {
+                avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
+            }
+        }
+
         const grid = document.getElementById('seller-items-grid');
         const stats = document.getElementById('seller-stats');
-        if (stats) stats.innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items ? items.length : 0}`;
+        if (stats) stats.innerHTML = `Объявлений: ${items ? items.length : 0}`;
 
         if (items && items.length > 0) {
             grid.innerHTML = items.map(item => window.createCardHtml(item)).join('');
-            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+            if (document.getElementById('tab-seller-items').classList.contains('text-brand-600')) {
+                grid.classList.remove('hidden');
                 grid.style.display = 'grid';
             }
         } else {
-            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+            if (document.getElementById('tab-seller-items').classList.contains('text-brand-600')) {
+                document.getElementById('seller-empty').classList.remove('hidden');
                 document.getElementById('seller-empty').style.display = 'flex';
             }
         }
     } catch (e) {
-        console.error("Ошибка загрузки товаров:", e);
+        console.error("Ошибка товаров:", e);
     } finally {
         document.getElementById('seller-loading').style.display = 'none';
     }
 
-    // 3. Загружаем отзывы
+    // 2. Загрузка отзывов
     try {
         const { data: reviews, error: reviewsError } = await supabase
             .from('reviews')
@@ -613,7 +621,7 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
 
             if (reviewsList) {
                 reviewsList.innerHTML = reviews.map(r => `
-                    <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm">
+                    <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm w-full">
                         <div class="flex justify-between items-start mb-2">
                             <div class="font-bold text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
                             <div class="text-amber-500 text-xs">
@@ -627,14 +635,13 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
             }
         } else {
             if (reviewsCountEl) reviewsCountEl.innerText = '(0)';
-            if (ratingContainer) ratingContainer.style.display = 'none';
-            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
+            if (ratingContainer) { ratingContainer.classList.add('hidden'); ratingContainer.style.display = 'none'; }
+            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold w-full"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
         }
     } catch (e) {
-        console.error("Ошибка загрузки отзывов:", e);
+        console.error("Ошибка отзывов:", e);
     }
 
-    // 4. Кнопка "Оставить отзыв"
     const btnLeaveReview = document.getElementById('btn-leave-review');
     if (btnLeaveReview) {
         if (!window.currentUser || window.currentUser.id === sellerId) {
@@ -1087,16 +1094,14 @@ window.closeModal = id => {
 window.checkAuthAndOpenAddModal = async () => {
     if (!window.currentUser) { 
         window.openModal('auth-modal');
-        const hint = (typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт";
-        window.showToast(hint, true); 
+        window.showToast("Сначала войдите в аккаунт", true); 
         return; 
     }
     
-    // БЕЗОПАСНАЯ ПРОВЕРКА PRO-СТАТУСА
-    const isPro = window.currentUserData ? window.currentUserData.is_pro : false;
+    // Безопасное чтение статуса PRO
+    const isPro = (window.currentUserData && window.currentUserData.is_pro) || false;
     const maxItems = isPro ? 50 : 10;
     const addBtn = document.getElementById('btn-header-add'); 
-    
     if(addBtn) addBtn.style.opacity = '0.5'; 
 
     try {
@@ -1105,14 +1110,11 @@ window.checkAuthAndOpenAddModal = async () => {
             .select('*', { count: 'exact', head: true })
             .eq('user_id', window.currentUser.id);
             
-        if (error) {
-            console.error("Ошибка получения лимита:", error);
-            throw error;
-        }
+        if (error) throw error;
         
         if (count >= maxItems) {
             if (!isPro) { 
-                window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
+                window.showToast(`Лимит: ${maxItems} объявлений. Нужен PRO!`, true); 
                 setTimeout(() => window.openModal('crypto-modal'), 1500); 
             } else { 
                 window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); 
@@ -1120,7 +1122,6 @@ window.checkAuthAndOpenAddModal = async () => {
             return;
         }
         
-        // Автоподстановка телефона, если он есть
         const phoneInput = document.getElementById('item-phone');
         if (phoneInput && window.currentUser.user_metadata && window.currentUser.user_metadata.phone) {
             phoneInput.value = window.currentUser.user_metadata.phone;
@@ -1128,8 +1129,8 @@ window.checkAuthAndOpenAddModal = async () => {
         
         window.openModal('add-modal');
     } catch (err) { 
-        console.error("Ошибка в checkAuthAndOpenAddModal:", err);
-        window.showToast("Ошибка проверки лимитов", true); 
+        console.error("Ошибка открытия формы:", err);
+        window.showToast("Ошибка базы данных", true); 
     } finally { 
         if(addBtn) addBtn.style.opacity = '1'; 
     }
