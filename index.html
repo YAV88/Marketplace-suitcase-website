@@ -701,6 +701,176 @@
             </form>
         </div>
     </div>
+
+    <div id="add-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[80]">
+        <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-2xl max-h-[90vh] rounded-[2rem] shadow-2xl p-6 md:p-10 relative border dark:border-stone-800 overflow-y-auto custom-scrollbar">
+            <button onclick="window.closeModal('add-modal')" class="absolute top-6 right-6 text-stone-400 text-3xl hover:text-brand-600 transition cursor-pointer z-20"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="add-modal-title" class="text-3xl font-display font-black mb-8 uppercase text-stone-900 dark:text-white" data-i18n="add_title">Пристроить добро</h2>
+            
+            <form id="add-form" class="flex flex-col gap-5" onsubmit="window.submitNewItem(event);">
+                <div class="flex gap-3 overflow-x-auto pb-2 custom-scrollbar" id="photo-preview-list"></div>
+                
+                <label id="drop-zone" class="w-full border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl p-8 flex flex-col items-center justify-center text-stone-400 cursor-pointer hover:border-brand-600 dark:hover:border-brand-500 transition bg-stone-50/50 dark:bg-stone-800/30 group">
+                    <i class="fa-solid fa-camera-retro text-5xl mb-3 text-stone-300 dark:text-stone-600 group-hover:text-brand-500 transition-colors"></i>
+                    <span class="font-bold text-lg pointer-events-none text-stone-700 dark:text-stone-300" data-i18n="add_drop_title">Перетащите фото сюда</span>
+                    <span class="text-xs mt-1 pointer-events-none" data-i18n="add_drop_sub">Или нажмите для выбора</span>
+                    <input type="file" id="file-input" multiple accept="image/*" class="hidden" onchange="window.previewPhotos(event)">
+                </label>
+                
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="text" id="item-title" data-i18n="add_item_title" placeholder="Название" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            <option value="" disabled selected data-i18n="add_cat_def">Категория...</option>
+                            <optgroup label="Одежда и Обувь">
+                                <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Сумки">Сумки</option><option value="Одежда - Аксессуары">Аксессуары</option><option value="Одежда - Спецодежда">Спецодежда</option>
+                            </optgroup>
+                            <optgroup label="Детям">
+                                <option value="Детям - Игрушки">Игрушки</option><option value="Детям - Коляски">Коляски</option><option value="Детям - Одежда">Одежда</option><option value="Детям - Обувь">Обувь</option><option value="Детям - Автокресла">Автокресла</option><option value="Детям - Мебель">Детская мебель</option>
+                            </optgroup>
+                            <optgroup label="Электроника">
+                                <option value="Электроника - Телефоны">Смартфоны</option><option value="Электроника - ПК">Компьютеры / ПК</option><option value="Электроника - Ноутбуки">Ноутбуки</option><option value="Электроника - Планшеты">Планшеты</option><option value="Электроника - ТВ">ТВ и Видео</option><option value="Электроника - Аудио">Аудио</option><option value="Электроника - Консоли">Игры / Консоли</option><option value="Электроника - Бытовая">Бытовая техника</option><option value="Электроника - Фото">Фототехника</option>
+                            </optgroup>
+                            <optgroup label="Дом и Интерьер">
+                                <option value="Интерьер - Мебель">Мебель</option><option value="Интерьер - Декор">Декор</option><option value="Интерьер - Посуда">Посуда</option><option value="Интерьер - Текстиль">Текстиль</option><option value="Интерьер - Ремонт">Стройматериалы</option><option value="Интерьер - Инструменты">Инструменты</option><option value="Интерьер - Сад">Сад и Огород</option>
+                            </optgroup>
+                            <optgroup label="Транспорт">
+                                <option value="Транспорт - Авто">Автомобили</option><option value="Транспорт - Мото">Мото</option><option value="Транспорт - Вело">Велосипеды</option><option value="Транспорт - Самокаты">Самокаты</option><option value="Транспорт - Запчасти">Запчасти</option><option value="Транспорт - Шины">Шины и диски</option>
+                            </optgroup>
+                            <optgroup label="Красота и Здоровье">
+                                <option value="Красота - Косметика">Косметика</option><option value="Красота - Парфюмерия">Парфюмерия</option><option value="Красота - Уход">Уход за собой</option><option value="Красота - Приборы">Фены и стайлеры</option>
+                            </optgroup>
+                            <optgroup label="Услуги">
+                                <option value="Услуги - Ремонт">Ремонт техники</option><option value="Услуги - Автосервис">Автосервис</option><option value="Услуги - Стройка">Ремонт и стройка</option><option value="Услуги - Красота">Бьюти услуги</option><option value="Услуги - Репетиторы">Репетиторы</option><option value="Услуги - Праздники">Праздники</option>
+                            </optgroup>
+                            <optgroup label="Работа">
+                                <option value="Работа - Вакансии">Вакансии</option><option value="Работа - Резюме">Ищу работу (Резюме)</option>
+                            </optgroup>
+                            <optgroup label="Для Бизнеса">
+                                <option value="Бизнес - Оборудование">Оборудование</option><option value="Бизнес - Бизнес">Готовый бизнес</option><option value="Бизнес - Сырье">Сырье и материалы</option>
+                            </optgroup>
+                            <optgroup label="Хобби и Отдых">
+                                <option value="Хобби - Спорт">Спорт</option><option value="Хобби - Туризм">Туризм и палатки</option><option value="Хобби - Книги">Книги</option><option value="Хобби - Музыка">Муз. инструменты</option><option value="Хобби - Игры">Настольные игры</option><option value="Хобби - Коллекции">Коллекционирование</option>
+                            </optgroup>
+                            <optgroup label="Животные">
+                                <option value="Животные - Собаки">Собаки</option><option value="Животные - Кошки">Кошки</option><option value="Животные - Птицы">Птицы</option><option value="Животные - Аквариум">Аквариумистика</option><option value="Животные - Товары">Зоотовары</option><option value="Животные - Другие">Другие</option>
+                            </optgroup>
+                            <optgroup label="Недвижимость">
+                                <option value="Жилье - Аренда">Аренда жилья</option><option value="Жилье - Посуточно">Аренда (посуточно)</option><option value="Жилье - Покупка">Продажа</option><option value="Жилье - Коммерция">Коммерческая</option><option value="Жилье - Дачи">Дома и дачи</option>
+                            </optgroup>
+                            <optgroup label="Другое">
+                                <option value="Другое - Билеты">Билеты</option><option value="Другое - Продукты">Продукты питания</option><option value="Другое - Разное">Разное</option><option value="Другое - Бесплатно">Отдам даром</option><option value="Другое - Бюро">Бюро находок</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-city" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
+                            <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
+                            <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
+                            <option value="Другой">Другой</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <input type="number" id="item-price" data-i18n="add_price" placeholder="Цена" onkeydown="if(event.key === ',') return false;" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed" required>
+                    </div>
+                    <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
+                        <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
+                    </div>
+                </div>
+
+                <div id="re-fields" class="hidden flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <div class="text-sm font-bold text-stone-500" data-i18n="add_address_title"><i class="fa-solid fa-map-location-dot"></i> Точный адрес и локация</div>
+                    <div class="relative z-[400] w-full">
+                        <input type="text" id="item-address" autocomplete="off" oninput="window.handleAddressInput(event)" data-i18n="add_address_ph" placeholder="Улица и номер дома (например: Knez Mihailova 1)..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
+                        <div id="address-suggestions" class="absolute w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl mt-2 hidden max-h-60 overflow-y-auto custom-scrollbar overflow-x-hidden divide-y divide-stone-100 dark:divide-stone-700/50"></div>
+                    </div>
+                    <div id="add-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden"></div>
+                    <p class="text-xs text-stone-400 font-bold">Перетащите маркер или кликните по карте, чтобы указать дом</p>
+                </div>
+                
+                <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    <input type="tel" id="item-phone" data-i18n="add_phone" placeholder="Телефон (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                </div>
+
+                <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_pay_title">Оплата (Можно несколько)</span>
+                <div class="flex flex-wrap gap-4">
+                    <label class="flex items-center gap-2.5 cursor-pointer group">
+                        <input type="checkbox" id="pay-cash" value="Наличные" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked>
+                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> <span data-i18n="pay_cash">Наличные</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center gap-2.5 cursor-pointer group">
+                        <input type="checkbox" id="pay-card" value="Перевод на карту" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
+                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                            <i class="fa-regular fa-credit-card text-indigo-500"></i> <span data-i18n="pay_card">Перевод на карту</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center gap-2.5 cursor-pointer group">
+                        <input type="checkbox" id="pay-crypto" value="Криптоперевод" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
+                        <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                            <i class="fa-brands fa-bitcoin text-emerald-600"></i> <span data-i18n="pay_crypto">Криптоперевод</span>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_del_title">Способ передачи <span class="text-brand-500">*</span></span>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2.5 cursor-pointer group">
+                            <input type="checkbox" id="del-meet" value="Личная встреча" class="w-5 h-5 accent-brand-500 rounded cursor-pointer" checked>
+                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">🤝 <span data-i18n="del_meet">Личная встреча</span></span>
+                        </label>
+                        <label class="flex items-center gap-2.5 cursor-pointer group">
+                            <input type="checkbox" id="del-post" value="PostExpress" class="w-5 h-5 accent-brand-500 rounded cursor-pointer">
+                            <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition">📦 <span data-i18n="del_post">PostExpress</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <span class="text-sm font-bold text-stone-500 mb-1" data-i18n="add_cond_title">Состояние <span class="text-brand-500">*</span></span>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="item-condition" value="Новое" class="peer hidden">
+                            <div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 peer-checked:border-emerald-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition shadow-sm">✨ <span data-i18n="cond_new">Новое</span></div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="item-condition" value="Б/У" class="peer hidden" checked>
+                            <div class="text-center py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-500 font-bold peer-checked:bg-stone-200 dark:peer-checked:bg-stone-700 peer-checked:border-stone-400 peer-checked:text-stone-800 dark:peer-checked:text-white transition shadow-sm">♻️ <span data-i18n="cond_used">Б/У</span></div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
+                    <div class="flex justify-between items-center mb-2 px-2 pt-1">
+                        <span class="text-sm font-bold text-stone-500" data-i18n="add_desc_title">Описание</span> 
+                    </div>
+                    <textarea id="item-desc" data-i18n="add_desc_ph" placeholder="Описание..." rows="4" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white"></textarea>
+                </div>
+
+                <div id="submit-progress-container" class="hidden flex-col gap-2 mt-2">
+                    <div class="flex justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
+                        <span id="submit-progress-text">Загрузка фото...</span>
+                        <span id="submit-progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2.5 overflow-hidden">
+                        <div id="submit-progress-bar" class="bg-brand-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer" data-i18n="btn_publish_item">Опубликовать</button>
+                
+            </form>
+        </div>
+    </div>
     
     <div id="profile-modal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/60 md:backdrop-blur-sm z-[70]">
         <div class="modal-content bg-white dark:bg-stone-900 w-full max-w-6xl h-[85vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
