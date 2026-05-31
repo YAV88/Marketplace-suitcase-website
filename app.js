@@ -1223,23 +1223,28 @@ window.toggleFavoriteModal = async (event) => {
         return;
     }
 
-    // Получаем ID открытого товара (зависит от того, как он у вас сохраняется при открытии)
-    // Обычно это window.currentOpenedItemId или берется из кнопки share
     const itemId = window.currentOpenedItemId; 
     
     if (itemId) {
-        // Вызываем вашу стандартную функцию добавления в склад
+        // Вызываем стандартную функцию добавления/удаления из склада
         if (typeof window.toggleFavorite === 'function') {
             await window.toggleFavorite(itemId, event);
             
-            // Визуально переключаем кнопку прямо в модальном окне (Мгновенный отклик)
+            // Проверяем, есть ли товар в сохраненных ПОСЛЕ нажатия
+            const isSaved = window.currentUserData && window.currentUserData.saved_items && window.currentUserData.saved_items.includes(itemId);
+            
+            // Визуально переключаем кнопку
             const favBtn = document.getElementById('modal-fav-btn');
             if (favBtn) {
-                // Переключаем цвета (Серый <-> Фирменный)
-                favBtn.classList.toggle('text-brand-600');
-                favBtn.classList.toggle('text-stone-400');
+                if (isSaved) {
+                    favBtn.classList.add('text-brand-600');
+                    favBtn.classList.remove('text-stone-400');
+                } else {
+                    favBtn.classList.add('text-stone-400');
+                    favBtn.classList.remove('text-brand-600');
+                }
                 
-                // Добавляем микро-анимацию "пульсации" при клике
+                // Добавляем микро-анимацию "пульсации"
                 favBtn.classList.add('scale-125');
                 setTimeout(() => {
                     favBtn.classList.remove('scale-125');
