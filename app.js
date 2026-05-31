@@ -444,28 +444,149 @@ window.switchSellerTab = (tabName) => {
     const tabItems = document.getElementById('tab-seller-items');
     const tabReviews = document.getElementById('tab-seller-reviews');
 
+    // Сбрасываем стили
+    if(tabItems) tabItems.className = 'profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 cursor-pointer shrink-0 transition-colors';
+    if(tabReviews) tabReviews.className = 'profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 cursor-pointer shrink-0 transition-colors';
+
     if (tabName === 'items') {
-        if(tabItems) { tabItems.classList.add('border-brand-600', 'text-brand-600'); tabItems.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabReviews) { tabReviews.classList.remove('border-brand-600', 'text-brand-600'); tabReviews.classList.add('border-transparent', 'text-stone-400'); }
-        
-        if(reviewsList) { reviewsList.classList.add('hidden'); reviewsList.style.display = 'none'; }
-        if(searchInput) { searchInput.classList.remove('hidden'); searchInput.style.display = 'block'; }
+        if(tabItems) tabItems.classList.add('active', 'border-brand-600', 'text-brand-600');
+        if(reviewsList) { reviewsList.style.display = 'none'; reviewsList.classList.add('hidden'); }
+        if(searchInput) { searchInput.style.display = 'block'; searchInput.classList.remove('hidden'); }
         
         if (itemsGrid && itemsGrid.innerHTML.trim() === '') {
-            if(itemsGrid) { itemsGrid.classList.add('hidden'); itemsGrid.style.display = 'none'; }
-            if(emptyState) { emptyState.classList.remove('hidden'); emptyState.style.display = 'flex'; }
+            if(itemsGrid) { itemsGrid.style.display = 'none'; itemsGrid.classList.add('hidden'); }
+            if(emptyState) { emptyState.style.display = 'flex'; emptyState.classList.remove('hidden'); }
         } else {
-            if(itemsGrid) { itemsGrid.classList.remove('hidden'); itemsGrid.style.display = 'grid'; }
-            if(emptyState) { emptyState.classList.add('hidden'); emptyState.style.display = 'none'; }
+            if(itemsGrid) { itemsGrid.style.display = 'grid'; itemsGrid.classList.remove('hidden'); }
+            if(emptyState) { emptyState.style.display = 'none'; emptyState.classList.add('hidden'); }
         }
     } else if (tabName === 'reviews') {
-        if(tabReviews) { tabReviews.classList.add('border-brand-600', 'text-brand-600'); tabReviews.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabItems) { tabItems.classList.remove('border-brand-600', 'text-brand-600'); tabItems.classList.add('border-transparent', 'text-stone-400'); }
+        if(tabReviews) tabReviews.classList.add('active', 'border-brand-600', 'text-brand-600');
         
-        if(itemsGrid) { itemsGrid.classList.add('hidden'); itemsGrid.style.display = 'none'; }
-        if(emptyState) { emptyState.classList.add('hidden'); emptyState.style.display = 'none'; }
-        if(searchInput) { searchInput.classList.add('hidden'); searchInput.style.display = 'none'; }
+        if(itemsGrid) { itemsGrid.style.display = 'none'; itemsGrid.classList.add('hidden'); }
+        if(emptyState) { emptyState.style.display = 'none'; emptyState.classList.add('hidden'); }
+        if(searchInput) { searchInput.style.display = 'none'; searchInput.classList.add('hidden'); }
+        
+        // Жестко показываем отзывы
         if(reviewsList) { reviewsList.classList.remove('hidden'); reviewsList.style.display = 'flex'; }
+    }
+};
+
+window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
+    window.currentSellerId = sellerId;
+    
+    // 1. Устанавливаем данные в шапку (Имя и Фото)
+    const nameEl = document.getElementById('seller-name');
+    const avatarContainer = document.getElementById('seller-avatar-container');
+    
+    if (nameEl) nameEl.innerText = sellerName || 'Продавец';
+    if (avatarContainer) {
+        if (sellerAvatar) {
+            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover">`;
+        } else {
+            avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
+        }
+    }
+    
+    window.openModal('seller-modal');
+    window.switchSellerTab('items'); 
+
+    // 2. Загружаем товары
+    try {
+        document.getElementById('seller-loading').style.display = 'flex';
+        document.getElementById('seller-items-grid').style.display = 'none';
+        document.getElementById('seller-empty').style.display = 'none';
+
+        const { data: items, error } = await supabase
+            .from('items')
+            .select('*')
+            .eq('user_id', sellerId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const grid = document.getElementById('seller-items-grid');
+        const stats = document.getElementById('seller-stats');
+        if (stats) stats.innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items ? items.length : 0}`;
+
+        if (items && items.length > 0) {
+            grid.innerHTML = items.map(item => window.createCardHtml(item)).join('');
+            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+                grid.style.display = 'grid';
+                grid.classList.remove('hidden');
+            }
+        } else {
+            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+                document.getElementById('seller-empty').style.display = 'flex';
+                document.getElementById('seller-empty').classList.remove('hidden');
+            }
+        }
+    } catch (e) {
+        console.error("Ошибка загрузки товаров:", e);
+    } finally {
+        document.getElementById('seller-loading').style.display = 'none';
+    }
+
+    // 3. Загружаем отзывы
+    try {
+        const { data: reviews, error: reviewsError } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('seller_id', sellerId)
+            .order('created_at', { ascending: false });
+
+        if (reviewsError) throw reviewsError;
+
+        const reviewsList = document.getElementById('seller-reviews-list');
+        const reviewsCountEl = document.getElementById('seller-reviews-count');
+        const ratingContainer = document.getElementById('seller-rating-container');
+
+        if (reviews && reviews.length > 0) {
+            const totalStars = reviews.reduce((sum, r) => sum + (r.rating || 5), 0);
+            const avgRating = (totalStars / reviews.length).toFixed(1);
+            
+            if (reviewsCountEl) reviewsCountEl.innerText = `(${reviews.length})`;
+            
+            if (ratingContainer) {
+                ratingContainer.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-stone-200">${avgRating}</span> <span class="text-stone-400">(${reviews.length})</span>`;
+                ratingContainer.style.display = 'flex';
+                ratingContainer.classList.remove('hidden');
+            }
+
+            if (reviewsList) {
+                reviewsList.innerHTML = reviews.map(r => `
+                    <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm w-full">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="font-bold text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
+                            <div class="text-amber-500 text-xs">
+                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
+                            </div>
+                        </div>
+                        <div class="text-sm text-stone-600 dark:text-stone-300">${r.comment || ''}</div>
+                        <div class="text-[10px] text-stone-400 mt-2">${new Date(r.created_at).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+            }
+        } else {
+            if (reviewsCountEl) reviewsCountEl.innerText = '(0)';
+            if (ratingContainer) { ratingContainer.style.display = 'none'; ratingContainer.classList.add('hidden'); }
+            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold w-full"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
+        }
+    } catch (e) {
+        console.error("Ошибка загрузки отзывов:", e);
+    }
+
+    // 4. Кнопка "Оставить отзыв"
+    const btnLeaveReview = document.getElementById('btn-leave-review');
+    if (btnLeaveReview) {
+        if (!window.currentUser || window.currentUser.id === sellerId) {
+            btnLeaveReview.classList.add('hidden');
+            btnLeaveReview.style.display = 'none';
+        } else {
+            btnLeaveReview.classList.remove('hidden');
+            btnLeaveReview.style.display = 'block';
+            btnLeaveReview.onclick = () => window.openModal('review-modal');
+        }
     }
 };
 
@@ -528,128 +649,6 @@ window.submitReview = async (event) => {
     } finally {
         const btn = document.getElementById('btn-submit-review');
         if(btn) { btn.disabled = false; btn.innerText = 'Отправить отзыв'; }
-    }
-};
-
-// ПОЛНОСТЬЮ ПЕРЕЗАПИСЫВАЕМ ФУНКЦИЮ ОТКРЫТИЯ ПРОФИЛЯ ПРОДАВЦА
-window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
-    window.currentSellerId = sellerId;
-    window.openModal('seller-modal');
-    window.switchSellerTab('items');
-
-    document.getElementById('seller-loading').style.display = 'flex';
-    if(document.getElementById('seller-items-grid')) document.getElementById('seller-items-grid').style.display = 'none';
-    if(document.getElementById('seller-empty')) document.getElementById('seller-empty').style.display = 'none';
-
-    try {
-        // 1. Загрузка товаров
-        const { data: items, error } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', sellerId)
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        // УМНОЕ ВОССТАНОВЛЕНИЕ ИМЕНИ И АВАТАРА (Если потерялись при переходе)
-        let finalName = sellerName;
-        let finalAvatar = sellerAvatar;
-        if ((!finalName || finalName === 'Продавец') && items && items.length > 0) {
-            finalName = items[0].author_name;
-            finalAvatar = items[0].author_avatar;
-        }
-
-        // Вставляем имя и аватар
-        const nameEl = document.getElementById('seller-name');
-        const avatarContainer = document.getElementById('seller-avatar-container');
-        if (nameEl) nameEl.innerText = finalName || 'Продавец';
-        if (avatarContainer) {
-            if (finalAvatar) {
-                avatarContainer.innerHTML = `<img src="${finalAvatar}" class="w-full h-full object-cover rounded-full">`;
-            } else {
-                avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
-            }
-        }
-
-        const grid = document.getElementById('seller-items-grid');
-        const stats = document.getElementById('seller-stats');
-        if (stats) stats.innerHTML = `Объявлений: ${items ? items.length : 0}`;
-
-        if (items && items.length > 0) {
-            grid.innerHTML = items.map(item => window.createCardHtml(item)).join('');
-            if (document.getElementById('tab-seller-items').classList.contains('text-brand-600')) {
-                grid.classList.remove('hidden');
-                grid.style.display = 'grid';
-            }
-        } else {
-            if (document.getElementById('tab-seller-items').classList.contains('text-brand-600')) {
-                document.getElementById('seller-empty').classList.remove('hidden');
-                document.getElementById('seller-empty').style.display = 'flex';
-            }
-        }
-    } catch (e) {
-        console.error("Ошибка товаров:", e);
-    } finally {
-        document.getElementById('seller-loading').style.display = 'none';
-    }
-
-    // 2. Загрузка отзывов
-    try {
-        const { data: reviews, error: reviewsError } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('seller_id', sellerId)
-            .order('created_at', { ascending: false });
-
-        if (reviewsError) throw reviewsError;
-
-        const reviewsList = document.getElementById('seller-reviews-list');
-        const reviewsCountEl = document.getElementById('seller-reviews-count');
-        const ratingContainer = document.getElementById('seller-rating-container');
-
-        if (reviews && reviews.length > 0) {
-            const totalStars = reviews.reduce((sum, r) => sum + (r.rating || 5), 0);
-            const avgRating = (totalStars / reviews.length).toFixed(1);
-            
-            if (reviewsCountEl) reviewsCountEl.innerText = `(${reviews.length})`;
-            
-            if (ratingContainer) {
-                ratingContainer.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-stone-200">${avgRating}</span> <span class="text-stone-400">(${reviews.length})</span>`;
-                ratingContainer.classList.remove('hidden');
-                ratingContainer.style.display = 'flex';
-            }
-
-            if (reviewsList) {
-                reviewsList.innerHTML = reviews.map(r => `
-                    <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm w-full">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="font-bold text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
-                            <div class="text-amber-500 text-xs">
-                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
-                            </div>
-                        </div>
-                        <div class="text-sm text-stone-600 dark:text-stone-300">${r.comment || ''}</div>
-                        <div class="text-[10px] text-stone-400 mt-2">${new Date(r.created_at).toLocaleDateString()}</div>
-                    </div>
-                `).join('');
-            }
-        } else {
-            if (reviewsCountEl) reviewsCountEl.innerText = '(0)';
-            if (ratingContainer) { ratingContainer.classList.add('hidden'); ratingContainer.style.display = 'none'; }
-            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold w-full"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
-        }
-    } catch (e) {
-        console.error("Ошибка отзывов:", e);
-    }
-
-    const btnLeaveReview = document.getElementById('btn-leave-review');
-    if (btnLeaveReview) {
-        if (!window.currentUser || window.currentUser.id === sellerId) {
-            btnLeaveReview.classList.add('hidden');
-        } else {
-            btnLeaveReview.classList.remove('hidden');
-            btnLeaveReview.onclick = () => window.openModal('review-modal');
-        }
     }
 };
 
@@ -1087,21 +1086,18 @@ window.closeModal = id => {
     }
 };
 
-// ==========================================
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ КНОПОК И МОДАЛОК
-// ==========================================
-
 window.checkAuthAndOpenAddModal = async () => {
     if (!window.currentUser) { 
         window.openModal('auth-modal');
-        window.showToast("Сначала войдите в аккаунт", true); 
+        window.showToast(window.t ? window.t('auth_hint') : "Войдите в аккаунт", true); 
         return; 
     }
     
-    // Безопасное чтение статуса PRO
-    const isPro = (window.currentUserData && window.currentUserData.is_pro) || false;
+    // Безопасное получение PRO-статуса
+    const isPro = window.currentUserData ? window.currentUserData.is_pro : false;
     const maxItems = isPro ? 50 : 10;
     const addBtn = document.getElementById('btn-header-add'); 
+    
     if(addBtn) addBtn.style.opacity = '0.5'; 
 
     try {
@@ -1110,11 +1106,14 @@ window.checkAuthAndOpenAddModal = async () => {
             .select('*', { count: 'exact', head: true })
             .eq('user_id', window.currentUser.id);
             
-        if (error) throw error;
+        if (error) {
+            console.error("Ошибка проверки БД:", error);
+            throw error;
+        }
         
         if (count >= maxItems) {
             if (!isPro) { 
-                window.showToast(`Лимит: ${maxItems} объявлений. Нужен PRO!`, true); 
+                window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
                 setTimeout(() => window.openModal('crypto-modal'), 1500); 
             } else { 
                 window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); 
@@ -1129,8 +1128,8 @@ window.checkAuthAndOpenAddModal = async () => {
         
         window.openModal('add-modal');
     } catch (err) { 
-        console.error("Ошибка открытия формы:", err);
-        window.showToast("Ошибка базы данных", true); 
+        console.error("Критическая ошибка открытия формы:", err);
+        window.showToast("Произошла ошибка. Попробуйте позже.", true); 
     } finally { 
         if(addBtn) addBtn.style.opacity = '1'; 
     }
