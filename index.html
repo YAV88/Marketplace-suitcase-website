@@ -81,29 +81,31 @@
                 </button>
             </div>
             
-            <div class="flex items-center gap-3 lg:gap-4 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 lg:pl-6">
-                <button onclick="window.toggleDarkMode()" class="hidden sm:flex text-stone-400 hover:text-brand-600 transition w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i id="theme-icon" class="fa-solid fa-moon text-lg"></i></button>
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto shrink-0 border-l border-stone-200 dark:border-stone-800 pl-3 sm:pl-4 lg:pl-6">
+                
+                <button onclick="window.toggleDarkMode()" class="hidden sm:flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                    <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+                </button>
                 
                 <div class="relative z-[110]">
-                    <button onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold shadow-sm">
-                        <span id="lang-indicator" class="text-stone-700 dark:text-stone-300 uppercase hidden sm:block tracking-wider">RU</span>
-                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
+                    <button onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')" class="flex items-center justify-center gap-1.5 w-11 sm:w-auto sm:px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                        <i class="fa-solid fa-globe sm:hidden text-lg"></i>
+                        <span id="lang-indicator" class="hidden sm:block uppercase tracking-wider">RU</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] hidden sm:block opacity-70"></i>
                     </button>
-                    
-                    <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-36 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg transition-all duration-200 overflow-hidden origin-top-right">
-                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 Русский</button>
-                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 Srpski</button>
-                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 English</button>
+                    <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-36 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl border border-stone-200 dark:border-stone-700 rounded-xl shadow-xl transition-all duration-200 overflow-hidden origin-top-right z-[120]">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 flex items-center gap-3 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 Русский</button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-sm text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 Srpski</button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 flex items-center gap-3 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-sm text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 English</button>
                     </div>
                 </div>
 
                 <div class="hidden lg:flex relative" id="info-dropdown-wrapper">
-                    <button onclick="window.toggleInfoMenu()" class="flex items-center justify-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-700 font-bold text-sm text-stone-800 dark:text-stone-200 transition cursor-pointer">
-                        <span class="leading-none mt-[2px]" data-i18n="nav_info">Инфо</span> 
-                        <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 mt-[2px]"></i>
+                    <button onclick="window.toggleInfoMenu()" class="flex items-center justify-center gap-1.5 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                        <span data-i18n="nav_info">Инфо</span> 
+                        <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
                     </button>
-                    
-                    <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[100]">
+                    <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[120]">
                         <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
                             <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> <span data-i18n="nav_about">О проекте</span></a>
                             <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> <span data-i18n="nav_rules">Правила</span></a>
@@ -111,7 +113,6 @@
                             <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> <span data-i18n="nav_faq">Помощь / FAQ</span></a>
                             <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> <span data-i18n="nav_privacy">Политика</span></a>
                             <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> <span data-i18n="nav_terms">Условия</span></a>
-                            
                             <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
                             <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> <span data-i18n="nav_contacts">Контакты</span></a>
                         </div>
@@ -122,42 +123,37 @@
                     window.toggleInfoMenu = () => {
                         const menu = document.getElementById('info-dropdown-menu');
                         const icon = document.getElementById('info-dropdown-icon');
-                        if (menu.classList.contains('hidden')) {
-                            menu.classList.remove('hidden');
-                            icon.classList.add('rotate-180');
-                        } else {
-                            menu.classList.add('hidden');
-                            icon.classList.remove('rotate-180');
-                        }
+                        if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); icon.classList.add('rotate-180');
+                        } else { menu.classList.add('hidden'); icon.classList.remove('rotate-180'); }
                     };
                     document.addEventListener('click', (e) => {
                         const wrapper = document.getElementById('info-dropdown-wrapper');
                         const menu = document.getElementById('info-dropdown-menu');
                         const icon = document.getElementById('info-dropdown-icon');
-                        
-                        if (wrapper && menu && !wrapper.contains(e.target)) {
-                            menu.classList.add('hidden');
-                            if(icon) icon.classList.remove('rotate-180');
-                        }
+                        if (wrapper && menu && !wrapper.contains(e.target)) { menu.classList.add('hidden'); if(icon) icon.classList.remove('rotate-180'); }
                     });
                 </script>
                 
-                <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')" class="hidden lg:block px-6 py-2.5 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer">Войти</button>
+                <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')" class="hidden lg:flex items-center justify-center px-6 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">Войти</button>
                 
-                <div id="nav-user-controls" class="hidden items-center gap-3">
-                    <button onclick="window.openChatListModal()" title="Сообщения" class="hidden lg:flex relative text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer">
-                        <i class="fa-regular fa-envelope"></i>
+                <div id="nav-user-controls" class="hidden items-center gap-2 sm:gap-3">
+                    <button onclick="window.openChatListModal()" title="Сообщения" class="hidden lg:flex relative items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                        <i class="fa-regular fa-envelope text-lg"></i>
                         <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
-                    <button onclick="window.openModal('profile-modal')" title="Профиль" class="hidden lg:flex text-stone-500 hover:text-brand-600 transition text-xl w-10 h-10 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 cursor-pointer"><i class="fa-regular fa-user"></i></button>
+                    <button onclick="window.openModal('profile-modal')" title="Профиль" class="hidden lg:flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                        <i class="fa-regular fa-user text-lg"></i>
+                    </button>
                 </div>
                 
-                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" class="hidden md:flex bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-black transition-colors items-center gap-2 cursor-pointer whitespace-nowrap shrink-0">
-                    <i class="fa-solid fa-tag"></i> <span class="hidden xl:inline" data-i18n="btn_publish">Пристроить добро</span><span class="xl:hidden" data-i18n="btn_publish_mob">Продать</span>
+                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" class="hidden md:flex items-center justify-center gap-2 px-6 h-11 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border border-brand-500">
+                    <i class="fa-solid fa-tag"></i> 
+                    <span class="hidden xl:inline" data-i18n="btn_publish">Пристроить добро</span>
+                    <span class="xl:hidden" data-i18n="btn_publish_mob">Продать</span>
                 </button>
                 
-                <button onclick="window.toggleDarkMode()" class="sm:hidden text-stone-400 hover:text-brand-600 transition w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 cursor-pointer"><i class="fa-solid fa-moon text-lg"></i></button>
-                <button class="lg:hidden text-2xl text-stone-600 dark:text-stone-300 cursor-pointer w-10 h-10 flex items-center justify-center" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+                <button onclick="window.toggleDarkMode()" class="sm:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 transition-all duration-200 cursor-pointer shadow-sm"><i class="fa-solid fa-moon text-lg"></i></button>
+                <button class="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition-all duration-200 cursor-pointer shadow-sm" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars text-lg"></i></button>
             </div>
         </div>
     </nav>
