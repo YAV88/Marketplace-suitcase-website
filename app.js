@@ -445,13 +445,12 @@ window.switchSellerTab = (tabName) => {
     const tabReviews = document.getElementById('tab-seller-reviews');
 
     if (tabName === 'items') {
-        if(tabItems) { tabItems.classList.add('border-brand-600', 'text-brand-600'); tabItems.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabReviews) { tabReviews.classList.remove('border-brand-600', 'text-brand-600'); tabReviews.classList.add('border-transparent', 'text-stone-400'); }
+        if(tabItems) { tabItems.classList.add('active', 'border-brand-600', 'text-brand-600'); tabItems.classList.remove('border-transparent', 'text-stone-400'); }
+        if(tabReviews) { tabReviews.classList.remove('active', 'border-brand-600', 'text-brand-600'); tabReviews.classList.add('border-transparent', 'text-stone-400'); }
         
         if(reviewsList) reviewsList.style.display = 'none';
         if(searchInput) searchInput.style.display = 'block';
         
-        // Если товаров нет
         if (itemsGrid && itemsGrid.innerHTML.trim() === '') {
             if(itemsGrid) itemsGrid.style.display = 'none';
             if(emptyState) emptyState.style.display = 'flex';
@@ -460,8 +459,8 @@ window.switchSellerTab = (tabName) => {
             if(emptyState) emptyState.style.display = 'none';
         }
     } else if (tabName === 'reviews') {
-        if(tabReviews) { tabReviews.classList.add('border-brand-600', 'text-brand-600'); tabReviews.classList.remove('border-transparent', 'text-stone-400'); }
-        if(tabItems) { tabItems.classList.remove('border-brand-600', 'text-brand-600'); tabItems.classList.add('border-transparent', 'text-stone-400'); }
+        if(tabReviews) { tabReviews.classList.add('active', 'border-brand-600', 'text-brand-600'); tabReviews.classList.remove('border-transparent', 'text-stone-400'); }
+        if(tabItems) { tabItems.classList.remove('active', 'border-brand-600', 'text-brand-600'); tabItems.classList.add('border-transparent', 'text-stone-400'); }
         
         if(itemsGrid) itemsGrid.style.display = 'none';
         if(emptyState) emptyState.style.display = 'none';
@@ -488,21 +487,14 @@ window.updateStarSelection = (rating) => {
 
 window.submitReview = async (event) => {
     event.preventDefault();
-    
-    if (!window.currentUser) {
-        window.showToast("Сначала войдите в аккаунт", true);
-        return;
-    }
+    if (!window.currentUser) return window.showToast("Сначала войдите в аккаунт", true);
 
     const commentEl = document.getElementById('review-comment');
     const comment = commentEl ? commentEl.value : '';
     const rating = window.currentReviewRating || 5; 
     const sellerId = window.currentSellerId;
 
-    if (!sellerId) {
-        window.showToast("Ошибка: продавец не найден", true);
-        return;
-    }
+    if (!sellerId) return window.showToast("Ошибка: продавец не найден", true);
 
     try {
         const btn = document.getElementById('btn-submit-review');
@@ -520,28 +512,22 @@ window.submitReview = async (event) => {
 
         window.showToast("Отзыв успешно опубликован!");
         window.closeModal('review-modal');
-        
-        // Очищаем форму
         if(commentEl) commentEl.value = '';
         if(typeof window.updateStarSelection === 'function') window.updateStarSelection(5);
 
-        // МГНОВЕННОЕ ОБНОВЛЕНИЕ ПРОФИЛЯ ПРОДАВЦА
-        const sellerNameEl = document.getElementById('seller-name');
-        const sellerName = sellerNameEl ? sellerNameEl.innerText : 'Продавец';
-        await window.openSellerProfile(sellerId, sellerName);
+        // ПЕРЕЗАГРУЖАЕМ ПРОФИЛЬ И ОТКРЫВАЕМ ВКЛАДКУ ОТЗЫВОВ
+        const sellerName = document.getElementById('seller-name')?.innerText;
+        const sellerAvatar = document.querySelector('#seller-avatar-container img')?.src;
         
-        // Автоматически переключаем на вкладку отзывов, чтобы пользователь увидел свой отзыв
+        await window.openSellerProfile(sellerId, sellerName, sellerAvatar);
         window.switchSellerTab('reviews');
 
     } catch (error) {
-        console.error("Ошибка отправки отзыва:", error);
+        console.error(error);
         window.showToast("Ошибка при отправке отзыва", true);
     } finally {
         const btn = document.getElementById('btn-submit-review');
-        if(btn) { 
-            btn.disabled = false; 
-            btn.innerText = (typeof window.t === 'function') ? window.t('btn_send_review') : 'Отправить отзыв'; 
-        }
+        if(btn) { btn.disabled = false; btn.innerText = window.t ? window.t('btn_send_review') : 'Отправить отзыв'; }
     }
 };
 
@@ -549,27 +535,23 @@ window.submitReview = async (event) => {
 window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
     window.currentSellerId = sellerId;
     
-    // 1. Вставляем имя продавца
+    // 1. Устанавливаем имя и аватар в шапке профиля
     const nameEl = document.getElementById('seller-name');
-    if (nameEl) {
-        nameEl.innerText = sellerName || 'Продавец';
-    }
-    
-    // 2. Вставляем аватар продавца
     const avatarContainer = document.getElementById('seller-avatar-container');
+    
+    if (nameEl) nameEl.innerText = sellerName || 'Продавец';
     if (avatarContainer) {
         if (sellerAvatar) {
-            // Если есть картинка, вставляем img
-            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover">`;
+            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover rounded-full">`;
         } else {
-            // Если нет, возвращаем иконку
             avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
         }
     }
     
     window.openModal('seller-modal');
-    window.switchSellerTab('items');
-    // 1. ЗАГРУЗКА ТОВАРОВ ПРОДАВЦА
+    window.switchSellerTab('items'); // Сначала показываем товары
+
+    // 2. Загружаем товары
     try {
         document.getElementById('seller-loading').style.display = 'flex';
         document.getElementById('seller-items-grid').style.display = 'none';
@@ -585,22 +567,25 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
 
         const grid = document.getElementById('seller-items-grid');
         const stats = document.getElementById('seller-stats');
-        
         if (stats) stats.innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items ? items.length : 0}`;
 
         if (items && items.length > 0) {
             grid.innerHTML = items.map(item => window.createCardHtml(item)).join('');
-            grid.style.display = 'grid';
+            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+                grid.style.display = 'grid';
+            }
         } else {
-            document.getElementById('seller-empty').style.display = 'flex';
+            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+                document.getElementById('seller-empty').style.display = 'flex';
+            }
         }
     } catch (e) {
-        console.error("Ошибка загрузки товаров продавца:", e);
+        console.error("Ошибка загрузки товаров:", e);
     } finally {
         document.getElementById('seller-loading').style.display = 'none';
     }
 
-    // 2. ЗАГРУЗКА И ПОДСЧЕТ ОТЗЫВОВ
+    // 3. Загружаем отзывы
     try {
         const { data: reviews, error: reviewsError } = await supabase
             .from('reviews')
@@ -615,20 +600,17 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
         const ratingContainer = document.getElementById('seller-rating-container');
 
         if (reviews && reviews.length > 0) {
-            // Высчитываем среднюю оценку
             const totalStars = reviews.reduce((sum, r) => sum + (r.rating || 5), 0);
             const avgRating = (totalStars / reviews.length).toFixed(1);
             
-            // Обновляем счетчик во вкладке (например: Отзывы (3))
             if (reviewsCountEl) reviewsCountEl.innerText = `(${reviews.length})`;
             
-            // Рисуем звездочку и средний рейтинг под именем продавца
             if (ratingContainer) {
                 ratingContainer.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-stone-200">${avgRating}</span> <span class="text-stone-400">(${reviews.length})</span>`;
                 ratingContainer.classList.remove('hidden');
+                ratingContainer.style.display = 'flex';
             }
 
-            // Отрисовываем сам список отзывов
             if (reviewsList) {
                 reviewsList.innerHTML = reviews.map(r => `
                     <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm">
@@ -644,21 +626,17 @@ window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
                 `).join('');
             }
         } else {
-            // Если отзывов пока нет
             if (reviewsCountEl) reviewsCountEl.innerText = '(0)';
-            if (ratingContainer) ratingContainer.classList.add('hidden');
-            if (reviewsList) {
-                reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
-            }
+            if (ratingContainer) ratingContainer.style.display = 'none';
+            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
         }
     } catch (e) {
         console.error("Ошибка загрузки отзывов:", e);
     }
 
-    // 3. Управление кнопкой "Оставить отзыв"
+    // 4. Кнопка "Оставить отзыв"
     const btnLeaveReview = document.getElementById('btn-leave-review');
     if (btnLeaveReview) {
-        // Скрываем кнопку, если пользователь смотрит свой же профиль, либо если он не авторизован
         if (!window.currentUser || window.currentUser.id === sellerId) {
             btnLeaveReview.classList.add('hidden');
         } else {
@@ -2427,12 +2405,29 @@ window.openItemDetails = async (id) => {
             });
         }
         
+        // === ЛОГИКА КНОПКИ ПРОДАВЦА ===
         const sellerBtn = document.getElementById('modal-seller-btn');
         if (sellerBtn) {
+            // Заполняем данные визуально в самой карточке
+            const authorNameEl = document.getElementById('modal-author');
+            const authorAvatarEl = document.getElementById('modal-author-avatar');
+            
+            const sName = item.author_name || 'Продавец';
+            const sAvatar = item.author_avatar;
+    
+            if (authorNameEl) authorNameEl.innerText = sName;
+            if (authorAvatarEl) {
+                if (sAvatar) {
+                    authorAvatarEl.innerHTML = `<img src="${sAvatar}" class="w-full h-full object-cover">`;
+                } else {
+                    authorAvatarEl.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
+                }
+            }
+    
+            // При клике передаем эти же данные в профиль продавца!
             sellerBtn.onclick = () => {
                 window.closeModal('item-modal');
-                // Передаем ID, Имя и Аватар
-                window.openSellerProfile(item.user_id, item.author_name, item.author_avatar);
+                window.openSellerProfile(item.user_id, sName, sAvatar);
             };
         }
         
