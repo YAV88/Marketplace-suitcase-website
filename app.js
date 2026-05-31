@@ -2679,6 +2679,7 @@ window.editItem = async (id) => {
 
 window.submitNewItem = async (event) => {
     if(event) event.preventDefault();
+    
     const btn = document.getElementById('add-submit-btn'); 
     const progCont = document.getElementById('submit-progress-container');
     const progBar = document.getElementById('submit-progress-bar');
@@ -2690,21 +2691,45 @@ window.submitNewItem = async (event) => {
     if(progBar) progBar.style.width = '0%';
     
     try {
-        if(!window.currentUser) throw new Error("Войдите в аккаунт");
+        if(!window.currentUser) throw new Error(window.t ? window.t('auth_hint') : "Войдите в аккаунт");
 
-        // ... (оставь тут сбор данных из полей: conditionEl, titleEl, priceEl, paymentArr, deliveryArr и т.д.) ...
-        
+        // 1. СБОР ДАННЫХ ИЗ ФОРМЫ (Здесь мы забираем все, что ввел пользователь)
+        const titleEl = document.getElementById('item-title').value.trim();
+        const categoryEl = document.getElementById('item-category').value;
+        const cityEl = document.getElementById('item-city').value;
+        const priceEl = document.getElementById('item-price').value;
+        const currencyEl = document.getElementById('item-currency').value;
+        const addressEl = document.getElementById('item-address') ? document.getElementById('item-address').value.trim() : '';
+        const phoneEl = document.getElementById('item-phone') ? document.getElementById('item-phone').value.trim() : '';
+        const descEl = document.getElementById('item-desc').value.trim();
+        const conditionEl = document.querySelector('input[name="item-condition"]:checked')?.value || 'Б/У';
+
+        const paymentArr = [];
+        if(document.getElementById('pay-cash')?.checked) paymentArr.push('Наличные');
+        if(document.getElementById('pay-card')?.checked) paymentArr.push('Перевод на карту');
+        if(document.getElementById('pay-crypto')?.checked) paymentArr.push('Криптоперевод');
+
+        const deliveryArr = [];
+        if(document.getElementById('del-meet')?.checked) deliveryArr.push('Личная встреча');
+        if(document.getElementById('del-post')?.checked) deliveryArr.push('PostExpress');
+
+        if (!titleEl || !categoryEl || !priceEl) {
+            throw new Error("Заполните все обязательные поля");
+        }
+
         let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
         
         function dataURItoBlob(dataURI) {
-            const byteString = atob(dataURI.split(',')[1]); const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length); const ia = new Uint8Array(ab);
+            const byteString = atob(dataURI.split(',')[1]); 
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length); 
+            const ia = new Uint8Array(ab);
             for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
             return new Blob([ab], {type: mimeString});
         }
 
-        // ЗАГРУЗКА ФОТО С ПРОГРЕССОМ
-        if (window.tempPhotos.length > 0) {
+        // 2. ЗАГРУЗКА ФОТО В SUPABASE С ПРОГРЕССОМ
+        if (window.tempPhotos && window.tempPhotos.length > 0) {
             finalImages = [];
             const totalPhotos = window.tempPhotos.length;
             
@@ -2724,8 +2749,7 @@ window.submitNewItem = async (event) => {
                     if (data && data.publicUrl) finalImages.push(data.publicUrl);
                 }
                 
-                // Обновляем прогресс-бар
-                const progress = Math.round(((i + 1) / totalPhotos) * 90); // 90% выделяем на фото, 10% на базу
+                const progress = Math.round(((i + 1) / totalPhotos) * 90); 
                 if(progBar) progBar.style.width = `${progress}%`;
                 if(progPerc) progPerc.innerText = `${progress}%`;
             }
@@ -2735,20 +2759,64 @@ window.submitNewItem = async (event) => {
         if(progBar) progBar.style.width = `95%`;
         if(progPerc) progPerc.innerText = `95%`;
 
-        // ... (оставь тут формирование itemData и отправку в Supabase) ...
+        // 3. ФОРМИРОВАНИЕ ОБЪЕКТА ДЛЯ БАЗЫ ДАННЫХ
+        const itemData = {
+            title: titleEl,
+            category: categoryEl,
+            city: cityEl,
+            price: parseFloat(priceEl) || 0,
+            currency: currencyEl,
+            address: addressEl,
+            phone: phoneEl,
+            description: descEl,
+            condition: conditionEl,
+            payment_methods: paymentArr,
+            delivery_methods: deliveryArr,
+            images: finalImages,
+            image_url: finalImages[0] || '', // Главное фото для превью
+            user_id: window.currentUser.id,
+            author_name: window.currentUser.user_metadata?.name || window.currentUser.user_metadata?.full_name || 'Продавец',
+            author_avatar: window.currentUser.user_metadata?.avatar_url || '',
+            status: 'active'
+        };
+
+        // 4. РЕАЛЬНАЯ ОТПРАВКА В БАЗУ
+        if (window.editingItemId) {
+            const { error } = await supabase.from('items').update(itemData).eq('id', window.editingItemId);
+            if (error) throw error;
+        } else {
+            const { error } = await supabase.from('items').insert([itemData]);
+            if (error) throw error;
+        }
 
         if(progBar) progBar.style.width = `100%`;
         if(progPerc) progPerc.innerText = `100%`;
 
+        // 5. УСПЕШНОЕ ЗАВЕРШЕНИЕ
         window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!"); 
         window.closeModal('add-modal'); 
-        window.fetchItems(false);
+        
+        // Очищаем форму, чтобы при следующем открытии она была пустой
+        document.getElementById('add-form').reset();
+        window.tempPhotos = [];
+        const photoList = document.getElementById('photo-preview-list');
+        if (photoList) photoList.innerHTML = '';
+        
+        // Перезагружаем ленту товаров, чтобы новый товар сразу появился на главной
+        if (typeof window.fetchItems === 'function') {
+            window.fetchItems(true); // true означает "очистить старые товары и загрузить заново"
+        }
+        
     } catch(e) { 
+        console.error("Ошибка публикации:", e);
         window.showToast(`Ошибка: ${e.message}`, true); 
     } finally { 
-        // Возвращаем кнопку
+        // Возвращаем кнопку на место
         if(progCont) { progCont.classList.add('hidden'); progCont.classList.remove('flex'); }
-        if(btn) { btn.style.display = 'block'; btn.innerHTML = window.editingItemId ? `Сохранить` : `Опубликовать`; } 
+        if(btn) { 
+            btn.style.display = 'block'; 
+            btn.innerHTML = window.editingItemId ? `Сохранить` : (window.t ? window.t('btn_publish_item') : `Опубликовать`); 
+        } 
     }
 };
 
