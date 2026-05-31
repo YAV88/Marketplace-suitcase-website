@@ -1080,17 +1080,16 @@ window.closeModal = id => {
 
 window.checkAuthAndOpenAddModal = async () => {
     if (!window.currentUser) { 
-        window.openModal('auth-modal'); 
-        window.showToast(window.t('auth_hint') ? "Сначала войдите в аккаунт" : "Log in first", true); 
+        window.openModal('auth-modal');
+        const hint = (typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт";
+        window.showToast(hint, true); 
         return; 
     }
     const isPro = window.currentUserData && window.currentUserData.is_pro;
     const maxItems = isPro ? 50 : 10;
     const addBtn = document.getElementById('btn-header-add'); 
-    const mobBtn = document.getElementById('btn-mobile-add');
     
     if(addBtn) addBtn.style.opacity = '0.5'; 
-    if(mobBtn) mobBtn.style.opacity = '0.5';
 
     try {
         const { count, error } = await supabase.from('items').select('*', { count: 'exact', head: true }).eq('user_id', window.currentUser.id);
@@ -1100,25 +1099,101 @@ window.checkAuthAndOpenAddModal = async () => {
                 window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
                 setTimeout(() => window.openModal('crypto-modal'), 1500); 
             } 
-            else { 
-                window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); 
-            } 
+            else { window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); } 
             return;
         }
         
-        // Автозаполнение телефона из профиля
         const phoneInput = document.getElementById('item-phone');
         if (phoneInput && window.currentUser.user_metadata?.phone) {
             phoneInput.value = window.currentUser.user_metadata.phone;
         }
-
         window.openModal('add-modal');
     } catch (err) { 
         window.showToast("Ошибка проверки лимитов", true); 
     } 
     finally { 
         if(addBtn) addBtn.style.opacity = '1'; 
-        if(mobBtn) mobBtn.style.opacity = '1'; 
+    }
+};
+
+window.toggleFavorite = async (btn, event, itemId) => {
+    if (event) event.stopPropagation();
+    if (!window.currentUser) { 
+        window.openModal('auth-modal'); 
+        window.showToast((typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт", true); 
+        return; 
+    }
+    if (!itemId) return;
+    
+    const isLiked = window.userFavorites.has(itemId);
+    const icon = btn ? btn.querySelector('i') : null;
+    
+    try {
+        if (isLiked) {
+            await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
+            window.userFavorites.delete(itemId);
+            if (icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
+            if (btn) btn.title = "Добавить на склад";
+        } else {
+            await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
+            window.userFavorites.add(itemId);
+            if (icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110 animate-pop';
+            if (btn) btn.title = "Убрать со склада";
+            setTimeout(() => { if (icon) icon.classList.remove('animate-pop'); }, 300);
+        }
+        if (window.renderProfileTabs) window.renderProfileTabs();
+        
+        // Синхронизация с открытой карточкой товара
+        if (window.activeModalItemId === itemId) {
+            const modalFavBtn = document.getElementById('modal-fav-btn');
+            const modalFavIcon = document.querySelector('#modal-fav-btn i');
+            if (modalFavIcon) {
+                const isNowLiked = window.userFavorites.has(itemId);
+                modalFavIcon.className = isNowLiked 
+                    ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110 animate-pop' 
+                    : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                if (modalFavBtn) modalFavBtn.title = isNowLiked ? "Убрать со склада" : "Добавить на склад";
+                setTimeout(() => { if (modalFavIcon) modalFavIcon.classList.remove('animate-pop'); }, 300);
+            }
+        }
+    } catch(e) { console.error(e); }
+};
+
+window.toggleFavoriteModal = async (event) => {
+    if (event) event.stopPropagation();
+    
+    if (!window.currentUser) {
+        window.openModal('auth-modal');
+        window.showToast((typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт", true);
+        return;
+    }
+
+    const itemId = window.activeModalItemId; 
+    
+    if (itemId) {
+        // Вызываем исправленную базовую функцию без кнопки из карточки
+        await window.toggleFavorite(null, null, itemId);
+        
+        // Визуально переключаем саму кнопку в модалке
+        const isSaved = window.userFavorites.has(itemId);
+        const favBtn = document.getElementById('modal-fav-btn');
+        const favIcon = document.querySelector('#modal-fav-btn i');
+        
+        if (favBtn && favIcon) {
+            if (isSaved) {
+                favBtn.classList.remove('text-stone-400');
+                favBtn.classList.add('text-brand-600');
+                favIcon.className = 'fa-solid fa-box text-lg scale-110 transition-transform';
+            } else {
+                favBtn.classList.add('text-stone-400');
+                favBtn.classList.remove('text-brand-600');
+                favIcon.className = 'fa-solid fa-box-open text-lg transition-transform';
+            }
+            favBtn.classList.add('scale-110');
+            setTimeout(() => favBtn.classList.remove('scale-110'), 200);
+        }
+    } else {
+        window.showToast("Ошибка: Товар не найден", true);
     }
 };
 
