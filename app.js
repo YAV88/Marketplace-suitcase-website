@@ -1210,7 +1210,46 @@ window.toggleFavorite = async (btn, event, itemId) => {
     } catch(e) {}
 };
 
-window.toggleFavoriteModal = (event) => { if(window.activeModalItemId) window.toggleFavorite(document.getElementById('modal-fav-btn'), event, window.activeModalItemId); }
+// ==========================================
+// ОБРАБОТЧИК КНОПКИ "СКЛАД" В КАРТОЧКЕ ТОВАРА
+// ==========================================
+window.toggleFavoriteModal = async (event) => {
+    if (event) event.stopPropagation();
+    
+    // Проверка авторизации
+    if (!window.currentUser) {
+        window.openModal('auth-modal');
+        window.showToast(window.t ? window.t('auth_hint') : "Войдите в аккаунт", true);
+        return;
+    }
+
+    // Получаем ID открытого товара (зависит от того, как он у вас сохраняется при открытии)
+    // Обычно это window.currentOpenedItemId или берется из кнопки share
+    const itemId = window.currentOpenedItemId; 
+    
+    if (itemId) {
+        // Вызываем вашу стандартную функцию добавления в склад
+        if (typeof window.toggleFavorite === 'function') {
+            await window.toggleFavorite(itemId, event);
+            
+            // Визуально переключаем кнопку прямо в модальном окне (Мгновенный отклик)
+            const favBtn = document.getElementById('modal-fav-btn');
+            if (favBtn) {
+                // Переключаем цвета (Серый <-> Фирменный)
+                favBtn.classList.toggle('text-brand-600');
+                favBtn.classList.toggle('text-stone-400');
+                
+                // Добавляем микро-анимацию "пульсации" при клике
+                favBtn.classList.add('scale-125');
+                setTimeout(() => {
+                    favBtn.classList.remove('scale-125');
+                }, 200);
+            }
+        }
+    } else {
+        window.showToast("Ошибка: ID товара не найден", true);
+    }
+};
 
 window.shareCurrentItem = () => {
     window.bumpViaShare();
