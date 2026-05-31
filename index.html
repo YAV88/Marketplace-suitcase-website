@@ -118,6 +118,21 @@
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    window.toggleInfoMenu = () => {
+                        const menu = document.getElementById('info-dropdown-menu');
+                        const icon = document.getElementById('info-dropdown-icon');
+                        if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); icon.classList.add('rotate-180');
+                        } else { menu.classList.add('hidden'); icon.classList.remove('rotate-180'); }
+                    };
+                    document.addEventListener('click', (e) => {
+                        const wrapper = document.getElementById('info-dropdown-wrapper');
+                        const menu = document.getElementById('info-dropdown-menu');
+                        const icon = document.getElementById('info-dropdown-icon');
+                        if (wrapper && menu && !wrapper.contains(e.target)) { menu.classList.add('hidden'); if(icon) icon.classList.remove('rotate-180'); }
+                    });
+                </script>
                 
                 <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')" class="hidden lg:flex items-center justify-center px-6 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">Войти</button>
                 
