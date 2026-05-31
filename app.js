@@ -1090,15 +1090,23 @@ window.checkAuthAndOpenAddModal = async () => {
         return; 
     }
     
-    const isPro = window.currentUserData && window.currentUserData.is_pro;
+    // БЕЗОПАСНАЯ ПРОВЕРКА PRO-СТАТУСА
+    const isPro = window.currentUserData ? window.currentUserData.is_pro : false;
     const maxItems = isPro ? 50 : 10;
     const addBtn = document.getElementById('btn-header-add'); 
     
     if(addBtn) addBtn.style.opacity = '0.5'; 
 
     try {
-        const { count, error } = await supabase.from('items').select('*', { count: 'exact', head: true }).eq('user_id', window.currentUser.id);
-        if (error) throw error;
+        const { count, error } = await supabase
+            .from('items')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', window.currentUser.id);
+            
+        if (error) {
+            console.error("Ошибка получения лимита:", error);
+            throw error;
+        }
         
         if (count >= maxItems) {
             if (!isPro) { 
@@ -1110,15 +1118,16 @@ window.checkAuthAndOpenAddModal = async () => {
             return;
         }
         
+        // Автоподстановка телефона, если он есть
         const phoneInput = document.getElementById('item-phone');
-        if (phoneInput && window.currentUser.user_metadata?.phone) {
+        if (phoneInput && window.currentUser.user_metadata && window.currentUser.user_metadata.phone) {
             phoneInput.value = window.currentUser.user_metadata.phone;
         }
         
         window.openModal('add-modal');
     } catch (err) { 
+        console.error("Ошибка в checkAuthAndOpenAddModal:", err);
         window.showToast("Ошибка проверки лимитов", true); 
-        console.error(err);
     } finally { 
         if(addBtn) addBtn.style.opacity = '1'; 
     }
