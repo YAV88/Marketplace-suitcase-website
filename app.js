@@ -1079,30 +1079,47 @@ window.closeModal = id => {
 };
 
 window.checkAuthAndOpenAddModal = async () => {
-    if (!window.currentUser) { window.openModal('auth-modal'); window.showToast('Сначала войдите в аккаунт', true); return; }
+    if (!window.currentUser) { 
+        window.openModal('auth-modal'); 
+        window.showToast(window.t('auth_hint') ? "Сначала войдите в аккаунт" : "Log in first", true); 
+        return; 
+    }
     const isPro = window.currentUserData && window.currentUserData.is_pro;
     const maxItems = isPro ? 50 : 10;
-    const addBtn = document.getElementById('btn-header-add'); const mobBtn = document.getElementById('btn-mobile-add');
-    if(addBtn) addBtn.style.opacity = '0.5'; if(mobBtn) mobBtn.style.opacity = '0.5';
+    const addBtn = document.getElementById('btn-header-add'); 
+    const mobBtn = document.getElementById('btn-mobile-add');
+    
+    if(addBtn) addBtn.style.opacity = '0.5'; 
+    if(mobBtn) mobBtn.style.opacity = '0.5';
 
     try {
         const { count, error } = await supabase.from('items').select('*', { count: 'exact', head: true }).eq('user_id', window.currentUser.id);
         if (error) throw error;
         if (count >= maxItems) {
-            if (!isPro) { window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); setTimeout(() => window.openModal('crypto-modal'), 1500); } 
-            else { window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); } return;
+            if (!isPro) { 
+                window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
+                setTimeout(() => window.openModal('crypto-modal'), 1500); 
+            } 
+            else { 
+                window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); 
+            } 
+            return;
         }
         
-        // === НОВЫЙ БЛОК: Автозаполнение телефона из профиля ===
+        // Автозаполнение телефона из профиля
         const phoneInput = document.getElementById('item-phone');
         if (phoneInput && window.currentUser.user_metadata?.phone) {
             phoneInput.value = window.currentUser.user_metadata.phone;
         }
-        // ========================================================
 
         window.openModal('add-modal');
-    } catch (err) { window.showToast("Ошибка проверки лимитов", true); } 
-    finally { if(addBtn) addBtn.style.opacity = '1'; if(mobBtn) mobBtn.style.opacity = '1'; }
+    } catch (err) { 
+        window.showToast("Ошибка проверки лимитов", true); 
+    } 
+    finally { 
+        if(addBtn) addBtn.style.opacity = '1'; 
+        if(mobBtn) mobBtn.style.opacity = '1'; 
+    }
 };
 
 window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if(el) el.classList.toggle('translate-x-full'); };
