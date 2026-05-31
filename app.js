@@ -436,157 +436,145 @@ window.currentSellerId = null;
 window.sellerReviews = [];
 window.currentReviewRating = 5;
 
-window.switchSellerTab = (tabName) => {
-    const itemsGrid = document.getElementById('seller-items-grid');
-    const reviewsList = document.getElementById('seller-reviews-list');
-    const emptyState = document.getElementById('seller-empty');
-    const searchInput = document.getElementById('seller-search-container');
-    const tabItems = document.getElementById('tab-seller-items');
-    const tabReviews = document.getElementById('tab-seller-reviews');
-
-    // Сбрасываем стили
-    if(tabItems) tabItems.className = 'profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 cursor-pointer shrink-0 transition-colors';
-    if(tabReviews) tabReviews.className = 'profile-tab py-3.5 px-4 border-b-2 border-transparent text-stone-400 cursor-pointer shrink-0 transition-colors';
-
-    if (tabName === 'items') {
-        if(tabItems) tabItems.classList.add('active', 'border-brand-600', 'text-brand-600');
-        if(reviewsList) { reviewsList.style.display = 'none'; reviewsList.classList.add('hidden'); }
-        if(searchInput) { searchInput.style.display = 'block'; searchInput.classList.remove('hidden'); }
-        
-        if (itemsGrid && itemsGrid.innerHTML.trim() === '') {
-            if(itemsGrid) { itemsGrid.style.display = 'none'; itemsGrid.classList.add('hidden'); }
-            if(emptyState) { emptyState.style.display = 'flex'; emptyState.classList.remove('hidden'); }
-        } else {
-            if(itemsGrid) { itemsGrid.style.display = 'grid'; itemsGrid.classList.remove('hidden'); }
-            if(emptyState) { emptyState.style.display = 'none'; emptyState.classList.add('hidden'); }
-        }
-    } else if (tabName === 'reviews') {
-        if(tabReviews) tabReviews.classList.add('active', 'border-brand-600', 'text-brand-600');
-        
-        if(itemsGrid) { itemsGrid.style.display = 'none'; itemsGrid.classList.add('hidden'); }
-        if(emptyState) { emptyState.style.display = 'none'; emptyState.classList.add('hidden'); }
-        if(searchInput) { searchInput.style.display = 'none'; searchInput.classList.add('hidden'); }
-        
-        // Жестко показываем отзывы
-        if(reviewsList) { reviewsList.classList.remove('hidden'); reviewsList.style.display = 'flex'; }
-    }
-};
-
-window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
-    window.currentSellerId = sellerId;
+window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
+    if (!userId) return; 
+    window.currentSellerId = userId;
+    window.openModal('seller-modal');
     
-    // 1. Устанавливаем данные в шапку (Имя и Фото)
+    // Вставляем Имя и Аватар
     const nameEl = document.getElementById('seller-name');
-    const avatarContainer = document.getElementById('seller-avatar-container');
+    const avatarCont = document.getElementById('seller-avatar-container');
     
     if (nameEl) nameEl.innerText = sellerName || 'Продавец';
-    if (avatarContainer) {
+    if (avatarCont) {
         if (sellerAvatar) {
-            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover">`;
+            avatarCont.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover rounded-full">`;
         } else {
-            avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
+            avatarCont.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
         }
     }
+
+    const grid = document.getElementById('seller-items-grid'); 
+    const listRev = document.getElementById('seller-reviews-list');
+    const empty = document.getElementById('seller-empty'); 
+    const loader = document.getElementById('seller-loading');
     
-    window.openModal('seller-modal');
-    window.switchSellerTab('items'); 
+    if(grid) grid.style.display = 'none'; 
+    if(listRev) { listRev.style.display = 'none'; listRev.classList.add('hidden'); }
+    if(empty) empty.style.display = 'none'; 
+    if(loader) loader.style.display = 'flex';
 
-    // 2. Загружаем товары
     try {
-        document.getElementById('seller-loading').style.display = 'flex';
-        document.getElementById('seller-items-grid').style.display = 'none';
-        document.getElementById('seller-empty').style.display = 'none';
+        // Параллельно грузим товары и отзывы из БД
+        const [itemsRes, reviewsRes] = await Promise.all([
+            supabase.from('items').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+            supabase.from('reviews').select('*').eq('seller_id', userId).order('created_at', { ascending: false })
+        ]);
 
-        const { data: items, error } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', sellerId)
-            .order('created_at', { ascending: false });
+        if (itemsRes.error) throw itemsRes.error;
+        
+        const items = itemsRes.data || [];
+        const reviews = reviewsRes.data || [];
+        if(loader) loader.style.display = 'none';
 
-        if (error) throw error;
-
-        const grid = document.getElementById('seller-items-grid');
-        const stats = document.getElementById('seller-stats');
-        if (stats) stats.innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items ? items.length : 0}`;
-
-        if (items && items.length > 0) {
-            grid.innerHTML = items.map(item => window.createCardHtml(item)).join('');
-            if (document.getElementById('tab-seller-items').classList.contains('active')) {
+        // ОТРИСОВКА ТОВАРОВ
+        document.getElementById('seller-stats').innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items.length}`;
+        if (items.length > 0) {
+            if(grid) {
+                grid.innerHTML = items.map(i => window.createCardHtml(i)).join('');
                 grid.style.display = 'grid';
-                grid.classList.remove('hidden');
             }
         } else {
-            if (document.getElementById('tab-seller-items').classList.contains('active')) {
-                document.getElementById('seller-empty').style.display = 'flex';
-                document.getElementById('seller-empty').classList.remove('hidden');
-            }
+            if(empty) empty.style.display = 'flex';
         }
-    } catch (e) {
-        console.error("Ошибка загрузки товаров:", e);
-    } finally {
-        document.getElementById('seller-loading').style.display = 'none';
-    }
 
-    // 3. Загружаем отзывы
-    try {
-        const { data: reviews, error: reviewsError } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('seller_id', sellerId)
-            .order('created_at', { ascending: false });
+        // ОТРИСОВКА ОТЗЫВОВ И РЕЙТИНГА
+        const ratingEl = document.getElementById('seller-rating-container');
+        const tabRevCount = document.getElementById('seller-reviews-count');
+        if(tabRevCount) tabRevCount.innerText = reviews.length > 0 ? `(${reviews.length})` : '';
 
-        if (reviewsError) throw reviewsError;
-
-        const reviewsList = document.getElementById('seller-reviews-list');
-        const reviewsCountEl = document.getElementById('seller-reviews-count');
-        const ratingContainer = document.getElementById('seller-rating-container');
-
-        if (reviews && reviews.length > 0) {
-            const totalStars = reviews.reduce((sum, r) => sum + (r.rating || 5), 0);
-            const avgRating = (totalStars / reviews.length).toFixed(1);
-            
-            if (reviewsCountEl) reviewsCountEl.innerText = `(${reviews.length})`;
-            
-            if (ratingContainer) {
-                ratingContainer.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-stone-200">${avgRating}</span> <span class="text-stone-400">(${reviews.length})</span>`;
-                ratingContainer.style.display = 'flex';
-                ratingContainer.classList.remove('hidden');
+        if (reviews.length > 0) {
+            const avg = (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1);
+            if(ratingEl) {
+                ratingEl.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span class="font-black text-stone-800 dark:text-white">${avg}</span> <span class="text-stone-400 font-medium ml-1">(${reviews.length})</span>`;
+                ratingEl.classList.remove('hidden');
+                ratingEl.style.display = 'flex';
             }
-
-            if (reviewsList) {
-                reviewsList.innerHTML = reviews.map(r => `
-                    <div class="bg-white dark:bg-stone-800/50 p-4 rounded-2xl border border-stone-100 dark:border-stone-700 shadow-sm w-full">
+            if(listRev) {
+                listRev.innerHTML = reviews.map(r => `
+                    <div class="bg-stone-50 dark:bg-stone-800/50 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-700 w-full mb-3">
                         <div class="flex justify-between items-start mb-2">
-                            <div class="font-bold text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
+                            <div class="font-black text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
                             <div class="text-amber-500 text-xs">
-                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
+                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300"></i>').join('')}
                             </div>
                         </div>
-                        <div class="text-sm text-stone-600 dark:text-stone-300">${r.comment || ''}</div>
-                        <div class="text-[10px] text-stone-400 mt-2">${new Date(r.created_at).toLocaleDateString()}</div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300 mt-2">${r.comment || ''}</div>
                     </div>
                 `).join('');
             }
         } else {
-            if (reviewsCountEl) reviewsCountEl.innerText = '(0)';
-            if (ratingContainer) { ratingContainer.style.display = 'none'; ratingContainer.classList.add('hidden'); }
-            if (reviewsList) reviewsList.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold w-full"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
+            if(ratingEl) { ratingEl.classList.add('hidden'); ratingEl.style.display = 'none'; }
+            if(listRev) {
+                listRev.innerHTML = `<div class="text-center text-stone-400 py-10 font-bold w-full"><i class="fa-regular fa-comment-dots text-4xl mb-3 opacity-50 block"></i>Отзывов пока нет.</div>`;
+            }
         }
-    } catch (e) {
-        console.error("Ошибка загрузки отзывов:", e);
-    }
 
-    // 4. Кнопка "Оставить отзыв"
-    const btnLeaveReview = document.getElementById('btn-leave-review');
-    if (btnLeaveReview) {
-        if (!window.currentUser || window.currentUser.id === sellerId) {
-            btnLeaveReview.classList.add('hidden');
-            btnLeaveReview.style.display = 'none';
-        } else {
-            btnLeaveReview.classList.remove('hidden');
-            btnLeaveReview.style.display = 'block';
-            btnLeaveReview.onclick = () => window.openModal('review-modal');
+        // Управление вкладками
+        window.switchSellerTab('items'); // По умолчанию открываем товары
+
+        // Кнопка Оставить отзыв
+        const btnLeaveRev = document.getElementById('btn-leave-review');
+        if (btnLeaveRev) {
+            if (window.currentUser && window.currentUser.id !== userId) {
+                btnLeaveRev.classList.remove('hidden');
+                btnLeaveRev.onclick = () => window.openModal('review-modal');
+            } else {
+                btnLeaveRev.classList.add('hidden');
+            }
         }
+
+    } catch (e) { 
+        console.error("Ошибка профиля:", e);
+        if(loader) loader.style.display = 'none'; 
+        if(empty) empty.style.display = 'flex'; 
+    }  
+};
+
+// Функция переключения вкладок продавца
+window.switchSellerTab = (tabName) => {
+    const grid = document.getElementById('seller-items-grid');
+    const listRev = document.getElementById('seller-reviews-list');
+    const empty = document.getElementById('seller-empty');
+    const search = document.getElementById('seller-search-container');
+    
+    const tabItems = document.getElementById('tab-seller-items');
+    const tabReviews = document.getElementById('tab-seller-reviews');
+
+    if (tabName === 'items') {
+        if(tabItems) tabItems.classList.add('text-brand-600', 'border-brand-600');
+        if(tabReviews) tabReviews.classList.remove('text-brand-600', 'border-brand-600');
+        
+        if(listRev) { listRev.style.display = 'none'; listRev.classList.add('hidden'); }
+        if(search) { search.style.display = 'block'; search.classList.remove('hidden'); }
+        
+        if (grid && grid.innerHTML.trim() !== '') {
+            grid.style.display = 'grid'; grid.classList.remove('hidden');
+            if(empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
+        } else {
+            if(grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
+            if(empty) { empty.style.display = 'flex'; empty.classList.remove('hidden'); }
+        }
+    } else {
+        if(tabReviews) tabReviews.classList.add('text-brand-600', 'border-brand-600');
+        if(tabItems) tabItems.classList.remove('text-brand-600', 'border-brand-600');
+        
+        if(grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
+        if(empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
+        if(search) { search.style.display = 'none'; search.classList.add('hidden'); }
+        
+        // ЖЕСТКОЕ ВКЛЮЧЕНИЕ ОТЗЫВОВ
+        if(listRev) { listRev.classList.remove('hidden'); listRev.style.display = 'flex'; }
     }
 };
 
@@ -1093,34 +1081,28 @@ window.checkAuthAndOpenAddModal = async () => {
         return; 
     }
     
-    // Безопасное получение PRO-статуса
-    const isPro = window.currentUserData ? window.currentUserData.is_pro : false;
-    const maxItems = isPro ? 50 : 10;
     const addBtn = document.getElementById('btn-header-add'); 
-    
     if(addBtn) addBtn.style.opacity = '0.5'; 
 
     try {
+        // Безопасное чтение PRO-статуса
+        const isPro = (window.currentUserData && window.currentUserData.is_pro) ? true : false;
+        const maxItems = isPro ? 50 : 10;
+        
         const { count, error } = await supabase
             .from('items')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', window.currentUser.id);
             
-        if (error) {
-            console.error("Ошибка проверки БД:", error);
-            throw error;
-        }
+        if (error) throw error;
         
         if (count >= maxItems) {
-            if (!isPro) { 
-                window.showToast(`Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
-                setTimeout(() => window.openModal('crypto-modal'), 1500); 
-            } else { 
-                window.showToast(`Достигнут VIP-лимит: ${maxItems} объявлений.`, true); 
-            } 
+            window.showToast(isPro ? `Достигнут VIP-лимит: ${maxItems} объявлений.` : `Лимит: ${maxItems} объявлений. Подключите PRO!`, true); 
+            if (!isPro) setTimeout(() => window.openModal('crypto-modal'), 1500);
             return;
         }
         
+        // Автоподстановка телефона
         const phoneInput = document.getElementById('item-phone');
         if (phoneInput && window.currentUser.user_metadata && window.currentUser.user_metadata.phone) {
             phoneInput.value = window.currentUser.user_metadata.phone;
@@ -1128,8 +1110,9 @@ window.checkAuthAndOpenAddModal = async () => {
         
         window.openModal('add-modal');
     } catch (err) { 
-        console.error("Критическая ошибка открытия формы:", err);
-        window.showToast("Произошла ошибка. Попробуйте позже.", true); 
+        console.error("Ошибка при открытии формы:", err);
+        // Fallback: если БД тупит, всё равно разрешаем открыть форму
+        window.openModal('add-modal');
     } finally { 
         if(addBtn) addBtn.style.opacity = '1'; 
     }
@@ -2405,29 +2388,13 @@ window.openItemDetails = async (id) => {
             });
         }
         
-        // === ЛОГИКА КНОПКИ ПРОДАВЦА ===
+        // === ЛОГИКА КНОПКИ ПРОДАВЦА (внутри openItemDetails) ===
         const sellerBtn = document.getElementById('modal-seller-btn');
         if (sellerBtn) {
-            // Заполняем данные визуально в самой карточке
-            const authorNameEl = document.getElementById('modal-author');
-            const authorAvatarEl = document.getElementById('modal-author-avatar');
-            
-            const sName = item.author_name || 'Продавец';
-            const sAvatar = item.author_avatar;
-    
-            if (authorNameEl) authorNameEl.innerText = sName;
-            if (authorAvatarEl) {
-                if (sAvatar) {
-                    authorAvatarEl.innerHTML = `<img src="${sAvatar}" class="w-full h-full object-cover">`;
-                } else {
-                    authorAvatarEl.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
-                }
-            }
-    
-            // При клике передаем эти же данные в профиль продавца!
             sellerBtn.onclick = () => {
                 window.closeModal('item-modal');
-                window.openSellerProfile(item.user_id, sName, sAvatar);
+                // Обязательно передаем все 3 параметра!
+                window.openSellerProfile(item.userId || item.user_id, item.authorName || item.author_name, item.authorAvatar || item.author_avatar);
             };
         }
         
@@ -2973,7 +2940,56 @@ window.handleAuthChange = async (session) => {
 };
 
 supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
-supabase.auth.onAuthStateChange((_e, s) => { if(window.authInitialized) window.handleAuthChange(s); });
+
+// === ОТСЛЕЖИВАНИЕ СТАТУСА АВТОРИЗАЦИИ ===
+supabase.auth.onAuthStateChange((event, session) => {
+    const loginBtn = document.getElementById('nav-login-btn');
+    const userControls = document.getElementById('nav-user-controls');
+    const mobLogin = document.getElementById('mob-nav-login');
+    const mobControls = document.getElementById('mob-user-controls');
+
+    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        window.currentUser = session ? session.user : null;
+        window.loadUserProfile();
+
+        // ЖЕСТКОЕ СОКРЫТИЕ (побеждаем Tailwind lg:flex)
+        if (loginBtn) {
+            loginBtn.style.display = 'none'; 
+            loginBtn.classList.remove('lg:flex'); 
+        }
+        if (mobLogin) mobLogin.style.display = 'none';
+
+        if (userControls) {
+            userControls.classList.remove('hidden');
+            userControls.classList.add('flex');
+        }
+        if (mobControls) {
+            mobControls.classList.remove('hidden');
+            mobControls.classList.add('flex');
+        }
+        window.closeModal('auth-modal');
+    } else if (event === 'SIGNED_OUT') {
+        window.currentUser = null;
+        window.currentUserData = null;
+        if(window.userFavorites) window.userFavorites.clear();
+        
+        // ВОЗВРАЩАЕМ КНОПКУ ВОЙТИ
+        if (loginBtn) {
+            loginBtn.style.display = ''; 
+            loginBtn.classList.add('lg:flex'); 
+        }
+        if (mobLogin) mobLogin.style.display = '';
+
+        if (userControls) {
+            userControls.classList.add('hidden');
+            userControls.classList.remove('flex');
+        }
+        if (mobControls) {
+            mobControls.classList.add('hidden');
+            mobControls.classList.remove('flex');
+        }
+    }
+});
 
 // --- БОКОВОЙ АККОРДЕОН КАТЕГОРИЙ ---
 window.renderSidebarCategories = () => {
