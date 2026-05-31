@@ -2158,7 +2158,24 @@ window.navigateItem = (direction, e) => {
 };
 
 window.openItemDetails = async (id) => {
+    // 1. СОХРАНЯЕМ ID ТОВАРА ДЛЯ КНОПКИ "СКЛАД" И "ПОДЕЛИТЬСЯ"
+    window.currentOpenedItemId = id;
+    
+    // 2. СРАЗУ КРАСИМ КНОПКУ "СКЛАД", ЕСЛИ ТОВАР УЖЕ СОХРАНЕН
+    const favBtn = document.getElementById('modal-fav-btn');
+    if (favBtn) {
+        const isSaved = window.currentUserData && window.currentUserData.saved_items && window.currentUserData.saved_items.includes(id);
+        if (isSaved) {
+            favBtn.classList.add('text-brand-600');
+            favBtn.classList.remove('text-stone-400');
+        } else {
+            favBtn.classList.add('text-stone-400');
+            favBtn.classList.remove('text-brand-600');
+        }
+    }
+
     try {
+        // ... (дальше идет твой стандартный код загрузки карточки товара)
         let item = window.loadedItems.find(i => i.id === id);
         if (!item) {
             const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
