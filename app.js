@@ -546,15 +546,29 @@ window.submitReview = async (event) => {
 };
 
 // ПОЛНОСТЬЮ ПЕРЕЗАПИСЫВАЕМ ФУНКЦИЮ ОТКРЫТИЯ ПРОФИЛЯ ПРОДАВЦА
-window.openSellerProfile = async (sellerId, sellerName) => {
+window.openSellerProfile = async (sellerId, sellerName, sellerAvatar) => {
     window.currentSellerId = sellerId;
     
+    // 1. Вставляем имя продавца
     const nameEl = document.getElementById('seller-name');
-    if(nameEl) nameEl.innerText = sellerName || 'Продавец';
+    if (nameEl) {
+        nameEl.innerText = sellerName || 'Продавец';
+    }
+    
+    // 2. Вставляем аватар продавца
+    const avatarContainer = document.getElementById('seller-avatar-container');
+    if (avatarContainer) {
+        if (sellerAvatar) {
+            // Если есть картинка, вставляем img
+            avatarContainer.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover">`;
+        } else {
+            // Если нет, возвращаем иконку
+            avatarContainer.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
+        }
+    }
     
     window.openModal('seller-modal');
-    window.switchSellerTab('items'); // По умолчанию открываем товары
-
+    window.switchSellerTab('items');
     // 1. ЗАГРУЗКА ТОВАРОВ ПРОДАВЦА
     try {
         document.getElementById('seller-loading').style.display = 'flex';
@@ -2415,8 +2429,11 @@ window.openItemDetails = async (id) => {
         
         const sellerBtn = document.getElementById('modal-seller-btn');
         if (sellerBtn) {
-            // Открываем профиль поверх карточки
-            sellerBtn.onclick = () => { window.openSellerProfile(item.userId); };
+            sellerBtn.onclick = () => {
+                window.closeModal('item-modal');
+                // Передаем ID, Имя и Аватар
+                window.openSellerProfile(item.user_id, item.author_name, item.author_avatar);
+            };
         }
         
         const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
