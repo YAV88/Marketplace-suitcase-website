@@ -1064,8 +1064,13 @@ setAutoTheme();
 window.toggleDarkMode = () => { 
     const html = document.documentElement;
     const newIsDark = !html.classList.contains('dark');
+    
+    // 1. Мгновенно переключаем класс темы (теперь браузер не будет спотыкаться)
+    html.classList.toggle('dark', newIsDark); 
+    localStorage.setItem('theme', newIsDark ? 'dark' : 'light'); 
+    
+    // 2. Отдельно запускаем красивую анимацию самой кнопки (Луна/Солнце)
     updateThemeIcons(newIsDark);
-    setTimeout(() => { html.classList.toggle('dark', newIsDark); localStorage.setItem('theme', newIsDark ? 'dark' : 'light'); }, 50);
 };
 
 window.goHome = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.resetFilters(), 300); };
