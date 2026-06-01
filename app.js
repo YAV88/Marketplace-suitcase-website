@@ -2077,7 +2077,7 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
     
     if (window.renderSidebarCategories) window.renderSidebarCategories();
     window.fetchItems(); 
-};
+}};
 
 window.toggleUrgentFilter = () => {
     window.showUrgentOnly = !window.showUrgentOnly; window.displayedCount = 12; 
@@ -3003,8 +3003,8 @@ window.submitNewItem = async (event) => {
             phone: phoneEl,
             description: descEl,
             condition: conditionEl,
-            payment: paymentArr,    // Было payment_methods
-            delivery: deliveryArr,  // Было delivery_methods
+            payment: paymentArr,  
+            delivery: deliveryArr,  
             images: finalImages,
             image_url: finalImages[0] || '', 
             user_id: window.currentUser.id,
@@ -3974,4 +3974,4 @@ window.navigatePhoto = (direction, event) => {
         const itemWidth = carousel.clientWidth;
         carousel.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
     }
-};
+}
