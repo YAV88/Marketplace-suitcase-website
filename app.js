@@ -51,7 +51,16 @@ window.i18n = {
         'rep_spam': 'Спам / Дубликаты', 'rep_toxic': 'Оскорбления', 'rep_illegal': 'Запрещенные вещи', 'rep_other': 'Другое',
         'report_ph': 'Опишите проблему подробнее (необязательно)...', 'btn_send_report': 'Отправить жалобу',
         'review_title': 'Оцените продавца', 'review_sub': 'Ваш отзыв поможет другим покупателям!', 'review_ph': 'Напишите пару слов о сделке...',
-        'btn_send_review': 'Отправить отзыв'
+        'btn_send_review': 'Отправить отзыв',
+        'pro_feat1_title': 'Бесплатные поднятия',
+        'pro_feat1_desc': 'Каждый день 1 поднятие в ТОП',
+        'pro_feat2_title': 'VIP-бейдж',
+        'pro_feat2_desc': 'Выделяет вас среди других продавцов',
+        'pro_price_label': 'Стоимость на 30 дней:',
+        'pro_network_label': 'Выберите сеть оплаты:',
+        'pro_network_hint': 'Комиссии сети BEP-20 самые низкие.',
+        'pro_secure_label': 'Безопасная оплата криптовалютой',
+        'pro_pay_btn': 'ОПЛАТИТЬ',
     },
     en: {
         'page_title': 'SVALKA — Classifieds in Serbia', 'og_desc': 'Great finds and quick sales in Serbia.',
@@ -108,7 +117,16 @@ window.i18n = {
         'Хобби': 'Hobby', 'Спорт': 'Sport', 'Туризм': 'Tourism', 'Туризм и палатки': 'Tourism & Tents', 'Книги': 'Books', 'Музыка': 'Music', 'Музыкальные инструменты': 'Musical Instruments', 'Игры': 'Games', 'Настольные игры': 'Board Games', 'Коллекции': 'Collections', 'Коллекционирование': 'Collecting',
         'Животные': 'Pets', 'Собаки': 'Dogs', 'Кошки': 'Cats', 'Птицы': 'Birds', 'Аквариум': 'Aquarium', 'Аквариумистика': 'Aquaristics', 'Товары': 'Goods', 'Зоотовары': 'Pet Supplies', 'Другие': 'Others',
         'Жилье': 'Real Estate', 'Аренда': 'Rent', 'Посуточно': 'Daily', 'Аренда (посуточно)': 'Rent (Daily)', 'Покупка': 'Purchase', 'Продажа': 'Sale', 'Коммерция': 'Commerce', 'Коммерческая': 'Commercial', 'Дачи': 'Cottages', 'Дома и дачи': 'Houses & Cottages',
-        'Другое': 'Other', 'Билеты': 'Tickets', 'Продукты': 'Groceries', 'Продукты питания': 'Food', 'Разное': 'Miscellaneous', 'Бесплатно': 'Free', 'Отдам даром': 'Give away', 'Бюро': 'Bureau', 'Бюро находок': 'Lost & Found'
+        'Другое': 'Other', 'Билеты': 'Tickets', 'Продукты': 'Groceries', 'Продукты питания': 'Food', 'Разное': 'Miscellaneous', 'Бесплатно': 'Free', 'Отдам даром': 'Give away', 'Бюро': 'Bureau', 'Бюро находок': 'Lost & Found',
+        'pro_feat1_title': 'Free Bumps',
+        'pro_feat1_desc': '1 free top bump every day',
+        'pro_feat2_title': 'VIP Badge',
+        'pro_feat2_desc': 'Makes you stand out from other sellers',
+        'pro_price_label': 'Cost for 30 days:',
+        'pro_network_label': 'Select payment network:',
+        'pro_network_hint': 'BEP-20 network fees are the lowest.',
+        'pro_secure_label': 'Secure cryptocurrency payment',
+        'pro_pay_btn': 'PAY',
     },
     sr: {
         'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.',
@@ -165,7 +183,16 @@ window.i18n = {
         'Хобби': 'Hobi', 'Спорт': 'Sport', 'Туризм': 'Turizam', 'Туризм и палатки': 'Turizam i šatori', 'Книги': 'Knjige', 'Музыка': 'Muzika', 'Музыкальные инструменты': 'Muzički instrumenti', 'Игры': 'Igre', 'Настольные игры': 'Društvene igre', 'Коллекции': 'Kolekcije', 'Коллекционирование': 'Kolekcionarstvo',
         'Животные': 'Životinje', 'Собаки': 'Psi', 'Кошки': 'Mačke', 'Птицы': 'Ptice', 'Аквариум': 'Akvarijum', 'Аквариумистика': 'Akvaristika', 'Товары': 'Roba', 'Зоотовары': 'Oprema za ljubimce', 'Другие': 'Ostali',
         'Жилье': 'Nekretnine', 'Аренда': 'Izdavanje', 'Посуточно': 'Na dan', 'Аренда (посуточно)': 'Izdavanje (na dan)', 'Покупка': 'Kupovina', 'Продажа': 'Prodaja', 'Коммерция': 'Komercijala', 'Коммерческая': 'Komercijalni objekti', 'Дачи': 'Vikendice', 'Дома и дачи': 'Kuće i vikendice',
-        'Другое': 'Ostalo', 'Билеты': 'Ulaznice', 'Продукты': 'Hrana', 'Продукты питания': 'Prehrambeni proizvodi', 'Разное': 'Razno', 'Бесплатно': 'Besplatno', 'Отдам даром': 'Poklanjam', 'Бюро': 'Biro', 'Бюро находок': 'Izgubljeno - nađeno'
+        'Другое': 'Ostalo', 'Билеты': 'Ulaznice', 'Продукты': 'Hrana', 'Продукты питания': 'Prehrambeni proizvodi', 'Разное': 'Razno', 'Бесплатно': 'Besplatno', 'Отдам даром': 'Poklanjam', 'Бюро': 'Biro', 'Бюро находок': 'Izgubljeno - nađeno',
+        'pro_feat1_title': 'Besplatna podizanja',
+        'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh',
+        'pro_feat2_title': 'VIP bedž',
+        'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca',
+        'pro_price_label': 'Cena za 30 dana:',
+        'pro_network_label': 'Izaberite mrežu za plaćanje:',
+        'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
+        'pro_secure_label': 'Sigurno plaćanje kriptovalutom',
+        'pro_pay_btn': 'PLATI',
     }
 };
 
