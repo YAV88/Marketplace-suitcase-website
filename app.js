@@ -599,7 +599,7 @@ window.submitReview = async (event) => {
     if (!window.currentUser) return window.showToast("Сначала войдите в аккаунт", true);
 
     const commentEl = document.getElementById('review-comment');
-    const comment = commentEl ? commentEl.value : '';
+    const comment = commentEl ? commentEl.value.trim() : '';
     const rating = window.currentReviewRating || 5; 
     const sellerId = window.currentSellerId;
 
@@ -609,34 +609,45 @@ window.submitReview = async (event) => {
         const btn = document.getElementById('btn-submit-review');
         if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
 
-        const { error } = await supabase.from('reviews').insert([{
+        // ИСПРАВЛЕННЫЕ КОЛОНКИ: Строго по твоей структуре БД (id и created_at сгенерирует сам Supabase)
+        const reviewData = {
             seller_id: sellerId,
-            buyer_id: window.currentUser.id,
-            buyer_name: window.currentUser.user_metadata?.name || 'Покупатель',
+            reviewer_id: window.currentUser.id,
             rating: rating,
             comment: comment
-        }]);
+        };
 
-        if (error) throw error;
+        const { error } = await supabase.from('reviews').insert([reviewData]);
+
+        if (error) {
+            console.error("Supabase Error:", error);
+            throw new Error("Не удалось записать отзыв в базу данных");
+        }
 
         window.showToast("Отзыв успешно опубликован!");
         window.closeModal('review-modal');
         if(commentEl) commentEl.value = '';
         if(typeof window.updateStarSelection === 'function') window.updateStarSelection(5);
 
-        // ПЕРЕЗАГРУЖАЕМ ПРОФИЛЬ И ОТКРЫВАЕМ ВКЛАДКУ ОТЗЫВОВ
-        const sellerName = document.getElementById('seller-name')?.innerText;
-        const sellerAvatar = document.querySelector('#seller-avatar-container img')?.src;
+        // МГНОВЕННОЕ ОБНОВЛЕНИЕ ПРОФИЛЯ ПРОДАВЦА
+        const sellerNameEl = document.getElementById('seller-name');
+        const sellerAvatarImg = document.querySelector('#seller-avatar-container img');
         
-        await window.openSellerProfile(sellerId, sellerName, sellerAvatar);
-        window.switchSellerTab('reviews');
+        const sName = sellerNameEl ? sellerNameEl.innerText : 'Продавец';
+        const sAvatar = sellerAvatarImg ? sellerAvatarImg.src : null;
+        
+        await window.openSellerProfile(sellerId, sName, sAvatar);
+        window.switchSellerTab('reviews'); // Сразу переключаем на вкладку с отзывами
 
     } catch (error) {
         console.error("Ошибка при отправке отзыва:", error);
-        window.showToast("Ошибка при отправке отзыва", true);
+        window.showToast(error.message, true);
     } finally {
         const btn = document.getElementById('btn-submit-review');
-        if(btn) { btn.disabled = false; btn.innerText = 'Отправить отзыв'; }
+        if(btn) { 
+            btn.disabled = false; 
+            btn.innerText = (typeof window.t === 'function') ? window.t('btn_send_review') : 'Отправить отзыв'; 
+        }
     }
 };
 
