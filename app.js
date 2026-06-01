@@ -911,7 +911,7 @@ window.openChatListModal = async (silentLoad = false) => {
     }
 
     try {
-        // 1. Грузим все данные чатов ОДНИМ запросом из нашей новой View!
+        // Вот он, тот самый быстрый запрос к нашей новой SQL View!
         const { data: chats, error } = await supabase
             .from('user_chats_view')
             .select('*')
@@ -927,7 +927,7 @@ window.openChatListModal = async (silentLoad = false) => {
 
         const chatIds = chats.map(c => c.chat_id);
 
-        // 2. Быстро получаем количество непрочитанных сообщений
+        // Быстро получаем количество непрочитанных сообщений
         const { data: unreadData } = await supabase
             .from('messages')
             .select('chat_id')
@@ -940,7 +940,7 @@ window.openChatListModal = async (silentLoad = false) => {
             unreadData.forEach(m => unreadMap[m.chat_id] = (unreadMap[m.chat_id] || 0) + 1);
         }
 
-        // 3. Формируем HTML
+        // Формируем HTML список чатов
         let html = '';
         chats.forEach(chat => {
             const isSeller = chat.seller_id === window.currentUser.id;
