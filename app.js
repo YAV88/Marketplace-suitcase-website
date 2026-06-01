@@ -1082,12 +1082,25 @@ window.toggleDarkMode = () => {
     const html = document.documentElement;
     const newIsDark = !html.classList.contains('dark');
     
-    // 1. Мгновенно переключаем класс темы (теперь браузер не будет спотыкаться)
+    // 1. ЖЕСТКО БЛОКИРУЕМ ВСЕ АНИМАЦИИ НА СТРАНИЦЕ
+    html.classList.add('disable-transitions');
+    
+    // 2. Мгновенно меняем тему
     html.classList.toggle('dark', newIsDark); 
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light'); 
     
-    // 2. Отдельно запускаем красивую анимацию самой кнопки (Луна/Солнце)
-    updateThemeIcons(newIsDark);
+    // Обновляем иконки (Луна/Солнце)
+    if (typeof window.updateThemeIcons === 'function') {
+        window.updateThemeIcons(newIsDark);
+    }
+    
+    // 3. Магия: заставляем браузер отрисовать кадр без анимаций, 
+    // и только потом возвращаем плавность (через двойной requestAnimationFrame)
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            html.classList.remove('disable-transitions');
+        });
+    });
 };
 
 window.goHome = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.resetFilters(), 300); };
