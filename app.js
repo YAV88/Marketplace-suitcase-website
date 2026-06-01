@@ -472,6 +472,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         ]);
 
         if (itemsRes.error) throw itemsRes.error;
+        if (reviewsRes.error) throw reviewsRes.error;
         
         const items = itemsRes.data || [];
         const reviews = reviewsRes.data || [];
@@ -488,6 +489,25 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
             if(empty) empty.style.display = 'flex';
         }
 
+        // --- НОВАЯ ЛОГИКА: ПОДТЯГИВАЕМ ИМЕНА И АВАТАРЫ ПОКУПАТЕЛЕЙ ---
+        const reviewerIds = [...new Set(reviews.map(r => r.reviewer_id).filter(Boolean))];
+        const usersMap = {};
+        
+        if (reviewerIds.length > 0) {
+            // Ищем данные пользователей через их объявления (таблица items)
+            const { data: usersData } = await supabase
+                .from('items')
+                .select('user_id, author_name, author_avatar')
+                .in('user_id', reviewerIds);
+                
+            if (usersData) {
+                usersData.forEach(u => {
+                    usersMap[u.user_id] = { name: u.author_name, avatar: u.author_avatar };
+                });
+            }
+        }
+        // -----------------------------------------------------------
+
         // ОТРИСОВКА ОТЗЫВОВ И РЕЙТИНГА
         const ratingEl = document.getElementById('seller-rating-container');
         const tabRevCount = document.getElementById('seller-reviews-count');
@@ -501,17 +521,29 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
                 ratingEl.style.display = 'flex';
             }
             if(listRev) {
-                listRev.innerHTML = reviews.map(r => `
+                listRev.innerHTML = reviews.map(r => {
+                    // Достаем имя и аватар из нашего словаря
+                    const revInfo = usersMap[r.reviewer_id] || {};
+                    const revName = revInfo.name || 'Покупатель';
+                    const revAvatar = revInfo.avatar 
+                        ? `<img src="${revInfo.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0 shadow-sm border border-stone-200 dark:border-stone-700">` 
+                        : `<div class="w-6 h-6 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-[10px] text-stone-500 shrink-0"><i class="fa-solid fa-user"></i></div>`;
+
+                    return `
                     <div class="bg-stone-50 dark:bg-stone-800/50 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-700 w-full mb-3">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="font-black text-sm text-stone-900 dark:text-white">${r.buyer_name || 'Покупатель'}</div>
-                            <div class="text-amber-500 text-xs">
-                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300"></i>').join('')}
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                ${revAvatar}
+                                <div class="font-black text-sm text-stone-900 dark:text-white truncate">${revName}</div>
+                            </div>
+                            <div class="text-amber-500 text-xs shrink-0 pt-0.5">
+                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
                             </div>
                         </div>
                         <div class="text-sm text-stone-700 dark:text-stone-300 mt-2">${r.comment || ''}</div>
+                        <div class="text-[10px] text-stone-400 mt-2">${new Date(r.created_at).toLocaleDateString()}</div>
                     </div>
-                `).join('');
+                `}).join('');
             }
         } else {
             if(ratingEl) { ratingEl.classList.add('hidden'); ratingEl.style.display = 'none'; }
@@ -528,9 +560,11 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         if (btnLeaveRev) {
             if (window.currentUser && window.currentUser.id !== userId) {
                 btnLeaveRev.classList.remove('hidden');
+                btnLeaveRev.style.display = 'block';
                 btnLeaveRev.onclick = () => window.openModal('review-modal');
             } else {
                 btnLeaveRev.classList.add('hidden');
+                btnLeaveRev.style.display = 'none';
             }
         }
 
