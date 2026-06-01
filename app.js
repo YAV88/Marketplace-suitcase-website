@@ -93,7 +93,22 @@ window.i18n = {
         'rep_spam': 'Spam / Duplicates', 'rep_toxic': 'Insults', 'rep_illegal': 'Prohibited items', 'rep_other': 'Other',
         'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report',
         'review_title': 'Rate the seller', 'review_sub': 'Your review will help other buyers!', 'review_ph': 'Write a few words...',
-        'btn_send_review': 'Send Review'
+        'btn_send_review': 'Send Review',
+        'Белград': 'Belgrade', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Nis', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pancevo', 'Чачак': 'Cacak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Other',
+        'Все категории': 'All Categories', 'Любое': 'Any', 'Любая': 'Any', 'Динары': 'Dinars', 'Евро': 'Euros', 'Все в': 'All in', 'Склад': 'Saved', 'Мои вещи': 'My Items',
+        'Одежда': 'Clothing', 'Женская': 'Women\'s', 'Мужская': 'Men\'s', 'Обувь': 'Shoes', 'Сумки': 'Bags', 'Аксессуары': 'Accessories', 'Спецодежда': 'Workwear',
+        'Детям': 'Kids', 'Игрушки': 'Toys', 'Коляски': 'Strollers', 'Автокресла': 'Car Seats', 'Детская мебель': 'Kids Furniture', 'Мебель': 'Furniture',
+        'Электроника': 'Electronics', 'Телефоны': 'Phones', 'Смартфоны': 'Smartphones', 'ПК': 'PC', 'Компьютеры / ПК': 'Computers / PC', 'Ноутбуки': 'Laptops', 'Планшеты': 'Tablets', 'ТВ': 'TV', 'ТВ и Видео': 'TV & Video', 'Аудио': 'Audio', 'Консоли': 'Consoles', 'Игры / Консоли': 'Games / Consoles', 'Бытовая': 'Appliances', 'Бытовая техника': 'Home Appliances', 'Фото': 'Photo', 'Фототехника': 'Photo Equipment',
+        'Интерьер': 'Interior', 'Декор': 'Decor', 'Посуда': 'Tableware', 'Текстиль': 'Textiles', 'Ремонт': 'Repair', 'Стройматериалы': 'Building Materials', 'Инструменты': 'Tools', 'Сад': 'Garden', 'Сад и Огород': 'Garden & Yard',
+        'Транспорт': 'Transport', 'Авто': 'Auto', 'Автомобили': 'Cars', 'Мото': 'Moto', 'Вело': 'Bikes', 'Велосипеды': 'Bicycles', 'Самокаты': 'Scooters', 'Запчасти': 'Parts', 'Шины': 'Tires', 'Шины и диски': 'Tires & Wheels',
+        'Красота': 'Beauty', 'Косметика': 'Cosmetics', 'Парфюмерия': 'Perfumery', 'Уход': 'Care', 'Уход за собой': 'Personal Care', 'Приборы': 'Devices', 'Фены и стайлеры': 'Hair Dryers & Stylers',
+        'Услуги': 'Services', 'Ремонт техники': 'Tech Repair', 'Автосервис': 'Car Service', 'Стройка': 'Construction', 'Ремонт и стройка': 'Repair & Construction', 'Бьюти услуги': 'Beauty Services', 'Репетиторы': 'Tutors', 'Праздники': 'Events',
+        'Работа': 'Jobs', 'Вакансии': 'Vacancies', 'Резюме': 'Resumes', 'Ищу работу': 'Looking for a job',
+        'Бизнес': 'Business', 'Оборудование': 'Equipment', 'Готовый бизнес': 'Ready Business', 'Сырье': 'Raw Materials', 'Сырье и материалы': 'Raw Materials',
+        'Хобби': 'Hobby', 'Спорт': 'Sport', 'Туризм': 'Tourism', 'Туризм и палатки': 'Tourism & Tents', 'Книги': 'Books', 'Музыка': 'Music', 'Музыкальные инструменты': 'Musical Instruments', 'Игры': 'Games', 'Настольные игры': 'Board Games', 'Коллекции': 'Collections', 'Коллекционирование': 'Collecting',
+        'Животные': 'Pets', 'Собаки': 'Dogs', 'Кошки': 'Cats', 'Птицы': 'Birds', 'Аквариум': 'Aquarium', 'Аквариумистика': 'Aquaristics', 'Товары': 'Goods', 'Зоотовары': 'Pet Supplies', 'Другие': 'Others',
+        'Жилье': 'Real Estate', 'Аренда': 'Rent', 'Посуточно': 'Daily', 'Аренда (посуточно)': 'Rent (Daily)', 'Покупка': 'Purchase', 'Продажа': 'Sale', 'Коммерция': 'Commerce', 'Коммерческая': 'Commercial', 'Дачи': 'Cottages', 'Дома и дачи': 'Houses & Cottages',
+        'Другое': 'Other', 'Билеты': 'Tickets', 'Продукты': 'Groceries', 'Продукты питания': 'Food', 'Разное': 'Miscellaneous', 'Бесплатно': 'Free', 'Отдам даром': 'Give away', 'Бюро': 'Bureau', 'Бюро находок': 'Lost & Found'
     },
     sr: {
         'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.',
@@ -135,7 +150,22 @@ window.i18n = {
         'rep_spam': 'Spam / Duplikati', 'rep_toxic': 'Uvrede', 'rep_illegal': 'Zabranjene stvari', 'rep_other': 'Ostalo',
         'report_ph': 'Opišite problem...', 'btn_send_report': 'Pošalji žalbu',
         'review_title': 'Ocenite prodavca', 'review_sub': 'Vaša recenzija će pomoći drugim kupcima!', 'review_ph': 'Napišite nekoliko reči...',
-        'btn_send_review': 'Pošalji recenziju'
+        'btn_send_review': 'Pošalji recenziju',
+        'Белград': 'Beograd', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Niš', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pančevo', 'Чачак': 'Čačak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Drugi',
+        'Все категории': 'Sve kategorije', 'Любое': 'Bilo koje', 'Любая': 'Bilo koja', 'Динары': 'Dinari', 'Евро': 'Evri', 'Все в': 'Sve u', 'Склад': 'Sačuvano', 'Мои вещи': 'Moje stvari',
+        'Одежда': 'Odeća', 'Женская': 'Ženska', 'Мужская': 'Muška', 'Обувь': 'Obuća', 'Сумки': 'Torbe', 'Аксессуары': 'Aksesoari', 'Спецодежда': 'Radna odeća',
+        'Детям': 'Deca', 'Игрушки': 'Igračke', 'Коляски': 'Kolica', 'Автокресла': 'Auto sedišta', 'Детская мебель': 'Dečiji nameštaj', 'Мебель': 'Nameštaj',
+        'Электроника': 'Elektronika', 'Телефоны': 'Telefoni', 'Смартфоны': 'Pametni telefoni', 'ПК': 'PC', 'Компьютеры / ПК': 'Računari / PC', 'Ноутбуки': 'Laptopovi', 'Планшеты': 'Tableti', 'ТВ': 'TV', 'ТВ и Видео': 'TV i Video', 'Аудио': 'Audio', 'Консоли': 'Konzole', 'Игры / Консоли': 'Igre / Konzole', 'Бытовая': 'Aparati', 'Бытовая техника': 'Bela tehnika', 'Фото': 'Foto', 'Фототехника': 'Foto oprema',
+        'Интерьер': 'Enterijer', 'Декор': 'Dekor', 'Посуда': 'Posuđe', 'Текстиль': 'Tekstil', 'Ремонт': 'Popravka', 'Стройматериалы': 'Građevinski materijali', 'Инструменты': 'Alati', 'Сад': 'Bašta', 'Сад и Огород': 'Bašta i dvorište',
+        'Транспорт': 'Transport', 'Авто': 'Auto', 'Автомобили': 'Automobili', 'Мото': 'Motocikli', 'Вело': 'Bicikli', 'Велосипеды': 'Bicikli', 'Самокаты': 'Trotineti', 'Запчасти': 'Delovi', 'Шины': 'Gume', 'Шины и диски': 'Gume i felne',
+        'Красота': 'Lepota', 'Косметика': 'Kozmetika', 'Парфюмерия': 'Parfimerija', 'Уход': 'Nega', 'Уход за собой': 'Nega lica i tela', 'Приборы': 'Uređaji', 'Фены и стайлеры': 'Fenovi i stajleri',
+        'Услуги': 'Usluge', 'Ремонт техники': 'Popravka tehnike', 'Автосервис': 'Auto servis', 'Стройка': 'Gradnja', 'Ремонт и стройка': 'Popravke i gradnja', 'Бьюти услуги': 'Beauty usluge', 'Репетиторы': 'Profesori', 'Праздники': 'Proslave',
+        'Работа': 'Posao', 'Вакансии': 'Poslovi', 'Резюме': 'CV', 'Ищу работу': 'Tražim posao',
+        'Бизнес': 'Biznis', 'Оборудование': 'Oprema', 'Готовый бизнес': 'Gotov biznis', 'Сырье': 'Sirovine', 'Сырье и материалы': 'Sirovine i materijali',
+        'Хобби': 'Hobi', 'Спорт': 'Sport', 'Туризм': 'Turizam', 'Туризм и палатки': 'Turizam i šatori', 'Книги': 'Knjige', 'Музыка': 'Muzika', 'Музыкальные инструменты': 'Muzički instrumenti', 'Игры': 'Igre', 'Настольные игры': 'Društvene igre', 'Коллекции': 'Kolekcije', 'Коллекционирование': 'Kolekcionarstvo',
+        'Животные': 'Životinje', 'Собаки': 'Psi', 'Кошки': 'Mačke', 'Птицы': 'Ptice', 'Аквариум': 'Akvarijum', 'Аквариумистика': 'Akvaristika', 'Товары': 'Roba', 'Зоотовары': 'Oprema za ljubimce', 'Другие': 'Ostali',
+        'Жилье': 'Nekretnine', 'Аренда': 'Izdavanje', 'Посуточно': 'Na dan', 'Аренда (посуточно)': 'Izdavanje (na dan)', 'Покупка': 'Kupovina', 'Продажа': 'Prodaja', 'Коммерция': 'Komercijala', 'Коммерческая': 'Komercijalni objekti', 'Дачи': 'Vikendice', 'Дома и дачи': 'Kuće i vikendice',
+        'Другое': 'Ostalo', 'Билеты': 'Ulaznice', 'Продукты': 'Hrana', 'Продукты питания': 'Prehrambeni proizvodi', 'Разное': 'Razno', 'Бесплатно': 'Besplatno', 'Отдам даром': 'Poklanjam', 'Бюро': 'Biro', 'Бюро находок': 'Izgubljeno - nađeno'
     }
 };
 
@@ -178,6 +208,24 @@ window.changeLanguage = (lang) => {
             }
         }
     });
+
+    // Динамический перевод окна категорий "Пристроить добро"
+    const catSelect = document.getElementById('item-category');
+    if (catSelect) {
+        Array.from(catSelect.options).forEach(opt => {
+            if (opt.value) {
+                const parts = opt.value.split(' - ');
+                opt.innerText = parts.map(p => window.t(p)).join(' - ');
+            }
+        });
+        Array.from(catSelect.getElementsByTagName('optgroup')).forEach(grp => {
+            if(!grp.dataset.orig) grp.dataset.orig = grp.label; // Сохраняем оригинал
+            grp.label = window.t(grp.dataset.orig);
+        });
+    }
+
+    // Обновляем текст вкладок профиля при смене языка
+    if (window.currentUser) window.switchProfileTab(window.currentProfileTab);
 };
 
 // Закрываем меню при клике в пустую область
@@ -1954,9 +2002,7 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
             
             if (window.filterCondition !== 'Все') {
                 window.filterCondition = 'Все';
-                window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], 'Все', 'applyCondition');
-                document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => b.style.display = '');
-            }
+                window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label: window.t('Любое')}, {val:'Новое', label:'✨ ' + window.t('Новое')}, {val:'Б/У', label:'♻️ ' + window.t('Б/У')}], 'Все', 'applyCondition');
         } else {
             condBlock.style.display = 'block';
             if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
@@ -1977,14 +2023,14 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
         
         const subContainer = document.getElementById('sub-cats-container');
         if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat]) {
-            // Главная кнопка "Все в категории" (Светящаяся активная)
-            let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]">Все в «${cat}»</button>`;
+            // Главная кнопка "Все в категории"
+            let subHtml = `<button onclick="window.filterByCategory('${cat}', event, true)" class="sub-cat-btn active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]">${window.t('Все в')} «${window.t(cat)}»</button>`;
             
-            // Остальные подкатегории (С эффектом hover)
+            // Остальные подкатегории
             window.subcategoriesMap[cat].forEach(sub => {
                 const prefix = sub.prefix || cat;
                 const fullCat = `${prefix} - ${sub.val}`;
-                subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]">${sub.label || sub.val}</button>`;
+                subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]">${window.t(sub.label || sub.val)}</button>`;
             });
             
             subContainer.innerHTML = subHtml;
@@ -3028,13 +3074,13 @@ window.renderProfileTabs = async () => {
 
     try {
         const favCount = window.userFavorites ? window.userFavorites.size : 0;
-        const tabSaved = document.getElementById('tab-my-saved'); if(tabSaved) tabSaved.innerText = `Склад (${favCount})`;
+        const tabSaved = document.getElementById('tab-my-saved'); if(tabSaved) tabSaved.innerText = `${window.t('Склад')} (${favCount})`;
 
         let items = [];
         if (window.currentProfileTab === 'items') {
             const { data } = await supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
             items = (data || []).map(window.mapItemData).filter(Boolean);
-            const tabItems = document.getElementById('tab-my-items'); if(tabItems) tabItems.innerText = `Мои вещи (${items.length})`;
+            const tabItems = document.getElementById('tab-my-items'); if(tabItems) tabItems.innerText = `${window.t('Мои вещи')} (${items.length})`;
         } else {
             const favIds = Array.from(window.userFavorites);
             if (favIds.length > 0) {
@@ -3180,27 +3226,24 @@ window.renderSidebarCategories = () => {
     const container = document.getElementById('sidebar-categories');
     if(!container || !window.subcategoriesMap) return;
     
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
-    
+    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
 
     for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) {
-            continue; 
-        }
+        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
 
         const isActiveMain = window.currentCategory.startsWith(mainCat);
-        // ИСПРАВЛЕНИЕ: Убрали иконки (галочки) и лишние обертки. Теперь только чистый текст.
         html += `
         <div class="sidebar-cat-group mt-1">
-            <button onclick="window.filterByCategory('${mainCat}', event)" class="text-left w-full py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+            <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
+                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
+                <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
+            </div>
             <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
-        
         subs.forEach(sub => {
             const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left w-full py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
+            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
         });
-        
         html += `</div></div>`;
     }
     container.innerHTML = html;
@@ -3320,7 +3363,7 @@ window.renderSidebarCities = () => {
             <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all shrink-0">
                 <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
             </div>
-            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${city}</span>
+            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${window.t(city)}</span>
         </label>
     `}).join('');
 };
@@ -3373,8 +3416,8 @@ window.toggleSidebarCat = (el) => {
 window.initSidebar = () => {
     window.renderSidebarCategories();
     window.renderSidebarCities();
-    window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label:'Любое'}, {val:'Новое', label:'✨ Новое'}, {val:'Б/У', label:'♻️ Б/У'}], window.filterCondition, 'applyCondition');
-    window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label:'Любая'}, {val:'RSD', label:'RSD (Динары)'}, {val:'EUR', label:'EUR (Евро)'}], window.filterCurrency, 'applyCurrency');
+    window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label: window.t('Любое')}, {val:'Новое', label:'✨ ' + window.t('Новое')}, {val:'Б/У', label:'♻️ ' + window.t('Б/У')}], window.filterCondition, 'applyCondition');
+    window.renderCustomRadios('currency-radios-wrap', 'curr', [{val:'Все', label: window.t('Любая')}, {val:'RSD', label:'RSD (' + window.t('Динары') + ')'}, {val:'EUR', label:'EUR (' + window.t('Евро') + ')'}], window.filterCurrency, 'applyCurrency');
 };
 
 // --- ЛОГИКА КАСТОМНОЙ СОРТИРОВКИ ---
