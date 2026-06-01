@@ -1332,26 +1332,55 @@ window.showToast = (msg, err=false) => {
     }
 };
 
-window.currentLightboxImages = []; window.currentLightboxIndex = 0;
+window.currentLightboxImages = []; 
+window.currentLightboxIndex = 0;
+
 window.openLightbox = (src) => {
+    // 1. Собираем все картинки текущего товара в массив
     if (window.activeModalItemId) {
         const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
-        if (item && Array.isArray(item.images) && item.images.length > 0) window.currentLightboxImages = item.images; else window.currentLightboxImages = [src];
-    } else { window.currentLightboxImages = [src]; }
-    const currentMainSrc = document.getElementById('modal-img').src;
-    window.currentLightboxIndex = window.currentLightboxImages.findIndex(img => currentMainSrc.includes(img));
+        if (item && Array.isArray(item.images) && item.images.length > 0) {
+            window.currentLightboxImages = item.images; 
+        } else { 
+            window.currentLightboxImages = [src]; 
+        }
+    } else { 
+        window.currentLightboxImages = [src]; 
+    }
+    
+    // 2. Ищем индекс именно той картинки, по которой кликнули (src)
+    // Раньше тут скрипт искал удаленный document.getElementById('modal-img').src и падал
+    window.currentLightboxIndex = window.currentLightboxImages.findIndex(img => src.includes(img) || img.includes(src));
+    
     if(window.currentLightboxIndex === -1) window.currentLightboxIndex = 0;
-    window.updateLightboxImage(); window.openModal('lightbox');
+    
+    // 3. Обновляем картинку в окне и открываем его
+    window.updateLightboxImage(); 
+    window.openModal('lightbox');
 };
 
+// Эту функцию можно оставить без изменений, но на всякий случай вот её чистый код:
 window.updateLightboxImage = () => {
-    const img = document.getElementById('lightbox-img'); if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
-    const prev = document.getElementById('lightbox-prev'); const next = document.getElementById('lightbox-next');
+    const img = document.getElementById('lightbox-img'); 
+    if(img) img.src = window.currentLightboxImages[window.currentLightboxIndex];
+    
+    const prev = document.getElementById('lightbox-prev'); 
+    const next = document.getElementById('lightbox-next');
     if(prev) prev.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
     if(next) next.style.display = window.currentLightboxImages.length > 1 ? 'block' : 'none';
 };
-window.lightboxNext = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; window.updateLightboxImage(); };
-window.lightboxPrev = (e) => { if(e) e.stopPropagation(); window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; window.updateLightboxImage(); };
+
+window.lightboxNext = (e) => { 
+    if(e) e.stopPropagation(); 
+    window.currentLightboxIndex = (window.currentLightboxIndex + 1) % window.currentLightboxImages.length; 
+    window.updateLightboxImage(); 
+};
+
+window.lightboxPrev = (e) => { 
+    if(e) e.stopPropagation(); 
+    window.currentLightboxIndex = (window.currentLightboxIndex - 1 + window.currentLightboxImages.length) % window.currentLightboxImages.length; 
+    window.updateLightboxImage(); 
+};
 
 window.shareCurrentItem = () => {
     window.bumpViaShare();
