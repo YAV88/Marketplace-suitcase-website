@@ -857,7 +857,12 @@ window.submitReport = async (event) => {
 };
 
 window.openChatModal = async () => {
-    if(!window.currentUser) { window.closeModal('item-modal'); window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+    if(!window.currentUser) { 
+        // Стек автоматически вернет в карточку после входа/закрытия auth-modal
+        window.openModal('auth-modal'); 
+        window.showToast("Войдите в аккаунт", true); 
+        return; 
+    }
     
     const item = window.loadedItems.find(i => i.id === window.activeModalItemId);
     if (!item) return;
@@ -1065,9 +1070,25 @@ window.toggleDarkMode = () => {
 
 window.goHome = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => window.resetFilters(), 300); };
 
+window.modalStack = []; // Инициализируем стек открытых окон
+
 window.openModal = id => { 
     const el = document.getElementById(id);
     if(el) { 
+        // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, чтобы не было наложения теней
+        if (window.modalStack.length > 0) {
+            const prevId = window.modalStack[window.modalStack.length - 1];
+            const prevEl = document.getElementById(prevId);
+            // Прячем визуально, но оставляем в DOM
+            if (prevEl && prevId !== id) prevEl.style.display = 'none';
+        }
+        
+        // Добавляем текущее окно в стек
+        if (!window.modalStack.includes(id)) {
+            window.modalStack.push(id);
+        }
+
+        el.style.display = ''; // Восстанавливаем видимость
         el.classList.add('active'); 
         document.body.classList.add('modal-open');
         
@@ -1077,7 +1098,7 @@ window.openModal = id => {
             if (boostyInput) boostyInput.value = window.currentUser.id;
         }
 
-        // --- НОВЫЙ БЛОК: Динамическое обновление статуса PRO в профиле ---
+        // Динамическое обновление статуса PRO в профиле
         if (id === 'profile-modal') {
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
@@ -1085,23 +1106,38 @@ window.openModal = id => {
             if (statusText && proBtn) {
                 if (window.currentUserData && window.currentUserData.is_pro) {
                     statusText.innerText = 'PRO (Активен)';
-                    statusText.className = 'text-sm font-black text-amber-500'; // Золотой цвет для VIP
-                    proBtn.classList.add('hidden'); // Прячем кнопку покупки
+                    statusText.className = 'text-sm font-black text-amber-500';
+                    proBtn.classList.add('hidden');
                 } else {
                     statusText.innerText = 'Базовый';
                     statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
-                    proBtn.classList.remove('hidden'); // Возвращаем кнопку покупки
+                    proBtn.classList.remove('hidden');
                 }
             }
         }
-        // ------------------------------------------------------------------
     } 
 };
 
 window.closeModal = id => { 
     const el = document.getElementById(id);
-    if(el) el.classList.remove('active');
-    if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open'); 
+    if(el) {
+        el.classList.remove('active');
+        el.style.display = ''; // Сбрасываем инлайн стиль
+        
+        // 2. УМНЫЙ СТЕК: Удаляем текущее окно из памяти
+        window.modalStack = window.modalStack.filter(m => m !== id);
+        
+        // Если в стеке еще есть окна, ВОЗВРАЩАЕМ ПРЕДЫДУЩЕЕ
+        if (window.modalStack.length > 0) {
+            const prevId = window.modalStack[window.modalStack.length - 1];
+            const prevEl = document.getElementById(prevId);
+            if (prevEl) prevEl.style.display = ''; 
+        } else {
+            // Если окон больше нет — снимаем блокировку скролла
+            if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open');
+        }
+    }
+    
     if (id === 'item-modal') { 
         history.pushState(null, '', window.location.pathname); 
         window.updateSEO();
@@ -1112,9 +1148,15 @@ window.closeModal = id => {
             setTimeout(() => window.openExistingChat(ctx.id, ctx.itemId, ctx.isSellerStr, ctx.name), 300);
         }
     }
+    
     if (id === 'add-modal') {
-        window.editingItemId = null; document.getElementById('add-modal-title').innerText = "Пристроить добро"; document.getElementById('add-submit-btn').innerText = "Опубликовать";
-        const formEl = document.getElementById('add-form'); if(formEl) formEl.reset(); window.tempPhotos = []; window.editExistingImages = [];
+        window.editingItemId = null;
+        const addTitle = document.getElementById('add-modal-title');
+        const addBtn = document.getElementById('add-submit-btn');
+        if(addTitle) addTitle.innerText = window.t ? window.t('add_title') : "Пристроить добро"; 
+        if(addBtn) addBtn.innerText = window.t ? window.t('btn_publish_item') : "Опубликовать";
+        const formEl = document.getElementById('add-form'); if(formEl) formEl.reset(); 
+        window.tempPhotos = []; window.editExistingImages = [];
         const photoList = document.getElementById('photo-preview-list'); if(photoList) photoList.innerHTML = '';
     }
 };
@@ -2440,8 +2482,7 @@ window.openItemDetails = async (id) => {
         const sellerBtn = document.getElementById('modal-seller-btn');
         if (sellerBtn) {
             sellerBtn.onclick = () => {
-                window.closeModal('item-modal');
-                // Обязательно передаем все 3 параметра!
+                // БОЛЬШЕ НЕ ЗАКРЫВАЕМ КАРТОЧКУ ТОВАРА! Стек сам ее спрячет.
                 window.openSellerProfile(item.userId || item.user_id, item.authorName || item.author_name, item.authorAvatar || item.author_avatar);
             };
         }
@@ -3294,7 +3335,23 @@ window.fetchItems();
 const urlParams = new URLSearchParams(window.location.search);
 const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
 
-window.addEventListener('popstate', () => { const params = new URLSearchParams(window.location.search); const item = params.get('item'); if (item) window.openItemDetails(item); else window.closeModal('item-modal'); });
+window.addEventListener('popstate', () => { 
+    const params = new URLSearchParams(window.location.search); 
+    const item = params.get('item'); 
+    if (item) {
+        window.openItemDetails(item); 
+    } else { 
+        // Если нажали "Назад" на главную — жестко закрываем весь стек окон
+        if (window.modalStack) {
+            window.modalStack.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.classList.remove('active'); el.style.display = ''; }
+            });
+            window.modalStack = [];
+        }
+        document.body.classList.remove('modal-open');
+    } 
+});
 
 // --- ПЕРЕКЛЮЧЕНИЕ ВИДА (СЕТКА / СПИСОК) ---
 window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
