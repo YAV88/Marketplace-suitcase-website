@@ -2407,30 +2407,33 @@ window.openItemDetails = async (id) => {
         const avatarEl = document.getElementById('modal-author-avatar');
         if(avatarEl) avatarEl.innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
         
+        // --- ЛОГИКА ПЛАШКИ ПРОДАВЦА + РЕЙТИНГ ---
         const authorSubEl = document.getElementById('modal-author-sub');
         if(authorSubEl) {
-            // Просто обновляем статус продавца (VIP или обычный)
-            authorSubEl.innerHTML = item.isHighlighted ? `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest inline-block">VIP ПРОДАВЕЦ</span>` : `<span>Продавец SVALKA</span>`;
+            // Делаем контейнер flex-строкой, чтобы статус и рейтинг выстроились в красивый ряд
+            authorSubEl.className = "text-[11px] text-stone-500 font-bold mt-1 flex items-center flex-wrap gap-2";
+            
+            const statusHtml = item.isHighlighted ? 
+                `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">VIP ПРОДАВЕЦ</span>` : 
+                `<span class="shrink-0">Продавец SVALKA</span>`;
+            
+            authorSubEl.innerHTML = statusHtml;
+
+            // Запрашиваем рейтинг напрямую из базы без сложных RPC запросов
+            supabase.from('reviews').select('rating').eq('seller_id', item.userId).then(({data, error}) => {
+                if(!error && data && data.length > 0) {
+                    const avg = (data.reduce((sum, r) => sum + (r.rating || 5), 0) / data.length).toFixed(1);
+                    // Добавляем красивую мини-плашку с рейтингом прямо рядом со статусом
+                    authorSubEl.innerHTML = `${statusHtml} <span class="flex items-center gap-1 text-stone-800 dark:text-stone-200 bg-white dark:bg-stone-800 px-1.5 py-0.5 rounded-md shadow-sm border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-star text-amber-500 text-[10px]"></i> <span class="font-black">${avg}</span> <span class="text-stone-400 font-medium ml-0.5">(${data.length})</span></span>`;
+                }
+            });
         }
 
-        // --- ЛОГИКА КНОПКИ ОТЗЫВОВ ---
+        // Прячем старую отдельную кнопку рейтинга (чтобы не было дублирования)
         const ratingEl = document.getElementById('modal-author-rating');
         if (ratingEl) {
             ratingEl.classList.add('hidden');
-            ratingEl.classList.remove('flex'); // Скрываем, чтобы не ломать сетку при загрузке
-            ratingEl.removeAttribute('onclick');
-            
-            supabase.rpc('get_seller_reviews', { p_seller_id: item.userId }).then(({data}) => {
-                if(data && data.length > 0) {
-                    const avg = (data.reduce((sum, r) => sum + r.rating, 0) / data.length).toFixed(1);
-                    
-                    // Яркая звезда и контрастный счетчик
-                    ratingEl.innerHTML = `<i class="fa-solid fa-star text-amber-500 text-base drop-shadow-sm"></i> ${avg} <span class="text-stone-400 dark:text-stone-500 font-medium ml-1">(${data.length})</span>`;
-                    ratingEl.classList.remove('hidden');
-                    ratingEl.classList.add('flex'); // Возвращаем в общую сетку кнопок
-                    ratingEl.setAttribute('onclick', `event.stopPropagation(); window.openSellerProfile('${item.userId}', 'reviews');`);
-                }
-            });
+            ratingEl.classList.remove('flex');
         }
         
         // === ЛОГИКА КНОПКИ ПРОДАВЦА (внутри openItemDetails) ===
