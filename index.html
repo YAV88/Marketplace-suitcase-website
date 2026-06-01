@@ -729,8 +729,8 @@
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                    <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-category" required onchange="window.handleCategoryChange(event)" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             <option value="" disabled selected data-i18n="add_cat_def">Категория...</option>
                             <optgroup label="Одежда и Обувь">
                                 <option value="Одежда - Женская">Женская</option><option value="Одежда - Мужская">Мужская</option><option value="Одежда - Обувь">Обувь</option><option value="Одежда - Сумки">Сумки</option><option value="Одежда - Аксессуары">Аксессуары</option><option value="Одежда - Спецодежда">Спецодежда</option>
@@ -772,14 +772,21 @@
                                 <option value="Другое - Билеты">Билеты</option><option value="Другое - Продукты">Продукты питания</option><option value="Другое - Разное">Разное</option><option value="Другое - Бесплатно">Отдам даром</option><option value="Другое - Бюро">Бюро находок</option>
                             </optgroup>
                         </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400">
+                            <i class="fa-solid fa-chevron-down text-sm"></i>
+                        </div>
                     </div>
-                    <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-city" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                    
+                    <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                        <select id="item-city" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             <option value="Белград">Белград</option><option value="Нови-Сад">Нови-Сад</option><option value="Ниш">Ниш</option><option value="Крагуевац">Крагуевац</option><option value="Суботица">Суботица</option>
                             <option value="Зренянин">Зренянин</option><option value="Панчево">Панчево</option><option value="Чачак">Чачак</option><option value="Кралево">Кралево</option><option value="Нови-Пазар">Нови-Пазар</option>
                             <option value="Смедерево">Смедерево</option><option value="Лесковац">Лесковац</option><option value="Вране">Вране</option><option value="Сомбор">Сомбор</option>
                             <option value="Другой">Другой</option>
                         </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400">
+                            <i class="fa-solid fa-chevron-down text-sm"></i>
+                        </div>
                     </div>
                 </div>
                 
@@ -787,8 +794,14 @@
                     <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
                         <input type="number" id="item-price" data-i18n="add_price" placeholder="Цена" onkeydown="if(event.key === ',') return false;" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed" required>
                     </div>
-                    <div class="bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
-                        <select id="item-currency" class="bg-transparent p-3 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white"><option>RSD</option><option>EUR</option></select>
+                    <div class="relative bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700">
+                        <select id="item-currency" class="appearance-none bg-transparent p-3 pr-8 font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                            <option>RSD</option>
+                            <option>EUR</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center text-stone-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
                     </div>
                 </div>
 
