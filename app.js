@@ -778,16 +778,22 @@ window.sendChatMessage = async () => {
 };
 
 window.subscribeToMessages = () => {
-    if (window.chatSubscription) supabase.removeChannel(window.chatSubscription);
+    // 1. На всякий случай добиваем старую подписку
+    if (window.chatSubscription) {
+        supabase.removeChannel(window.chatSubscription);
+        window.chatSubscription = null;
+    }
     
-    // УНИКАЛЬНЫЙ КАНАЛ ДЛЯ КОНКРЕТНОЙ КОМНАТЫ
-    const roomName = 'chat_room_' + window.currentChatId;
+    // 2. Создаем УНИКАЛЬНОЕ имя комнаты, чтобы обойти баг кэширования веб-сокетов Supabase
+    const roomName = 'chat_room_' + window.currentChatId + '_' + Date.now();
+    
     window.chatSubscription = supabase.channel(roomName)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
             const newMsg = payload.new;
             if (newMsg.sender_id !== window.currentUser?.id) {
                 const container = document.getElementById('chat-messages');
                 if(container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
+       
                 container.insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${newMsg.text}</div></div>`);
                 container.scrollTop = container.scrollHeight;
                 
@@ -1133,9 +1139,9 @@ window.closeModal = id => {
     const el = document.getElementById(id);
     if(el) {
         el.classList.remove('active');
-        el.style.display = ''; // Сбрасываем инлайн стиль
+        el.style.display = ''; 
         
-        // 2. УМНЫЙ СТЕК: Удаляем текущее окно из памяти
+        // УМНЫЙ СТЕК: Удаляем текущее окно из памяти
         window.modalStack = window.modalStack.filter(m => m !== id);
         
         // Если в стеке еще есть окна, ВОЗВРАЩАЕМ ПРЕДЫДУЩЕЕ
@@ -1144,7 +1150,6 @@ window.closeModal = id => {
             const prevEl = document.getElementById(prevId);
             if (prevEl) prevEl.style.display = ''; 
         } else {
-            // Если окон больше нет — снимаем блокировку скролла
             if(!document.querySelector('.modal-overlay.active')) document.body.classList.remove('modal-open');
         }
     }
@@ -1152,7 +1157,6 @@ window.closeModal = id => {
     if (id === 'item-modal') { 
         history.pushState(null, '', window.location.pathname); 
         window.updateSEO();
-        // Возврат в чат после просмотра товара
         if (window.chatReturnContext) {
             const ctx = window.chatReturnContext;
             window.chatReturnContext = null;
@@ -1169,6 +1173,15 @@ window.closeModal = id => {
         const formEl = document.getElementById('add-form'); if(formEl) formEl.reset(); 
         window.tempPhotos = []; window.editExistingImages = [];
         const photoList = document.getElementById('photo-preview-list'); if(photoList) photoList.innerHTML = '';
+    }
+
+    // === ИСПРАВЛЕНИЕ: ЖЕСТКАЯ ОЧИСТКА ЧАТА ===
+    if (id === 'chat-modal') {
+        window.currentChatId = null; // Сбрасываем ID, чтобы глобальный слушатель понял, что мы вышли
+        if (window.chatSubscription) {
+            supabase.removeChannel(window.chatSubscription); // Убиваем фонового зомби
+            window.chatSubscription = null;
+        }
     }
 };
 
