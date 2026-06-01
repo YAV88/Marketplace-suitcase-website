@@ -897,65 +897,72 @@ window.openChatModal = async () => {
 };
 
 window.openChatListModal = async (silentLoad = false) => {
-    if(!window.currentUser) { window.openModal('auth-modal'); window.showToast("Войдите в аккаунт", true); return; }
+    if(!window.currentUser) { 
+        window.openModal('auth-modal'); 
+        window.showToast("Войдите в аккаунт", true); 
+        return; 
+    }
+    
     if(!silentLoad) window.openModal('chat-list-modal');
     const container = document.getElementById('chat-list-container');
-    if(container && !silentLoad) container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
     
+    if(container && !silentLoad) {
+        container.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
+    }
+
     try {
-        const { data: chats, error } = await supabase.from('chats').select('*').or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`).order('created_at', { ascending: false });
+        // 1. Грузим все данные чатов ОДНИМ запросом из нашей новой View!
+        const { data: chats, error } = await supabase
+            .from('user_chats_view')
+            .select('*')
+            .or(`buyer_id.eq.${window.currentUser.id},seller_id.eq.${window.currentUser.id}`)
+            .order('last_message_time', { ascending: false });
+
         if (error) throw error;
+        
         if (!chats || chats.length === 0) {
             container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-stone-400 mt-20"><i class="fa-regular fa-envelope-open text-6xl mb-4 opacity-50"></i><div class="text-base font-bold text-center">Нет активных диалогов</div></div>`;
             return;
         }
 
-        const chatIds = chats.map(c => c.id);
-        const itemIds = [...new Set(chats.map(c => c.item_id))];
-        const userIds = [...new Set([...chats.map(c => c.buyer_id), ...chats.map(c => c.seller_id)])];
+        const chatIds = chats.map(c => c.chat_id);
 
-        // ИЩЕМ ИМЕНА В ТАБЛИЦЕ ITEMS (так как их нет в профилях)
-        const [itemsRes, userItemsRes, unreadRes] = await Promise.all([
-            supabase.from('items').select('id, title, image_url, author_name').in('id', itemIds),
-            supabase.from('items').select('user_id, author_name').in('user_id', userIds),
-            supabase.from('messages').select('chat_id').in('chat_id', chatIds).eq('is_read', false).neq('sender_id', window.currentUser.id)
-        ]);
+        // 2. Быстро получаем количество непрочитанных сообщений
+        const { data: unreadData } = await supabase
+            .from('messages')
+            .select('chat_id')
+            .in('chat_id', chatIds)
+            .eq('is_read', false)
+            .neq('sender_id', window.currentUser.id);
 
-        const itemsMap = {}; if(itemsRes.data) itemsRes.data.forEach(i => itemsMap[i.id] = i);
-        
-        // Словарь имен на основе других объявлений юзеров
-        const namesMap = {}; 
-        if(userItemsRes.data) userItemsRes.data.forEach(i => { if(i.author_name) namesMap[i.user_id] = i.author_name; });
-        
-        const unreadMap = {}; if(unreadRes.data) unreadRes.data.forEach(m => unreadMap[m.chat_id] = (unreadMap[m.chat_id] || 0) + 1);
+        const unreadMap = {};
+        if (unreadData) {
+            unreadData.forEach(m => unreadMap[m.chat_id] = (unreadMap[m.chat_id] || 0) + 1);
+        }
 
-        const lastMsgPromises = chats.map(c => supabase.from('messages').select('text').eq('chat_id', c.id).order('created_at', { ascending: false }).limit(1));
-        const lastMsgsResults = await Promise.all(lastMsgPromises);
-        
+        // 3. Формируем HTML
         let html = '';
-        chats.forEach((chat, index) => {
-            const item = itemsMap[chat.item_id];
+        chats.forEach(chat => {
             const isSeller = chat.seller_id === window.currentUser.id;
             
-            const partnerId = isSeller ? chat.buyer_id : chat.seller_id;
-            // Подставляем имя из словаря, если его там нет — пишем "Покупатель"
-            const interlocutorName = namesMap[partnerId] || (isSeller ? "Покупатель" : (item ? item.author_name : "Продавец"));
-
-            const res = lastMsgsResults[index];
-            const lastMsg = (res.data && res.data.length > 0) ? res.data[0].text : 'Нет сообщений...';
-            const unreadCount = unreadMap[chat.id] || 0;
+            // Если мы продаем, собеседник - покупатель. И наоборот.
+            const interlocutorName = isSeller ? (chat.buyer_name || "Покупатель") : (chat.seller_name || chat.item_title || "Продавец");
+            
+            const lastMsg = chat.last_message || 'Нет сообщений...';
+            const unreadCount = unreadMap[chat.chat_id] || 0;
+            const itemImg = chat.item_image || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
             
             const roleBadge = isSeller 
                 ? `<span class="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200">Вы продаете</span>` 
                 : `<span class="bg-brand-50 text-brand-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-brand-100">Вы покупаете</span>`;
-            
+
             html += `
-            <div onclick="window.openExistingChat('${chat.id}', '${chat.item_id}', '${isSeller}', '${interlocutorName.replace(/'/g, "\\'")}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
-                <img src="${(item && item.image_url) ? item.image_url : 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+            <div onclick="window.openExistingChat('${chat.chat_id}', '${chat.item_id}', '${isSeller}', '${interlocutorName.replace(/'/g, "\\'")}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+                <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
                 <div class="flex-1 overflow-hidden text-left">
                     <div class="flex items-center gap-2 mb-1">
                         ${roleBadge}
-                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${item ? item.title : 'Товар удален'}</h4>
+                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${chat.item_title || 'Товар удален'}</h4>
                     </div>
                     <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> Собеседник: <span class="text-stone-800 dark:text-stone-200">${interlocutorName}</span></p>
                     <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${lastMsg}</p>
@@ -963,8 +970,12 @@ window.openChatListModal = async (silentLoad = false) => {
                 ${unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : ''}
             </div>`;
         });
+        
         container.innerHTML = html;
-    } catch (e) { container.innerHTML = `<div class="text-center text-red-500 p-10">${e.message}</div>`; }
+        
+    } catch (e) { 
+        container.innerHTML = `<div class="text-center text-red-500 p-10">Ошибка: ${e.message}</div>`; 
+    }
 };
 
 window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) => {
