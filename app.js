@@ -2094,7 +2094,7 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
     
     if (window.renderSidebarCategories) window.renderSidebarCategories();
     window.fetchItems(); 
-}};
+};
 
 window.toggleUrgentFilter = () => {
     window.showUrgentOnly = !window.showUrgentOnly; window.displayedCount = 12; 
