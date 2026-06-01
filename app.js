@@ -2045,6 +2045,8 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
             if (window.filterCondition !== 'Все') {
                 window.filterCondition = 'Все';
                 window.renderCustomRadios('condition-radios-wrap', 'cond', [{val:'Все', label: window.t('Любое')}, {val:'Новое', label:'✨ ' + window.t('Новое')}, {val:'Б/У', label:'♻️ ' + window.t('Б/У')}], 'Все', 'applyCondition');
+                document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => b.style.display = '');
+            }
         } else {
             condBlock.style.display = 'block';
             if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
