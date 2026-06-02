@@ -2017,7 +2017,7 @@ window.subcategoriesMap = {
 };
 
 window.filterByCategory = (cat, event, isSubCat = false) => {
-    if (event) event.preventDefault(); // Убрали stopPropagation для бокового меню
+    if (event) event.preventDefault();
 
     // --- СЕНЬОР-ЛОГИКА: Умное закрытие ---
     if (window.currentCategory === cat && cat !== 'Все') {
@@ -2123,49 +2123,6 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
 
     const isMobile = window.innerWidth < 1024;
     if (!isMobile || isSubCat) {
-        if (typeof window.fetchItems === 'function') window.fetchItems(false); // ИСПРАВЛЕНИЕ: false не дает дублировать карточки
-    }
-};
-
-    const allBtn = document.querySelector('#sidebar-categories > button');
-    if (allBtn) {
-        if (cat === 'Все') {
-            allBtn.classList.add('text-brand-600');
-            allBtn.classList.remove('text-stone-700', 'dark:text-stone-300');
-        } else {
-            allBtn.classList.remove('text-brand-600');
-            allBtn.classList.add('text-stone-700', 'dark:text-stone-300');
-        }
-    }
-
-    // ИСПРАВЛЕНИЕ: Используем правильный ID контейнера 'sub-cats-container'
-    const subCatsContainer = document.getElementById('sub-cats-container') || document.getElementById('sub-categories');
-    if (subCatsContainer) {
-        if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
-            const mainCat = cat.split(' - ')[0];
-            let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]'}">${window.t('Все в')} «${window.t(mainCat)}»</button>`;
-            
-            window.subcategoriesMap[mainCat].forEach(sub => {
-                const prefix = sub.prefix || mainCat;
-                const fullCat = `${prefix} - ${sub.val}`;
-                const isActive = cat === fullCat;
-                const activeClass = isActive
-                    ? "active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
-                    : "px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]";
-                subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${activeClass}">${window.t(sub.label || sub.val)}</button>`;
-            });
-            subCatsContainer.innerHTML = subHtml;
-            subCatsContainer.style.display = 'flex';
-            subCatsContainer.classList.remove('hidden'); 
-        } else {
-            subCatsContainer.style.display = 'none';
-            subCatsContainer.classList.add('hidden');
-        }
-    }
-
-    const isMobile = window.innerWidth < 1024;
-    if (!isMobile || isSubCat) {
-        // ИСПРАВЛЕНИЕ: Вызываем fetchItems(false), чтобы карточки заменялись, а не дублировались
         if (typeof window.fetchItems === 'function') window.fetchItems(false);
     }
 };
