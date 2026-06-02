@@ -2427,8 +2427,8 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                 </div>
                 
                 <div class="flex flex-wrap gap-1.5 mb-3 mt-1">
-                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${window.t(item.city)}</span>
-                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${item.condition === 'Новое' ? '✨ ' : '♻️ '}${window.t(item.condition)}</span>
+                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${window.t(i.city)}</span>
+                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${window.t(i.condition)}</span>
                 </div>
                 
                 <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
@@ -3307,34 +3307,6 @@ supabase.auth.onAuthStateChange((event, session) => {
     if (window.authInitialized) window.handleAuthChange(session);
 });
 
-// --- БОКОВОЙ АККОРДЕОН КАТЕГОРИЙ ---
-window.renderSidebarCategories = () => {
-    const container = document.getElementById('sidebar-categories');
-    if (!container || !window.subcategoriesMap) return;
-
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
-    const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-
-    for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
-
-        const isActiveMain = window.currentCategory.startsWith(mainCat);
-        html += `
-        <div class="sidebar-cat-group mt-1">
-            <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
-                <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
-            </div>
-            <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
-        subs.forEach(sub => {
-            const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
-        });
-        html += `</div></div>`;
-    }
-    container.innerHTML = html;
-};
-
 window.applyCondition = (val) => {
     window.filterCondition = val;
 
@@ -3393,27 +3365,24 @@ window.renderSidebarCategories = () => {
     const container = document.getElementById('sidebar-categories');
     if (!container || !window.subcategoriesMap) return;
 
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
-
+    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
 
     for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-        // ИСКЛЮЧАЕМ категории из сайдбара, если выбран фильтр состояния Б/У или Новое
-        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) {
-            continue;
-        }
+        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
 
         const isActiveMain = window.currentCategory.startsWith(mainCat);
         html += `
         <div class="sidebar-cat-group mt-1">
             <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
                 <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
             </div>
             <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
+        
         subs.forEach(sub => {
             const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
+            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
         });
         html += `</div></div>`;
     }
