@@ -1145,22 +1145,20 @@ const initPWA = () => {
 };
 initPWA();
 
-const updateThemeIcons = (isDark) => {
-    document.querySelectorAll('button[onclick="window.toggleDarkMode()"] i').forEach(icon => {
-        // 1. Анимация исчезновения и вращения старой иконки
+window.updateThemeIcons = (isDark) => {
+    // Используем *= чтобы находить любые варианты вызова функции в HTML
+    document.querySelectorAll('button[onclick*="toggleDarkMode"] i').forEach(icon => {
         icon.style.transform = 'rotate(-180deg) scale(0.5)';
         icon.style.opacity = '0';
 
         setTimeout(() => {
-            // 2. Меняем иконку (ДОБАВЛЕН класс inline-block для работы анимации transform)
             icon.className = isDark 
                 ? 'fa-solid fa-sun text-amber-500 text-lg inline-block transition-all duration-300' 
                 : 'fa-solid fa-moon text-indigo-400 text-lg inline-block transition-all duration-300';
             
-            // 3. Плавное появление новой иконки
             icon.style.transform = 'rotate(0deg) scale(1)';
             icon.style.opacity = '1';
-        }, 150); // Ждем половину анимации перед сменой
+        }, 150); 
     });
 };
 
@@ -1177,28 +1175,23 @@ const setAutoTheme = () => {
             else document.documentElement.classList.remove('dark');
         } catch (e) { }
     }
-    setTimeout(() => updateThemeIcons(isDark), 50);
+    // Вызываем правильную глобальную функцию
+    setTimeout(() => window.updateThemeIcons(isDark), 50);
 };
 setAutoTheme();
 
 window.toggleDarkMode = () => {
     const html = document.documentElement;
     const newIsDark = !html.classList.contains('dark');
-
-    // 1. ЖЕСТКО БЛОКИРУЕМ ВСЕ АНИМАЦИИ НА СТРАНИЦЕ
+    
     html.classList.add('disable-transitions');
-
-    // 2. Мгновенно меняем тему
     html.classList.toggle('dark', newIsDark);
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
-
-    // Обновляем иконки (Луна/Солнце)
+    
     if (typeof window.updateThemeIcons === 'function') {
         window.updateThemeIcons(newIsDark);
     }
 
-    // 3. Магия: заставляем браузер отрисовать кадр без анимаций, 
-    // и только потом возвращаем плавность (через двойной requestAnimationFrame)
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             html.classList.remove('disable-transitions');
