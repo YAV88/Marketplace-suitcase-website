@@ -2017,10 +2017,7 @@ window.subcategoriesMap = {
 };
 
 window.filterByCategory = (cat, event, isSubCat = false) => {
-    if (event) {
-        event.preventDefault();
-        // Убрали stopPropagation(), чтобы клик мог развернуть боковое меню
-    }
+    if (event) event.preventDefault(); // Убрали stopPropagation для бокового меню
 
     // --- СЕНЬОР-ЛОГИКА: Умное закрытие ---
     if (window.currentCategory === cat && cat !== 'Все') {
@@ -2088,6 +2085,47 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
             });
         }
     });
+
+    const allBtn = document.querySelector('#sidebar-categories > button');
+    if (allBtn) {
+        if (cat === 'Все') {
+            allBtn.classList.add('text-brand-600');
+            allBtn.classList.remove('text-stone-700', 'dark:text-stone-300');
+        } else {
+            allBtn.classList.remove('text-brand-600');
+            allBtn.classList.add('text-stone-700', 'dark:text-stone-300');
+        }
+    }
+
+    const subCatsContainer = document.getElementById('sub-cats-container') || document.getElementById('sub-categories');
+    if (subCatsContainer) {
+        if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
+            const mainCat = cat.split(' - ')[0];
+            let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]'}">${window.t('Все в')} «${window.t(mainCat)}»</button>`;
+            
+            window.subcategoriesMap[mainCat].forEach(sub => {
+                const prefix = sub.prefix || mainCat;
+                const fullCat = `${prefix} - ${sub.val}`;
+                const isActive = cat === fullCat;
+                const activeClass = isActive
+                    ? "active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
+                    : "px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]";
+                subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${activeClass}">${window.t(sub.label || sub.val)}</button>`;
+            });
+            subCatsContainer.innerHTML = subHtml;
+            subCatsContainer.style.display = 'flex';
+            subCatsContainer.classList.remove('hidden'); 
+        } else {
+            subCatsContainer.style.display = 'none';
+            subCatsContainer.classList.add('hidden');
+        }
+    }
+
+    const isMobile = window.innerWidth < 1024;
+    if (!isMobile || isSubCat) {
+        if (typeof window.fetchItems === 'function') window.fetchItems(false); // ИСПРАВЛЕНИЕ: false не дает дублировать карточки
+    }
+};
 
     const allBtn = document.querySelector('#sidebar-categories > button');
     if (allBtn) {
@@ -2358,19 +2396,17 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
     else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
     const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-    const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
+    const imgHeight = 'h-36 sm:h-40';
+    const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
 
     let deliveryBadges = '';
-    // Выравниваем иконки точно по центру через flex items-center justify-center
     if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
     if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
-
+    
     let paymentBadges = '';
     if (i.payment) {
         const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
         const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-
-        // Используем векторные иконки FontAwesome (fa-brands fa-bitcoin для крипты и fa-regular fa-credit-card для карты)
         if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help transition-transform hover:scale-110" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
         if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
     }
@@ -2387,8 +2423,7 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
 
     const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
     const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
-
-    // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
+    
     // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
     const cardFooter = (isOwner && isProfileView) ? `
         <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
@@ -2397,13 +2432,7 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                 <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
             </button>
         </div>
-    ` : ``;
-    
-        <div class="view-grid-city text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
-            <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
-            <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
-        </div>
-    `;
+    ` : ``; 
 
     return `
     <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
@@ -2424,6 +2453,11 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                     ${i.price || 0} ${i.currency || 'RSD'}
                 </div>
                 
+                <div class="flex flex-wrap gap-1.5 mb-3 mt-2">
+                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${window.t(i.city)}</span>
+                    ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${window.t(i.condition || 'Б/У')}</span>` : ''}
+                </div>
+
                 <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
             </div>
             
@@ -2437,7 +2471,7 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
             ${cardFooter}
         </div>
     </div>`;
-}
+};
 
 window.navigateItem = (direction, e) => {
     if (e) e.stopPropagation();
