@@ -2064,37 +2064,33 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
 
     document.querySelectorAll('.sidebar-cat-group').forEach(grp => {
         const btn = grp.querySelector('button');
-        const subWrap = grp.querySelector('.sidebar-sub-cats');
-        const icon = grp.querySelector('i.fa-chevron-down');
-
-        if (!btn || !subWrap) return; // Защита от ошибок
-
+        if (!btn) return;
+        
         const grpCat = btn.innerText.trim();
 
+        // Только подсвечиваем цвет текста, НЕ трогаем классы раскрытия (max-h)
         if (cat.startsWith(grpCat) && cat !== 'Все') {
             btn.classList.add('text-brand-600');
             btn.classList.remove('text-stone-700', 'dark:text-stone-300');
-            subWrap.classList.remove('max-h-0', 'opacity-0');
-            subWrap.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-            if (icon) icon.classList.add('rotate-180');
         } else {
             btn.classList.remove('text-brand-600');
             btn.classList.add('text-stone-700', 'dark:text-stone-300');
-            subWrap.classList.add('max-h-0', 'opacity-0');
-            subWrap.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-            if (icon) icon.classList.remove('rotate-180');
         }
-
-        subWrap.querySelectorAll('button').forEach(subBtn => {
-            const isSubActive = window.currentCategory === (grpCat + ' - ' + subBtn.innerText.trim());
-            if (isSubActive) {
-                subBtn.classList.add('text-brand-600', 'font-bold');
-                subBtn.classList.remove('text-stone-500', 'dark:text-stone-400');
-            } else {
-                subBtn.classList.remove('text-brand-600', 'font-bold');
-                subBtn.classList.add('text-stone-500', 'dark:text-stone-400');
-            }
-        });
+        
+        // Подсвечиваем активную подкатегорию внутри (если она открыта вручную)
+        const subWrap = grp.querySelector('.sidebar-sub-cats');
+        if (subWrap) {
+            subWrap.querySelectorAll('button').forEach(subBtn => {
+                const isSubActive = window.currentCategory === (grpCat + ' - ' + subBtn.innerText.trim());
+                if (isSubActive) {
+                    subBtn.classList.add('text-brand-600', 'font-bold');
+                    subBtn.classList.remove('text-stone-500', 'dark:text-stone-400');
+                } else {
+                    subBtn.classList.remove('text-brand-600', 'font-bold');
+                    subBtn.classList.add('text-stone-500', 'dark:text-stone-400');
+                }
+            });
+        }
     });
 
     const allBtn = document.querySelector('#sidebar-categories > button');
@@ -2424,11 +2420,6 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                 </h4>
                 <div class="text-brand-600 price-text ${priceClass} mt-0.5 font-black">
                     ${i.price || 0} ${i.currency || 'RSD'}
-                </div>
-                
-                <div class="flex flex-wrap gap-1.5 mb-3 mt-1">
-                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${window.t(i.city)}</span>
-                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${window.t(i.condition)}</span>
                 </div>
                 
                 <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
@@ -3436,8 +3427,27 @@ window.applyCondition = (val) => { window.filterCondition = val; window.applyFil
 window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
 
 window.toggleSidebarCat = (element) => {
+    // 1. Применяем фильтр (если клик был по галочке/строке, а не по самой кнопке)
     const btn = element.querySelector('button');
-    if (btn) btn.click();
+    if (btn && window.event && window.event.target !== btn) {
+        btn.click();
+    }
+
+    // 2. Независимое визуальное открытие/закрытие списка подкатегорий
+    const subWrap = element.nextElementSibling;
+    const icon = element.querySelector('i.fa-chevron-down');
+
+    if (subWrap) {
+        if (subWrap.classList.contains('max-h-0')) {
+            subWrap.classList.remove('max-h-0', 'opacity-0');
+            subWrap.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
+            if (icon) icon.classList.add('rotate-180');
+        } else {
+            subWrap.classList.add('max-h-0', 'opacity-0');
+            subWrap.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
+            if (icon) icon.classList.remove('rotate-180');
+        }
+    }
 };
 
 // Инициализация при загрузке
