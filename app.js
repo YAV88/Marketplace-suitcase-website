@@ -2426,8 +2426,9 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                     ${i.price || 0} ${i.currency || 'RSD'}
                 </div>
                 
-                <div class="view-list-city font-medium mb-1">
-                    <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
+                <div class="flex flex-wrap gap-1.5 mb-3 mt-1">
+                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${window.t(item.city)}</span>
+                    <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${item.condition === 'Новое' ? '✨ ' : '♻️ '}${window.t(item.condition)}</span>
                 </div>
                 
                 <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
@@ -3334,21 +3335,6 @@ window.renderSidebarCategories = () => {
     container.innerHTML = html;
 };
 
-window.toggleSidebarCat = (el) => {
-    const subs = el.nextElementSibling;
-    const icon = el.querySelector('i');
-    icon.classList.toggle('rotate-180');
-
-    // Плавное переключение через max-height
-    if (subs.classList.contains('max-h-0')) {
-        subs.classList.remove('max-h-0', 'opacity-0');
-        subs.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-    } else {
-        subs.classList.add('max-h-0', 'opacity-0');
-        subs.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-    }
-};
-
 window.applyCondition = (val) => {
     window.filterCondition = val;
 
@@ -3480,21 +3466,9 @@ window.renderCustomRadios = (id, name, options, currentVal, callbackName) => {
 window.applyCondition = (val) => { window.filterCondition = val; window.applyFilters(); };
 window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
 
-window.toggleSidebarCat = (el) => {
-    // Ищем родительский контейнер всей категории
-    const parentCat = el.closest('.mb-2') || el.parentElement;
-    // Ищем внутри него блок с подкатегориями (он обычно имеет класс pl-6 или mt-2)
-    const subCats = parentCat.querySelector('.pl-6, .mt-2.space-y-1, div[class*="pl-"]');
-
-    if (subCats) {
-        subCats.classList.toggle('hidden');
-    } else if (el.nextElementSibling) {
-        // Запасной вариант (старое поведение)
-        el.nextElementSibling.classList.toggle('hidden');
-    }
-
-    const icon = el.querySelector('i.fa-chevron-down');
-    if (icon) icon.classList.toggle('rotate-180');
+window.toggleSidebarCat = (element) => {
+    const btn = element.querySelector('button');
+    if (btn) btn.click();
 };
 
 // Инициализация при загрузке
