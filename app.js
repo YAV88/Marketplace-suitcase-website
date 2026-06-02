@@ -270,6 +270,12 @@ window.changeLanguage = (lang) => {
     if (window.currentUser && typeof window.switchProfileTab === 'function') {
         window.switchProfileTab(window.currentProfileTab);
     }
+
+    // --- ПЕРЕРИСОВКА ДИНАМИЧЕСКИХ БЛОКОВ ---
+    if (!window.isInitialLoad) {
+        if (typeof window.initSidebar === 'function') window.initSidebar();
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+    }
 };
 
 // Закрываем меню при клике в пустую область
@@ -280,9 +286,11 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Запуск при загрузке
+// Запуск при загрузке (с флагом первой загрузки)
 document.addEventListener('DOMContentLoaded', () => {
+    window.isInitialLoad = true;
     window.changeLanguage(window.currentLang);
+    setTimeout(() => { window.isInitialLoad = false; }, 1000);
 });
 
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
@@ -1144,8 +1152,11 @@ const updateThemeIcons = (isDark) => {
         icon.style.opacity = '0';
 
         setTimeout(() => {
-            // 2. Меняем иконку (Луна/Солнце)
-            icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-lg transition-all duration-300' : 'fa-solid fa-moon text-lg transition-all duration-300';
+            // 2. Меняем иконку (ДОБАВЛЕН класс inline-block для работы анимации transform)
+            icon.className = isDark 
+                ? 'fa-solid fa-sun text-amber-500 text-lg inline-block transition-all duration-300' 
+                : 'fa-solid fa-moon text-indigo-400 text-lg inline-block transition-all duration-300';
+            
             // 3. Плавное появление новой иконки
             icon.style.transform = 'rotate(0deg) scale(1)';
             icon.style.opacity = '1';
