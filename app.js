@@ -1149,16 +1149,13 @@ const initPWA = () => {
 initPWA();
 
 window.updateThemeIcons = (isDark) => {
-    // Используем *= чтобы находить любые варианты вызова функции в HTML
     document.querySelectorAll('button[onclick*="toggleDarkMode"] i').forEach(icon => {
         icon.style.transform = 'rotate(-180deg) scale(0.5)';
         icon.style.opacity = '0';
-
         setTimeout(() => {
             icon.className = isDark 
                 ? 'fa-solid fa-sun text-amber-500 text-lg inline-block transition-all duration-300' 
                 : 'fa-solid fa-moon text-indigo-400 text-lg inline-block transition-all duration-300';
-            
             icon.style.transform = 'rotate(0deg) scale(1)';
             icon.style.opacity = '1';
         }, 150); 
@@ -1178,8 +1175,9 @@ const setAutoTheme = () => {
             else document.documentElement.classList.remove('dark');
         } catch (e) { }
     }
-    // Вызываем правильную глобальную функцию
-    setTimeout(() => window.updateThemeIcons(isDark), 50);
+    setTimeout(() => {
+        if (typeof window.updateThemeIcons === 'function') window.updateThemeIcons(isDark);
+    }, 50);
 };
 setAutoTheme();
 
