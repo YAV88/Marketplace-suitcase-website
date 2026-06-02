@@ -785,18 +785,22 @@ window.submitReview = async (event) => {
     }
 };
 
-window.initGlobalChatListener = () => {
-    if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
+window.initGlobalChatListener = async () => {
+    // АСИНХРОННАЯ очистка глобального слушателя
+    if (window.globalChatSubscription) {
+        await supabase.removeChannel(window.globalChatSubscription);
+        window.globalChatSubscription = null;
+    }
 
     const channelName = 'global_chats_' + (window.currentUser?.id || 'guest');
-
-    // Запрашиваем права на уведомления (если еще не запрашивали)
+    
+    // Запрашиваем права на уведомления...
     if (window.currentUser && "Notification" in window) {
         if (Notification.permission !== "granted" && Notification.permission !== "denied") {
             Notification.requestPermission();
         }
     }
-
+    
     window.globalChatSubscription = supabase.channel(channelName)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
             if (window.currentUser) {
@@ -877,16 +881,15 @@ window.sendChatMessage = async () => {
     } catch (e) { window.showToast("Ошибка отправки", true); }
 };
 
-window.subscribeToMessages = () => {
-    // 1. На всякий случай добиваем старую подписку
+window.subscribeToMessages = async () => {
+    // 1. АСИНХРОННО убиваем старую подписку (ждем полного отключения)
     if (window.chatSubscription) {
-        supabase.removeChannel(window.chatSubscription);
+        await supabase.removeChannel(window.chatSubscription);
         window.chatSubscription = null;
     }
 
-    // 2. Создаем УНИКАЛЬНОЕ имя комнаты, чтобы обойти баг кэширования веб-сокетов Supabase
+    // 2. Создаем УНИКАЛЬНОЕ имя комнаты
     const roomName = 'chat_room_' + window.currentChatId + '_' + Date.now();
-
     window.chatSubscription = supabase.channel(roomName)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
             const newMsg = payload.new;
@@ -1289,12 +1292,14 @@ window.closeModal = id => {
         const photoList = document.getElementById('photo-preview-list'); if (photoList) photoList.innerHTML = '';
     }
 
-    // === ИСПРАВЛЕНИЕ: ЖЕСТКАЯ ОЧИСТКА ЧАТА ===
+    // === ИСПРАВЛЕНИЕ: БЕЗОПАСНАЯ ОЧИСТКА ЧАТА ===
     if (id === 'chat-modal') {
-        window.currentChatId = null; // Сбрасываем ID, чтобы глобальный слушатель понял, что мы вышли
+        window.currentChatId = null;
         if (window.chatSubscription) {
-            supabase.removeChannel(window.chatSubscription); // Убиваем фонового зомби
+            // Перехватываем подписку в локальную переменную перед удалением
+            const subToKill = window.chatSubscription;
             window.chatSubscription = null;
+            supabase.removeChannel(subToKill); // Fire-and-forget (не блокируем закрытие UI)
         }
     }
 };
