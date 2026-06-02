@@ -2019,7 +2019,7 @@ window.subcategoriesMap = {
 window.filterByCategory = (cat, event, isSubCat = false) => {
     if (event) {
         event.preventDefault();
-        event.stopPropagation();
+        // Убрали stopPropagation(), чтобы клик мог развернуть боковое меню
     }
 
     // --- СЕНЬОР-ЛОГИКА: Умное закрытие ---
@@ -2038,13 +2038,11 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
 
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
     const condRadios = document.getElementById('condition-radios-wrap');
-
     if (condRadios) {
         const condBlock = condRadios.parentElement;
         const prevDivider = condBlock.previousElementSibling;
         const isNoCondCat = noConditionCats.some(c => cat.startsWith(c));
 
-        // ЗДЕСЬ БЫЛА ОШИБКА СО СКОБКАМИ. ТЕПЕРЬ ВСЁ ИДЕАЛЬНО:
         if (isNoCondCat) {
             condBlock.style.display = 'none';
             if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = 'none';
@@ -2068,7 +2066,6 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
         
         const grpCat = btn.innerText.trim();
 
-        // Только подсвечиваем цвет текста, НЕ трогаем классы раскрытия (max-h)
         if (cat.startsWith(grpCat) && cat !== 'Все') {
             btn.classList.add('text-brand-600');
             btn.classList.remove('text-stone-700', 'dark:text-stone-300');
@@ -2077,7 +2074,6 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
             btn.classList.add('text-stone-700', 'dark:text-stone-300');
         }
         
-        // Подсвечиваем активную подкатегорию внутри (если она открыта вручную)
         const subWrap = grp.querySelector('.sidebar-sub-cats');
         if (subWrap) {
             subWrap.querySelectorAll('button').forEach(subBtn => {
@@ -2104,12 +2100,13 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
         }
     }
 
-    const subCatsContainer = document.getElementById('sub-categories');
+    // ИСПРАВЛЕНИЕ: Используем правильный ID контейнера 'sub-cats-container'
+    const subCatsContainer = document.getElementById('sub-cats-container') || document.getElementById('sub-categories');
     if (subCatsContainer) {
         if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
             const mainCat = cat.split(' - ')[0];
             let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]'}">${window.t('Все в')} «${window.t(mainCat)}»</button>`;
-
+            
             window.subcategoriesMap[mainCat].forEach(sub => {
                 const prefix = sub.prefix || mainCat;
                 const fullCat = `${prefix} - ${sub.val}`;
@@ -2121,14 +2118,17 @@ window.filterByCategory = (cat, event, isSubCat = false) => {
             });
             subCatsContainer.innerHTML = subHtml;
             subCatsContainer.style.display = 'flex';
+            subCatsContainer.classList.remove('hidden'); 
         } else {
             subCatsContainer.style.display = 'none';
+            subCatsContainer.classList.add('hidden');
         }
     }
 
     const isMobile = window.innerWidth < 1024;
     if (!isMobile || isSubCat) {
-        if (typeof window.fetchItems === 'function') window.fetchItems(true);
+        // ИСПРАВЛЕНИЕ: Вызываем fetchItems(false), чтобы карточки заменялись, а не дублировались
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
     }
 };
 
@@ -2389,6 +2389,7 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
     const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
 
     // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
+    // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
     const cardFooter = (isOwner && isProfileView) ? `
         <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
             <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50"> <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП </button>
@@ -2396,7 +2397,8 @@ window.createCardHtml = function (i, isVIP, isProfileView = false) {
                 <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
             </button>
         </div>
-    ` : `
+    ` : ``;
+    
         <div class="view-grid-city text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
             <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
             <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
@@ -3361,16 +3363,14 @@ window.renderSidebarCategories = () => {
 
     for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
         if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
-
         const isActiveMain = window.currentCategory.startsWith(mainCat);
         html += `
         <div class="sidebar-cat-group mt-1">
             <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
+                <button onclick="window.filterByCategory('${mainCat}', event, true)" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
                 <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
             </div>
             <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
-        
         subs.forEach(sub => {
             const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
             html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
