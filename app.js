@@ -286,12 +286,43 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Запуск при загрузке (с флагом первой загрузки)
-document.addEventListener('DOMContentLoaded', () => {
+// ==========================================
+// ГЛАВНЫЙ СТАРТЕР ПРИЛОЖЕНИЯ
+// ==========================================
+const initSvalkaApp = () => {
+    // 1. Включаем режим начальной загрузки
     window.isInitialLoad = true;
-    window.changeLanguage(window.currentLang);
+    
+    // 2. Переводим текстовую оболочку
+    if (typeof window.changeLanguage === 'function') {
+        window.changeLanguage(window.currentLang);
+    }
+    
+    // 3. Генерируем боковое меню и фильтры
+    if (typeof window.initSidebar === 'function') {
+        window.initSidebar();
+    }
+    
+    // 4. ДЕЛАЕМ ГЛАВНОЕ: Запрашиваем карточки из базы!
+    if (typeof window.fetchItems === 'function') {
+        window.fetchItems(false);
+    }
+    
+    // 5. Проверяем авторизацию пользователя (если вошел - меняем кнопки)
+    if (typeof window.checkUserSession === 'function') {
+        window.checkUserSession();
+    }
+    
+    // 6. Выключаем режим начальной загрузки через секунду
     setTimeout(() => { window.isInitialLoad = false; }, 1000);
-});
+};
+
+// Запускаем двигатель (надежный метод для script type="module")
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSvalkaApp);
+} else {
+    initSvalkaApp();
+}
 
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
 window.customConfirm = (title, message, btnText, colorTheme, iconClass) => {
