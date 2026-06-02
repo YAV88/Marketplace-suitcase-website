@@ -1975,6 +1975,16 @@ window.fetchItems = async (isLoadMore = false) => {
     } finally { if (loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; }
 };
 
+// Автоматическое применение фильтра "Оплата"
+document.addEventListener('change', (e) => {
+    if (e.target && e.target.classList.contains('filter-payment')) {
+        window.displayedCount = 12; // Сбрасываем счетчик подгрузки
+        if (typeof window.fetchItems === 'function') {
+            window.fetchItems(false); // Запрашиваем новые данные
+        }
+    }
+});
+
 window.resetFilters = () => {
     const elMin = document.getElementById('filter-price-min');
     const elMax = document.getElementById('filter-price-max');
