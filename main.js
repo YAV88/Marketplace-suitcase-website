@@ -8,7 +8,7 @@ window.supabase = supabase;
 window.submitAuth = AuthModule.submitAuth;
 window.logout = AuthModule.logout;
 window.checkUserSession = AuthModule.checkUserSession;
-
+window.handleAuthChange = AuthModule.handleAuthChange;
 window.fetchItems = ItemsModule.fetchItems;
 window.openItemDetails = ItemsModule.openItemDetails;
 window.filterByCategory = ItemsModule.filterByCategory;
