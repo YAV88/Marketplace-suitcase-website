@@ -55,21 +55,21 @@ export const AuthModule = {
     submitAuth: async (event) => {
         if (event) event.preventDefault();
         
-        // Надежная проверка режима без привязки к языку
-        const titleEl = document.getElementById('auth-title');
-        const titleText = titleEl ? titleEl.innerText.toLowerCase() : '';
-        const dataI18n = titleEl ? titleEl.getAttribute('data-i18n') : '';
-        const isRegister = dataI18n === 'auth_reg_title' || titleText.includes('регистр') || titleText.includes('register') || titleText.includes('создать');
+        // 1. Надежное определение режима через глобальную переменную
+        const isRegister = window.authMode === 'register';
 
-        // Считываем данные формы ровно один раз
         const email = document.getElementById('auth-email').value;
         const password = document.getElementById('auth-password').value;
-        const btn = document.getElementById('btn-submit-auth');
-        const originalText = btn.innerHTML;
+        
+        // 2. ИСПРАВЛЕНО: Правильный ID кнопки из HTML
+        const btn = document.getElementById('auth-submit-btn');
+        const originalText = btn ? btn.innerHTML : 'Отправить';
         
         try {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
-            btn.disabled = true;
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
+                btn.disabled = true;
+            }
 
             if (isRegister) {
                 const { error } = await supabase.auth.signUp({ email, password });
@@ -86,8 +86,10 @@ export const AuthModule = {
             if (errorMsg.includes('Invalid login credentials')) errorMsg = 'Неверный email или пароль';
             if (typeof window.showToast === 'function') window.showToast(errorMsg, 'error');
         } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+            if (btn) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
     },
 
