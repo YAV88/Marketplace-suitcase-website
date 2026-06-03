@@ -54,7 +54,18 @@ export const AuthModule = {
 
     submitAuth: async (event) => {
         if (event) event.preventDefault();
-        const isRegister = !document.getElementById('auth-title').innerText.includes('Вход');
+        submitAuth: async (event) => {
+        if (event) event.preventDefault();
+        
+        // --- ИСПРАВЛЕНИЕ: Надежная проверка режима (не зависит от языка) ---
+        const titleEl = document.getElementById('auth-title');
+        const titleText = titleEl ? titleEl.innerText.toLowerCase() : '';
+        const dataI18n = titleEl ? titleEl.getAttribute('data-i18n') : '';
+        const isRegister = dataI18n === 'auth_reg_title' || titleText.includes('регистр') || titleText.includes('register') || titleText.includes('создать');
+        // ------------------------------------------------------------------
+
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-password').value;
         const email = document.getElementById('auth-email').value;
         const password = document.getElementById('auth-password').value;
         const btn = document.getElementById('btn-submit-auth');
