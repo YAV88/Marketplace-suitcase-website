@@ -13,10 +13,12 @@ export const AuthModule = {
     },
 
     handleAuthChange: async (session) => {
+        // === ИСПРАВЛЕННЫЕ ID ИЗ ТВОЕГО HTML ===
         const btnLogin = document.getElementById('nav-login-btn');
         const userMenu = document.getElementById('nav-user-controls');
         const mobileBtnLogin = document.getElementById('mob-nav-login');
         const mobileUserMenu = document.getElementById('mob-user-controls');
+        // =====================================
 
         if (session) {
             window.currentUser = session.user;
@@ -26,31 +28,27 @@ export const AuthModule = {
             const avatarUrl = window.currentUser.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
             document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
-            // ==========================================
             // ОБНОВЛЯЕМ ДАННЫЕ В HTML ПРОФИЛЯ
-            // ==========================================
             const profileName = document.getElementById('profile-name');
             const profileEmail = document.getElementById('profile-email');
             const profilePhone = document.getElementById('profile-phone');
             const profileCity = document.getElementById('profile-city');
-            const headerUserName = document.getElementById('header-user-name');
+            const headerUserName = document.getElementById('header-user-name'); 
             
             if (profileName) profileName.innerText = window.currentUser.name || window.currentUser.full_name || 'Пользователь';
             if (profileEmail) profileEmail.innerText = window.currentUser.email || '';
-            if (profilePhone) profilePhone.value = window.currentUser.phone || '';
+            if (profilePhone) profilePhone.value = window.currentUser.phone || ''; 
             if (profilePhone && profilePhone.tagName !== 'INPUT') profilePhone.innerText = window.currentUser.phone || 'Не указан';
             if (profileCity) profileCity.value = window.currentUser.city || '';
             if (headerUserName) headerUserName.innerText = window.currentUser.name || window.currentUser.full_name || 'Профиль';
-            
-            if (typeof window.renderUserProfile === 'function') {
-                window.renderUserProfile();
-            }
-            // ==========================================
 
+            // ПРЯЧЕМ КНОПКУ "ВОЙТИ" И ПОКАЗЫВАЕМ ПРОФИЛЬ
             if (btnLogin) btnLogin.classList.add('hidden');
-            if (userMenu) userMenu.classList.remove('hidden');
+            if (userMenu) { userMenu.classList.remove('hidden'); userMenu.classList.add('flex'); } // Добавляем flex
+            
+            // ТО ЖЕ САМОЕ ДЛЯ МОБИЛЬНОГО МЕНЮ
             if (mobileBtnLogin) mobileBtnLogin.classList.add('hidden');
-            if (mobileUserMenu) mobileUserMenu.classList.remove('hidden');
+            if (mobileUserMenu) { mobileUserMenu.classList.remove('hidden'); mobileUserMenu.classList.add('flex'); }
 
             const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
             window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
@@ -61,10 +59,12 @@ export const AuthModule = {
         } else {
             window.currentUser = null;
             window.userFavorites = new Set();
-            if (btnLogin) btnLogin.classList.remove('hidden');
-            if (userMenu) userMenu.classList.add('hidden');
-            if (mobileBtnLogin) mobileBtnLogin.classList.remove('hidden');
-            if (mobileUserMenu) mobileUserMenu.classList.add('hidden');
+            
+            // ВОЗВРАЩАЕМ КНОПКУ "ВОЙТИ", ЕСЛИ ВЫШЛИ
+            if (btnLogin) { btnLogin.classList.remove('hidden'); btnLogin.classList.add('lg:flex'); }
+            if (userMenu) { userMenu.classList.add('hidden'); userMenu.classList.remove('flex'); }
+            if (mobileBtnLogin) { mobileBtnLogin.classList.remove('hidden'); mobileBtnLogin.classList.add('flex'); }
+            if (mobileUserMenu) { mobileUserMenu.classList.add('hidden'); mobileUserMenu.classList.remove('flex'); }
             
             if (window.globalChatSubscription) {
                 supabase.removeChannel(window.globalChatSubscription);
