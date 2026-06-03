@@ -55,41 +55,59 @@ export const AuthModule = {
     submitAuth: async (event) => {
         if (event) event.preventDefault();
         
-        // 1. Надежное определение режима через глобальную переменную
-        const isRegister = window.authMode === 'register';
+        // Задаем дефолтный режим 'login', если пользователь не переключал вкладки
+        const mode = window.authMode || 'login';
+        const isRegister = mode === 'register';
 
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
-        
-        // 2. ИСПРАВЛЕНО: Правильный ID кнопки из HTML
+        const emailEl = document.getElementById('auth-email');
+        const passwordEl = document.getElementById('auth-password');
         const btn = document.getElementById('auth-submit-btn');
-        const originalText = btn ? btn.innerHTML : 'Отправить';
+
+        if (!emailEl || !passwordEl || !btn) {
+            console.error("Ошибка DOM: Элементы формы не найдены.");
+            return;
+        }
+
+        const email = emailEl.value;
+        const password = passwordEl.value;
+        const originalText = btn.innerHTML;
         
         try {
-            if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
-                btn.disabled = true;
-            }
+            // Визуальный отклик кнопки
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
+            btn.disabled = true;
 
             if (isRegister) {
                 const { error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
+                
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
+                else alert('Успешная регистрация! Проверьте почту.');
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+                
                 if (typeof window.showToast === 'function') window.showToast('С возвращением!', 'success');
+                else alert('С возвращением!');
             }
+            
             if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
         } catch (err) {
+            console.error("Supabase Auth Error:", err);
+            
+            // Обработка частых ошибок
             let errorMsg = err.message;
             if (errorMsg.includes('Invalid login credentials')) errorMsg = 'Неверный email или пароль';
+            if (errorMsg.includes('already registered')) errorMsg = 'Пользователь с таким email уже существует';
+            if (errorMsg.includes('Password should be at least')) errorMsg = 'Пароль должен быть не менее 6 символов';
+            
+            // Надежный вывод ошибки
             if (typeof window.showToast === 'function') window.showToast(errorMsg, 'error');
+            else alert("Ошибка: " + errorMsg);
         } finally {
-            if (btn) {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+            // Возврат кнопки в исходное состояние
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     },
 
