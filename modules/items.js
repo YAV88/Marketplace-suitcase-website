@@ -737,7 +737,28 @@ export const ItemsModule = {
 
             } else {
                 if (ownerControls) ownerControls.classList.add('hidden');
-                if (chatBtn) chatBtn.classList.remove('hidden'); 
+                if (chatBtn) {
+                    chatBtn.classList.remove('hidden'); 
+                    
+                    // --- ИСПРАВЛЕНИЕ: Передаем данные продавца в чат ---
+                    chatBtn.onclick = () => {
+                        if (!window.currentUser) {
+                            if (typeof window.showToast === 'function') window.showToast('Войдите, чтобы написать продавцу', 'error');
+                            return;
+                        }
+                        
+                        // Генерируем уникальный ID комнаты: id1_id2_idТовара
+                        const ownerId = item.userId || item.user_id;
+                        const chatId = [window.currentUser.id, ownerId].sort().join('_') + '_' + item.id;
+                        const itemImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
+                        
+                        if (typeof window.openChat === 'function') {
+                            // Передаем (ID чата, Название, ID товара, Картинку, ID продавца)
+                            window.openChat(chatId, item.title, item.id, itemImg, ownerId);
+                        }
+                    };
+                    // ----------------------------------------------------
+                } 
             }
 
             const currentIndex = window.loadedItems.findIndex(i => i.id === item.id);
