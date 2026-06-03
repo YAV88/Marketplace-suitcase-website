@@ -26,6 +26,28 @@ export const AuthModule = {
             const avatarUrl = window.currentUser.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
             document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
+            // ==========================================
+            // ИСПРАВЛЕНИЕ: ОБНОВЛЯЕМ ДАННЫЕ В HTML ПРОФИЛЯ
+            // ==========================================
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+            const profilePhone = document.getElementById('profile-phone');
+            const profileCity = document.getElementById('profile-city');
+            const headerUserName = document.getElementById('header-user-name'); // Если есть имя в шапке
+            
+            if (profileName) profileName.innerText = window.currentUser.name || window.currentUser.full_name || 'Пользователь';
+            if (profileEmail) profileEmail.innerText = window.currentUser.email || '';
+            if (profilePhone) profilePhone.value = window.currentUser.phone || ''; // Если это инпут
+            if (profilePhone && profilePhone.tagName !== 'INPUT') profilePhone.innerText = window.currentUser.phone || 'Не указан';
+            if (profileCity) profileCity.value = window.currentUser.city || '';
+            if (headerUserName) headerUserName.innerText = window.currentUser.name || window.currentUser.full_name || 'Профиль';
+            
+            // Если у тебя в main.js осталась старая функция рендера профиля, вызываем её:
+            if (typeof window.renderUserProfile === 'function') {
+                window.renderUserProfile();
+            }
+            // ==========================================
+
             if (btnLogin) btnLogin.classList.add('hidden');
             if (userMenu) userMenu.classList.remove('hidden');
             if (mobileBtnLogin) mobileBtnLogin.classList.add('hidden');
