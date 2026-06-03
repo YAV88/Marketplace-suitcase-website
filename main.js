@@ -3,6 +3,19 @@ import { AuthModule } from './modules/auth.js';
 import { ChatModule } from './modules/chat.js';
 import { ItemsModule } from './modules/items.js';
 
+window.currentCategory = 'Все';
+window.filterCities = [];
+window.searchQuery = '';
+window.showUrgentOnly = false;
+window.filterCondition = 'Все';
+window.filterPriceMin = '';
+window.filterPriceMax = '';
+window.filterCurrency = 'Все';
+window.currentSortMode = 'new';
+window.displayedCount = 12;
+window.loadedItems = [];
+window.currentUser = null;
+window.userFavorites = new Set();
 // Пробрасываем модули в глобальную область, чтобы кнопки в HTML работали
 window.supabase = supabase;
 window.submitAuth = AuthModule.submitAuth;
