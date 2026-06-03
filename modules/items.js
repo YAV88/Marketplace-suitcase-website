@@ -759,3 +759,4 @@ export const ItemsModule = {
             history.pushState({ modal: true }, '', '?item=' + id);
         } catch (err) { console.error(err); }
     }
+};
