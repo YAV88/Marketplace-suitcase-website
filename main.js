@@ -1454,6 +1454,9 @@ window.setAuthMode = mode => {
     const confirmInput = document.getElementById('auth-password-confirm');
     const tabL = document.getElementById('tab-login');
     const tabR = document.getElementById('tab-register');
+    
+    // Добавлено: Находим кнопку формы по правильному ID
+    const submitBtn = document.getElementById('auth-submit-btn');
 
     if (mode === 'register') {
         if (fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
@@ -1461,19 +1464,28 @@ window.setAuthMode = mode => {
         if (confirmInput) confirmInput.required = true;
         if (tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
         if (tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
+        
+        // Тематическое название для регистрации
+        if (submitBtn) {
+            submitBtn.innerText = "Присоединиться";
+            submitBtn.removeAttribute('data-i18n'); // Отключаем словарь для этой кнопки
+        }
 
-        // === ИСПРАВЛЕНИЕ: Вызываем генерацию аватарок при переключении ===
         if (typeof window.renderRegistrationAvatars === 'function') {
             window.renderRegistrationAvatars();
         }
-        // ==================================================================
-
     } else {
         if (fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
         if (confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); }
         if (confirmInput) confirmInput.required = false;
         if (tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
         if (tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
+        
+        // Тематическое название для входа
+        if (submitBtn) {
+            submitBtn.innerText = "Зайти на Свалку";
+            submitBtn.removeAttribute('data-i18n');
+        }
     }
 };
 
