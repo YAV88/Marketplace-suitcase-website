@@ -13,10 +13,10 @@ export const AuthModule = {
     },
 
     handleAuthChange: async (session) => {
-        const btnLogin = document.getElementById('btn-login');
-        const userMenu = document.getElementById('user-menu');
-        const mobileBtnLogin = document.getElementById('mobile-btn-login');
-        const mobileUserMenu = document.getElementById('mobile-user-menu');
+        const btnLogin = document.getElementById('nav-login-btn');
+        const userMenu = document.getElementById('nav-user-controls');
+        const mobileBtnLogin = document.getElementById('mob-nav-login');
+        const mobileUserMenu = document.getElementById('mob-user-controls');
 
         if (session) {
             window.currentUser = session.user;
@@ -27,22 +27,21 @@ export const AuthModule = {
             document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
             // ==========================================
-            // ИСПРАВЛЕНИЕ: ОБНОВЛЯЕМ ДАННЫЕ В HTML ПРОФИЛЯ
+            // ОБНОВЛЯЕМ ДАННЫЕ В HTML ПРОФИЛЯ
             // ==========================================
             const profileName = document.getElementById('profile-name');
             const profileEmail = document.getElementById('profile-email');
             const profilePhone = document.getElementById('profile-phone');
             const profileCity = document.getElementById('profile-city');
-            const headerUserName = document.getElementById('header-user-name'); // Если есть имя в шапке
+            const headerUserName = document.getElementById('header-user-name');
             
             if (profileName) profileName.innerText = window.currentUser.name || window.currentUser.full_name || 'Пользователь';
             if (profileEmail) profileEmail.innerText = window.currentUser.email || '';
-            if (profilePhone) profilePhone.value = window.currentUser.phone || ''; // Если это инпут
+            if (profilePhone) profilePhone.value = window.currentUser.phone || '';
             if (profilePhone && profilePhone.tagName !== 'INPUT') profilePhone.innerText = window.currentUser.phone || 'Не указан';
             if (profileCity) profileCity.value = window.currentUser.city || '';
             if (headerUserName) headerUserName.innerText = window.currentUser.name || window.currentUser.full_name || 'Профиль';
             
-            // Если у тебя в main.js осталась старая функция рендера профиля, вызываем её:
             if (typeof window.renderUserProfile === 'function') {
                 window.renderUserProfile();
             }
