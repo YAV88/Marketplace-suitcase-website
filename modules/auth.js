@@ -13,11 +13,11 @@ export const AuthModule = {
     },
 
     handleAuthChange: async (session) => {
-        // === ИСПРАВЛЕННЫЕ ID ИЗ ТВОЕГО HTML ===
-        const btnLogin = document.getElementById('nav-login-btn');
-        const userMenu = document.getElementById('nav-user-controls');
-        const mobileBtnLogin = document.getElementById('mob-nav-login');
-        const mobileUserMenu = document.getElementById('mob-user-controls');
+        // === ИСТИННЫЕ ID ИЗ ТВОЕГО INDEX.HTML ===
+        const btnLogin = document.getElementById('btn-login');
+        const userMenu = document.getElementById('user-menu');
+        const mobileBtnLogin = document.getElementById('mobile-btn-login');
+        const mobileUserMenu = document.getElementById('mobile-user-menu');
         // =====================================
 
         if (session) {
@@ -28,7 +28,7 @@ export const AuthModule = {
             const avatarUrl = window.currentUser.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
             document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
-            // ОБНОВЛЯЕМ ДАННЫЕ В HTML ПРОФИЛЯ
+            // ЗАПОЛНЯЕМ ДАННЫЕ ПРОФИЛЯ
             const profileName = document.getElementById('profile-name');
             const profileEmail = document.getElementById('profile-email');
             const profilePhone = document.getElementById('profile-phone');
@@ -42,14 +42,14 @@ export const AuthModule = {
             if (profileCity) profileCity.value = window.currentUser.city || '';
             if (headerUserName) headerUserName.innerText = window.currentUser.name || window.currentUser.full_name || 'Профиль';
 
-            // ПРЯЧЕМ КНОПКУ "ВОЙТИ" И ПОКАЗЫВАЕМ ПРОФИЛЬ
+            // ЖЕСТКОЕ ПЕРЕКЛЮЧЕНИЕ ИНТЕРФЕЙСА (ПРЯЧЕМ КНОПКУ ВХОДА)
             if (btnLogin) btnLogin.classList.add('hidden');
-            if (userMenu) { userMenu.classList.remove('hidden'); userMenu.classList.add('flex'); } // Добавляем flex
+            if (userMenu) userMenu.classList.remove('hidden'); 
             
-            // ТО ЖЕ САМОЕ ДЛЯ МОБИЛЬНОГО МЕНЮ
             if (mobileBtnLogin) mobileBtnLogin.classList.add('hidden');
-            if (mobileUserMenu) { mobileUserMenu.classList.remove('hidden'); mobileUserMenu.classList.add('flex'); }
+            if (mobileUserMenu) mobileUserMenu.classList.remove('hidden'); 
 
+            // ПОДТЯГИВАЕМ ЛАЙКИ И ЗАПУСКАЕМ РЕНДЕР
             const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
             window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
 
@@ -57,14 +57,14 @@ export const AuthModule = {
             if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
 
         } else {
+            // ЛОГИКА ВЫХОДА (ВОЗВРАЩАЕМ КНОПКИ)
             window.currentUser = null;
             window.userFavorites = new Set();
             
-            // ВОЗВРАЩАЕМ КНОПКУ "ВОЙТИ", ЕСЛИ ВЫШЛИ
-            if (btnLogin) { btnLogin.classList.remove('hidden'); btnLogin.classList.add('lg:flex'); }
-            if (userMenu) { userMenu.classList.add('hidden'); userMenu.classList.remove('flex'); }
-            if (mobileBtnLogin) { mobileBtnLogin.classList.remove('hidden'); mobileBtnLogin.classList.add('flex'); }
-            if (mobileUserMenu) { mobileUserMenu.classList.add('hidden'); mobileUserMenu.classList.remove('flex'); }
+            if (btnLogin) btnLogin.classList.remove('hidden'); 
+            if (userMenu) userMenu.classList.add('hidden'); 
+            if (mobileBtnLogin) mobileBtnLogin.classList.remove('hidden'); 
+            if (mobileUserMenu) mobileUserMenu.classList.add('hidden'); 
             
             if (window.globalChatSubscription) {
                 supabase.removeChannel(window.globalChatSubscription);
@@ -72,7 +72,7 @@ export const AuthModule = {
             }
         }
     },
-
+    
     submitAuth: async (event) => {
         if (event) event.preventDefault();
         
