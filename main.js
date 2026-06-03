@@ -2997,19 +2997,20 @@ window.navigatePhoto = (direction, event) => {
 // ==========================================
 // ГЛАВНЫЙ СТАРТЕР ПРИЛОЖЕНИЯ
 // ==========================================
-const initSvalkaApp = () => {
+function initSvalkaApp() {
     window.isInitialLoad = true;
     
     if (typeof window.changeLanguage === 'function') window.changeLanguage(window.currentLang);
     if (typeof window.initSidebar === 'function') window.initSidebar();
     
     // Запускаем из модулей!
-    AuthModule.checkUserSession();
-    ItemsModule.fetchItems(false);
+    if (typeof AuthModule !== 'undefined') AuthModule.checkUserSession();
+    if (typeof ItemsModule !== 'undefined') ItemsModule.fetchItems(false);
     
     setTimeout(() => { window.isInitialLoad = false; }, 1000);
-};
+}
 
+// Запускаем двигатель
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSvalkaApp);
 } else {
