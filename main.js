@@ -3,24 +3,23 @@ import { AuthModule } from './modules/auth.js';
 import { ChatModule } from './modules/chat.js';
 import { ItemsModule } from './modules/items.js';
 
-window.currentCategory = 'Все';
-window.filterCities = [];
-window.searchQuery = '';
-window.showUrgentOnly = false;
-window.filterCondition = 'Все';
-window.filterPriceMin = '';
-window.filterPriceMax = '';
-window.filterCurrency = 'Все';
-window.currentSortMode = 'new';
-window.displayedCount = 12;
-window.loadedItems = [];
-window.currentUser = null;
-window.userFavorites = new Set();
-// Пробрасываем модули в глобальную область, чтобы кнопки в HTML работали
-window.supabase = supabase;
-window.submitAuth = AuthModule.submitAuth;
-window.logout = AuthModule.logout;
-window.checkUserSession = AuthModule.checkUserSession;
+// ==========================================
+// БЛОК ПРЕДОХРАНИТЕЛЯ: ГАРАНТИЯ ГЛОБАЛЬНОГО СОСТОЯНИЯ
+// ==========================================
+window.currentCategory = window.currentCategory || 'Все';
+window.filterCities = window.filterCities || [];
+window.searchQuery = window.searchQuery || '';
+window.showUrgentOnly = window.showUrgentOnly || false;
+window.filterCondition = window.filterCondition || 'Все';
+window.filterPriceMin = window.filterPriceMin || '';
+window.filterPriceMax = window.filterPriceMax || '';
+window.filterCurrency = window.filterCurrency || 'Все';
+window.currentSortMode = window.currentSortMode || 'new';
+window.displayedCount = window.displayedCount || 12;
+window.loadedItems = window.loadedItems || [];
+window.currentUser = window.currentUser || null;
+window.userFavorites = window.userFavorites || new Set();
+// ==========================================
 window.handleAuthChange = AuthModule.handleAuthChange;
 window.fetchItems = ItemsModule.fetchItems;
 window.openItemDetails = ItemsModule.openItemDetails;
