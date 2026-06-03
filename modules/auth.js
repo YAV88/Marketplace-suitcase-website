@@ -90,4 +90,11 @@ export const AuthModule = {
             btn.disabled = false;
         }
     },
-}
+
+    logout: async () => {
+        try {
+            await supabase.auth.signOut();
+            window.location.reload();
+        } catch (err) { console.error("Ошибка при выходе:", err); }
+    }
+};
