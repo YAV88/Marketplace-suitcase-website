@@ -54,18 +54,14 @@ export const AuthModule = {
 
     submitAuth: async (event) => {
         if (event) event.preventDefault();
-        submitAuth: async (event) => {
-        if (event) event.preventDefault();
         
-        // --- ИСПРАВЛЕНИЕ: Надежная проверка режима (не зависит от языка) ---
+        // Надежная проверка режима без привязки к языку
         const titleEl = document.getElementById('auth-title');
         const titleText = titleEl ? titleEl.innerText.toLowerCase() : '';
         const dataI18n = titleEl ? titleEl.getAttribute('data-i18n') : '';
         const isRegister = dataI18n === 'auth_reg_title' || titleText.includes('регистр') || titleText.includes('register') || titleText.includes('создать');
-        // ------------------------------------------------------------------
 
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
+        // Считываем данные формы ровно один раз
         const email = document.getElementById('auth-email').value;
         const password = document.getElementById('auth-password').value;
         const btn = document.getElementById('btn-submit-auth');
@@ -94,11 +90,3 @@ export const AuthModule = {
             btn.disabled = false;
         }
     },
-
-    logout: async () => {
-        try {
-            await supabase.auth.signOut();
-            window.location.reload();
-        } catch (err) { console.error("Ошибка при выходе:", err); }
-    }
-};
