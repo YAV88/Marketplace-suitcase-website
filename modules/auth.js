@@ -93,13 +93,24 @@ export const AuthModule = {
             if (isRegister) {
                 const { error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
+                
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
                 else alert('Успешная регистрация! Проверьте почту.');
+                
+                // === ВОТ ЭТА НОВАЯ СТРОКА ===
+                // Перезагружаем страницу через 1.5 секунды
+                setTimeout(() => window.location.reload(), 1500); 
+
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+                
                 if (typeof window.showToast === 'function') window.showToast('С возвращением!', 'success');
                 else alert('С возвращением!');
+                
+                // === ВОТ ЭТА НОВАЯ СТРОКА ===
+                // Перезагружаем страницу через 1 секунду
+                setTimeout(() => window.location.reload(), 1000); 
             }
             
             if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
@@ -116,11 +127,3 @@ export const AuthModule = {
             btn.disabled = false;
         }
     },
-
-    logout: async () => {
-        try {
-            await supabase.auth.signOut();
-            window.location.reload();
-        } catch (err) { console.error("Ошибка при выходе:", err); }
-    }
-};
