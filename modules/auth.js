@@ -14,14 +14,12 @@ export const AuthModule = {
 
     handleAuthChange: async (session) => {
         try {
-            // ОМНИ-СЕЛЕКТОРЫ: Захватываем все известные ID из разных версий верстки
             const loginIds = ['btn-login', 'nav-login-btn', 'mobile-btn-login', 'mob-nav-login', 'header-login-btn'];
             const menuIds = ['user-menu', 'nav-user-controls', 'mobile-user-menu', 'mob-user-controls', 'header-user-menu'];
 
             if (session) {
                 window.currentUser = session.user;
                 
-                // Безопасное извлечение профиля (не крашит скрипт при отсутствии записи)
                 try {
                     const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
                     if (profile) window.currentUser = { ...window.currentUser, ...profile };
@@ -30,7 +28,6 @@ export const AuthModule = {
                 const avatarUrl = window.currentUser?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
                 document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
-                // Безопасный инжект текста
                 const safeSet = (id, val, isInput = false) => {
                     const el = document.getElementById(id);
                     if (el) { isInput ? el.value = val : el.innerText = val; }
@@ -42,15 +39,32 @@ export const AuthModule = {
                 safeSet('profile-phone', window.currentUser.phone || '', true);
                 safeSet('profile-city', window.currentUser.city || '', true);
 
-                // ЖЕСТКИЙ ПЕРЕХВАТ ИНТЕРФЕЙСА (Игнорирует конфликты Tailwind)
-                loginIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.style.display = 'flex'; el.classList.remove('hidden'); } });
+                // === АБСОЛЮТНОЕ УДАЛЕНИЕ КНОПКИ "ВОЙТИ" (Обход Tailwind) ===
+                loginIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('flex', 'lg:flex', 'md:flex', 'block'); 
+                        el.style.display = 'none'; 
+                    } 
+                });
+                menuIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.remove('hidden'); 
+                        el.classList.add('flex', 'lg:flex'); 
+                        el.style.display = 'flex'; 
+                    } 
+                });
 
                 try {
                     const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
                     window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                 } catch(e) {}
 
+                // === ИСПРАВЛЕНИЕ: ЗАПУСК РЕНДЕРА ТОВАРОВ И БЕЙДЖЕЙ ===
+                if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
+                if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
                 if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
                 if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
 
@@ -58,9 +72,22 @@ export const AuthModule = {
                 window.currentUser = null;
                 window.userFavorites = new Set();
                 
-                // Возврат интерфейса в стартовое состояние
-                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.style.display = ''; el.classList.remove('hidden'); } });
-                menuIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+                loginIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.remove('hidden'); 
+                        el.classList.add('lg:flex'); 
+                        el.style.display = ''; 
+                    } 
+                });
+                menuIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('flex', 'lg:flex'); 
+                        el.style.display = 'none'; 
+                    } 
+                });
                 
                 if (window.globalChatSubscription) {
                     supabase.removeChannel(window.globalChatSubscription);
@@ -93,23 +120,12 @@ export const AuthModule = {
             if (isRegister) {
                 const { error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
-                
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
-                else alert('Успешная регистрация! Проверьте почту.');
-                
-                // === ВОТ ЭТА НОВАЯ СТРОКА ===
-                // Перезагружаем страницу через 1.5 секунды
                 setTimeout(() => window.location.reload(), 1500); 
-
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                
                 if (typeof window.showToast === 'function') window.showToast('С возвращением!', 'success');
-                else alert('С возвращением!');
-                
-                // === ВОТ ЭТА НОВАЯ СТРОКА ===
-                // Перезагружаем страницу через 1 секунду
                 setTimeout(() => window.location.reload(), 1000); 
             }
             
@@ -126,5 +142,12 @@ export const AuthModule = {
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
+    },
+
+    logout: async () => {
+        try {
+            await supabase.auth.signOut();
+            window.location.reload();
+        } catch (err) { console.error("Ошибка при выходе:", err); }
     }
 };
