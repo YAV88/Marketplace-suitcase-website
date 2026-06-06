@@ -39,21 +39,18 @@ export const AuthModule = {
                 safeSet('profile-phone', window.currentUser.phone || '', true);
                 safeSet('profile-city', window.currentUser.city || '', true);
 
-                // === АБСОЛЮТНОЕ УДАЛЕНИЕ КНОПКИ "ВОЙТИ" (Обход Tailwind) ===
+                // === ЖЕСТКОЕ СКРЫТИЕ КНОПКИ ВХОДА И ПОКАЗ ПРОФИЛЯ ===
                 loginIds.forEach(id => { 
                     const el = document.getElementById(id); 
                     if (el) { 
-                        el.classList.add('hidden'); 
-                        el.classList.remove('flex', 'lg:flex', 'md:flex', 'block'); 
-                        el.style.display = 'none'; 
+                        el.style.setProperty('display', 'none', 'important'); // Перебиваем Tailwind
                     } 
                 });
                 menuIds.forEach(id => { 
                     const el = document.getElementById(id); 
                     if (el) { 
                         el.classList.remove('hidden'); 
-                        el.classList.add('flex', 'lg:flex'); 
-                        el.style.display = 'flex'; 
+                        el.style.setProperty('display', 'flex', 'important'); 
                     } 
                 });
 
@@ -62,7 +59,8 @@ export const AuthModule = {
                     window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                 } catch(e) {}
 
-                // === ИСПРАВЛЕНИЕ: ЗАПУСК РЕНДЕРА ТОВАРОВ И БЕЙДЖЕЙ ===
+                // Рендер верхнего блока профиля и товаров
+                if (typeof window.renderUserProfile === 'function') window.renderUserProfile();
                 if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
                 if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
                 if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
@@ -76,16 +74,13 @@ export const AuthModule = {
                     const el = document.getElementById(id); 
                     if (el) { 
                         el.classList.remove('hidden'); 
-                        el.classList.add('lg:flex'); 
-                        el.style.display = ''; 
+                        el.style.setProperty('display', '', 'important'); 
                     } 
                 });
                 menuIds.forEach(id => { 
                     const el = document.getElementById(id); 
                     if (el) { 
-                        el.classList.add('hidden'); 
-                        el.classList.remove('flex', 'lg:flex'); 
-                        el.style.display = 'none'; 
+                        el.style.setProperty('display', 'none', 'important'); 
                     } 
                 });
                 
@@ -105,20 +100,35 @@ export const AuthModule = {
 
         const emailEl = document.getElementById('auth-email');
         const passwordEl = document.getElementById('auth-password');
+        const nameEl = document.getElementById('auth-name'); // Берем поле имени
         const btn = document.getElementById('auth-submit-btn');
 
         if (!emailEl || !passwordEl || !btn) return;
 
-        const email = emailEl.value;
+        const email = emailEl.value.trim();
         const password = passwordEl.value;
+        const name = nameEl ? nameEl.value.trim() : '';
         const originalText = btn.innerHTML;
+
+        // === ПРОВЕРКА НА ПУСТОЕ ИМЯ ПРИ РЕГИСТРАЦИИ ===
+        if (isRegister && !name) {
+            if (typeof window.showToast === 'function') window.showToast('Пожалуйста, укажите ваше имя', 'error');
+            else alert('Пожалуйста, укажите ваше имя');
+            if (nameEl) nameEl.focus();
+            return; // Прерываем выполнение
+        }
         
         try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
             btn.disabled = true;
 
             if (isRegister) {
-                const { error } = await supabase.auth.signUp({ email, password });
+                // Передаем имя в Supabase
+                const { error } = await supabase.auth.signUp({ 
+                    email, 
+                    password,
+                    options: { data: { name: name, full_name: name } }
+                });
                 if (error) throw error;
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
                 setTimeout(() => window.location.reload(), 1500); 
