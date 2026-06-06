@@ -14,34 +14,87 @@ export const AuthModule = {
 
     handleAuthChange: async (session) => {
         try {
-            // Список ID элементов для управления
-            const loginIds = ['btn-login', 'nav-login-btn', 'header-login-btn'];
-            const menuIds = ['user-menu', 'nav-user-controls', 'header-user-menu'];
+            const loginIds = ['btn-login', 'nav-login-btn', 'mobile-btn-login', 'mob-nav-login', 'header-login-btn'];
+            const menuIds = ['user-menu', 'nav-user-controls', 'mobile-user-menu', 'mob-user-controls', 'header-user-menu'];
 
             if (session) {
                 window.currentUser = session.user;
-                // Загружаем профиль
-                const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-                if (profile) window.currentUser = { ...window.currentUser, ...profile };
+                
+                try {
+                    const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+                    if (profile) window.currentUser = { ...window.currentUser, ...profile };
+                } catch(e) { console.warn("Профиль не заполнен, используем базовые данные"); }
 
-                // Обновление интерфейса (Принудительное)
-                const userName = window.currentUser.full_name || window.currentUser.name || 'Пользователь';
-                const nameEl = document.getElementById('header-user-name');
-                if (nameEl) nameEl.innerText = userName;
+                const avatarUrl = window.currentUser?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
+                document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
 
-                // Убираем класс hidden и сбрасываем стиль
-                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.style.display = 'none'; } });
-                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.display = 'flex'; } });
+                const safeSet = (id, val, isInput = false) => {
+                    const el = document.getElementById(id);
+                    if (el) { isInput ? el.value = val : el.innerText = val; }
+                };
+                
+                safeSet('profile-name', window.currentUser.name || window.currentUser.full_name || 'Свалкер');
+                safeSet('header-user-name', window.currentUser.name || window.currentUser.full_name || 'Профиль');
+                safeSet('profile-email', window.currentUser.email || '');
+                safeSet('profile-phone', window.currentUser.phone || '', true);
+                safeSet('profile-city', window.currentUser.city || '', true);
 
-                // РЕНДЕР ПРОФИЛЯ
+                // === АБСОЛЮТНОЕ УДАЛЕНИЕ КНОПКИ "ВОЙТИ" (Обход Tailwind) ===
+                loginIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('flex', 'lg:flex', 'md:flex', 'block'); 
+                        el.style.display = 'none'; 
+                    } 
+                });
+                menuIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.remove('hidden'); 
+                        el.classList.add('flex', 'lg:flex'); 
+                        el.style.display = 'flex'; 
+                    } 
+                });
+
+                try {
+                    const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
+                    window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
+                } catch(e) {}
+
+                // === ИСПРАВЛЕНИЕ: ЗАПУСК РЕНДЕРА ТОВАРОВ И БЕЙДЖЕЙ ===
                 if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
-                if (typeof window.fetchItems === 'function') window.fetchItems(false);
+                if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
+                if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
+                if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
+
             } else {
-                // Возврат к состоянию "Войти"
-                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.display = 'flex'; } });
-                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.style.display = 'none'; } });
+                window.currentUser = null;
+                window.userFavorites = new Set();
+                
+                loginIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.remove('hidden'); 
+                        el.classList.add('lg:flex'); 
+                        el.style.display = ''; 
+                    } 
+                });
+                menuIds.forEach(id => { 
+                    const el = document.getElementById(id); 
+                    if (el) { 
+                        el.classList.add('hidden'); 
+                        el.classList.remove('flex', 'lg:flex'); 
+                        el.style.display = 'none'; 
+                    } 
+                });
+                
+                if (window.globalChatSubscription) {
+                    supabase.removeChannel(window.globalChatSubscription);
+                    window.globalChatSubscription = null;
+                }
             }
-        } catch (err) { console.error("Ошибка рендера:", err); }
+        } catch (err) { console.error("Сбой обновления UI:", err); }
     },
 
     submitAuth: async (event) => {
