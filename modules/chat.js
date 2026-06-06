@@ -58,7 +58,7 @@ export const ChatModule = {
             const unreadIds = messages.filter(m => !m.is_read && m.sender_id !== window.currentUser.id).map(m => m.id);
             if (unreadIds.length > 0) {
                 await supabase.from('messages').update({ is_read: true }).in('id', unreadIds);
-                ChatModule.updateChatBadges();
+                if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
             }
         } catch (err) {
             container.innerHTML = '<div class="text-center text-red-500 mt-4">Не удалось загрузить чат</div>';
@@ -105,7 +105,9 @@ export const ChatModule = {
                         container.insertAdjacentHTML('beforeend', `<div class="flex justify-start w-full mt-2"><div class="max-w-[85%] p-3 rounded-2xl rounded-bl-none shadow-sm text-base font-medium break-words bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200">${newMsg.text}</div></div>`);
                         container.scrollTop = container.scrollHeight;
                     }
-                    supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => ChatModule.updateChatBadges());
+                    supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => {
+                        if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
+                    });
                 }
             }).subscribe();
     },
@@ -118,36 +120,32 @@ export const ChatModule = {
 
         if (!window.currentUser) return;
 
-        const channelName = 'global_chats_' + window.currentUser.id;
         if ("Notification" in window) {
             if (Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
             }
         }
+
+        const channelName = 'global_chats_' + window.currentUser.id;
         
         window.globalChatSubscription = supabase.channel(channelName)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                 const newMsg = payload.new;
-                if (newMsg.sender_id !== window.currentUser.id && newMsg.recipient_id === window.currentUser.id) {
+                
+                // === ИСПРАВЛЕНИЕ: МАКСИМАЛЬНО ПРОСТАЯ ПРОВЕРКА ===
+                // Если сообщение отправили НЕ мы, значит оно нам. Обновляем счетчики.
+                if (newMsg.sender_id !== window.currentUser.id) {
+                    
+                    if (typeof window.updateChatBadges === 'function') {
+                        window.updateChatBadges(); 
+                    }
+                    
                     if (window.currentChatId !== newMsg.chat_id) {
-                        ChatModule.updateChatBadges(); 
                         if (Notification.permission === "granted") {
-                            new Notification("Новое сообщение на SVALKA", { body: newMsg.text, icon: "/favicon.ico" });
+                            new Notification("Новое сообщение на SVALKA", { body: newMsg.text || "Вам прислали сообщение", icon: "/favicon.ico" });
                         }
                     }
                 }
             }).subscribe();
-    },
-
-    updateChatBadges: async () => {
-        if (!window.currentUser) return;
-        try {
-            const { data, error } = await supabase.from('messages').select('id').eq('recipient_id', window.currentUser.id).eq('is_read', false);
-            if (error) throw error;
-            const hasUnread = data && data.length > 0;
-            document.querySelectorAll('.chat-badge').forEach(badge => {
-                if (hasUnread) badge.classList.remove('hidden'); else badge.classList.add('hidden');
-            });
-        } catch (err) {}
     }
 };
