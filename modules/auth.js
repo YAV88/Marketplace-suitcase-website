@@ -14,82 +14,34 @@ export const AuthModule = {
 
     handleAuthChange: async (session) => {
         try {
-            const loginIds = ['btn-login', 'nav-login-btn', 'mobile-btn-login', 'mob-nav-login', 'header-login-btn'];
-            const menuIds = ['user-menu', 'nav-user-controls', 'mobile-user-menu', 'mob-user-controls', 'header-user-menu'];
+            // Список ID элементов для управления
+            const loginIds = ['btn-login', 'nav-login-btn', 'header-login-btn'];
+            const menuIds = ['user-menu', 'nav-user-controls', 'header-user-menu'];
 
             if (session) {
                 window.currentUser = session.user;
-                
-                try {
-                    const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-                    if (profile) window.currentUser = { ...window.currentUser, ...profile };
-                } catch(e) { console.warn("Профиль не заполнен, используем базовые данные"); }
+                // Загружаем профиль
+                const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+                if (profile) window.currentUser = { ...window.currentUser, ...profile };
 
-                const avatarUrl = window.currentUser?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
-                document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
+                // Обновление интерфейса (Принудительное)
+                const userName = window.currentUser.full_name || window.currentUser.name || 'Пользователь';
+                const nameEl = document.getElementById('header-user-name');
+                if (nameEl) nameEl.innerText = userName;
 
-                const safeSet = (id, val, isInput = false) => {
-                    const el = document.getElementById(id);
-                    if (el) { isInput ? el.value = val : el.innerText = val; }
-                };
-                
-                safeSet('profile-name', window.currentUser.name || window.currentUser.full_name || 'Свалкер');
-                safeSet('header-user-name', window.currentUser.name || window.currentUser.full_name || 'Профиль');
-                safeSet('profile-email', window.currentUser.email || '');
-                safeSet('profile-phone', window.currentUser.phone || '', true);
-                safeSet('profile-city', window.currentUser.city || '', true);
+                // Убираем класс hidden и сбрасываем стиль
+                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.style.display = 'none'; } });
+                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.display = 'flex'; } });
 
-                // === ЖЕСТКОЕ СКРЫТИЕ КНОПКИ ВХОДА И ПОКАЗ ПРОФИЛЯ ===
-                loginIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.style.setProperty('display', 'none', 'important'); // Перебиваем Tailwind
-                    } 
-                });
-                menuIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.remove('hidden'); 
-                        el.style.setProperty('display', 'flex', 'important'); 
-                    } 
-                });
-
-                try {
-                    const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
-                    window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
-                } catch(e) {}
-
-                // Рендер верхнего блока профиля и товаров
-                if (typeof window.renderUserProfile === 'function') window.renderUserProfile();
+                // РЕНДЕР ПРОФИЛЯ
                 if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
-                if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
-                if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
-                if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
-
+                if (typeof window.fetchItems === 'function') window.fetchItems(false);
             } else {
-                window.currentUser = null;
-                window.userFavorites = new Set();
-                
-                loginIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.remove('hidden'); 
-                        el.style.setProperty('display', '', 'important'); 
-                    } 
-                });
-                menuIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.style.setProperty('display', 'none', 'important'); 
-                    } 
-                });
-                
-                if (window.globalChatSubscription) {
-                    supabase.removeChannel(window.globalChatSubscription);
-                    window.globalChatSubscription = null;
-                }
+                // Возврат к состоянию "Войти"
+                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.display = 'flex'; } });
+                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.style.display = 'none'; } });
             }
-        } catch (err) { console.error("Сбой обновления UI:", err); }
+        } catch (err) { console.error("Ошибка рендера:", err); }
     },
 
     submitAuth: async (event) => {
@@ -100,35 +52,20 @@ export const AuthModule = {
 
         const emailEl = document.getElementById('auth-email');
         const passwordEl = document.getElementById('auth-password');
-        const nameEl = document.getElementById('auth-name'); // Берем поле имени
         const btn = document.getElementById('auth-submit-btn');
 
         if (!emailEl || !passwordEl || !btn) return;
 
-        const email = emailEl.value.trim();
+        const email = emailEl.value;
         const password = passwordEl.value;
-        const name = nameEl ? nameEl.value.trim() : '';
         const originalText = btn.innerHTML;
-
-        // === ПРОВЕРКА НА ПУСТОЕ ИМЯ ПРИ РЕГИСТРАЦИИ ===
-        if (isRegister && !name) {
-            if (typeof window.showToast === 'function') window.showToast('Пожалуйста, укажите ваше имя', 'error');
-            else alert('Пожалуйста, укажите ваше имя');
-            if (nameEl) nameEl.focus();
-            return; // Прерываем выполнение
-        }
         
         try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
             btn.disabled = true;
 
             if (isRegister) {
-                // Передаем имя в Supabase
-                const { error } = await supabase.auth.signUp({ 
-                    email, 
-                    password,
-                    options: { data: { name: name, full_name: name } }
-                });
+                const { error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
                 setTimeout(() => window.location.reload(), 1500); 
