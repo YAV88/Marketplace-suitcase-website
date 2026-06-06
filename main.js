@@ -19,12 +19,14 @@ window.displayedCount = window.displayedCount || 12;
 window.loadedItems = window.loadedItems || [];
 window.currentUser = window.currentUser || null;
 window.userFavorites = window.userFavorites || new Set();
-// ==========================================
+
+window.submitAuth = AuthModule.submitAuth;
+window.logout = AuthModule.logout;
+window.checkUserSession = AuthModule.checkUserSession;
 window.handleAuthChange = AuthModule.handleAuthChange;
 window.fetchItems = ItemsModule.fetchItems;
 window.openItemDetails = ItemsModule.openItemDetails;
 window.filterByCategory = ItemsModule.filterByCategory;
-
 window.openChat = ChatModule.openChat;
 window.sendMessage = ChatModule.sendMessage;
 window.initGlobalChatListener = ChatModule.initGlobalChatListener;
@@ -494,13 +496,9 @@ window.deleteItemConfirm = async () => {
     }
 };
 
-window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = [];
-window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все';
-window.searchQuery = ''; window.showUrgentOnly = false; window.filterCities = [];
-window.filterPriceMin = ''; window.filterPriceMax = ''; window.filterCurrency = 'Все';
+window.tempPhotos = []; window.editExistingImages = [];
 window.currentProfileTab = 'items'; window.activeModalItemId = null;
-window.editingItemId = null; window.userFavorites = new Set();
-window.displayedCount = 12; window.authMode = 'login'; window.authInitialized = false;
+window.editingItemId = null; window.authMode = 'login';
 
 // === ЧАТЫ И УВЕДОМЛЕНИЯ ===
 window.currentChatId = null;
@@ -924,8 +922,8 @@ window.openChatModal = async () => {
             chat = newChat;
         }
         window.currentChatId = chat.id;
-        await window.loadMessages();
-        window.subscribeToMessages();
+        await ChatModule.loadMessages(chat.id);
+        await ChatModule.subscribeToMessages();
     } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
 };
 
@@ -1047,8 +1045,8 @@ window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) 
     messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
     window.openModal('chat-modal');
 
-    await window.loadMessages();
-    window.subscribeToMessages();
+    await ChatModule.loadMessages(chatId);
+    await ChatModule.subscribeToMessages();
 };
 // ========================
 
@@ -2314,15 +2312,6 @@ window.filterProfileItems = (input, gridId) => {
 
 const originalSwitchTab = window.switchProfileTab;
 window.switchProfileTab = (tab) => { const searchInput = document.getElementById('profile-search-input'); if (searchInput) searchInput.value = ''; originalSwitchTab(tab); };
-
-// Проверяем сессию при загрузке страницы
-supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
-
-// === ОТСЛЕЖИВАНИЕ СТАТУСА АВТОРИЗАЦИИ ===
-supabase.auth.onAuthStateChange((event, session) => {
-    // Вызываем рабочую функцию вместо той опечатки
-    if (window.authInitialized) window.handleAuthChange(session);
-});
 
 window.applyCondition = (val) => {
     window.filterCondition = val;
