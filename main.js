@@ -20,16 +20,31 @@ window.loadedItems = window.loadedItems || [];
 window.currentUser = window.currentUser || null;
 window.userFavorites = window.userFavorites || new Set();
 
+// ==========================================
+// ГЛОБАЛЬНЫЙ МОСТ: СВЯЗЬ МОДУЛЕЙ И ИНТЕРФЕЙСА
+// ==========================================
+window.supabase = supabase;
+
+// Модуль Авторизации
 window.submitAuth = AuthModule.submitAuth;
 window.logout = AuthModule.logout;
 window.checkUserSession = AuthModule.checkUserSession;
 window.handleAuthChange = AuthModule.handleAuthChange;
+
+// Модуль Товаров (Без createCardHtml профиль крашится!)
 window.fetchItems = ItemsModule.fetchItems;
 window.openItemDetails = ItemsModule.openItemDetails;
 window.filterByCategory = ItemsModule.filterByCategory;
+window.createCardHtml = ItemsModule.createCardHtml; 
+
+// Модуль Чатов (Без updateChatBadges крашатся уведомления!)
 window.openChat = ChatModule.openChat;
 window.sendMessage = ChatModule.sendMessage;
+window.loadMessages = ChatModule.loadMessages;
+window.subscribeToMessages = ChatModule.subscribeToMessages;
 window.initGlobalChatListener = ChatModule.initGlobalChatListener;
+window.updateChatBadges = ChatModule.updateChatBadges;
+// ==========================================
 
 // ==========================================
 // ГЛОБАЛЬНЫЙ ДВИЖОК МУЛЬТИЯЗЫЧНОСТИ (i18n)
