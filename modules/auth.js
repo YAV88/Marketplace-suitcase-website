@@ -126,4 +126,5 @@ export const AuthModule = {
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
-    },
+    }
+};
