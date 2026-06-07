@@ -119,7 +119,7 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (С плашками и без дублей)
+    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Монолитные размеры и без дублей)
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
@@ -128,7 +128,11 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
+        // h-full заставляет все карточки в ряду тянуться до высоты самой большой (если контейнер грид)
+        const cardClass = isVIP ?
+            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full' : 
+            'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full w-full';
+            
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -136,16 +140,19 @@ export const ItemsModule = {
 
         let statusBadge = ''; let opacityClass = '';
         if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`; }
-        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
+        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`;
+        opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
         const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-        const imgHeight = 'h-36 sm:h-40';
-        const pClass = 'p-3 sm:p-4'; 
-        const titleClass = 'text-sm sm:text-base'; 
-        const priceClass = 'text-base sm:text-lg';
+        // Жесткая фиксация картинки
+        const imgHeight = 'h-40 sm:h-48 shrink-0'; 
+        const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
+        const titleClass = 'text-sm sm:text-base leading-tight'; 
+        const priceClass = 'text-base sm:text-lg shrink-0';
 
         let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
+        // Заменили иконку PostExpress на грузовик, чтобы не дублировала кнопку "На склад"
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
         let paymentBadges = '';
@@ -156,6 +163,7 @@ export const ItemsModule = {
             if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
         }
 
+        // Состояние товара теперь ТОЛЬКО ЗДЕСЬ (на фотографии сверху)
         let condBadge = '';
         if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
         else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">РАБОТА</div>`;
@@ -170,48 +178,56 @@ export const ItemsModule = {
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
         
         const cardFooter = (isOwner && isProfileView) ? `
-            <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
-                <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50"> <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП </button>
-                <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700">
+            <div class="view-grid-city text-[10px] font-bold mt-3 pt-3 flex gap-2 shrink-0 border-t border-stone-100 dark:border-stone-700">
+                <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 w-full"> <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП </button>
+                <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700 w-full">
                     <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
                 </button>
             </div>
-        ` : ``; 
-
-        const t = window.t || (text => text); // Фолбэк, если переводчик еще не загрузился
+        ` : ``;
+        
+        const t = window.t || (text => text); 
 
         return `
-        <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
+        <div class="${cardClass} ${opacityClass} overflow-hidden" onclick="window.openItemDetails('${i.id}')">
             ${favHtml}
-            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
+            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0 w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${statusBadge}
                 ${condBadge}
             </div>
             
-            <div class="card-body-wrap ${pClass} flex-1 flex flex-col">
-                <div class="view-list-col-2 flex-1 flex flex-col">
-                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">
+            <div class="card-body-wrap ${pClass} w-full">
+                <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
+                    
+                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-10 overflow-hidden">
                         ${vipCrown}${i.title || 'Без названия'}
                     </h4>
-                    <div class="text-brand-600 price-text ${priceClass} mt-0.5 font-black">
+                    
+                    <div class="text-brand-600 price-text ${priceClass} mt-0.5 mb-2 font-black shrink-0">
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="flex flex-col gap-1.5 mt-auto pt-2">
-                        <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}</span>
-                            ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${t(i.condition || 'Б/У')}</span>` : ''}
+                    <div class="view-grid-desc hidden lg:block text-sm text-stone-500 dark:text-stone-400 line-clamp-2 h-10 overflow-hidden shrink-0 mb-3 break-words whitespace-pre-line leading-tight">
+                        ${i.description || t('Описание отсутствует.')}
+                    </div>
+                    
+                    <div class="flex flex-col gap-2 mt-auto shrink-0 w-full">
+                        <div class="flex items-center">
+                            <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide truncate max-w-full">
+                                <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}
+                            </span>
                         </div>
+                        
                         ${(deliveryBadges || paymentBadges) ? `
-                        <div class="flex flex-wrap items-center gap-1.5">
+                        <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
                             ${deliveryBadges}
                             ${paymentBadges}
                         </div>` : ''}
                     </div>
                 </div>
 
-                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
+                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden border-l border-stone-200 dark:border-stone-700">
                     <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-pre-line leading-relaxed">
                         ${i.description || t('Описание отсутствует.')}
                     </p>
