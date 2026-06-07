@@ -198,7 +198,11 @@ export const ItemsModule = {
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="flex flex-wrap gap-1.5 mb-3 mt-2">
+                    <p class="text-sm text-stone-500 hidden lg:block line-clamp-2 mt-1 mb-1 leading-snug">
+                        ${i.description || ''}
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-1.5 mb-3 mt-1">
                         <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}</span>
                         ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${t(i.condition || 'Б/У')}</span>` : ''}
                     </div>
