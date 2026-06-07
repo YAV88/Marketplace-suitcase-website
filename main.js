@@ -2222,6 +2222,7 @@ window.submitNewItem = async (event) => {
 
         // 5. УСПЕШНОЕ ЗАВЕРШЕНИЕ
         window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
         window.closeModal('add-modal');
 
         document.getElementById('add-form').reset();
