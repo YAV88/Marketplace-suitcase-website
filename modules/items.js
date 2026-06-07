@@ -198,17 +198,22 @@ export const ItemsModule = {
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="flex flex-wrap items-center gap-1.5 mt-auto pt-2">
-                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}</span>
-                        ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${t(i.condition || 'Б/У')}</span>` : ''}
-                        ${deliveryBadges}
-                        ${paymentBadges}
+                    <div class="flex flex-col gap-1.5 mt-auto pt-2">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}</span>
+                            ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${t(i.condition || 'Б/У')}</span>` : ''}
+                        </div>
+                        ${(deliveryBadges || paymentBadges) ? `
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            ${deliveryBadges}
+                            ${paymentBadges}
+                        </div>` : ''}
                     </div>
                 </div>
 
                 <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
                     <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-pre-line leading-relaxed">
-                        ${i.description || 'Описание отсутствует.'}
+                        ${i.description || t('Описание отсутствует.')}
                     </p>
                 </div>
                 
@@ -626,26 +631,34 @@ export const ItemsModule = {
                 }
             }
 
+            // ИСПРАВЛЕНИЕ: Карта недвижимости
             const addrCont = document.getElementById('modal-address-container');
             if (addrCont) {
-                if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
-                    addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
+                if (isEstate) {
+                    addrCont.classList.remove('hidden');
+                    addrCont.classList.add('flex');
                     const modalAddrEl = document.getElementById('modal-address');
-                    if (modalAddrEl) modalAddrEl.innerText = item.address || item.city || '';
-                    setTimeout(() => {
-                        try {
-                            if (!window.viewMapObj) {
-                                window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
-                                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
-                                window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
-                            } else {
-                                window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
-                                window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
-                            }
-                            window.viewMapObj.invalidateSize();
-                        } catch (mapErr) { }
-                    }, 150);
-                } else { addrCont.classList.add('hidden'); addrCont.classList.remove('flex'); }
+                    if (modalAddrEl) modalAddrEl.innerText = window.t ? window.t(item.address || item.city || '') : (item.address || item.city || '');
+                    
+                    if (item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
+                        // Увеличили таймаут, чтобы модальное окно точно успело стать display: block
+                        setTimeout(() => {
+                            try {
+                                if (!window.viewMapObj) {
+                                    window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
+                                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
+                                    window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
+                                } else {
+                                    window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
+                                    window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
+                                }
+                                window.viewMapObj.invalidateSize();
+                            } catch (mapErr) { console.error("Map Init Error:", mapErr); }
+                        }, 300);
+                    }
+                } else {
+                    addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
+                }
             }
 
             const descEl = document.getElementById('modal-desc');
@@ -747,20 +760,20 @@ export const ItemsModule = {
                 if (chatBtn) {
                     chatBtn.classList.remove('hidden'); 
                     
-                    // --- ИСПРАВЛЕНИЕ: Передаем данные продавца в чат ---
-                    chatBtn.onclick = () => {
+                    chatBtn.onclick = (e) => {
+                        e.preventDefault(); // Запрещаем стандартные переходы
+                        e.stopPropagation(); // Блокируем клик по подложке
+                        
                         if (!window.currentUser) {
-                            if (typeof window.showToast === 'function') window.showToast('Войдите, чтобы написать продавцу', 'error');
+                            if (typeof window.showToast === 'function') window.showToast(window.t('Войдите, чтобы написать продавцу'), 'error');
                             return;
                         }
                         
-                        // Генерируем уникальный ID комнаты: id1_id2_idТовара
                         const ownerId = item.userId || item.user_id;
                         const chatId = [window.currentUser.id, ownerId].sort().join('_') + '_' + item.id;
                         const itemImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
                         
                         if (typeof window.openChat === 'function') {
-                            // Передаем (ID чата, Название, ID товара, Картинку, ID продавца)
                             window.openChat(chatId, item.title, item.id, itemImg, ownerId);
                         }
                     };
