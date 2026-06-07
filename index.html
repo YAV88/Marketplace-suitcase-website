@@ -1595,15 +1595,17 @@
                         <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto shrink-0">
                             <button id="modal-author-rating"
                                 class="hidden flex-1 sm:flex-none items-center justify-center gap-1.5 px-4 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 font-bold text-sm hover:bg-stone-50 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 transition cursor-pointer"></button>
+                            
                             <button id="btn-contact-seller" onclick="window.openChatModal()"
-                                class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition shadow-md cursor-pointer">
-                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline"
-                                    data-i18n="btn_chat">Чат</span>
+                                class="shrink-0 flex items-center justify-center gap-2 px-6 sm:px-8 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition shadow-md cursor-pointer">
+                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline" data-i18n="btn_chat">Чат</span>
                             </button>
-                            <div id="modal-phone-container" class="hidden flex-1 sm:flex-none">
+                            
+                            <div id="modal-phone-container" class="hidden flex-1 min-w-0">
                                 <a id="modal-phone" href="#"
-                                    class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition cursor-pointer">
-                                    <i class="fa-solid fa-phone"></i> <span id="modal-phone-text"></span>
+                                    class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition cursor-pointer overflow-hidden">
+                                    <i class="fa-solid fa-phone shrink-0"></i> 
+                                    <span id="modal-phone-text" class="whitespace-nowrap overflow-hidden text-ellipsis"></span>
                                 </a>
                             </div>
                         </div>
