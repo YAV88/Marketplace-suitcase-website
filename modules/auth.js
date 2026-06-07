@@ -14,11 +14,9 @@ export const AuthModule = {
 
     handleAuthChange: async (session) => {
         try {
-            // ID кнопок в верхней шапке сайта
             const loginIds = ['btn-login', 'nav-login-btn', 'mobile-btn-login', 'mob-nav-login', 'header-login-btn'];
             const menuIds = ['user-menu', 'nav-user-controls', 'mobile-user-menu', 'mob-user-controls', 'header-user-menu'];
 
-            // === РЕАЛЬНЫЕ ID ИЗ ТВОЕГО ОКНА ПРОФИЛЯ ===
             const profileLoginWrapper = document.getElementById('profile-login-wrapper');
             const profileEconomySection = document.getElementById('profile-economy-section');
             const btnEditProfile = document.getElementById('btn-edit-profile');
@@ -26,16 +24,18 @@ export const AuthModule = {
 
             if (session) {
                 window.currentUser = session.user;
+                // === ИСПРАВЛЕНИЕ: Вытягиваем скрытые метаданные ===
+                const meta = session.user.user_metadata || {}; 
                 
                 try {
                     const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
                     if (profile) window.currentUser = { ...window.currentUser, ...profile };
                 } catch(e) {}
 
-                const avatarUrl = window.currentUser?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + session.user.id;
+                // Ищем аватарку: сначала в профиле, затем в метаданных (сохраненную при регистрации), затем генерируем дефолтную (версия 9.x)
+                const avatarUrl = window.currentUser?.avatar_url || meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
                 document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
                 
-                // Аватарка внутри самого окна профиля
                 const profileAvatarCont = document.getElementById('profile-avatar-container');
                 if (profileAvatarCont) {
                     profileAvatarCont.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
@@ -43,15 +43,16 @@ export const AuthModule = {
 
                 const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
                 
-                safeSet('profile-name', window.currentUser.name || window.currentUser.full_name || 'Свалкер');
-                safeSet('header-user-name', window.currentUser.name || window.currentUser.full_name || 'Профиль');
-                safeSet('profile-email', window.currentUser.email || '');
+                // Ищем имя: в профиле ИЛИ в метаданных ИЛИ ставим стандартное
+                const userName = window.currentUser?.name || window.currentUser?.full_name || meta.name || meta.full_name || 'Свалкер';
+                
+                safeSet('profile-name', userName);
+                safeSet('header-user-name', userName);
+                safeSet('profile-email', window.currentUser?.email || '');
 
-                // Прячем кнопку "Войти" везде и показываем меню в шапке
                 loginIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.setProperty('display', 'none', 'important'); });
                 menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.setProperty('display', 'flex', 'important'); } });
 
-                // === МЕНЯЕМ БЛОКИ ВНУТРИ ОКНА ПРОФИЛЯ ===
                 if (profileLoginWrapper) { profileLoginWrapper.classList.add('hidden'); profileLoginWrapper.classList.remove('block'); }
                 if (profileEconomySection) { profileEconomySection.classList.remove('hidden'); profileEconomySection.classList.add('flex'); }
                 if (btnEditProfile) { btnEditProfile.classList.remove('hidden'); btnEditProfile.classList.add('flex'); }
@@ -71,18 +72,19 @@ export const AuthModule = {
                 window.currentUser = null;
                 window.userFavorites = new Set();
                 
-                // Возвращаем шапку сайта в статус "Гость"
                 loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.setProperty('display', '', 'important'); } });
                 menuIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.setProperty('display', 'none', 'important'); });
                 
-                // === ВОЗВРАЩАЕМ ПРОФИЛЬ В СТАТУС "ГОСТЬ" ===
                 if (profileLoginWrapper) { profileLoginWrapper.classList.remove('hidden'); profileLoginWrapper.classList.add('block'); }
                 if (profileEconomySection) { profileEconomySection.classList.add('hidden'); profileEconomySection.classList.remove('flex'); }
                 if (btnEditProfile) { btnEditProfile.classList.add('hidden'); btnEditProfile.classList.remove('flex'); }
                 if (btnLogoutProfile) { btnLogoutProfile.classList.add('hidden'); btnLogoutProfile.classList.remove('flex'); }
                 
+                const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
                 safeSet('profile-name', 'Гость');
                 safeSet('profile-email', 'Не авторизован');
+                
+                const profileAvatarCont = document.getElementById('profile-avatar-container');
                 if (profileAvatarCont) profileAvatarCont.innerHTML = '<i class="fa-solid fa-user"></i>';
 
                 if (window.globalChatSubscription) {
@@ -111,26 +113,24 @@ export const AuthModule = {
         const password = passwordEl.value;
         const originalText = btn.innerHTML;
 
-        // === СТРОГАЯ ПРОВЕРКА ИМЕНИ И ПАРОЛЯ ПРИ РЕГИСТРАЦИИ ===
         let name = '';
-        let avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`;
+        let avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${email}`;
 
         if (isRegister) {
             name = nameEl ? nameEl.value.trim() : '';
             if (!name) {
                 if (typeof window.showToast === 'function') window.showToast('Пожалуйста, укажите ваше имя', 'error');
                 if (nameEl) nameEl.focus();
-                return; // Блокируем отправку
+                return; 
             }
 
             const confirmPassword = confirmPasswordEl ? confirmPasswordEl.value : '';
             if (password !== confirmPassword) {
                 if (typeof window.showToast === 'function') window.showToast('Пароли не совпадают!', 'error');
                 if (confirmPasswordEl) confirmPasswordEl.focus();
-                return; // Блокируем отправку
+                return; 
             }
 
-            // Проверяем, выбрал ли пользователь аватарку робота из твоей сетки
             const selectedAvatarEl = document.querySelector('input[name="avatar"]:checked');
             if (selectedAvatarEl) {
                 avatarUrl = selectedAvatarEl.value;
@@ -145,6 +145,7 @@ export const AuthModule = {
                 const { error } = await supabase.auth.signUp({ 
                     email, 
                     password,
+                    // Сохраняем имя и аватар жестко в мету аккаунта
                     options: { data: { name: name, full_name: name, avatar_url: avatarUrl } }
                 });
                 if (error) throw error;
