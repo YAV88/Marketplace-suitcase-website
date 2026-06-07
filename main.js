@@ -299,7 +299,7 @@ window.changeLanguage = (lang) => {
         Array.from(catSelect.options).forEach(opt => {
             if (opt.value) {
                 const parts = opt.value.split(' - ');
-                opt.innerText = parts.map(p => window.t(p)).join(' - ');
+                opt.innerText = window.t(parts[parts.length - 1]);
             }
         });
         Array.from(catSelect.getElementsByTagName('optgroup')).forEach(grp => {
@@ -2231,9 +2231,9 @@ window.submitNewItem = async (event) => {
         if (photoList) photoList.innerHTML = '';
 
         // Правильный перезапуск ленты товаров
-        if (typeof window.fetchItems === 'function') {
-            window.fetchItems(false);
-        }
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+        // МГНОВЕННОЕ ОБНОВЛЕНИЕ ПРОФИЛЯ
+        if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
 
     } catch (e) {
         console.error("Ошибка публикации:", e);
