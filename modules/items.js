@@ -198,15 +198,15 @@ export const ItemsModule = {
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="flex flex-wrap gap-1.5 mb-3 mt-2">
+                    <div class="flex flex-wrap items-center gap-1.5 mt-auto pt-2">
                         <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide"><i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}</span>
                         ${!(isService || isJob || isEstate || isAnimalEntity) ? `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide">${i.condition === 'Новое' ? '✨ ' : '♻️ '}${t(i.condition || 'Б/У')}</span>` : ''}
+                        ${deliveryBadges}
+                        ${paymentBadges}
                     </div>
-
-                    <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
                 </div>
 
-                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 border-l border-stone-200 dark:border-stone-700 overflow-hidden">
+                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
                     <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-pre-line leading-relaxed">
                         ${i.description || 'Описание отсутствует.'}
                     </p>
