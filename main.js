@@ -347,6 +347,47 @@ window.changeLanguage = (lang) => {
             { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }
         ], currentCond, 'applyCondition');
     }
+
+    // === ГЛУБОКАЯ ЛОКАЛИЗАЦИЯ И ФИКС ИНТЕРФЕЙСА ===
+    setTimeout(() => {
+        // 1. Убираем двойные стрелки во всех селектах (Города, Категории, Фильтры)
+        document.querySelectorAll('select').forEach(sel => {
+            sel.classList.add('appearance-none');
+            // Если фон белый, делаем прозрачным, чтобы не перекрывал иконку
+            sel.classList.remove('bg-white'); 
+            sel.classList.add('bg-transparent');
+        });
+
+        // 2. Перевод главных категорий (optgroup) и опций
+        document.querySelectorAll('optgroup').forEach(grp => {
+            if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
+            grp.label = window.t(grp.dataset.origLabel);
+        });
+
+        document.querySelectorAll('select option').forEach(opt => {
+            // Игнорируем value, переводим только видимый текст
+            if (!opt.dataset.origText) opt.dataset.origText = opt.text;
+            if (opt.dataset.origText && !opt.disabled) {
+                // Если это подкатегория с дефисом, переводим части
+                if (opt.dataset.origText.includes(' - ')) {
+                    const parts = opt.dataset.origText.split(' - ');
+                    opt.text = window.t(parts[parts.length - 1]);
+                } else {
+                    opt.text = window.t(opt.dataset.origText);
+                }
+            }
+        });
+
+        // 3. Перевод радиокнопок состояния (ПК панель)
+        if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
+            const currentCond = window.filterCondition || 'Все';
+            window.renderCustomRadios('condition-radios-wrap', 'cond', [
+                { val: 'Все', label: window.t('Любое') }, 
+                { val: 'Новое', label: '✨ ' + window.t('Новое') }, 
+                { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }
+            ], currentCond, 'applyCondition');
+        }
+    }, 50);
 };
 
 // Закрываем меню при клике в пустую область
