@@ -643,40 +643,14 @@ export const ItemsModule = {
                 }
             }
 
-            // ИСПРАВЛЕНИЕ: Карта недвижимости
+            // Подготовка блока адреса (без запуска карты)
             const addrCont = document.getElementById('modal-address-container');
             if (addrCont) {
-                if (isEstate) {
+                if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
                     addrCont.classList.remove('hidden');
                     addrCont.classList.add('flex');
                     const modalAddrEl = document.getElementById('modal-address');
                     if (modalAddrEl) modalAddrEl.innerText = window.t ? window.t(item.address || item.city || '') : (item.address || item.city || '');
-                    
-                    if (item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
-                        // Ждем 500мс, чтобы анимация модального окна ПОЛНОСТЬЮ завершилась, иначе карта отрисует серый квадрат
-                        setTimeout(() => {
-                            try {
-                                if (typeof L === 'undefined') return; // Защита, если библиотека не загрузилась
-                                
-                                const mapEl = document.getElementById('view-map');
-                                if (!mapEl) return;
-
-                                if (!window.viewMapObj) {
-                                    window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
-                                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
-                                    window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
-                                } else {
-                                    window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
-                                    window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
-                                }
-                                
-                                // Двойной вызов перерасчета размера карты гарантирует её прогрузку
-                                window.viewMapObj.invalidateSize();
-                                setTimeout(() => { if (window.viewMapObj) window.viewMapObj.invalidateSize(); }, 100);
-                                
-                            } catch (mapErr) { console.error("Ошибка инициализации карты:", mapErr); }
-                        }, 500); 
-                    }
                 } else {
                     addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
                 }
@@ -782,8 +756,8 @@ export const ItemsModule = {
                     chatBtn.classList.remove('hidden'); 
                     
                     chatBtn.onclick = (e) => {
-                        e.preventDefault(); // Запрещаем стандартные переходы
-                        e.stopPropagation(); // Блокируем клик по подложке
+                        e.preventDefault();
+                        e.stopPropagation();
                         
                         if (!window.currentUser) {
                             if (typeof window.showToast === 'function') window.showToast(window.t('Войдите, чтобы написать продавцу'), 'error');
@@ -798,7 +772,6 @@ export const ItemsModule = {
                             window.openChat(chatId, item.title, item.id, itemImg, ownerId);
                         }
                     };
-                    // ----------------------------------------------------
                 } 
             }
 
@@ -819,6 +792,33 @@ export const ItemsModule = {
                 window.openModal('item-modal');
             }
             history.pushState({ modal: true }, '', '?item=' + id);
+
+            // ИСПРАВЛЕНИЕ: Карта недвижимости запускается СТРОГО ПОСЛЕ открытия модального окна!
+            if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
+                setTimeout(() => {
+                    try {
+                        if (typeof L === 'undefined') return; 
+                        
+                        const mapEl = document.getElementById('view-map');
+                        if (!mapEl) return;
+
+                        if (!window.viewMapObj) {
+                            window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
+                            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
+                            window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
+                        } else {
+                            window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
+                            window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
+                        }
+                        
+                        window.viewMapObj.invalidateSize();
+                        // Двойной вызов перерасчета размера карты гарантирует её прогрузку
+                        setTimeout(() => { if (window.viewMapObj) window.viewMapObj.invalidateSize(); }, 200);
+                        
+                    } catch (mapErr) { console.error("Ошибка инициализации карты:", mapErr); }
+                }, 400); // Задержка 400мс, чтобы анимация модалки точно завершилась
+            }
+
         } catch (err) { console.error(err); }
     }
 };
