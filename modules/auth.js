@@ -16,6 +16,10 @@ export const AuthModule = {
         try {
             const loginIds = ['btn-login', 'nav-login-btn', 'mobile-btn-login', 'mob-nav-login', 'header-login-btn'];
             const menuIds = ['user-menu', 'nav-user-controls', 'mobile-user-menu', 'mob-user-controls', 'header-user-menu'];
+            
+            // Блоки внутри раздела "Профиль"
+            const profileGuest = document.getElementById('profile-guest');
+            const profileContent = document.getElementById('profile-content');
 
             if (session) {
                 window.currentUser = session.user;
@@ -39,30 +43,19 @@ export const AuthModule = {
                 safeSet('profile-phone', window.currentUser.phone || '', true);
                 safeSet('profile-city', window.currentUser.city || '', true);
 
-                // === АБСОЛЮТНОЕ УДАЛЕНИЕ КНОПКИ "ВОЙТИ" (Обход Tailwind) ===
-                loginIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.add('hidden'); 
-                        el.classList.remove('flex', 'lg:flex', 'md:flex', 'block'); 
-                        el.style.display = 'none'; 
-                    } 
-                });
-                menuIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.remove('hidden'); 
-                        el.classList.add('flex', 'lg:flex'); 
-                        el.style.display = 'flex'; 
-                    } 
-                });
+                // Прячем кнопки входа, показываем меню пользователя
+                loginIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.setProperty('display', 'none', 'important'); });
+                menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.setProperty('display', 'flex', 'important'); } });
+
+                // === ИСПРАВЛЕНИЕ: ПЕРЕКЛЮЧЕНИЕ САМОГО ПРОФИЛЯ ===
+                if (profileGuest) profileGuest.classList.add('hidden');
+                if (profileContent) profileContent.classList.remove('hidden');
 
                 try {
                     const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
                     window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                 } catch(e) {}
 
-                // === ИСПРАВЛЕНИЕ: ЗАПУСК РЕНДЕРА ТОВАРОВ И БЕЙДЖЕЙ ===
                 if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
                 if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
                 if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
@@ -72,22 +65,12 @@ export const AuthModule = {
                 window.currentUser = null;
                 window.userFavorites = new Set();
                 
-                loginIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.remove('hidden'); 
-                        el.classList.add('lg:flex'); 
-                        el.style.display = ''; 
-                    } 
-                });
-                menuIds.forEach(id => { 
-                    const el = document.getElementById(id); 
-                    if (el) { 
-                        el.classList.add('hidden'); 
-                        el.classList.remove('flex', 'lg:flex'); 
-                        el.style.display = 'none'; 
-                    } 
-                });
+                loginIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.setProperty('display', '', 'important'); } });
+                menuIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.setProperty('display', 'none', 'important'); });
+                
+                // === ИСПРАВЛЕНИЕ: ВОЗВРАТ ЗАГЛУШКИ ПРОФИЛЯ ПРИ ВЫХОДЕ ===
+                if (profileGuest) profileGuest.classList.remove('hidden');
+                if (profileContent) profileContent.classList.add('hidden');
                 
                 if (window.globalChatSubscription) {
                     supabase.removeChannel(window.globalChatSubscription);
@@ -105,20 +88,45 @@ export const AuthModule = {
 
         const emailEl = document.getElementById('auth-email');
         const passwordEl = document.getElementById('auth-password');
+        const confirmPasswordEl = document.getElementById('auth-password-confirm');
+        const nameEl = document.getElementById('auth-name'); 
         const btn = document.getElementById('auth-submit-btn');
 
         if (!emailEl || !passwordEl || !btn) return;
 
-        const email = emailEl.value;
+        const email = emailEl.value.trim();
         const password = passwordEl.value;
+        const confirmPassword = confirmPasswordEl ? confirmPasswordEl.value : '';
+        const name = nameEl ? nameEl.value.trim() : '';
         const originalText = btn.innerHTML;
+
+        // === ЖЕСТКАЯ ВАЛИДАЦИЯ РЕГИСТРАЦИИ ===
+        if (isRegister) {
+            if (!name) {
+                if (typeof window.showToast === 'function') window.showToast('Пожалуйста, укажите ваше имя', 'error'); else alert('Пожалуйста, укажите ваше имя');
+                if (nameEl) nameEl.focus();
+                return; // БЛОКИРУЕМ ОТПРАВКУ
+            }
+            if (password !== confirmPassword) {
+                if (typeof window.showToast === 'function') window.showToast('Пароли не совпадают!', 'error'); else alert('Пароли не совпадают!');
+                if (confirmPasswordEl) confirmPasswordEl.focus();
+                return; // БЛОКИРУЕМ ОТПРАВКУ
+            }
+        }
         
         try {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
             btn.disabled = true;
 
             if (isRegister) {
-                const { error } = await supabase.auth.signUp({ email, password });
+                // Подхватываем аватар, если он был выбран, иначе ставим заглушку
+                const avatar = window.selectedAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`;
+                
+                const { error } = await supabase.auth.signUp({ 
+                    email, 
+                    password,
+                    options: { data: { name: name, full_name: name, avatar_url: avatar } }
+                });
                 if (error) throw error;
                 if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
                 setTimeout(() => window.location.reload(), 1500); 
