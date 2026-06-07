@@ -119,7 +119,7 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА
+    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Адаптивные шрифты и полное заполнение)
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
@@ -184,9 +184,9 @@ export const ItemsModule = {
         
         const t = window.t || (text => text); 
 
-        // ИСПРАВЛЕНИЕ: Превращаем описание в одну чистую текстовую строку, без HTML и переносов.
-        let safeDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\\n\\r]+/g, ' ').trim() : t('Описание отсутствует.');
-        if (safeDesc.length > 150) safeDesc = safeDesc.substring(0, 150) + '...';
+        // ИСПРАВЛЕНИЕ 1: Увеличили длину текста с 150 до 400 символов, чтобы он доходил до низа блока в режиме списка
+        let safeDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
+        if (safeDesc.length > 400) safeDesc = safeDesc.substring(0, 400) + '...';
 
         return `
         <div class="${cardClass} ${opacityClass} overflow-hidden" onclick="window.openItemDetails('${i.id}')">
@@ -200,7 +200,7 @@ export const ItemsModule = {
             <div class="card-body-wrap ${pClass} w-full">
                 <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
                     
-                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-10 overflow-hidden">
+                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-11 sm:h-12 overflow-hidden">
                         ${vipCrown}${i.title || 'Без названия'}
                     </h4>
                     
@@ -223,10 +223,11 @@ export const ItemsModule = {
                     </div>
                 </div>
 
-                <div class="view-list-col-3 hidden">
-                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-snug break-words line-clamp-3">
+                <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative">
+                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                         ${safeDesc}
                     </p>
+                    <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white dark:from-stone-800 to-transparent pointer-events-none"></div>
                 </div>
                 
                 ${cardFooter}
