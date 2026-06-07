@@ -224,8 +224,8 @@ export const ItemsModule = {
                 </div>
 
                 <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
-                    <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-normal">
-                        ${i.description || t('Описание отсутствует.')}
+                    <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 max-h-[80px] overflow-hidden break-words whitespace-normal">
+                        ${i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/\n/g, ' ') : t('Описание отсутствует.')}
                     </p>
                 </div>
                 
