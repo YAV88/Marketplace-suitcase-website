@@ -208,10 +208,6 @@ export const ItemsModule = {
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="view-grid-desc hidden lg:block text-sm text-stone-500 dark:text-stone-400 line-clamp-2 h-10 overflow-hidden shrink-0 mb-3 break-words whitespace-pre-line leading-tight">
-                        ${i.description || t('Описание отсутствует.')}
-                    </div>
-                    
                     <div class="flex flex-col gap-2 mt-auto shrink-0 w-full">
                         <div class="flex items-center">
                             <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide truncate max-w-full">
@@ -227,8 +223,8 @@ export const ItemsModule = {
                     </div>
                 </div>
 
-                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden border-l border-stone-200 dark:border-stone-700">
-                    <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-pre-line leading-relaxed">
+                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
+                    <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 break-words whitespace-normal">
                         ${i.description || t('Описание отсутствует.')}
                     </p>
                 </div>
@@ -657,9 +653,14 @@ export const ItemsModule = {
                     if (modalAddrEl) modalAddrEl.innerText = window.t ? window.t(item.address || item.city || '') : (item.address || item.city || '');
                     
                     if (item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
-                        // Увеличили таймаут, чтобы модальное окно точно успело стать display: block
+                        // Ждем 500мс, чтобы анимация модального окна ПОЛНОСТЬЮ завершилась, иначе карта отрисует серый квадрат
                         setTimeout(() => {
                             try {
+                                if (typeof L === 'undefined') return; // Защита, если библиотека не загрузилась
+                                
+                                const mapEl = document.getElementById('view-map');
+                                if (!mapEl) return;
+
                                 if (!window.viewMapObj) {
                                     window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
                                     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
@@ -668,15 +669,19 @@ export const ItemsModule = {
                                     window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
                                     window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
                                 }
+                                
+                                // Двойной вызов перерасчета размера карты гарантирует её прогрузку
                                 window.viewMapObj.invalidateSize();
-                            } catch (mapErr) { console.error("Map Init Error:", mapErr); }
-                        }, 300);
+                                setTimeout(() => { if (window.viewMapObj) window.viewMapObj.invalidateSize(); }, 100);
+                                
+                            } catch (mapErr) { console.error("Ошибка инициализации карты:", mapErr); }
+                        }, 500); 
                     }
                 } else {
                     addrCont.classList.add('hidden'); addrCont.classList.remove('flex');
                 }
             }
-
+            
             const descEl = document.getElementById('modal-desc');
             if (descEl) descEl.innerText = item.description || "Описание отсутствует.";
 
