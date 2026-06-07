@@ -161,23 +161,22 @@ export const ItemsModule = {
         }
 
         let condBadge = '';
-        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
-        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">РАБОТА</div>`;
-        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
+        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Услуги')}</div>`;
+        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Работа')}</div>`;
+        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Недвижимость')}</div>`;
         else if (isAnimalEntity) condBadge = '';
         else {
-            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
-            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
+            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Новое')}</div>`;
+            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Б/У')}</div>`;
         }
-
         const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
         
         const cardFooter = (isOwner && isProfileView) ? `
             <div class="view-grid-city text-[10px] font-bold mt-3 pt-3 flex gap-2 shrink-0 border-t border-stone-100 dark:border-stone-700">
-                <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 w-full"> <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП </button>
+                <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 w-full"> <i class="fa-solid fa-share-nodes mr-1.5"></i> ${t('В ТОП')} </button>
                 <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700 w-full">
-                    <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
+                    <i class="fa-solid fa-pen mr-1.5"></i> ${t('Редакт.')}
                 </button>
             </div>
         ` : ``;
