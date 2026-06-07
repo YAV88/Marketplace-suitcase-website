@@ -318,6 +318,35 @@ window.changeLanguage = (lang) => {
         if (typeof window.initSidebar === 'function') window.initSidebar();
         if (typeof window.fetchItems === 'function') window.fetchItems(false);
     }
+
+    document.querySelectorAll('optgroup').forEach(grp => {
+        if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
+        grp.label = window.t(grp.dataset.origLabel);
+    });
+
+    // 2. Перевод городов и плейсхолдеров в списках ("Города", "Категории")
+    ['item-city', 'item-category'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (sel) {
+            Array.from(sel.options).forEach(opt => {
+                if (!opt.dataset.origText) opt.dataset.origText = opt.text;
+                // Не переводим пустые значения, переводим только текст
+                if (opt.dataset.origText) {
+                    opt.text = window.t(opt.dataset.origText);
+                }
+            });
+        }
+    });
+
+    // 3. Мгновенный перевод кнопок состояния (ПК фильтр: Любое, Новое, Б/У)
+    if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
+        const currentCond = window.filterCondition || 'Все';
+        window.renderCustomRadios('condition-radios-wrap', 'cond', [
+            { val: 'Все', label: window.t('Любое') }, 
+            { val: 'Новое', label: '✨ ' + window.t('Новое') }, 
+            { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }
+        ], currentCond, 'applyCondition');
+    }
 };
 
 // Закрываем меню при клике в пустую область
