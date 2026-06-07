@@ -119,7 +119,7 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Монолитные размеры и без дублей)
+    // 2. ИДЕАЛЬНАЯ КАРТОЧКА
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
@@ -128,7 +128,6 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        // h-full заставляет все карточки в ряду тянуться до высоты самой большой (если контейнер грид)
         const cardClass = isVIP ?
             'item-card vip-card cursor-pointer flex flex-col relative h-full w-full' : 
             'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full w-full';
@@ -144,14 +143,12 @@ export const ItemsModule = {
         opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
         const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-        // Жесткая фиксация картинки
         const imgHeight = 'h-40 sm:h-48 shrink-0'; 
         const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
         const titleClass = 'text-sm sm:text-base leading-tight'; 
         const priceClass = 'text-base sm:text-lg shrink-0';
 
         let deliveryBadges = '';
-        // Заменили иконку PostExpress на грузовик, чтобы не дублировала кнопку "На склад"
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
@@ -163,7 +160,6 @@ export const ItemsModule = {
             if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
         }
 
-        // Состояние товара теперь ТОЛЬКО ЗДЕСЬ (на фотографии сверху)
         let condBadge = '';
         if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
         else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">РАБОТА</div>`;
@@ -187,6 +183,10 @@ export const ItemsModule = {
         ` : ``;
         
         const t = window.t || (text => text); 
+
+        // ИСПРАВЛЕНИЕ: Превращаем описание в одну чистую текстовую строку, без HTML и переносов.
+        let safeDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\\n\\r]+/g, ' ').trim() : t('Описание отсутствует.');
+        if (safeDesc.length > 150) safeDesc = safeDesc.substring(0, 150) + '...';
 
         return `
         <div class="${cardClass} ${opacityClass} overflow-hidden" onclick="window.openItemDetails('${i.id}')">
@@ -223,9 +223,9 @@ export const ItemsModule = {
                     </div>
                 </div>
 
-                <div class="view-list-col-3 hidden flex-col flex-1 pl-4 ml-4 overflow-hidden">
-                    <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-4 max-h-[80px] overflow-hidden break-words whitespace-normal">
-                        ${i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/\n/g, ' ') : t('Описание отсутствует.')}
+                <div class="view-list-col-3 hidden">
+                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-snug break-words line-clamp-3">
+                        ${safeDesc}
                     </p>
                 </div>
                 
