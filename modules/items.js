@@ -119,9 +119,12 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Адаптивные шрифты и полное заполнение)
+    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Исправлен баг с функцией t)
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
+        // === ИСПРАВЛЕНИЕ: Функция перевода теперь в самом начале! ===
+        const t = window.t || (text => text); 
+
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
         const isJob = i.category && i.category.includes('Работа');
@@ -138,8 +141,8 @@ export const ItemsModule = {
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
 
         let statusBadge = ''; let opacityClass = '';
-        if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`; }
-        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`;
+        if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">${t('В РЕЗЕРВЕ')}</div>`; }
+        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
         opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
         const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
@@ -169,7 +172,8 @@ export const ItemsModule = {
             if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Новое')}</div>`;
             else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Б/У')}</div>`;
         }
-        const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
+
+        const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
         
         const cardFooter = (isOwner && isProfileView) ? `
@@ -180,10 +184,7 @@ export const ItemsModule = {
                 </button>
             </div>
         ` : ``;
-        
-        const t = window.t || (text => text); 
 
-        // ИСПРАВЛЕНИЕ 1: Увеличили длину текста с 150 до 400 символов, чтобы он доходил до низа блока в режиме списка
         let safeDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (safeDesc.length > 400) safeDesc = safeDesc.substring(0, 400) + '...';
 
