@@ -230,7 +230,7 @@ window.i18n = {
         'Одежда и Обувь':'Odeća i Obuća', 'Дом и Интерьер':'Kuća i Enterijer', 'Красота и Здоровье':'Lepota i Zdravlje', 'Для Бизнеса':'Za Biznis', 'Хобби и Отдых':'Hobi i Odmor',
         'Недвижимость':'Nekretnine', 'Жилье':'Smeštaj', 'Услуги':'Usluge', 'Работа':'Posao', 'В ТОП':'U TOP', 'Редакт.':'Uredi',
         'Статус':'Status', 'Базовый':'Osnovni', 'Любое':'Bilo koje', 'Новое':'Novo', 'Б/У':'Polovno', 'Новые находки':'Novi nalazi',
-        'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.'
+        'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.',
         'Белград': 'Beograd', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Niš', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pančevo', 'Чачак': 'Čačak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Drugi',
         'Все категории': 'Sve kategorije', 'Любое': 'Bilo koje', 'Любая': 'Bilo koja', 'Динары': 'Dinari', 'Евро': 'Evri', 'Все в': 'Sve u', 'Склад': 'Sačuvano', 'Мои вещи': 'Moje stvari',
         'Одежда': 'Odeća', 'Женская': 'Ženska', 'Мужская': 'Muška', 'Обувь': 'Obuća', 'Сумки': 'Torbe', 'Аксессуары': 'Aksesoari', 'Спецодежда': 'Radna odeća',
