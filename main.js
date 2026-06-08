@@ -318,7 +318,10 @@ window.changeLanguage = (lang) => {
     if (dropdown) dropdown.classList.add('hidden');
 
     // ЕДИНЫЙ ИНДИКАТОР В КНОПКЕ (Оставляем только чистый код языка)
-    const indicator = document.getElementById('lang-indicator');
+    const currentLangSpan = document.getElementById('lang-current');
+    if (currentLangSpan) {
+        currentLangSpan.innerText = lang.toUpperCase();
+    }
     if (indicator) {
         if (lang === 'ru') indicator.innerText = 'RU';
         if (lang === 'sr') indicator.innerText = 'SR';

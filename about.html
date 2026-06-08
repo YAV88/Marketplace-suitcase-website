@@ -2,114 +2,80 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\r\n    <title data-i18n="page_title">SVALKA — О проекте</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title data-i18n="page_about">SVALKA — О проекте</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { 
-            darkMode: 'class',
-            theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } }
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } } }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tektur:wght@600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Tektur', sans-serif; }
-        
-        /* Glassmorphism эффект для элементов */
-        .glass-panel {
-            background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-        }
-        .dark .glass-panel {
-            background-color: rgba(28, 25, 23, 0.7);
-        }
+        body { font-family: 'Inter', sans-serif; } .font-display { font-family: 'Tektur', sans-serif; }
+        .glass-panel { background-color: rgba(255, 255, 255, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+        .dark .glass-panel { background-color: rgba(28, 25, 23, 0.7); }
     </style>
 </head>
 <body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-950 transition-colors min-h-screen relative overflow-x-hidden">
-    
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-brand-500/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
-
     <div class="max-w-3xl mx-auto relative z-10">
         
-        <div class="flex justify-between items-center mb-8 sm:mb-12 pb-4 border-b border-stone-200/60 dark:border-stone-800/80">
-            <a href="index.html" class="flex items-center gap-2 group text-stone-500 dark:text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 font-bold text-sm transition-colors">
-                <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
-                <span data-i18n="back_to_site">Назад на сайт</span>
+        <div class="flex items-center justify-between mb-6 sm:mb-10 border-b border-stone-200/60 dark:border-stone-800/80 pb-4">
+            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-4 py-2 sm:px-5 sm:py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
+                <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="nav_home_back">На главную</span>
             </a>
-            
             <div class="flex items-center gap-3">
-                <div class="relative group">
-                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold">
-                        <span id="lang-flag">🇷🇺</span>
-                        <span id="lang-code" class="text-stone-700 dark:text-stone-300 uppercase">RU</span>
-                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
+                <div class="relative group z-[110]" id="lang-dropdown-wrapper">
+                    <button class="flex items-center gap-2 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-all cursor-pointer text-sm font-bold text-stone-700 dark:text-stone-300 active:scale-95">
+                        <i class="fa-solid fa-globe text-brand-500"></i> <span id="lang-current">RU</span> <i class="fa-solid fa-chevron-down text-[10px] text-stone-500"></i>
                     </button>
-                    <div class="absolute right-0 mt-1 w-32 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
-                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 RU</button>
-                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 SR</button>
-                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 EN</button>
+                    <div class="absolute right-0 mt-2 w-36 bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[120] overflow-hidden">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Русский <span class="text-[10px] text-stone-400">RU</span></button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Srpski <span class="text-[10px] text-stone-400">SR</span></button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">English <span class="text-[10px] text-stone-400">EN</span></button>
                     </div>
                 </div>
-
-                <button onclick="togglePageTheme()" class="w-9 h-9 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 flex items-center justify-center transition-all cursor-pointer">
-                    <i id="theme-icon" class="fa-solid fa-moon text-stone-600 dark:text-stone-400"></i>
+                <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
                 </button>
             </div>
         </div>
 
         <div class="glass-panel border border-white/40 dark:border-stone-800/60 p-6 sm:p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
             <div class="flex items-center gap-4 mb-6 sm:mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-xl shrink-0 shadow-sm">
-                    <i class="fa-solid fa-circle-info"></i>
-                </div>
+                <div class="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-xl shrink-0 shadow-sm"><i class="fa-solid fa-circle-info"></i></div>
                 <h1 class="text-3xl sm:text-4xl font-display font-black uppercase tracking-tight text-stone-900 dark:text-white">
                     <span data-i18n="about_title_1">О</span> <span class="text-brand-500" data-i18n="about_title_2">проекте</span>
                 </h1>
             </div>
             
             <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
-                <p data-i18n="about_p1">SVALKA — это современный, быстрый и удобный локальный маркетплейс, созданный специально для русскоязычного и интернационального сообщества в Сербии. Наша цель — дать пользователям простой инструмент для того, чтобы подарить вещам вторую жизнь, найти что-то уникальное или выгодно разгрузить свой дом.</p>
-                
-                <p data-i18n="about_p2">Мы создали эту площадку как альтернативу громоздким, перегруженным рекламой сайтам объявлений. Наш приоритет — чистый минималистичный дизайн, высокая скорость работы как на ПК, так и на смартфонах, и максимальное удобство использования.</p>
+                <p data-i18n="about_p1">SVALKA — это современный, быстрый и удобный локальный маркетплейс, созданный специально для русскоязычного и интернационального сообщества в Сербии.</p>
+                <p data-i18n="about_p2">Мы создали эту площадку как альтернативу громоздким, перегруженным рекламой сайтам объявлений.</p>
             
                 <h2 class="text-lg font-bold text-stone-900 dark:text-white pt-2" data-i18n="features_title">Главные особенности SVALKA:</h2>
                 
                 <ul class="list-none space-y-4">
                     <li class="flex items-start gap-3">
                         <div class="mt-1 text-brand-500 shrink-0 text-xs"><i class="fa-solid fa-circle shadow-sm"></i></div>
-                        <div>
-                            <strong class="text-stone-900 dark:text-white" data-i18n="feat_1_title">Простая публикация:</strong> 
-                            <span data-i18n="feat_1_desc">Достаточно нажать одну кнопку «Пристроить добро», чтобы ваша вещь моментально оказалась перед глазами сотен покупателей.</span>
-                        </div>
+                        <div><strong class="text-stone-900 dark:text-white" data-i18n="feat_1_title">Простая публикация:</strong> <span data-i18n="feat_1_desc">Достаточно нажать одну кнопку, чтобы ваша вещь оказалась перед глазами покупателей.</span></div>
                     </li>
                     <li class="flex items-start gap-3">
                         <div class="mt-1 text-brand-500 shrink-0 text-xs"><i class="fa-solid fa-circle shadow-sm"></i></div>
-                        <div>
-                            <strong class="text-stone-900 dark:text-white" data-i18n="feat_2_title">Умная фильтрация:</strong> 
-                            <span data-i18n="feat_2_desc">Мгновенный поиск объявлений по городам Сербии, категориям и состоянию предметов.</span>
-                        </div>
+                        <div><strong class="text-stone-900 dark:text-white" data-i18n="feat_2_title">Умная фильтрация:</strong> <span data-i18n="feat_2_desc">Мгновенный поиск объявлений по городам Сербии, категориям и состоянию предметов.</span></div>
                     </li>
                     <li class="flex items-start gap-3">
                         <div class="mt-1 text-brand-500 shrink-0 text-xs"><i class="fa-solid fa-circle shadow-sm"></i></div>
-                        <div>
-                            <strong class="text-stone-900 dark:text-white" data-i18n="feat_3_title">Безопасные диалоги:</strong> 
-                            <span data-i18n="feat_3_desc">Договаривайтесь о встречах во встроенных приватных чатах без необходимости обмениваться личными номерами телефонов или переходить в сторонние мессенджеры.</span>
-                        </div>
+                        <div><strong class="text-stone-900 dark:text-white" data-i18n="feat_3_title">Безопасные диалоги:</strong> <span data-i18n="feat_3_desc">Договаривайтесь о встречах во встроенных приватных чатах.</span></div>
                     </li>
                     <li class="flex items-start gap-3">
                         <div class="mt-1 text-brand-500 shrink-0 text-xs"><i class="fa-solid fa-circle shadow-sm"></i></div>
-                        <div>
-                            <strong class="text-stone-900 dark:text-white" data-i18n="feat_4_title">Система репутации:</strong> 
-                            <span data-i18n="feat_4_desc">Ставьте оценки и пишите отзывы о сделках, помогая формировать честное и открытое сообщество продавцов и покупателей.</span>
-                        </div>
+                        <div><strong class="text-stone-900 dark:text-white" data-i18n="feat_4_title">Система репутации:</strong> <span data-i18n="feat_4_desc">Ставьте оценки и пишите отзывы о сделках.</span></div>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-    
     <script src="info-pages.js"></script>
 </body>
 </html>

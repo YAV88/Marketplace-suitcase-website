@@ -26,25 +26,27 @@
             </a>
             
             <div class="flex items-center gap-3">
-                <div class="relative group">
-                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold">
-                        <span id="lang-flag">🇷🇺</span>
-                        <span id="lang-code" class="text-stone-700 dark:text-stone-300 uppercase">RU</span>
-                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
+                <!-- НОВЫЙ ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА -->
+                <div class="relative group" id="lang-dropdown-wrapper">
+                    <button class="flex items-center gap-2 px-3 py-2 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800 shadow-sm hover:border-brand-500 transition-all cursor-pointer text-sm font-bold text-stone-700 dark:text-stone-300 active:scale-95">
+                        <i class="fa-solid fa-globe text-brand-500"></i>
+                        <span id="lang-current">RU</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-stone-500"></i>
                     </button>
-                    <div class="absolute right-0 mt-1 w-32 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
-                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 RU</button>
-                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 SR</button>
-                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 EN</button>
+                    <div class="absolute right-0 mt-2 w-36 bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Русский <span class="text-[10px] text-stone-400">RU</span></button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Srpski <span class="text-[10px] text-stone-400">SR</span></button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">English <span class="text-[10px] text-stone-400">EN</span></button>
                     </div>
                 </div>
 
+                <!-- КНОПКА ТЕМЫ -->
                 <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
                     <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
                 </button>
             </div>
         </div>
-
+        
         <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
             <div class="flex items-center gap-4 mb-8">
                 <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-xl"><i class="fa-solid fa-envelope"></i></div>

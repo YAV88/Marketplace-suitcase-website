@@ -3,61 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SVALKA — Правила платформы</title>
+    <title data-i18n="page_rules">SVALKA — Правила платформы</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { 
-            darkMode: 'class',
-            theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } }
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } } }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+        body { font-family: 'Inter', sans-serif; } h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
 <body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-950 transition-colors min-h-screen">
     <div class="max-w-3xl mx-auto">
+        
         <div class="flex items-center justify-between mb-6 sm:mb-10">
-            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-5 py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
-                <i class="fa-solid fa-arrow-left text-xs"></i> На главную
+            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-4 py-2 sm:px-5 sm:py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
+                <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="nav_home_back">На главную</span>
             </a>
-            <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
-                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
-            </button>
+            <div class="flex items-center gap-3">
+                <div class="relative group z-[110]" id="lang-dropdown-wrapper">
+                    <button class="flex items-center gap-2 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-all cursor-pointer text-sm font-bold text-stone-700 dark:text-stone-300 active:scale-95">
+                        <i class="fa-solid fa-globe text-brand-500"></i> <span id="lang-current">RU</span> <i class="fa-solid fa-chevron-down text-[10px] text-stone-500"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[120] overflow-hidden">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Русский <span class="text-[10px] text-stone-400">RU</span></button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Srpski <span class="text-[10px] text-stone-400">SR</span></button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">English <span class="text-[10px] text-stone-400">EN</span></button>
+                    </div>
+                </div>
+                <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
         </div>
 
         <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
             <div class="flex items-center gap-4 mb-8">
                 <div class="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-xl"><i class="fa-solid fa-list-check"></i></div>
-                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Правила <span class="text-brand-500">публикации</span></h1>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">
+                    <span data-i18n="rules_title_1">Правила</span> <span class="text-brand-500" data-i18n="rules_title_2">публикации</span>
+                </h1>
             </div>
             
             <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
-                <p>Чтобы платформа оставалась чистой и полезной для всех, мы просим соблюдать несколько простых правил при размещении объявлений.</p>
+                <p data-i18n="rules_desc">Чтобы платформа оставалась чистой и полезной для всех, мы просим соблюдать несколько простых правил при размещении объявлений.</p>
             
                 <section>
-                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">1. Оформление объявлений</h2>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2" data-i18n="rul_1_title">1. Оформление объявлений</h2>
                     <ul class="list-disc pl-5 space-y-1.5">
-                        <li><strong>Реальные фото:</strong> Загружайте собственные фотографии товара. Стоковые картинки из интернета удаляются модераторами.</li>
-                        <li><strong>Честная цена:</strong> Указывайте итоговую стоимость. Запрещено ставить цену «1 RSD» для привлечения внимания.</li>
-                        <li><strong>Без спама:</strong> Не публикуйте один и тот же товар несколько раз. Если хотите продать быстрее — используйте функцию поднятия (Bump).</li>
+                        <li data-i18n="rul_1_1"><strong>Реальные фото:</strong> Загружайте собственные фотографии товара.</li>
+                        <li data-i18n="rul_1_2"><strong>Честная цена:</strong> Указывайте итоговую стоимость.</li>
+                        <li data-i18n="rul_1_3"><strong>Без спама:</strong> Не публикуйте один и тот же товар несколько раз.</li>
                     </ul>
                 </section>
             
                 <section>
-                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">2. Что запрещено продавать</h2>
-                    <p>Наш маркетплейс соблюдает законодательство, поэтому к публикации строго запрещены:</p>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2" data-i18n="rul_2_title">2. Что запрещено продавать</h2>
+                    <p data-i18n="rul_2_desc">Наш маркетплейс соблюдает законодательство, поэтому строго запрещены:</p>
                     <ul class="list-disc pl-5 space-y-1.5 mt-2">
-                        <li>Оружие, взрывчатые вещества и пиротехника.</li>
-                        <li>Любые медицинские препараты, лекарства и БАДы.</li>
-                        <li>Табачные изделия, электронные сигареты, жидкости и кальяны.</li>
-                        <li>Подделки под известные бренды (копии, реплики).</li>
-                        <li>Финансовые услуги, сомнительные схемы заработка и предложения о работе.</li>
+                        <li data-i18n="rul_2_1">Оружие, взрывчатые вещества и пиротехника.</li>
+                        <li data-i18n="rul_2_2">Любые медицинские препараты, лекарства и БАДы.</li>
+                        <li data-i18n="rul_2_3">Табачные изделия, электронные сигареты, жидкости и кальяны.</li>
+                        <li data-i18n="rul_2_4">Подделки под известные бренды (копии, реплики).</li>
+                        <li data-i18n="rul_2_5">Финансовые услуги, сомнительные схемы заработка и предложения о работе.</li>
                     </ul>
-                    <p class="mt-3 text-sm text-stone-500">Объявления с запрещенными товарами удаляются, а аккаунты их авторов блокируются навсегда.</p>
+                    <p class="mt-3 text-sm text-stone-500" data-i18n="rul_2_warn">Объявления с запрещенными товарами удаляются, а аккаунты их авторов блокируются навсегда.</p>
                 </section>
             </div>
         </div>
