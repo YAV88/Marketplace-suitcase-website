@@ -261,11 +261,14 @@ export const ItemsModule = {
             const feedTitle = document.getElementById('main-feed-title');
             const feedIcon = document.getElementById('main-feed-icon');
             if (feedTitle && feedIcon) {
+                const t = window.t || (txt => txt);
                 if (window.showUrgentOnly) {
-                    feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200";
+                    feedTitle.innerText = t('vip_title') !== 'vip_title' ? t('vip_title') : "ТОП Находки";
+                    feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200";
                     feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl";
                 } else {
-                    feedTitle.innerText = "Новые находки"; feedTitle.className = "font-black text-xl text-stone-500";
+                    feedTitle.innerText = t('Новые находки') !== 'Новые находки' ? t('Новые находки') : "Новые находки";
+                    feedTitle.className = "font-black text-xl text-stone-500";
                     feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl";
                 }
             }

@@ -3049,14 +3049,27 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 2. Анимированный плейсхолдер поиска (Магия перебора)
+// 2. Анимированный плейсхолдер поиска (с динамическим переводом)
 const searchInputAtm = document.getElementById('main-search-input');
 const searchPhrases = ['iPhone 13 Pro', 'Кроссовки Nike', 'PlayStation 5', 'Велосипед', 'Квартира в Нови-Саде', 'Услуги электрика', 'Диван IKEA', 'MacBook Air'];
 let phraseIndex = 0;
 
 setInterval(() => {
     if (searchInputAtm && document.activeElement !== searchInputAtm && !searchInputAtm.value) {
-        searchInputAtm.setAttribute('placeholder', 'Например: ' + searchPhrases[phraseIndex]);
+        let prefix = 'Например: ';
+        if (window.currentLang === 'en') prefix = 'For example: ';
+        if (window.currentLang === 'sr') prefix = 'Na primer: ';
+
+        let phrase = searchPhrases[phraseIndex];
+        if (window.currentLang === 'en') {
+            const enPhrases = { 'Кроссовки Nike': 'Nike sneakers', 'Велосипед': 'Bicycle', 'Квартира в Нови-Саде': 'Apartment in Novi Sad', 'Услуги электрика': 'Electrician services', 'Диван IKEA': 'IKEA Sofa' };
+            phrase = enPhrases[phrase] || phrase;
+        } else if (window.currentLang === 'sr') {
+            const srPhrases = { 'Кроссовки Nike': 'Nike patike', 'Велосипед': 'Bicikl', 'Квартира в Нови-Саде': 'Stan u Novom Sadu', 'Услуги электрика': 'Usluge električara', 'Диван IKEA': 'IKEA kauč' };
+            phrase = srPhrases[phrase] || phrase;
+        }
+
+        searchInputAtm.setAttribute('placeholder', prefix + phrase);
         phraseIndex = (phraseIndex + 1) % searchPhrases.length;
     }
 }, 3500);
