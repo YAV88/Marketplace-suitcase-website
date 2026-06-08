@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SVALKA — Помощь / FAQ</title>
+    <title data-i18n="page_faq">SVALKA — Помощь / FAQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { 
@@ -22,29 +22,49 @@
     <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-6 sm:mb-10">
             <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-5 py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
-                <i class="fa-solid fa-arrow-left text-xs"></i> На главную
+                <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="nav_home_back">На главную</span>
             </a>
-            <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
-                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
-            </button>
+
+            <div class="flex items-center gap-3">
+                <div class="relative group">
+                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold">
+                        <span id="lang-flag">🇷🇺</span>
+                        <span id="lang-code" class="text-stone-700 dark:text-stone-300 uppercase">RU</span>
+                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
+                    </button>
+                    <div class="absolute right-0 mt-1 w-32 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 RU</button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 SR</button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 EN</button>
+                    </div>
+                </div>
+
+                <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
         </div>
 
         <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
             <div class="flex items-center gap-4 mb-8">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl"><i class="fa-solid fa-circle-question"></i></div>
-                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Помощь <span class="text-brand-500">/ FAQ</span></h1>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">
+                    <span data-i18n="faq_title_1">Помощь</span> <span class="text-brand-500" data-i18n="faq_title_2">/ FAQ</span>
+                </h1>
             </div>
             
             <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
                 <section class="border-b border-stone-100 dark:border-stone-800 pb-5">
-                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Как выставить вещь на продажу?</h2>
-                    <p>Всё максимально просто: войдите в свой профиль, нажмите большую кнопку <strong class="text-brand-600 dark:text-brand-400">«Пристроить добро»</strong> в шапке сайта, заполните описание, укажите город, состояние вещи, цену и прикрепите фотографии. Карточка товара появится в общей ленте сразу же, без долгой модерации.</p>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2" data-i18n="faq_q1">Как выставить вещь на продажу?</h2>
+                    <p data-i18n="faq_a1">Всё максимально просто: войдите в свой профиль, нажмите большую кнопку <strong>«Пристроить добро»</strong> в шапке сайта, заполните описание, укажите город, состояние вещи, цену и прикрепите фотографии. Карточка товара появится в общей ленте сразу же, без долгой модерации.</p>
                 </section>
             
                 <section class="mt-10 pt-10 border-t border-stone-200 dark:border-stone-800/60">
                     <div class="text-center mb-8">
-                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Всё о <span class="text-brand-500">продвижении</span> и ТОП-статусах</h2>
-                        <p class="text-stone-600 dark:text-stone-400 mt-2 font-bold">Как продавать быстрее и эффективнее</p>
+                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">
+                            <span data-i18n="faq_q2_1">Всё о</span> <span class="text-brand-500" data-i18n="faq_q2_2">продвижении</span> <span data-i18n="faq_q2_3">и ТОП-статусах</span>
+                        </h2>
+                        <p class="text-stone-600 dark:text-stone-400 mt-2 font-bold" data-i18n="faq_a2_sub">Как продавать быстрее и эффективнее</p>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -53,8 +73,8 @@
                             <div class="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center text-brand-600 dark:text-brand-400 text-2xl mb-5 shrink-0">
                                 <i class="fa-solid fa-rocket"></i>
                             </div>
-                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3">Bump и VIP-статус</h3>
-                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed">
+                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3" data-i18n="faq_bump_title">Bump и VIP-статус</h3>
+                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed" data-i18n="faq_bump_desc">
                                 <strong>Bump (Поднятие)</strong> мгновенно возвращает ваш товар на самый верх обычной ленты.<br><br>
                                 <strong>VIP-статус</strong> намертво закрепляет карточку в премиум-блоке в самом верху сайта.
                             </p>
@@ -64,8 +84,8 @@
                             <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-2xl mb-5 shrink-0">
                                 <i class="fa-solid fa-eye"></i>
                             </div>
-                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3">Максимум внимания</h3>
-                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed">
+                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3" data-i18n="faq_attn_title">Максимум внимания</h3>
+                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed" data-i18n="faq_attn_desc">
                                 Товары с VIP-статусом собирают <strong>в 5–10 раз больше просмотров</strong>. Вещь всегда находится на виду у покупателей, что гарантирует шквал сообщений в чате и быструю продажу.
                             </p>
                         </div>
@@ -74,8 +94,8 @@
                             <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-2xl mb-5 shrink-0">
                                 <i class="fa-solid fa-shuffle"></i>
                             </div>
-                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3">Справедливая ротация</h3>
-                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed">
+                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3" data-i18n="faq_rot_title">Справедливая ротация</h3>
+                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed" data-i18n="faq_rot_desc">
                                 Алгоритм использует <strong>динамическое перемешивание</strong>. При каждом обновлении страницы ТОП-товары меняются местами. Каждый продавец получает свою честную долю внимания!
                             </p>
                         </div>
@@ -84,8 +104,8 @@
                             <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-2xl mb-5 shrink-0">
                                 <i class="fa-solid fa-bolt"></i>
                             </div>
-                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3">Мгновенная активация</h3>
-                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed">
+                            <h3 class="font-bold text-lg text-stone-900 dark:text-white mb-3" data-i18n="faq_act_title">Мгновенная активация</h3>
+                            <p class="text-stone-800 dark:text-stone-300 text-sm sm:text-base leading-relaxed" data-i18n="faq_act_desc">
                                 Зайдите в свой профиль и нажмите кнопку <strong>«Купить PRO»</strong>. Выберите подходящий пакет токенов и оплатите в 1 клик. Система зачислит продвижение на ваш аккаунт моментально.
                             </p>
                         </div>

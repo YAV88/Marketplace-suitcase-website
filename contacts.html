@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SVALKA — Контакты</title>
+    <title data-i18n="page_contacts">SVALKA — Контакты</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { 
@@ -22,30 +22,48 @@
     <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-6 sm:mb-10">
             <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-5 py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
-                <i class="fa-solid fa-arrow-left text-xs"></i> На главную
+                <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="nav_home_back">На главную</span>
             </a>
-            <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
-                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
-            </button>
+            
+            <div class="flex items-center gap-3">
+                <div class="relative group">
+                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-900 border border-stone-200/50 dark:border-stone-700/50 transition-all cursor-pointer text-xs font-bold">
+                        <span id="lang-flag">🇷🇺</span>
+                        <span id="lang-code" class="text-stone-700 dark:text-stone-300 uppercase">RU</span>
+                        <i class="fa-solid fa-chevron-down text-[8px] text-stone-500 ml-0.5"></i>
+                    </button>
+                    <div class="absolute right-0 mt-1 w-32 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇺 RU</button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇷🇸 SR</button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 flex items-center gap-2 transition-colors border-t border-stone-100 dark:border-stone-800 font-bold text-xs text-stone-700 dark:text-stone-200 cursor-pointer">🇬🇧 EN</button>
+                    </div>
+                </div>
+
+                <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
         </div>
 
         <div class="bg-white dark:bg-stone-900 p-6 sm:p-10 rounded-[2rem] shadow-sm border border-stone-100 dark:border-stone-800/60">
             <div class="flex items-center gap-4 mb-8">
                 <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-xl"><i class="fa-solid fa-envelope"></i></div>
-                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">Обратная <span class="text-brand-500">связь</span></h1>
+                <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-stone-900 dark:text-white">
+                    <span data-i18n="contacts_title_1">Обратная</span> <span class="text-brand-500" data-i18n="contacts_title_2">связь</span>
+                </h1>
             </div>
 
             <div class="space-y-6 text-sm sm:text-base leading-relaxed text-stone-600 dark:text-stone-400 font-medium">
-                <p>Если у вас возникли технические проблемы, вы нашли ошибку или хотите предложить идею по улучшению маркетплейса — напишите нам.</p>
+                <p data-i18n="contacts_desc">Если у вас возникли технические проблемы, вы нашли ошибку или хотите предложить идею по улучшению маркетплейса — напишите нам.</p>
                 
                 <div class="bg-stone-50 dark:bg-stone-800/40 p-6 rounded-2xl border border-stone-200/60 dark:border-stone-800/80 text-center mt-6">
-                    <div class="text-stone-500 dark:text-stone-400 mb-2">Служба поддержки пользователей:</div>
+                    <div class="text-stone-500 dark:text-stone-400 mb-2" data-i18n="contacts_support">Служба поддержки пользователей:</div>
                     <a href="mailto:support@svalka.trade" class="text-xl sm:text-2xl font-black text-stone-900 dark:text-white hover:text-brand-600 transition-colors">support@svalka.trade</a>
                 </div>
 
                 <section class="mt-8 pt-4 border-t border-stone-100 dark:border-stone-800">
-                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Как сообщить о мошеннике?</h2>
-                    <p>Если вы заметили подозрительного продавца, не обязательно писать на почту. Вы можете нажать кнопку «Пожаловаться» прямо в карточке пользователя. Наши модераторы проверяют такие жалобы в приоритетном порядке.</p>
+                    <h2 class="text-lg font-bold text-stone-900 dark:text-white mb-2" data-i18n="contacts_fraud_title">Как сообщить о мошеннике?</h2>
+                    <p data-i18n="contacts_fraud_desc">Если вы заметили подозрительного продавца, не обязательно писать на почту. Вы можете нажать кнопку «Пожаловаться» прямо в карточке пользователя. Наши модераторы проверяют такие жалобы в приоритетном порядке.</p>
                 </section>
             </div>
         </div>
