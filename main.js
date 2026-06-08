@@ -159,16 +159,15 @@ window.i18n = {
         'rep_spam': 'Spam / Duplicates', 'rep_toxic': 'Insults', 'rep_illegal': 'Prohibited items', 'rep_other': 'Other',
         'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report',
         'review_title': 'Rate the seller', 'review_sub': 'Your review will help other buyers!', 'review_ph': 'Write a few words...',
-        'btn_send_review': 'Send Review',
-        'pro_feat1_title': 'Free Bumps',
-        'pro_feat1_desc': '1 free top bump every day',
-        'pro_feat2_title': 'VIP Badge',
-        'pro_feat2_desc': 'Makes you stand out from other sellers',
-        'pro_price_label': 'Cost for 30 days:',
-        'pro_network_label': 'Select payment network:',
-        'pro_network_hint': 'BEP-20 network fees are the lowest.',
-        'pro_secure_label': 'Secure cryptocurrency payment',
-        'pro_pay_btn': 'PAY',
+        'btn_send_review': 'Send Review', 'pro_feat1_title': 'Free Bumps',
+        'pro_feat1_desc': '1 free top bump every day', 'pro_feat2_title': 'VIP Badge',
+        'pro_feat2_desc': 'Makes you stand out from other sellers', 'pro_price_label': 'Cost for 30 days:',
+        'pro_network_label': 'Select payment network:', 'pro_network_hint': 'BEP-20 network fees are the lowest.',
+        'pro_secure_label': 'Secure cryptocurrency payment', 'pro_pay_btn': 'PAY',
+        'Одежда и Обувь':'Clothing & Shoes', 'Дом и Интерьер':'Home & Interior', 'Красота и Здоровье':'Beauty & Health', 'Для Бизнеса':'For Business', 'Хобби и Отдых':'Hobbies & Leisure',
+        'Недвижимость':'Real Estate', 'Жилье':'Accommodation', 'Услуги':'Services', 'Работа':'Jobs', 'В ТОП':'To TOP', 'Редакт.':'Edit',
+        'Статус':'Status', 'Базовый':'Basic', 'Любое':'Any', 'Новое':'New', 'Б/У':'Used', 'Новые находки':'New Finds',
+        'Категория...':'Category...', 'Город...':'City...', 'Описание отсутствует.':'No description.'
         'Белград': 'Belgrade', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Nis', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pancevo', 'Чачак': 'Cacak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Other',
         'Все категории': 'All Categories', 'Любое': 'Any', 'Любая': 'Any', 'Динары': 'Dinars', 'Евро': 'Euros', 'Все в': 'All in', 'Склад': 'Saved', 'Мои вещи': 'My Items',
         'Одежда': 'Clothing', 'Женская': 'Women\'s', 'Мужская': 'Men\'s', 'Обувь': 'Shoes', 'Сумки': 'Bags', 'Аксессуары': 'Accessories', 'Спецодежда': 'Workwear',
@@ -225,16 +224,13 @@ window.i18n = {
         'rep_spam': 'Spam / Duplikati', 'rep_toxic': 'Uvrede', 'rep_illegal': 'Zabranjene stvari', 'rep_other': 'Ostalo',
         'report_ph': 'Opišite problem...', 'btn_send_report': 'Pošalji žalbu',
         'review_title': 'Ocenite prodavca', 'review_sub': 'Vaša recenzija će pomoći drugim kupcima!', 'review_ph': 'Napišite nekoliko reči...',
-        'btn_send_review': 'Pošalji recenziju',
-        'pro_feat1_title': 'Besplatna podizanja',
-        'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh',
-        'pro_feat2_title': 'VIP bedž',
-        'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca',
-        'pro_price_label': 'Cena za 30 dana:',
-        'pro_network_label': 'Izaberite mrežu za plaćanje:',
-        'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
-        'pro_secure_label': 'Sigurno plaćanje kriptovalutom',
-        'pro_pay_btn': 'PLATI',
+        'btn_send_review': 'Pošalji recenziju', 'pro_feat1_title': 'Besplatna podizanja', 'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh','pro_feat2_title': 'VIP bedž',
+        'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca','pro_price_label': 'Cena za 30 dana:', 'pro_network_label': 'Izaberite mrežu za plaćanje:', 'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
+        'pro_secure_label': 'Sigurno plaćanje kriptovalutom', 'pro_pay_btn': 'PLATI',
+        'Одежда и Обувь':'Odeća i Obuća', 'Дом и Интерьер':'Kuća i Enterijer', 'Красота и Здоровье':'Lepota i Zdravlje', 'Для Бизнеса':'Za Biznis', 'Хобби и Отдых':'Hobi i Odmor',
+        'Недвижимость':'Nekretnine', 'Жилье':'Smeštaj', 'Услуги':'Usluge', 'Работа':'Posao', 'В ТОП':'U TOP', 'Редакт.':'Uredi',
+        'Статус':'Status', 'Базовый':'Osnovni', 'Любое':'Bilo koje', 'Новое':'Novo', 'Б/У':'Polovno', 'Новые находки':'Novi nalazi',
+        'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.'
         'Белград': 'Beograd', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Niš', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pančevo', 'Чачак': 'Čačak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Drugi',
         'Все категории': 'Sve kategorije', 'Любое': 'Bilo koje', 'Любая': 'Bilo koja', 'Динары': 'Dinari', 'Евро': 'Evri', 'Все в': 'Sve u', 'Склад': 'Sačuvano', 'Мои вещи': 'Moje stvari',
         'Одежда': 'Odeća', 'Женская': 'Ženska', 'Мужская': 'Muška', 'Обувь': 'Obuća', 'Сумки': 'Torbe', 'Аксессуары': 'Aksesoari', 'Спецодежда': 'Radna odeća',
@@ -348,43 +344,72 @@ window.changeLanguage = (lang) => {
         ], currentCond, 'applyCondition');
     }
 
-    // === ГЛУБОКАЯ ЛОКАЛИЗАЦИЯ И ФИКС ИНТЕРФЕЙСА ===
+    // === РАСШИРЕННАЯ ГЛУБОКАЯ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА ===
     setTimeout(() => {
-        // 1. Убираем двойные стрелки во всех селектах (Города, Категории, Фильтры)
+        const t = window.t || (txt => txt);
+
+        // 1. Перевод заголовка на главной странице ("Новые находки" / "Находки")
+        const mainTitle = document.querySelector('h3.font-display.font-black.text-xl');
+        if (mainTitle && mainTitle.childNodes.length > 0) {
+            // Безопасно меняем только текстовый узел, не ломая иконку рядом
+            for (let node of mainTitle.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                    const orig = node.textContent.trim();
+                    if (orig.includes('находки') || orig.includes('Находки') || orig.includes('Fresh') || orig.includes('Nalazi')) {
+                        node.textContent = ' ' + t('Новые находки');
+                    }
+                }
+            }
+        }
+
+        // 2. Перевод статуса аккаунта в профиле ("Status: Базовый")
+        const statusLabel = document.querySelector('#profile-economy-section span.text-stone-500');
+        if (statusLabel) statusLabel.innerText = t('Статус') + ':';
+        
+        const statusVal = document.getElementById('profile-account-status');
+        if (statusVal) {
+            if (!statusVal.dataset.origText) statusVal.dataset.origText = statusVal.innerText;
+            statusVal.innerText = t(statusVal.dataset.origText);
+        }
+
+        // 3. Перевод заголовков разделов в окне создания товара ("Категория...", "Город...")
         document.querySelectorAll('select').forEach(sel => {
             sel.classList.add('appearance-none');
-            // Если фон белый, делаем прозрачным, чтобы не перекрывал иконку
             sel.classList.remove('bg-white'); 
             sel.classList.add('bg-transparent');
+            
+            // Ищем первый заблокированный placeholder-option
+            if (sel.options[0] && sel.options[0].disabled) {
+                const placeholderKey = sel.id === 'item-category' ? 'Категория...' : (sel.id === 'item-city' ? 'Город...' : sel.options[0].text);
+                sel.options[0].text = t(placeholderKey);
+            }
         });
 
-        // 2. Перевод главных категорий (optgroup) и опций
+        // 4. Перевод главных категорий (optgroup) и подкатегорий
         document.querySelectorAll('optgroup').forEach(grp => {
             if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
-            grp.label = window.t(grp.dataset.origLabel);
+            grp.label = t(grp.dataset.origLabel);
         });
 
         document.querySelectorAll('select option').forEach(opt => {
-            // Игнорируем value, переводим только видимый текст
             if (!opt.dataset.origText) opt.dataset.origText = opt.text;
             if (opt.dataset.origText && !opt.disabled) {
-                // Если это подкатегория с дефисом, переводим части
                 if (opt.dataset.origText.includes(' - ')) {
                     const parts = opt.dataset.origText.split(' - ');
-                    opt.text = window.t(parts[parts.length - 1]);
+                    opt.text = t(parts[parts.length - 1]);
                 } else {
-                    opt.text = window.t(opt.dataset.origText);
+                    opt.text = t(opt.dataset.origText);
                 }
             }
         });
 
-        // 3. Перевод радиокнопок состояния (ПК панель)
+        // 5. Перевод радиокнопок состояния (Фильтры слева на ПК: Любое, Новое, Б/У)
         if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
             const currentCond = window.filterCondition || 'Все';
             window.renderCustomRadios('condition-radios-wrap', 'cond', [
-                { val: 'Все', label: window.t('Любое') }, 
-                { val: 'Новое', label: '✨ ' + window.t('Новое') }, 
-                { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }
+                { val: 'Все', label: t('Любое') }, 
+                { val: 'Новое', label: '✨ ' + t('Новое') }, 
+                { val: 'Б/У', label: '♻️ ' + t('Б/У') }
             ], currentCond, 'applyCondition');
         }
     }, 50);
