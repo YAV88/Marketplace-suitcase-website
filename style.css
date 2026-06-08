@@ -3930,24 +3930,33 @@ select option {
   /* Выравниваем размер с категорией */
 }
 
-/* 2. Защита заголовка "Пристроить добро" от наложения на крестик */
+/* 2. Идеальное центрирование и балансировка заголовка "Пристроить добро" */
 
 #add-modal-title {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 1.5rem !important;
+  /* Увеличили шрифт для мобильных (было 1.25) */
+  line-height: 1.2 !important;
+  /* Вертикальная балансировка */
+  margin-top: 0.75rem !important;
+  /* Слегка опускаем от верхнего края */
+  margin-bottom: 1.5rem !important;
+  /* Воздух до блока фотографий */
+  /* Математически точная симметрия */
+  padding-left: 2.5rem !important;
+  /* Фейковый отступ слева для баланса */
   padding-right: 2.5rem !important;
-  /* Создаем непробиваемую зону в 40px справа под крестик */
-  font-size: 1.25rem !important;
-  /* На мобилках делаем шрифт чуть компактнее (text-xl) */
-  line-height: 1.3 !important;
-  word-break: break-word;
-  /* Автоматический перенос длинных слов */
+  /* Отступ справа под реальный крестик */
 }
 
-/* На планшетах и ПК возвращаем заголовку крупный размер */
+/* Для планшетов и ПК делаем еще крупнее */
 
 @media (min-width: 640px) {
   #add-modal-title {
-    font-size: 1.5rem !important;
-    /* text-2xl */
+    font-size: 1.8rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
   }
 }
 
