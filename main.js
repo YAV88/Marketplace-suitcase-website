@@ -159,7 +159,7 @@ window.i18n = {
         'rep_spam': 'Spam / Duplicates', 'rep_toxic': 'Insults', 'rep_illegal': 'Prohibited items', 'rep_other': 'Other',
         'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report',
         'review_title': 'Rate the seller', 'review_sub': 'Your review will help other buyers!', 'review_ph': 'Write a few words...',
-        'btn_send_review': 'Send Review', 'pro_feat1_title': 'Free Bumps',
+        'btn_send_review': 'Send Review', 'pro_feat1_title': 'Free Bumps', 'PRO (Активен)': 'PRO (Active)',
         'pro_feat1_desc': '1 free top bump every day', 'pro_feat2_title': 'VIP Badge',
         'pro_feat2_desc': 'Makes you stand out from other sellers', 'pro_price_label': 'Cost for 30 days:',
         'pro_network_label': 'Select payment network:', 'pro_network_hint': 'BEP-20 network fees are the lowest.',
@@ -222,7 +222,7 @@ window.i18n = {
         'confirm_title': 'Da li ste sigurni?', 'confirm_desc': 'Ova akcija se ne može opozvati.', 'btn_cancel': 'Otkaži', 'btn_yes': 'Da, siguran sam',
         'del_meet': 'Lični susret', 'del_post': 'PostExpress', 'report_title': 'Žalba', 'rep_fraud': 'Prevara',
         'rep_spam': 'Spam / Duplikati', 'rep_toxic': 'Uvrede', 'rep_illegal': 'Zabranjene stvari', 'rep_other': 'Ostalo',
-        'report_ph': 'Opišite problem...', 'btn_send_report': 'Pošalji žalbu',
+        'report_ph': 'Opišite problem...', 'btn_send_report': 'Pošalji žalbu', 'PRO (Активен)': 'PRO (Aktivan)',
         'review_title': 'Ocenite prodavca', 'review_sub': 'Vaša recenzija će pomoći drugim kupcima!', 'review_ph': 'Napišite nekoliko reči...',
         'btn_send_review': 'Pošalji recenziju', 'pro_feat1_title': 'Besplatna podizanja', 'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh','pro_feat2_title': 'VIP bedž',
         'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca','pro_price_label': 'Cena za 30 dana:', 'pro_network_label': 'Izaberite mrežu za plaćanje:', 'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
@@ -1257,12 +1257,14 @@ window.openModal = id => {
             const proBtn = document.getElementById('profile-buy-pro-btn');
 
             if (statusText && proBtn) {
+                const t = window.t || (txt => txt); // Подключаем функцию перевода
+                
                 if (window.currentUserData && window.currentUserData.is_pro) {
-                    statusText.innerText = 'PRO (Активен)';
+                    statusText.innerText = t('PRO (Активен)');
                     statusText.className = 'text-sm font-black text-amber-500';
                     proBtn.classList.add('hidden');
                 } else {
-                    statusText.innerText = 'Базовый';
+                    statusText.innerText = t('Базовый');
                     statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                     proBtn.classList.remove('hidden');
                 }
