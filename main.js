@@ -289,6 +289,18 @@ window.changeLanguage = (lang) => {
         }
     });
 
+    // === ИСПРАВЛЕНИЕ: ЖЕСТКОЕ ВОССТАНОВЛЕНИЕ ИМЕНИ ПОЛЬЗОВАТЕЛЯ ===
+    const profileTitleEl = document.querySelector('[data-i18n="profile_title"]');
+    if (profileTitleEl) {
+        if (window.currentUser) {
+            // Возвращаем реальное имя, если пользователь авторизован
+            profileTitleEl.innerText = window.currentUser.user_metadata?.name || window.currentUser.user_metadata?.full_name || 'Пользователь';
+        } else {
+            // Если гость, переводим как обычно
+            profileTitleEl.innerText = window.t('profile_title');
+        }
+    }
+
     // Динамический перевод окна категорий "Пристроить добро"
     const catSelect = document.getElementById('item-category');
     if (catSelect) {

@@ -763,17 +763,11 @@ export const ItemsModule = {
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        if (!window.currentUser) {
-                            if (typeof window.showToast === 'function') window.showToast(window.t('Войдите, чтобы написать продавцу'), 'error');
-                            return;
-                        }
-                        
-                        const ownerId = item.userId || item.user_id;
-                        const chatId = [window.currentUser.id, ownerId].sort().join('_') + '_' + item.id;
-                        const itemImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-                        
-                        if (typeof window.openChat === 'function') {
-                            window.openChat(chatId, item.title, item.id, itemImg, ownerId);
+                        // Обращаемся к правильной глобальной функции из main.js
+                        if (typeof window.openChatModal === 'function') {
+                            window.openChatModal();
+                        } else {
+                            if (typeof window.showToast === 'function') window.showToast("Ошибка: модуль чата не найден", true);
                         }
                     };
                 } 
