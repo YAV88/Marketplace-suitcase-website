@@ -408,15 +408,6 @@ window.changeLanguage = (lang) => {
     setTimeout(() => {
         const t = window.t || (txt => txt);
 
-        // 1. Перевод заголовка "НОВЫЕ НАХОДКИ" (железобетонный поиск по всем h3)
-        document.querySelectorAll('h3').forEach(h3 => {
-            const text = h3.innerText.toUpperCase();
-            if (text.includes('НАХОДКИ') || text.includes('FINDS') || text.includes('NALAZI')) {
-                if (!h3.dataset.origText) h3.dataset.origText = 'Новые находки';
-                h3.innerHTML = `<i class="fa-solid fa-fire text-brand-500 mr-2"></i> ${t(h3.dataset.origText)}`;
-            }
-        });
-
         // 2. Перевод строки поиска "Например: ..."
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
