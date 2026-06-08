@@ -322,10 +322,6 @@ window.changeLanguage = (lang) => {
     if (currentLangSpan) {
         currentLangSpan.innerText = lang.toUpperCase();
     }
-    if (indicator) {
-        if (lang === 'ru') indicator.innerText = 'RU';
-        if (lang === 'sr') indicator.innerText = 'SR';
-        if (lang === 'en') indicator.innerText = 'EN';
     }
 
     // Подменяем все размеченные тексты "на лету"
