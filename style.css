@@ -3960,6 +3960,27 @@ select option {
   }
 }
 
+/* ==========================================
+   ФИКС КОНТРАСТА ДЛЯ ТЁМНЫХ БЛОКОВ (SVALKA PRO)
+   ========================================== */
+
+.bg-stone-800 select, 
+.bg-stone-900 select, 
+.bg-stone-950 select,
+.bg-black select {
+  color: #ffffff !important;
+  /* Делаем текст белым на темном фоне */
+}
+
+/* Но внутри выпадающего списка опций текст должен оставаться темным для читаемости на белом фоне */
+
+.bg-stone-800 select option, 
+.bg-stone-900 select option, 
+.bg-stone-950 select option,
+.bg-black select option {
+  color: #1c1917 !important;
+}
+
 .focus-within\:border-brand-500:focus-within{
   --tw-border-opacity: 1;
   border-color: rgb(20 184 166 / var(--tw-border-opacity, 1));
@@ -5197,4 +5218,4 @@ select option {
   .xl\:hidden{
     display: none;
   }
-}
+} 
