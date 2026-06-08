@@ -322,7 +322,6 @@ window.changeLanguage = (lang) => {
     if (currentLangSpan) {
         currentLangSpan.innerText = lang.toUpperCase();
     }
-    }
 
     // Подменяем все размеченные тексты "на лету"
     document.querySelectorAll('[data-i18n]').forEach(el => {
