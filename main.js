@@ -120,7 +120,7 @@ window.i18n = {
         'Другое': 'Другое', 'Билеты': 'Билеты', 'Продукты': 'Продукты', 'Продукты питания': 'Продукты питания', 'Разное': 'Разное', 'Бесплатно': 'Бесплатно', 'Отдам даром': 'Отдам даром', 'Бюро': 'Бюро', 'Бюро находок': 'Бюро находок'
     },
     en: {
-        'page_title': 'SVALKA — Classifieds in Serbia', 'og_desc': 'Great finds and quick sales in Serbia.',
+        'page_title': 'SVALKA — Classifieds in Serbia', 'og_desc': 'Great finds and quick sales in Serbia.', 'Например: велосипед, макбук...': 'For example: bicycle, macbook...', 'Базовый': 'Basic', 'ВИП': 'VIP',
         'search_placeholder': 'I am looking for...', 'btn_login': 'Log in', 'btn_publish': 'Post an Ad', 'btn_publish_mob': 'Sell',
         'nav_info': 'Info', 'nav_about': 'About Project', 'nav_rules': 'Rules', 'nav_security': 'Security',
         'nav_faq': 'Help / FAQ', 'nav_privacy': 'Privacy', 'nav_terms': 'Terms', 'nav_contacts': 'Contacts',
@@ -187,8 +187,8 @@ window.i18n = {
     sr: {
         'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.',
         'search_placeholder': 'Tražim...', 'btn_login': 'Prijavi se', 'btn_publish': 'Objavi oglas', 'btn_publish_mob': 'Prodaj',
-        'nav_info': 'Info', 'nav_about': 'O projektu', 'nav_rules': 'Pravila', 'nav_security': 'Bezbednost',
-        'nav_faq': 'Pomoć / FAQ', 'nav_privacy': 'Politika', 'nav_terms': 'Uslovi', 'nav_contacts': 'Kontakti',
+        'nav_info': 'Info', 'nav_about': 'O projektu', 'nav_rules': 'Pravila', 'nav_security': 'Bezbednost', 'Например: велосипед, макбук...': 'Na primer: bicikl, macbook...', 'Базовый': 'Osnovni', 'ВИП': 'VIP',
+        'nav_faq': 'Pomoć / FAQ', 'nav_privacy': 'Politika', 'nav_terms': 'Uslovi', 'nav_contacts': 'Kontakti', 
         'nav_profile': 'Profil', 'nav_messages': 'Poruke', 'nav_logout': 'Odjavi se', 'bot_nav_home': 'Početna',
         'bot_nav_saved': 'Sačuvano', 'bot_nav_chat': 'Čet', 'feed_title': 'Oglasi', 'feed_desc': 'Najnoviji oglasi u Srbiji',
         'filter_btn': 'Filteri', 'filter_cat': 'Kategorija', 'filter_city': 'Grad', 'filter_condition': 'Stanje',
@@ -348,44 +348,43 @@ window.changeLanguage = (lang) => {
     setTimeout(() => {
         const t = window.t || (txt => txt);
 
-        // 1. Перевод заголовка на главной странице ("Новые находки" / "Находки")
-        const mainTitle = document.querySelector('h3.font-display.font-black.text-xl');
-        if (mainTitle && mainTitle.childNodes.length > 0) {
-            // Безопасно меняем только текстовый узел, не ломая иконку рядом
-            for (let node of mainTitle.childNodes) {
-                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                    const orig = node.textContent.trim();
-                    if (orig.includes('находки') || orig.includes('Находки') || orig.includes('Fresh') || orig.includes('Nalazi')) {
-                        node.textContent = ' ' + t('Новые находки');
-                    }
-                }
+        // 1. Перевод заголовка "НОВЫЕ НАХОДКИ" (железобетонный поиск по всем h3)
+        document.querySelectorAll('h3').forEach(h3 => {
+            const text = h3.innerText.toUpperCase();
+            if (text.includes('НАХОДКИ') || text.includes('FINDS') || text.includes('NALAZI')) {
+                if (!h3.dataset.origText) h3.dataset.origText = 'Новые находки';
+                h3.innerHTML = `<i class="fa-solid fa-fire text-brand-500 mr-2"></i> ${t(h3.dataset.origText)}`;
             }
+        });
+
+        // 2. Перевод строки поиска "Например: ..."
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            if (!searchInput.dataset.origPlaceholder) {
+                searchInput.dataset.origPlaceholder = searchInput.placeholder;
+            }
+            searchInput.placeholder = t(searchInput.dataset.origPlaceholder);
         }
 
-        // 2. Перевод статуса аккаунта в профиле ("Status: Базовый")
-        const statusLabel = document.querySelector('#profile-economy-section span.text-stone-500');
-        if (statusLabel) statusLabel.innerText = t('Статус') + ':';
-        
+        // 3. Перевод статуса аккаунта в профиле ("Базовый", "ВИП")
         const statusVal = document.getElementById('profile-account-status');
         if (statusVal) {
-            if (!statusVal.dataset.origText) statusVal.dataset.origText = statusVal.innerText;
-            statusVal.innerText = t(statusVal.dataset.origText);
+            // Очищаем статус от лишних пробелов и символов
+            const rawStatus = statusVal.dataset.origText || statusVal.innerText.trim();
+            statusVal.dataset.origText = rawStatus;
+            statusVal.innerText = t(rawStatus);
         }
 
-        // 3. Перевод заголовков разделов в окне создания товара ("Категория...", "Город...")
+        // Перевод заголовков разделов в окне создания товара ("Категория...", "Город...")
         document.querySelectorAll('select').forEach(sel => {
-            sel.classList.add('appearance-none');
-            sel.classList.remove('bg-white'); 
-            sel.classList.add('bg-transparent');
-            
-            // Ищем первый заблокированный placeholder-option
             if (sel.options[0] && sel.options[0].disabled) {
-                const placeholderKey = sel.id === 'item-category' ? 'Категория...' : (sel.id === 'item-city' ? 'Город...' : sel.options[0].text);
+                const placeholderKey = sel.id === 'item-category' ? 'Категория...' : (sel.id === 'item-city' ? 'Город...' : sel.options[0].dataset.origText || sel.options[0].text);
+                sel.options[0].dataset.origText = placeholderKey;
                 sel.options[0].text = t(placeholderKey);
             }
         });
 
-        // 4. Перевод главных категорий (optgroup) и подкатегорий
+        // Перевод главных категорий (optgroup) и подкатегорий
         document.querySelectorAll('optgroup').forEach(grp => {
             if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
             grp.label = t(grp.dataset.origLabel);
@@ -402,16 +401,6 @@ window.changeLanguage = (lang) => {
                 }
             }
         });
-
-        // 5. Перевод радиокнопок состояния (Фильтры слева на ПК: Любое, Новое, Б/У)
-        if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
-            const currentCond = window.filterCondition || 'Все';
-            window.renderCustomRadios('condition-radios-wrap', 'cond', [
-                { val: 'Все', label: t('Любое') }, 
-                { val: 'Новое', label: '✨ ' + t('Новое') }, 
-                { val: 'Б/У', label: '♻️ ' + t('Б/У') }
-            ], currentCond, 'applyCondition');
-        }
     }, 50);
 };
 
