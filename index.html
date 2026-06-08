@@ -19,8 +19,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="app.js"></script>
-
+    <script type="module" src="main.js"></script>
 </head>
 
 <body class="text-stone-800 dark:text-stone-200 antialiased relative pb-[70px] lg:pb-0">
@@ -1070,9 +1069,7 @@
                         Мин. 8 символов: латиница и цифры</p>
                 </div>
                 <div class="flex justify-between items-center mt-4">
-                    <button type="submit" id="auth-submit-btn"
-                        class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer"
-                        data-i18n="btn_login">Войти</button>
+                    <button type="submit" id="auth-submit-btn" class="bg-brand-600 text-white px-10 py-3.5 rounded-xl font-bold text-base transition shadow-md cursor-pointer">Зайти на Свалку</button>
                     <button type="button" onclick="window.forgotPassword()"
                         class="text-base font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer"
                         data-i18n="auth_forgot">Забыли пароль?</button>
@@ -1261,7 +1258,7 @@
 
                     <div
                         class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-city"
+                        <select id="item-city" required
                             class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             <option value="Белград">Белград</option>
                             <option value="Нови-Сад">Нови-Сад</option>
@@ -1598,15 +1595,17 @@
                         <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto shrink-0">
                             <button id="modal-author-rating"
                                 class="hidden flex-1 sm:flex-none items-center justify-center gap-1.5 px-4 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 font-bold text-sm hover:bg-stone-50 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 transition cursor-pointer"></button>
+                            
                             <button id="btn-contact-seller" onclick="window.openChatModal()"
-                                class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition shadow-md cursor-pointer">
-                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline"
-                                    data-i18n="btn_chat">Чат</span>
+                                class="shrink-0 flex items-center justify-center gap-2 px-6 sm:px-8 h-11 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition shadow-md cursor-pointer">
+                                <i class="fa-solid fa-comment-dots text-lg"></i> <span class="sm:hidden lg:inline" data-i18n="btn_chat">Чат</span>
                             </button>
-                            <div id="modal-phone-container" class="hidden flex-1 sm:flex-none">
+                            
+                            <div id="modal-phone-container" class="hidden flex-1 min-w-0">
                                 <a id="modal-phone" href="#"
-                                    class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition cursor-pointer">
-                                    <i class="fa-solid fa-phone"></i> <span id="modal-phone-text"></span>
+                                    class="flex items-center justify-center gap-2 w-full h-11 px-4 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition cursor-pointer overflow-hidden">
+                                    <i class="fa-solid fa-phone shrink-0"></i> 
+                                    <span id="modal-phone-text" class="whitespace-nowrap overflow-hidden text-ellipsis"></span>
                                 </a>
                             </div>
                         </div>

@@ -1,8 +1,50 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+import { supabaseUrl, supabaseKey, supabase } from './config.js';
+import { AuthModule } from './modules/auth.js';
+import { ChatModule } from './modules/chat.js';
+import { ItemsModule } from './modules/items.js';
 
-const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// ==========================================
+// БЛОК ПРЕДОХРАНИТЕЛЯ: ГАРАНТИЯ ГЛОБАЛЬНОГО СОСТОЯНИЯ
+// ==========================================
+window.currentCategory = window.currentCategory || 'Все';
+window.filterCities = window.filterCities || [];
+window.searchQuery = window.searchQuery || '';
+window.showUrgentOnly = window.showUrgentOnly || false;
+window.filterCondition = window.filterCondition || 'Все';
+window.filterPriceMin = window.filterPriceMin || '';
+window.filterPriceMax = window.filterPriceMax || '';
+window.filterCurrency = window.filterCurrency || 'Все';
+window.currentSortMode = window.currentSortMode || 'new';
+window.displayedCount = window.displayedCount || 12;
+window.loadedItems = window.loadedItems || [];
+window.currentUser = window.currentUser || null;
+window.userFavorites = window.userFavorites || new Set();
+
+// ==========================================
+// ГЛОБАЛЬНЫЙ МОСТ: СВЯЗЬ МОДУЛЕЙ И ИНТЕРФЕЙСА
+// ==========================================
+window.supabase = supabase;
+
+// Модуль Авторизации
+window.submitAuth = AuthModule.submitAuth;
+window.logout = AuthModule.logout;
+window.checkUserSession = AuthModule.checkUserSession;
+window.handleAuthChange = AuthModule.handleAuthChange;
+
+// Модуль Товаров (Без createCardHtml профиль крашится!)
+window.fetchItems = ItemsModule.fetchItems;
+window.openItemDetails = ItemsModule.openItemDetails;
+window.filterByCategory = ItemsModule.filterByCategory;
+window.createCardHtml = ItemsModule.createCardHtml; 
+
+// Модуль Чатов (Без updateChatBadges крашатся уведомления!)
+window.openChat = ChatModule.openChat;
+window.sendMessage = ChatModule.sendMessage;
+window.loadMessages = ChatModule.loadMessages;
+window.subscribeToMessages = ChatModule.subscribeToMessages;
+window.initGlobalChatListener = ChatModule.initGlobalChatListener;
+window.updateChatBadges = ChatModule.updateChatBadges;
+// ==========================================
 
 // ==========================================
 // ГЛОБАЛЬНЫЙ ДВИЖОК МУЛЬТИЯЗЫЧНОСТИ (i18n)
@@ -117,16 +159,15 @@ window.i18n = {
         'rep_spam': 'Spam / Duplicates', 'rep_toxic': 'Insults', 'rep_illegal': 'Prohibited items', 'rep_other': 'Other',
         'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report',
         'review_title': 'Rate the seller', 'review_sub': 'Your review will help other buyers!', 'review_ph': 'Write a few words...',
-        'btn_send_review': 'Send Review',
-        'pro_feat1_title': 'Free Bumps',
-        'pro_feat1_desc': '1 free top bump every day',
-        'pro_feat2_title': 'VIP Badge',
-        'pro_feat2_desc': 'Makes you stand out from other sellers',
-        'pro_price_label': 'Cost for 30 days:',
-        'pro_network_label': 'Select payment network:',
-        'pro_network_hint': 'BEP-20 network fees are the lowest.',
-        'pro_secure_label': 'Secure cryptocurrency payment',
-        'pro_pay_btn': 'PAY',
+        'btn_send_review': 'Send Review', 'pro_feat1_title': 'Free Bumps',
+        'pro_feat1_desc': '1 free top bump every day', 'pro_feat2_title': 'VIP Badge',
+        'pro_feat2_desc': 'Makes you stand out from other sellers', 'pro_price_label': 'Cost for 30 days:',
+        'pro_network_label': 'Select payment network:', 'pro_network_hint': 'BEP-20 network fees are the lowest.',
+        'pro_secure_label': 'Secure cryptocurrency payment', 'pro_pay_btn': 'PAY',
+        'Одежда и Обувь':'Clothing & Shoes', 'Дом и Интерьер':'Home & Interior', 'Красота и Здоровье':'Beauty & Health', 'Для Бизнеса':'For Business', 'Хобби и Отдых':'Hobbies & Leisure',
+        'Недвижимость':'Real Estate', 'Жилье':'Accommodation', 'Услуги':'Services', 'Работа':'Jobs', 'В ТОП':'To TOP', 'Редакт.':'Edit',
+        'Статус':'Status', 'Базовый':'Basic', 'Любое':'Any', 'Новое':'New', 'Б/У':'Used', 'Новые находки':'New Finds',
+        'Категория...':'Category...', 'Город...':'City...', 'Описание отсутствует.':'No description.',
         'Белград': 'Belgrade', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Nis', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pancevo', 'Чачак': 'Cacak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Other',
         'Все категории': 'All Categories', 'Любое': 'Any', 'Любая': 'Any', 'Динары': 'Dinars', 'Евро': 'Euros', 'Все в': 'All in', 'Склад': 'Saved', 'Мои вещи': 'My Items',
         'Одежда': 'Clothing', 'Женская': 'Women\'s', 'Мужская': 'Men\'s', 'Обувь': 'Shoes', 'Сумки': 'Bags', 'Аксессуары': 'Accessories', 'Спецодежда': 'Workwear',
@@ -183,16 +224,13 @@ window.i18n = {
         'rep_spam': 'Spam / Duplikati', 'rep_toxic': 'Uvrede', 'rep_illegal': 'Zabranjene stvari', 'rep_other': 'Ostalo',
         'report_ph': 'Opišite problem...', 'btn_send_report': 'Pošalji žalbu',
         'review_title': 'Ocenite prodavca', 'review_sub': 'Vaša recenzija će pomoći drugim kupcima!', 'review_ph': 'Napišite nekoliko reči...',
-        'btn_send_review': 'Pošalji recenziju',
-        'pro_feat1_title': 'Besplatna podizanja',
-        'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh',
-        'pro_feat2_title': 'VIP bedž',
-        'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca',
-        'pro_price_label': 'Cena za 30 dana:',
-        'pro_network_label': 'Izaberite mrežu za plaćanje:',
-        'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
-        'pro_secure_label': 'Sigurno plaćanje kriptovalutom',
-        'pro_pay_btn': 'PLATI',
+        'btn_send_review': 'Pošalji recenziju', 'pro_feat1_title': 'Besplatna podizanja', 'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh','pro_feat2_title': 'VIP bedž',
+        'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca','pro_price_label': 'Cena za 30 dana:', 'pro_network_label': 'Izaberite mrežu za plaćanje:', 'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
+        'pro_secure_label': 'Sigurno plaćanje kriptovalutom', 'pro_pay_btn': 'PLATI',
+        'Одежда и Обувь':'Odeća i Obuća', 'Дом и Интерьер':'Kuća i Enterijer', 'Красота и Здоровье':'Lepota i Zdravlje', 'Для Бизнеса':'Za Biznis', 'Хобби и Отдых':'Hobi i Odmor',
+        'Недвижимость':'Nekretnine', 'Жилье':'Smeštaj', 'Услуги':'Usluge', 'Работа':'Posao', 'В ТОП':'U TOP', 'Редакт.':'Uredi',
+        'Статус':'Status', 'Базовый':'Osnovni', 'Любое':'Bilo koje', 'Новое':'Novo', 'Б/У':'Polovno', 'Новые находки':'Novi nalazi',
+        'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.',
         'Белград': 'Beograd', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Niš', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pančevo', 'Чачак': 'Čačak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Drugi',
         'Все категории': 'Sve kategorije', 'Любое': 'Bilo koje', 'Любая': 'Bilo koja', 'Динары': 'Dinari', 'Евро': 'Evri', 'Все в': 'Sve u', 'Склад': 'Sačuvano', 'Мои вещи': 'Moje stvari',
         'Одежда': 'Odeća', 'Женская': 'Ženska', 'Мужская': 'Muška', 'Обувь': 'Obuća', 'Сумки': 'Torbe', 'Аксессуары': 'Aksesoari', 'Спецодежда': 'Radna odeća',
@@ -257,7 +295,7 @@ window.changeLanguage = (lang) => {
         Array.from(catSelect.options).forEach(opt => {
             if (opt.value) {
                 const parts = opt.value.split(' - ');
-                opt.innerText = parts.map(p => window.t(p)).join(' - ');
+                opt.innerText = window.t(parts[parts.length - 1]);
             }
         });
         Array.from(catSelect.getElementsByTagName('optgroup')).forEach(grp => {
@@ -270,6 +308,111 @@ window.changeLanguage = (lang) => {
     if (window.currentUser && typeof window.switchProfileTab === 'function') {
         window.switchProfileTab(window.currentProfileTab);
     }
+
+    // --- ПЕРЕРИСОВКА ДИНАМИЧЕСКИХ БЛОКОВ ---
+    if (!window.isInitialLoad) {
+        if (typeof window.initSidebar === 'function') window.initSidebar();
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+    }
+
+    document.querySelectorAll('optgroup').forEach(grp => {
+        if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
+        grp.label = window.t(grp.dataset.origLabel);
+    });
+
+    // 2. Перевод городов и плейсхолдеров в списках ("Города", "Категории")
+    ['item-city', 'item-category'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (sel) {
+            Array.from(sel.options).forEach(opt => {
+                if (!opt.dataset.origText) opt.dataset.origText = opt.text;
+                // Не переводим пустые значения, переводим только текст
+                if (opt.dataset.origText) {
+                    opt.text = window.t(opt.dataset.origText);
+                }
+            });
+        }
+    });
+
+    // 3. Мгновенный перевод кнопок состояния (ПК фильтр: Любое, Новое, Б/У)
+    if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
+        const currentCond = window.filterCondition || 'Все';
+        window.renderCustomRadios('condition-radios-wrap', 'cond', [
+            { val: 'Все', label: window.t('Любое') }, 
+            { val: 'Новое', label: '✨ ' + window.t('Новое') }, 
+            { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }
+        ], currentCond, 'applyCondition');
+    }
+
+    // === РАСШИРЕННАЯ ГЛУБОКАЯ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА ===
+    setTimeout(() => {
+        const t = window.t || (txt => txt);
+
+        // 1. Перевод заголовка на главной странице ("Новые находки" / "Находки")
+        const mainTitle = document.querySelector('h3.font-display.font-black.text-xl');
+        if (mainTitle && mainTitle.childNodes.length > 0) {
+            // Безопасно меняем только текстовый узел, не ломая иконку рядом
+            for (let node of mainTitle.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                    const orig = node.textContent.trim();
+                    if (orig.includes('находки') || orig.includes('Находки') || orig.includes('Fresh') || orig.includes('Nalazi')) {
+                        node.textContent = ' ' + t('Новые находки');
+                    }
+                }
+            }
+        }
+
+        // 2. Перевод статуса аккаунта в профиле ("Status: Базовый")
+        const statusLabel = document.querySelector('#profile-economy-section span.text-stone-500');
+        if (statusLabel) statusLabel.innerText = t('Статус') + ':';
+        
+        const statusVal = document.getElementById('profile-account-status');
+        if (statusVal) {
+            if (!statusVal.dataset.origText) statusVal.dataset.origText = statusVal.innerText;
+            statusVal.innerText = t(statusVal.dataset.origText);
+        }
+
+        // 3. Перевод заголовков разделов в окне создания товара ("Категория...", "Город...")
+        document.querySelectorAll('select').forEach(sel => {
+            sel.classList.add('appearance-none');
+            sel.classList.remove('bg-white'); 
+            sel.classList.add('bg-transparent');
+            
+            // Ищем первый заблокированный placeholder-option
+            if (sel.options[0] && sel.options[0].disabled) {
+                const placeholderKey = sel.id === 'item-category' ? 'Категория...' : (sel.id === 'item-city' ? 'Город...' : sel.options[0].text);
+                sel.options[0].text = t(placeholderKey);
+            }
+        });
+
+        // 4. Перевод главных категорий (optgroup) и подкатегорий
+        document.querySelectorAll('optgroup').forEach(grp => {
+            if (!grp.dataset.origLabel) grp.dataset.origLabel = grp.label;
+            grp.label = t(grp.dataset.origLabel);
+        });
+
+        document.querySelectorAll('select option').forEach(opt => {
+            if (!opt.dataset.origText) opt.dataset.origText = opt.text;
+            if (opt.dataset.origText && !opt.disabled) {
+                if (opt.dataset.origText.includes(' - ')) {
+                    const parts = opt.dataset.origText.split(' - ');
+                    opt.text = t(parts[parts.length - 1]);
+                } else {
+                    opt.text = t(opt.dataset.origText);
+                }
+            }
+        });
+
+        // 5. Перевод радиокнопок состояния (Фильтры слева на ПК: Любое, Новое, Б/У)
+        if (typeof window.renderCustomRadios === 'function' && document.getElementById('condition-radios-wrap')) {
+            const currentCond = window.filterCondition || 'Все';
+            window.renderCustomRadios('condition-radios-wrap', 'cond', [
+                { val: 'Все', label: t('Любое') }, 
+                { val: 'Новое', label: '✨ ' + t('Новое') }, 
+                { val: 'Б/У', label: '♻️ ' + t('Б/У') }
+            ], currentCond, 'applyCondition');
+        }
+    }, 50);
 };
 
 // Закрываем меню при клике в пустую область
@@ -280,10 +423,12 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Запуск при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    window.changeLanguage(window.currentLang);
-});
+// Запускаем двигатель (надежный метод для script type="module")
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSvalkaApp);
+} else {
+    initSvalkaApp();
+}
 
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
 window.customConfirm = (title, message, btnText, colorTheme, iconClass) => {
@@ -461,13 +606,9 @@ window.deleteItemConfirm = async () => {
     }
 };
 
-window.filterCondition = 'Все'; window.currentUser = null; window.loadedItems = [];
-window.tempPhotos = []; window.editExistingImages = []; window.currentCategory = 'Все';
-window.searchQuery = ''; window.showUrgentOnly = false; window.filterCities = [];
-window.filterPriceMin = ''; window.filterPriceMax = ''; window.filterCurrency = 'Все';
+window.tempPhotos = []; window.editExistingImages = [];
 window.currentProfileTab = 'items'; window.activeModalItemId = null;
-window.editingItemId = null; window.userFavorites = new Set();
-window.displayedCount = 12; window.authMode = 'login'; window.authInitialized = false;
+window.editingItemId = null; window.authMode = 'login';
 
 // === ЧАТЫ И УВЕДОМЛЕНИЯ ===
 window.currentChatId = null;
@@ -777,79 +918,6 @@ window.submitReview = async (event) => {
     }
 };
 
-window.initGlobalChatListener = () => {
-    if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
-
-    const channelName = 'global_chats_' + (window.currentUser?.id || 'guest');
-
-    // Запрашиваем права на уведомления (если еще не запрашивали)
-    if (window.currentUser && "Notification" in window) {
-        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-            Notification.requestPermission();
-        }
-    }
-
-    window.globalChatSubscription = supabase.channel(channelName)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
-            if (window.currentUser) {
-                const newMsg = payload.new;
-
-                // Если сообщение написали НАМ (а не мы сами)
-                if (newMsg.sender_id !== window.currentUser.id) {
-                    window.updateChatBadges();
-
-                    const listModal = document.getElementById('chat-list-modal');
-                    if (listModal && listModal.classList.contains('active')) {
-                        window.openChatListModal(true);
-                    }
-
-                    // ОТПРАВКА PUSH УВЕДОМЛЕНИЯ
-                    if ("Notification" in window && Notification.permission === "granted") {
-                        // Не показываем Push, если мы уже находимся внутри этого чата
-                        if (window.currentChatId !== newMsg.chat_id) {
-                            const notification = new Notification("SVALKA: Новое сообщение!", {
-                                body: newMsg.text,
-                                icon: "https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/logorobot.png"
-                            });
-
-                            notification.onclick = function () {
-                                window.focus(); // Возвращаем фокус на вкладку
-                                window.openChatListModal(); // Открываем чаты
-                            };
-                        }
-                    } else {
-                        // Фолбэк: если системные Push запрещены, показываем внутренний Toast
-                        if (window.currentChatId !== newMsg.chat_id) {
-                            window.showToast("У вас новое сообщение!");
-                        }
-                    }
-                }
-            }
-        }).subscribe();
-};
-
-window.loadMessages = async () => {
-    if (!window.currentChatId) return;
-    const { data, error } = await supabase.from('messages').select('*').eq('chat_id', window.currentChatId).order('created_at', { ascending: true });
-
-    if (window.currentUser) {
-        supabase.from('messages').update({ is_read: true }).eq('chat_id', window.currentChatId).neq('sender_id', window.currentUser.id).eq('is_read', false).then(() => window.updateChatBadges());
-    }
-
-    const container = document.getElementById('chat-messages');
-    if (error || !data || data.length === 0) {
-        container.innerHTML = `<div class="text-center text-xs font-bold text-stone-400 my-4">Напишите первое сообщение!</div>`;
-        return;
-    }
-
-    container.innerHTML = data.map(m => {
-        const isMe = m.sender_id === window.currentUser.id;
-        if (isMe) return `<div class="flex items-end justify-end gap-2 w-full mt-2"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${m.text}</div></div>`;
-        else return `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${m.text}</div></div>`;
-    }).join('');
-    container.scrollTop = container.scrollHeight;
-};
-
 window.sendChatMessage = async () => {
     if (!window.currentChatId || !window.currentUser) return;
     const input = document.getElementById('chat-input-field');
@@ -867,31 +935,6 @@ window.sendChatMessage = async () => {
         const tempMsg = document.getElementById('temp-msg');
         if (tempMsg) { tempMsg.classList.remove('opacity-50'); tempMsg.removeAttribute('id'); }
     } catch (e) { window.showToast("Ошибка отправки", true); }
-};
-
-window.subscribeToMessages = () => {
-    // 1. На всякий случай добиваем старую подписку
-    if (window.chatSubscription) {
-        supabase.removeChannel(window.chatSubscription);
-        window.chatSubscription = null;
-    }
-
-    // 2. Создаем УНИКАЛЬНОЕ имя комнаты, чтобы обойти баг кэширования веб-сокетов Supabase
-    const roomName = 'chat_room_' + window.currentChatId + '_' + Date.now();
-
-    window.chatSubscription = supabase.channel(roomName)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${window.currentChatId}` }, payload => {
-            const newMsg = payload.new;
-            if (newMsg.sender_id !== window.currentUser?.id) {
-                const container = document.getElementById('chat-messages');
-                if (container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
-
-                container.insertAdjacentHTML('beforeend', `<div class="flex items-end gap-2 max-w-[85%] mt-2"><div class="bg-stone-100 dark:bg-stone-800 p-3 rounded-2xl rounded-bl-none shadow-sm text-base text-stone-800 dark:text-stone-200 font-medium break-words">${newMsg.text}</div></div>`);
-                container.scrollTop = container.scrollHeight;
-
-                supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => window.updateChatBadges());
-            }
-        }).subscribe();
 };
 
 window.currentChatItemId = null;
@@ -989,8 +1032,8 @@ window.openChatModal = async () => {
             chat = newChat;
         }
         window.currentChatId = chat.id;
-        await window.loadMessages();
-        window.subscribeToMessages();
+        await ChatModule.loadMessages(chat.id);
+        await ChatModule.subscribeToMessages();
     } catch (e) { messagesContainer.innerHTML = `<div class="text-center text-stone-400 mt-4">Ошибка загрузки чата</div>`; }
 };
 
@@ -1112,8 +1155,8 @@ window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) 
     messagesContainer.innerHTML = `<div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>`;
     window.openModal('chat-modal');
 
-    await window.loadMessages();
-    window.subscribeToMessages();
+    await ChatModule.loadMessages(chatId);
+    await ChatModule.subscribeToMessages();
 };
 // ========================
 
@@ -1137,19 +1180,17 @@ const initPWA = () => {
 };
 initPWA();
 
-const updateThemeIcons = (isDark) => {
-    document.querySelectorAll('button[onclick="window.toggleDarkMode()"] i').forEach(icon => {
-        // 1. Анимация исчезновения и вращения старой иконки
+window.updateThemeIcons = (isDark) => {
+    document.querySelectorAll('button[onclick*="toggleDarkMode"] i').forEach(icon => {
         icon.style.transform = 'rotate(-180deg) scale(0.5)';
         icon.style.opacity = '0';
-
         setTimeout(() => {
-            // 2. Меняем иконку (Луна/Солнце)
-            icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-lg transition-all duration-300' : 'fa-solid fa-moon text-lg transition-all duration-300';
-            // 3. Плавное появление новой иконки
+            icon.className = isDark 
+                ? 'fa-solid fa-sun text-amber-500 text-lg inline-block transition-all duration-300' 
+                : 'fa-solid fa-moon text-indigo-400 text-lg inline-block transition-all duration-300';
             icon.style.transform = 'rotate(0deg) scale(1)';
             icon.style.opacity = '1';
-        }, 150); // Ждем половину анимации перед сменой
+        }, 150); 
     });
 };
 
@@ -1166,28 +1207,24 @@ const setAutoTheme = () => {
             else document.documentElement.classList.remove('dark');
         } catch (e) { }
     }
-    setTimeout(() => updateThemeIcons(isDark), 50);
+    setTimeout(() => {
+        if (typeof window.updateThemeIcons === 'function') window.updateThemeIcons(isDark);
+    }, 50);
 };
 setAutoTheme();
 
 window.toggleDarkMode = () => {
     const html = document.documentElement;
     const newIsDark = !html.classList.contains('dark');
-
-    // 1. ЖЕСТКО БЛОКИРУЕМ ВСЕ АНИМАЦИИ НА СТРАНИЦЕ
+    
     html.classList.add('disable-transitions');
-
-    // 2. Мгновенно меняем тему
     html.classList.toggle('dark', newIsDark);
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
-
-    // Обновляем иконки (Луна/Солнце)
+    
     if (typeof window.updateThemeIcons === 'function') {
         window.updateThemeIcons(newIsDark);
     }
 
-    // 3. Магия: заставляем браузер отрисовать кадр без анимаций, 
-    // и только потом возвращаем плавность (через двойной requestAnimationFrame)
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             html.classList.remove('disable-transitions');
@@ -1285,12 +1322,14 @@ window.closeModal = id => {
         const photoList = document.getElementById('photo-preview-list'); if (photoList) photoList.innerHTML = '';
     }
 
-    // === ИСПРАВЛЕНИЕ: ЖЕСТКАЯ ОЧИСТКА ЧАТА ===
+    // === ИСПРАВЛЕНИЕ: БЕЗОПАСНАЯ ОЧИСТКА ЧАТА ===
     if (id === 'chat-modal') {
-        window.currentChatId = null; // Сбрасываем ID, чтобы глобальный слушатель понял, что мы вышли
+        window.currentChatId = null;
         if (window.chatSubscription) {
-            supabase.removeChannel(window.chatSubscription); // Убиваем фонового зомби
+            // Перехватываем подписку в локальную переменную перед удалением
+            const subToKill = window.chatSubscription;
             window.chatSubscription = null;
+            supabase.removeChannel(subToKill); // Fire-and-forget (не блокируем закрытие UI)
         }
     }
 };
@@ -1535,6 +1574,9 @@ window.setAuthMode = mode => {
     const confirmInput = document.getElementById('auth-password-confirm');
     const tabL = document.getElementById('tab-login');
     const tabR = document.getElementById('tab-register');
+    
+    // Добавлено: Находим кнопку формы по правильному ID
+    const submitBtn = document.getElementById('auth-submit-btn');
 
     if (mode === 'register') {
         if (fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
@@ -1542,64 +1584,29 @@ window.setAuthMode = mode => {
         if (confirmInput) confirmInput.required = true;
         if (tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
         if (tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
+        
+        // Тематическое название для регистрации
+        if (submitBtn) {
+            submitBtn.innerText = "Присоединиться";
+            submitBtn.removeAttribute('data-i18n'); // Отключаем словарь для этой кнопки
+        }
 
-        // === ИСПРАВЛЕНИЕ: Вызываем генерацию аватарок при переключении ===
         if (typeof window.renderRegistrationAvatars === 'function') {
             window.renderRegistrationAvatars();
         }
-        // ==================================================================
-
     } else {
         if (fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
         if (confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); }
         if (confirmInput) confirmInput.required = false;
         if (tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
         if (tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
-    }
-};
-
-window.submitAuth = async (event) => {
-    if (event) event.preventDefault();
-    const btn = document.getElementById('auth-submit-btn');
-    const emailEl = document.getElementById('auth-email');
-    const passEl = document.getElementById('auth-password');
-    const email = emailEl ? emailEl.value.trim() : '';
-    const pass = passEl ? passEl.value : '';
-
-    // Финальная проверка на кириллицу (на случай если вставили копипастом)
-    if (/[А-Яа-яЁё]/.test(email) || /[А-Яа-яЁё]/.test(pass)) {
-        window.showToast("Почта и пароль не должны содержать русские буквы!", true);
-        return;
-    }
-
-    if (window.authMode === 'register') {
-        const passConfirmEl = document.getElementById('auth-password-confirm');
-        const passConfirm = passConfirmEl ? passConfirmEl.value : '';
-
-        if (pass !== passConfirm) {
-            window.showToast("Пароли не совпадают!", true);
-            return;
+        
+        // Тематическое название для входа
+        if (submitBtn) {
+            submitBtn.innerText = "Зайти на Свалку";
+            submitBtn.removeAttribute('data-i18n');
         }
-
-        const passRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
-        if (!passRegex.test(pass)) { window.showToast("Пароль от 8 символов (буквы + цифры)", true); return; }
     }
-
-    if (btn) { btn.disabled = true; btn.innerText = "..."; }
-    try {
-        if (window.authMode === 'login') {
-            const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) throw error;
-        } else {
-            const nameEl = document.getElementById('auth-name'); const name = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Пользователь';
-            const avatarEl = document.querySelector('input[name="avatar"]:checked'); const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
-            const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { full_name: name, avatar_url: avatar } } });
-            if (error) throw error;
-        }
-        window.closeModal('auth-modal'); window.showToast("Успешно!");
-        if (emailEl) emailEl.value = ''; if (passEl) passEl.value = '';
-    } catch (e) { window.showToast(e.message, true); }
-    finally { if (btn) { btn.disabled = false; btn.innerHTML = window.authMode === 'login' ? 'Войти' : 'Регистрация'; } }
 };
 
 window.forgotPassword = async () => {
@@ -1690,19 +1697,6 @@ window.saveProfile = async (event) => {
     }
 };
 
-window.logout = async () => {
-    // 1. Ждем, пока Supabase точно удалит сессию
-    await supabase.auth.signOut();
-
-    // 2. Очищаем локальные данные
-    sessionStorage.clear();
-    window.currentUser = null;
-    window.closeModal('profile-modal');
-
-    // 3.Перезагружаем страницу
-    window.location.reload();
-};
-
 // Принятие фильтров на мобилках
 window.applyFilters = () => {
     const elCity = document.getElementById('filter-city');
@@ -1719,257 +1713,15 @@ window.applyFilters = () => {
     window.fetchItems();
 };
 
-window.fetchItems = async (isLoadMore = false) => {
-    const loader = document.getElementById('loading-placeholder');
-    const mainGrid = document.getElementById('main-items-grid');
-    const emptyState = document.getElementById('empty-state');
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    const vipSection = document.getElementById('vip-section');
-    const vipGrid = document.getElementById('vip-items-grid');
-    const proBanner = document.getElementById('pro-thin-banner');
-
-    if (!isLoadMore) {
-        window.displayedCount = 12;
-        if (!window.searchQuery) {
-            if (mainGrid) { mainGrid.style.opacity = '0.5'; mainGrid.style.pointerEvents = 'none'; }
-            if (vipGrid) { vipGrid.style.opacity = '0.5'; vipGrid.style.pointerEvents = 'none'; }
-            if (loader && (!mainGrid || mainGrid.innerHTML === '')) loader.style.display = 'block';
-        }
-
-        if (emptyState) emptyState.classList.add('hidden');
-        if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-
-        const feedTitle = document.getElementById('main-feed-title');
-        const feedIcon = document.getElementById('main-feed-icon');
-        if (feedTitle && feedIcon) {
-            if (window.showUrgentOnly) {
-                feedTitle.innerText = "ТОП Находки"; feedTitle.className = "font-black text-xl text-stone-800 dark:text-stone-200";
-                feedIcon.className = "fa-solid fa-crown text-amber-500 text-2xl";
-            } else {
-                feedTitle.innerText = "Новые находки"; feedTitle.className = "font-black text-xl text-stone-500";
-                feedIcon.className = "fa-regular fa-clock text-stone-400 text-2xl";
-            }
+// Автоматическое применение фильтра "Оплата"
+document.addEventListener('change', (e) => {
+    if (e.target && e.target.classList.contains('filter-payment')) {
+        window.displayedCount = 12; // Сбрасываем счетчик подгрузки
+        if (typeof window.fetchItems === 'function') {
+            window.fetchItems(false); // Запрашиваем новые данные
         }
     }
-
-    try {
-        let res, vipRes = { data: [] };
-        let fallbackMode = false;
-
-        try {
-            let q = supabase.from('items').select('*').neq('status', 'sold');
-            let vq = supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(40);
-
-            // Фильтр по способам оплаты (если выбран хотя бы один чекбокс)
-            const selectedPayments = Array.from(document.querySelectorAll('.filter-payment:checked')).map(cb => cb.value);
-            if (selectedPayments.length > 0) {
-                q = q.overlaps('payment', selectedPayments);
-                vq = vq.overlaps('payment', selectedPayments);
-            }
-
-            if (window.currentCategory !== 'Все') {
-                q = q.ilike('category', `${window.currentCategory}%`);
-                vq = vq.ilike('category', `${window.currentCategory}%`);
-            }
-            if (window.filterCities.length > 0) {
-                q = q.in('city', window.filterCities);
-                vq = vq.in('city', window.filterCities);
-            }
-            // ==========================================
-            // ГЛОБАЛЬНЫЙ ПОИСК ПО ВСЕЙ КАРТОЧКЕ ТОВАРА
-            // ==========================================
-            if (window.searchQuery) {
-                const sq = window.searchQuery.trim();
-
-                // Убрали несуществующую subcategory. Ищем только по реальным колонкам!
-                const orQuery = `title.ilike.%${sq}%,description.ilike.%${sq}%,city.ilike.%${sq}%,category.ilike.%${sq}%`;
-
-                // Применяем расширенный поиск к обычным и VIP товарам
-                q = q.or(orQuery);
-                vq = vq.or(orQuery);
-            }
-
-            // --- ЛОГИКА СЕНЬОРА: Исключение несовместимых категорий при поиске по состоянию ---
-            if (window.filterCondition && window.filterCondition !== 'Все') {
-                if (window.filterCondition === 'Б/У') {
-                    q = q.or('condition.eq.Б/У,condition.is.null');
-                    vq = vq.or('condition.eq.Б/У,condition.is.null');
-                } else {
-                    q = q.eq('condition', window.filterCondition);
-                    vq = vq.eq('condition', window.filterCondition);
-                }
-
-                // Жестко вырезаем категории из SQL-запроса
-                const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-                noConditionCats.forEach(cat => {
-                    q = q.not('category', 'ilike', `${cat}%`);
-                    vq = vq.not('category', 'ilike', `${cat}%`);
-                });
-            }
-            // -----------------------------------------------------------------------------------
-
-            const needsJsPriceFilter = (window.filterPriceMin || window.filterPriceMax) && window.filterCurrency === 'Все';
-
-            if (window.filterCurrency !== 'Все') {
-                q = q.eq('currency', window.filterCurrency);
-                vq = vq.eq('currency', window.filterCurrency);
-
-                if (window.filterPriceMin) {
-                    q = q.gte('price', Number(window.filterPriceMin));
-                    vq = vq.gte('price', Number(window.filterPriceMin));
-                }
-                if (window.filterPriceMax) {
-                    q = q.lte('price', Number(window.filterPriceMax));
-                    vq = vq.lte('price', Number(window.filterPriceMax));
-                }
-            }
-
-            if (window.showUrgentOnly) {
-                q = q.gt('highlighted_until', new Date().toISOString());
-            }
-
-            if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp' && !needsJsPriceFilter) {
-                q = q.order('created_at', { ascending: false });
-                q = q.limit(window.displayedCount + 1);
-            }
-
-            const results = await Promise.all([q, vq]);
-            if (results[0].error) throw results[0].error;
-
-            let itemsData = results[0].data || [];
-            let vipData = results[1].data || [];
-
-            if (needsJsPriceFilter) {
-                const minRsd = window.filterPriceMin ? Number(window.filterPriceMin) : 0;
-                const maxRsd = window.filterPriceMax ? Number(window.filterPriceMax) : Infinity;
-
-                const filterByPrice = (items) => items.filter(item => {
-                    const itemRsd = item.currency === 'EUR' ? (Number(item.price) || 0) * 117 : (Number(item.price) || 0);
-                    return itemRsd >= minRsd && itemRsd <= maxRsd;
-                });
-
-                itemsData = filterByPrice(itemsData);
-                vipData = filterByPrice(vipData);
-            }
-
-            if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp') {
-                const getPriceForSort = (item) => {
-                    const p = Number(item.price) || 0;
-                    return item.currency === 'EUR' ? p * 117 : p;
-                };
-                const sortFn = window.currentSortMode === 'cheap'
-                    ? (a, b) => getPriceForSort(a) - getPriceForSort(b)
-                    : (a, b) => getPriceForSort(b) - getPriceForSort(a);
-
-                itemsData.sort(sortFn);
-            }
-
-            if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp' || needsJsPriceFilter) {
-                itemsData = itemsData.slice(0, window.displayedCount + 1);
-            }
-
-            results[0].data = itemsData;
-            results[1].data = vipData;
-            res = results[0]; vipRes = results[1];
-
-        } catch (err) {
-            fallbackMode = true;
-            res = await supabase.from('items').select('*').order('created_at', { ascending: false });
-        }
-
-        if (fallbackMode && res.data) {
-            let filtered = res.data.filter(i => {
-                const matchCat = window.currentCategory === 'Все' || (i.category && i.category.startsWith(window.currentCategory));
-                const searchQ = (window.searchQuery || '').toLowerCase(); const titleStr = (i.title || '').toLowerCase();
-                const matchSearch = titleStr.includes(searchQ); const matchUrgent = !window.showUrgentOnly || i.is_highlighted;
-                const matchCity = window.filterCities.length === 0 || window.filterCities.includes(i.city);
-
-                const matchCond = window.filterCondition === 'Все' || (window.filterCondition === 'Б/У' ? (i.condition === 'Б/У' || !i.condition) : i.condition === window.filterCondition);
-
-                // Защита в fallback: выкидываем Услуги и Животных, если включен фильтр
-                const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-                const isNoCondCat = noConditionCats.some(c => (i.category || '').startsWith(c));
-                if (window.filterCondition !== 'Все' && isNoCondCat) return false;
-
-                let matchPrice = true; const p = Number(i.price) || 0;
-                const itemRsd = i.currency === 'EUR' ? p * 117 : p;
-
-                if (window.filterCurrency === 'Все') {
-                    if (window.filterPriceMin && itemRsd < Number(window.filterPriceMin)) matchPrice = false;
-                    if (window.filterPriceMax && itemRsd > Number(window.filterPriceMax)) matchPrice = false;
-                } else {
-                    if (window.filterPriceMin && p < Number(window.filterPriceMin)) matchPrice = false;
-                    if (window.filterPriceMax && p > Number(window.filterPriceMax)) matchPrice = false;
-                    if (i.currency !== window.filterCurrency) matchPrice = false;
-                }
-
-                return matchCat && matchSearch && matchUrgent && matchCity && matchPrice && matchCond;
-            });
-
-            const getPriceForSort = (item) => {
-                const p = Number(item.price) || 0;
-                return item.currency === 'EUR' ? p * 117 : p;
-            };
-
-            if (window.currentSortMode === 'cheap') {
-                filtered.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
-            } else if (window.currentSortMode === 'exp') {
-                filtered.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
-            }
-
-            vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);
-            res.data = filtered.slice(0, window.displayedCount + 1);
-        }
-
-        const items = (res.data || []).map(window.mapItemData).filter(Boolean);
-        const hasMore = items.length > window.displayedCount;
-        const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
-
-        if (!isLoadMore) window.loadedItems = itemsToDisplay;
-        else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
-
-        if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-            // Перемешиваем массив и берем 8 штук
-            const vipMapped = vipRes.data
-                .map(window.mapItemData)
-                .filter(Boolean)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 8);
-
-            if (vipMapped.length > 0 && vipGrid && vipSection) {
-                vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto';
-                vipGrid.innerHTML = vipMapped.map(i => window.createCardHtml(i, true)).join('');
-                vipSection.classList.remove('hidden');
-                // Добавляем в общий список загруженных, чтобы открывались модалки
-                vipMapped.forEach(v => { if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
-            }
-        }
-
-        if (itemsToDisplay.length > 0) {
-            let html = '';
-            itemsToDisplay.forEach(item => { html += window.createCardHtml(item, item.isHighlighted); });
-            if (mainGrid) {
-                mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto';
-                if (!isLoadMore) mainGrid.innerHTML = html; else mainGrid.insertAdjacentHTML('beforeend', html);
-                mainGrid.classList.remove('hidden');
-            }
-            if (loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }
-            if (proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
-        } else {
-            if (!isLoadMore) {
-                if (mainGrid) { mainGrid.innerHTML = ''; mainGrid.classList.add('hidden'); mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto'; }
-                if (emptyState) emptyState.classList.remove('hidden');
-                if (proBanner) proBanner.classList.add('hidden');
-            }
-            if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-        }
-    } catch (e) {
-        if (window.loadedItems.length === 0 && loader) {
-            loader.style.display = 'block';
-            loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span></div>`;
-        }
-    } finally { if (loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; }
-};
+});
 
 window.resetFilters = () => {
     const elMin = document.getElementById('filter-price-min');
@@ -2014,126 +1766,6 @@ window.subcategoriesMap = {
     'Животные': [{ val: 'Собаки' }, { val: 'Кошки' }, { val: 'Птицы' }, { val: 'Аквариум', label: 'Аквариумистика' }, { val: 'Товары', label: 'Зоотовары' }, { val: 'Другие' }],
     'Жилье': [{ val: 'Аренда' }, { val: 'Посуточно', label: 'Аренда (посуточно)' }, { val: 'Покупка', label: 'Продажа' }, { val: 'Коммерция', label: 'Коммерческая' }, { val: 'Дачи', label: 'Дома и дачи' }],
     'Другое': [{ val: 'Билеты' }, { val: 'Продукты', label: 'Продукты питания' }, { val: 'Разное' }, { val: 'Бесплатно', label: 'Отдам даром' }, { val: 'Бюро', label: 'Бюро находок' }]
-};
-
-window.filterByCategory = (cat, event, isSubCat = false) => {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    // --- СЕНЬОР-ЛОГИКА: Умное закрытие ---
-    if (window.currentCategory === cat && cat !== 'Все') {
-        if (cat.includes(' - ')) {
-            cat = cat.split(' - ')[0];
-        } else {
-            cat = 'Все';
-        }
-    }
-    // -------------------------------------
-
-    window.currentCategory = cat;
-    window.showUrgentOnly = false;
-    window.displayedCount = 12;
-
-    const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-    const condRadios = document.getElementById('condition-radios-wrap');
-
-    if (condRadios) {
-        const condBlock = condRadios.parentElement;
-        const prevDivider = condBlock.previousElementSibling;
-        const isNoCondCat = noConditionCats.some(c => cat.startsWith(c));
-
-        // ЗДЕСЬ БЫЛА ОШИБКА СО СКОБКАМИ. ТЕПЕРЬ ВСЁ ИДЕАЛЬНО:
-        if (isNoCondCat) {
-            condBlock.style.display = 'none';
-            if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = 'none';
-
-            if (window.filterCondition !== 'Все') {
-                window.filterCondition = 'Все';
-                window.renderCustomRadios('condition-radios-wrap', 'cond', [{ val: 'Все', label: window.t('Любое') }, { val: 'Новое', label: '✨ ' + window.t('Новое') }, { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }], 'Все', 'applyCondition');
-            }
-        } else {
-            condBlock.style.display = 'block';
-            if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
-        }
-    }
-
-    const urgentBtn = document.getElementById('btn-cat-urgent');
-    if (urgentBtn) urgentBtn.classList.remove('active', 'bg-amber-100', 'border-amber-400', 'text-amber-700');
-
-    document.querySelectorAll('.sidebar-cat-group').forEach(grp => {
-        const btn = grp.querySelector('button');
-        const subWrap = grp.querySelector('.sidebar-sub-cats');
-        const icon = grp.querySelector('i.fa-chevron-down');
-
-        if (!btn || !subWrap) return; // Защита от ошибок
-
-        const grpCat = btn.innerText.trim();
-
-        if (cat.startsWith(grpCat) && cat !== 'Все') {
-            btn.classList.add('text-brand-600');
-            btn.classList.remove('text-stone-700', 'dark:text-stone-300');
-            subWrap.classList.remove('max-h-0', 'opacity-0');
-            subWrap.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-            if (icon) icon.classList.add('rotate-180');
-        } else {
-            btn.classList.remove('text-brand-600');
-            btn.classList.add('text-stone-700', 'dark:text-stone-300');
-            subWrap.classList.add('max-h-0', 'opacity-0');
-            subWrap.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-            if (icon) icon.classList.remove('rotate-180');
-        }
-
-        subWrap.querySelectorAll('button').forEach(subBtn => {
-            const isSubActive = window.currentCategory === (grpCat + ' - ' + subBtn.innerText.trim());
-            if (isSubActive) {
-                subBtn.classList.add('text-brand-600', 'font-bold');
-                subBtn.classList.remove('text-stone-500', 'dark:text-stone-400');
-            } else {
-                subBtn.classList.remove('text-brand-600', 'font-bold');
-                subBtn.classList.add('text-stone-500', 'dark:text-stone-400');
-            }
-        });
-    });
-
-    const allBtn = document.querySelector('#sidebar-categories > button');
-    if (allBtn) {
-        if (cat === 'Все') {
-            allBtn.classList.add('text-brand-600');
-            allBtn.classList.remove('text-stone-700', 'dark:text-stone-300');
-        } else {
-            allBtn.classList.remove('text-brand-600');
-            allBtn.classList.add('text-stone-700', 'dark:text-stone-300');
-        }
-    }
-
-    const subCatsContainer = document.getElementById('sub-categories');
-    if (subCatsContainer) {
-        if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
-            const mainCat = cat.split(' - ')[0];
-            let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]'}">${window.t('Все в')} «${window.t(mainCat)}»</button>`;
-
-            window.subcategoriesMap[mainCat].forEach(sub => {
-                const prefix = sub.prefix || mainCat;
-                const fullCat = `${prefix} - ${sub.val}`;
-                const isActive = cat === fullCat;
-                const activeClass = isActive
-                    ? "active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
-                    : "px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]";
-                subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${activeClass}">${window.t(sub.label || sub.val)}</button>`;
-            });
-            subCatsContainer.innerHTML = subHtml;
-            subCatsContainer.style.display = 'flex';
-        } else {
-            subCatsContainer.style.display = 'none';
-        }
-    }
-
-    const isMobile = window.innerWidth < 1024;
-    if (!isMobile || isSubCat) {
-        if (typeof window.fetchItems === 'function') window.fetchItems(true);
-    }
 };
 
 window.toggleUrgentFilter = () => {
@@ -2346,105 +1978,6 @@ window.mapItemData = function (i) {
     } catch (err) { return null; }
 }
 
-window.createCardHtml = function (i, isVIP, isProfileView = false) {
-    const isOwner = window.currentUser && window.currentUser.id === i.userId;
-    const isService = i.category && i.category.includes('Услуги');
-    const isJob = i.category && i.category.includes('Работа');
-    const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
-    const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
-    const cardClass = isVIP ? 'item-card vip-card cursor-pointer flex flex-col relative h-full' : 'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full';
-    const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
-    const isLiked = window.userFavorites && window.userFavorites.has(i.id);
-    const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
-
-    let statusBadge = ''; let opacityClass = '';
-    if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">В РЕЗЕРВЕ</div>`; }
-    else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">ПРОДАНО</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
-
-    const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-    const imgHeight = 'h-36 sm:h-40'; const pClass = 'p-3 sm:p-4'; const titleClass = 'text-sm sm:text-base'; const priceClass = 'text-base sm:text-lg';
-
-    let deliveryBadges = '';
-    // Выравниваем иконки точно по центру через flex items-center justify-center
-    if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-box"></i></span>`;
-    if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
-
-    let paymentBadges = '';
-    if (i.payment) {
-        const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
-        const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-
-        // Используем векторные иконки FontAwesome (fa-brands fa-bitcoin для крипты и fa-regular fa-credit-card для карты)
-        if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help transition-transform hover:scale-110" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
-        if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
-    }
-
-    let condBadge = '';
-    if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">УСЛУГИ</div>`;
-    else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">РАБОТА</div>`;
-    else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НЕДВИЖИМОСТЬ</div>`;
-    else if (isAnimalEntity) condBadge = '';
-    else {
-        if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">НОВОЕ</div>`;
-        else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">Б/У</div>`;
-    }
-
-    const favTitle = isLiked ? 'Убрать со склада' : 'Добавить на склад';
-    const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
-
-    // Кнопки управления показываем ТОЛЬКО если это владелец И мы находимся в профиле
-    const cardFooter = (isOwner && isProfileView) ? `
-        <div class="view-grid-city text-[10px] font-bold mt-auto pt-2 flex gap-2">
-            <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50"> <i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП </button>
-            <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="px-3 py-1.5 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700">
-                <i class="fa-solid fa-pen mr-1.5"></i> Редакт.
-            </button>
-        </div>
-    ` : `
-        <div class="view-grid-city text-xs border-t border-stone-100 dark:border-stone-700 font-bold text-stone-400 flex justify-between items-center mt-auto pt-2">
-            <span class="truncate pr-1"><i class="fa-solid fa-location-dot"></i> ${i.city || 'Сербия'}</span>
-            <span class="text-stone-800 dark:text-white shrink-0 opacity-50">&rarr;</span>
-        </div>
-    `;
-
-    return `
-    <div class="${cardClass} ${opacityClass}" onclick="window.openItemDetails('${i.id}')">
-        ${favHtml}
-        <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0">
-            <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
-            ${statusBadge}
-            ${condBadge}
-        </div>
-        
-        <div class="card-body-wrap ${pClass} flex-1 flex flex-col">
-            
-            <div class="view-list-col-2 flex-1 flex flex-col">
-                <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 leading-tight break-words">
-                    ${vipCrown}${i.title || 'Без названия'}
-                </h4>
-                <div class="text-brand-600 price-text ${priceClass} mt-0.5 font-black">
-                    ${i.price || 0} ${i.currency || 'RSD'}
-                </div>
-                
-                <div class="view-list-city font-medium mb-1">
-                    <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${i.city || 'Сербия'}
-                </div>
-                
-                <div class="view-badges items-center mt-auto pt-2 flex flex-wrap gap-1.5">${deliveryBadges}${paymentBadges}</div>
-            </div>
-            
-            <div class="view-list-col-3 hidden">
-                <h5 class="text-base font-black text-stone-900 dark:text-white uppercase tracking-wider mb-3 block">Описание находки</h5>
-                <p class="view-list-desc">
-                    ${i.description || 'Продавец не добавил описание к этому товару.'}
-                </p>
-            </div>
-            
-            ${cardFooter}
-        </div>
-    </div>`;
-}
-
 window.navigateItem = (direction, e) => {
     if (e) e.stopPropagation();
     if (!window.loadedItems || !window.activeModalItemId) return;
@@ -2459,307 +1992,6 @@ window.navigateItem = (direction, e) => {
         const nextItem = window.loadedItems[newIndex];
         window.openItemDetails(nextItem.id);
     }
-};
-
-window.openItemDetails = async (id) => {
-    // 1. СОХРАНЯЕМ ID ТОВАРА ДЛЯ КНОПКИ "СКЛАД" И "ПОДЕЛИТЬСЯ"
-    window.currentOpenedItemId = id;
-
-    // 2. СРАЗУ КРАСИМ КНОПКУ "СКЛАД", ЕСЛИ ТОВАР УЖЕ СОХРАНЕН
-    const favBtn = document.getElementById('modal-fav-btn');
-    if (favBtn) {
-        const isSaved = window.currentUserData && window.currentUserData.saved_items && window.currentUserData.saved_items.includes(id);
-        if (isSaved) {
-            favBtn.classList.add('text-brand-600');
-            favBtn.classList.remove('text-stone-400');
-        } else {
-            favBtn.classList.add('text-stone-400');
-            favBtn.classList.remove('text-brand-600');
-        }
-    }
-
-    try {
-        // ... (дальше идет твой стандартный код загрузки карточки товара)
-        let item = window.loadedItems.find(i => i.id === id);
-        if (!item) {
-            const { data } = await supabase.from('items').select('*').eq('id', id).maybeSingle();
-            if (data) { item = window.mapItemData(data); window.loadedItems.push(item); }
-        }
-        if (!item) { window.showToast("Товар не найден", true); return; }
-
-        window.activeModalItemId = item.id;
-
-        // ВАУ-ЭФФЕКТ: Свайп-карусель изображений
-        const carousel = document.getElementById('modal-carousel');
-        const dotsContainer = document.getElementById('modal-pagination-dots');
-        const btnPrev = document.getElementById('modal-prev-photo');
-        const btnNext = document.getElementById('modal-next-photo');
-
-        if (carousel && dotsContainer) {
-            let images = Array.isArray(item.images) && item.images.length > 0
-                ? item.images
-                : [item.imageUrl || item.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'];
-
-            window.currentLightboxImages = images;
-
-            // Генерируем слайды
-            carousel.innerHTML = images.map((src) => `
-                <div class="w-full h-full shrink-0 flex items-center justify-center snap-center relative">
-                    <img src="${src}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${src}')">
-                </div>
-            `).join('');
-
-            // Генерируем точки
-            if (images.length > 1) {
-                dotsContainer.innerHTML = images.map((_, idx) => `
-                    <div class="carousel-dot w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-white scale-125 shadow-sm' : 'bg-white/50'}"></div>
-                `).join('');
-                dotsContainer.classList.remove('hidden');
-                if (btnPrev) btnPrev.classList.replace('hidden', 'md:flex');
-                if (btnNext) btnNext.classList.replace('hidden', 'md:flex');
-
-                // Синхронизация скролла с точками
-                carousel.onscroll = () => {
-                    const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
-                    const dots = dotsContainer.querySelectorAll('.carousel-dot');
-                    dots.forEach((dot, i) => {
-                        dot.className = i === index
-                            ? "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white scale-125 shadow-sm"
-                            : "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white/50";
-                    });
-                    window.currentLightboxIndex = index;
-                };
-
-                // Прокрутка в начало при открытии нового товара
-                carousel.scrollLeft = 0;
-            } else {
-                dotsContainer.innerHTML = '';
-                dotsContainer.classList.add('hidden');
-                if (btnPrev) btnPrev.classList.replace('md:flex', 'hidden');
-                if (btnNext) btnNext.classList.replace('md:flex', 'hidden');
-            }
-        }
-
-        const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-        const titleEl = document.getElementById('modal-title');
-        if (titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
-
-        const isService = item.category && item.category.includes('Услуги');
-        const isJob = item.category && item.category.includes('Работа');
-        const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));
-        const isAnimalEntity = item.category && item.category.startsWith('Животные') && !item.category.includes('Товары');
-
-        const condTextEl = document.getElementById('modal-condition-text');
-        if (condTextEl) {
-            if (isService || isJob || isEstate || isAnimalEntity) { condTextEl.classList.add('hidden'); }
-            else { condTextEl.classList.remove('hidden'); condTextEl.innerHTML = item.condition === 'Новое' ? '<i class="fa-solid fa-sparkles mr-1"></i> Новое' : '<i class="fa-solid fa-recycle mr-1"></i> Б/У'; }
-        }
-
-        const catTextEl = document.getElementById('modal-category-text');
-        if (catTextEl) {
-            const catText = (item.category && item.category.includes('-')) ? item.category.split('-')[1].trim() : (item.category || 'Другое');
-            catTextEl.innerText = catText.toUpperCase();
-
-            let bgClass = 'bg-brand-600';
-            if (isService) bgClass = 'bg-blue-500';
-            else if (isJob) bgClass = 'bg-fuchsia-500';
-            else if (isEstate) bgClass = 'bg-indigo-500';
-
-            catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${bgClass}`;
-        }
-
-        const priceEl = document.getElementById('modal-price');
-        if (priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
-
-        const delCont = document.getElementById('modal-delivery-container');
-        if (delCont) {
-            let delHtml = '';
-            const delList = item.delivery || ['Личная встреча'];
-            if (delList.includes('PostExpress')) delHtml += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-brand-200 dark:border-brand-800/50"><i class="fa-solid fa-box mr-1.5"></i> Отправка PostExpress</span>`;
-            if (delList.includes('Личная встреча')) delHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-handshake mr-1.5"></i> Личная встреча</span>`;
-            delCont.innerHTML = delHtml;
-        }
-
-        const phoneContainer = document.getElementById('modal-phone-container');
-        if (phoneContainer) {
-            if (item.phone) {
-                phoneContainer.classList.remove('hidden');
-                phoneContainer.classList.add('flex');
-                const phoneEl = document.getElementById('modal-phone');
-                const phoneText = document.getElementById('modal-phone-text');
-                if (phoneEl && phoneText) {
-                    phoneEl.href = `tel:${item.phone}`;
-                    phoneText.innerText = item.phone; // Динамически вставляем номер
-                }
-            } else {
-                phoneContainer.classList.add('hidden');
-                phoneContainer.classList.remove('flex');
-            }
-        }
-
-        // --- СТАТУСЫ ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
-        const statusBadge = document.getElementById('modal-status-badge');
-        if (statusBadge) {
-            // Проверяем оба варианта на всякий случай (и новую логику, и старую)
-            const isReserved = item.status === 'reserved' || item.is_reserved === true;
-
-            if (item.status === 'sold') {
-                statusBadge.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> ПРОДАНО';
-                // Красная плашка для проданного
-                statusBadge.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg text-white bg-red-500 shadow-sm inline-flex items-center';
-            } else if (isReserved) {
-                statusBadge.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> В РЕЗЕРВЕ';
-                // Желтая/Оранжевая плашка для резерва
-                statusBadge.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg text-white bg-amber-500 shadow-sm inline-flex items-center';
-            } else {
-                // Если товар активен — прячем бейдж
-                statusBadge.className = 'hidden';
-            }
-        }
-
-        const addrCont = document.getElementById('modal-address-container');
-        if (addrCont) {
-            if (isEstate && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
-                addrCont.classList.remove('hidden'); addrCont.classList.add('flex');
-                const modalAddrEl = document.getElementById('modal-address');
-                if (modalAddrEl) modalAddrEl.innerText = item.address || item.city || '';
-                setTimeout(() => {
-                    try {
-                        if (!window.viewMapObj) {
-                            window.viewMapObj = L.map('view-map').setView([item.coords[0], item.coords[1]], 15);
-                            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.viewMapObj);
-                            window.viewMarkerObj = L.marker([item.coords[0], item.coords[1]]).addTo(window.viewMapObj);
-                        } else {
-                            window.viewMapObj.setView([item.coords[0], item.coords[1]], 15);
-                            window.viewMarkerObj.setLatLng([item.coords[0], item.coords[1]]);
-                        }
-                        window.viewMapObj.invalidateSize();
-                    } catch (mapErr) { }
-                }, 150);
-            } else { addrCont.classList.add('hidden'); addrCont.classList.remove('flex'); }
-        }
-
-        const descEl = document.getElementById('modal-desc');
-        if (descEl) descEl.innerText = item.description || "Описание отсутствует.";
-
-        const cityTextEl = document.getElementById('modal-city-text');
-        if (cityTextEl) cityTextEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${(item.city || "СЕРБИЯ").toUpperCase()}`;
-
-        const authorEl = document.getElementById('modal-author');
-        if (authorEl) authorEl.innerText = item.authorName || "Пользователь";
-
-        const avatarEl = document.getElementById('modal-author-avatar');
-        if (avatarEl) avatarEl.innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
-
-        // --- ЛОГИКА ПЛАШКИ ПРОДАВЦА + РЕЙТИНГ ---
-        const authorSubEl = document.getElementById('modal-author-sub');
-        if (authorSubEl) {
-            // Делаем контейнер flex-строкой, чтобы статус и рейтинг выстроились в красивый ряд
-            authorSubEl.className = "text-[11px] text-stone-500 font-bold mt-1 flex items-center flex-wrap gap-2";
-
-            const statusHtml = item.isHighlighted ?
-                `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">VIP ПРОДАВЕЦ</span>` :
-                `<span class="shrink-0">Продавец SVALKA</span>`;
-
-            authorSubEl.innerHTML = statusHtml;
-
-            // Запрашиваем рейтинг напрямую из базы без сложных RPC запросов
-            supabase.from('reviews').select('rating').eq('seller_id', item.userId).then(({ data, error }) => {
-                if (!error && data && data.length > 0) {
-                    const avg = (data.reduce((sum, r) => sum + (r.rating || 5), 0) / data.length).toFixed(1);
-                    // Добавляем красивую мини-плашку с рейтингом прямо рядом со статусом
-                    authorSubEl.innerHTML = `${statusHtml} <span class="flex items-center gap-1 text-stone-800 dark:text-stone-200 bg-white dark:bg-stone-800 px-1.5 py-0.5 rounded-md shadow-sm border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-star text-amber-500 text-[10px]"></i> <span class="font-black">${avg}</span> <span class="text-stone-400 font-medium ml-0.5">(${data.length})</span></span>`;
-                }
-            });
-        }
-
-        // Прячем старую отдельную кнопку рейтинга (чтобы не было дублирования)
-        const ratingEl = document.getElementById('modal-author-rating');
-        if (ratingEl) {
-            ratingEl.classList.add('hidden');
-            ratingEl.classList.remove('flex');
-        }
-
-        // === ЛОГИКА КНОПКИ ПРОДАВЦА (внутри openItemDetails) ===
-        const sellerBtn = document.getElementById('modal-seller-btn');
-        if (sellerBtn) {
-            sellerBtn.onclick = () => {
-                // БОЛЬШЕ НЕ ЗАКРЫВАЕМ КАРТОЧКУ ТОВАРА! Стек сам ее спрячет.
-                window.openSellerProfile(item.userId || item.user_id, item.authorName || item.author_name, item.authorAvatar || item.author_avatar);
-            };
-        }
-
-        const coverImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.imageUrl || '');
-        window.updateSEO(item.title, item.description, coverImg);
-
-        const modalFavBtn = document.getElementById('modal-fav-btn');
-        const modalFavIcon = document.querySelector('#modal-fav-btn i');
-        if (modalFavIcon && window.userFavorites) {
-            const isLiked = window.userFavorites.has(item.id);
-            modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-            if (modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
-        }
-
-        const isOwner = window.currentUser && window.currentUser.id === item.userId;
-        const ctrl = document.getElementById('modal-owner-controls');
-        const contactBtn = document.getElementById('btn-contact-seller');
-        const actionControls = document.getElementById('modal-owner-action-controls');
-
-        // --- ПАНЕЛЬ ВЛАДЕЛЬЦА: ТАЙМЕРЫ И СТАТУСЫ ---
-        const ownerControls = document.getElementById('modal-owner-controls');
-        const chatBtn = document.getElementById('btn-contact-seller'); // Находим кнопку чата
-
-        if (isOwner) {
-            if (ownerControls) ownerControls.classList.remove('hidden');
-            if (chatBtn) chatBtn.classList.add('hidden'); // Прячем кнопку чата от себя, чтобы не писать себе же
-
-            const shareBadge = document.getElementById('share-bump-badge');
-            const shareTimer = document.getElementById('share-bump-timer');
-            if (shareBadge && shareTimer) {
-                const lastShared = item.last_shared_at ? new Date(item.last_shared_at).getTime() : 0;
-                const now = new Date().getTime();
-                const hoursPassed = lastShared ? (now - lastShared) / (1000 * 60 * 60) : 25;
-
-                if (hoursPassed >= 24) {
-                    shareBadge.classList.remove('hidden');
-                    shareTimer.innerText = "+1 В ТОП бесплатно";
-                    shareTimer.classList.add('text-brand-600', 'dark:text-brand-400', 'font-black');
-                } else {
-                    shareBadge.classList.add('hidden');
-                    const hoursLeft = Math.ceil(24 - hoursPassed);
-                    shareTimer.innerText = `Кулдаун: ${hoursLeft} ч.`;
-                    shareTimer.classList.remove('text-brand-600', 'dark:text-brand-400', 'font-black');
-                }
-            }
-
-            // 2. Меняем текст кнопки резерва, если он уже включен
-            const reserveBtnText = document.getElementById('btn-reserve-text');
-            const isReserved = item.status === 'reserved' || item.is_reserved;
-            if (reserveBtnText) reserveBtnText.innerText = isReserved ? "Снять резерв" : "В резерв";
-
-        } else {
-            if (ownerControls) ownerControls.classList.add('hidden');
-            if (chatBtn) chatBtn.classList.remove('hidden'); // Показываем чат другим
-        }
-
-        // --- ЛОГИКА КНОПОК ПЕРЕЛИСТЫВАНИЯ ---
-        const currentIndex = window.loadedItems.findIndex(i => i.id === item.id);
-        const prevBtn = document.getElementById('modal-prev-item');
-        const nextBtn = document.getElementById('modal-next-item');
-
-        if (prevBtn) {
-            if (currentIndex > 0) { prevBtn.classList.remove('hidden'); prevBtn.classList.add('flex'); }
-            else { prevBtn.classList.add('hidden'); prevBtn.classList.remove('flex'); }
-        }
-        if (nextBtn) {
-            if (currentIndex !== -1 && currentIndex < window.loadedItems.length - 1) { nextBtn.classList.remove('hidden'); nextBtn.classList.add('flex'); }
-            else { nextBtn.classList.add('hidden'); nextBtn.classList.remove('flex'); }
-        }
-        // ------------------------------------
-
-        window.openModal('item-modal');
-        history.pushState({ modal: true }, '', '?item=' + id);
-    } catch (err) { }
 };
 
 window.changeItemStatus = async (newStatus) => {
@@ -3085,6 +2317,7 @@ window.submitNewItem = async (event) => {
 
         // 5. УСПЕШНОЕ ЗАВЕРШЕНИЕ
         window.showToast(window.editingItemId ? "Обновлено!" : "Опубликовано!");
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
         window.closeModal('add-modal');
 
         document.getElementById('add-form').reset();
@@ -3093,9 +2326,9 @@ window.submitNewItem = async (event) => {
         if (photoList) photoList.innerHTML = '';
 
         // Правильный перезапуск ленты товаров
-        if (typeof window.fetchItems === 'function') {
-            window.fetchItems(false);
-        }
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+        // МГНОВЕННОЕ ОБНОВЛЕНИЕ ПРОФИЛЯ
+        if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
 
     } catch (e) {
         console.error("Ошибка публикации:", e);
@@ -3191,164 +2424,6 @@ window.filterProfileItems = (input, gridId) => {
 const originalSwitchTab = window.switchProfileTab;
 window.switchProfileTab = (tab) => { const searchInput = document.getElementById('profile-search-input'); if (searchInput) searchInput.value = ''; originalSwitchTab(tab); };
 
-window.handleAuthChange = async (session) => {
-    try {
-        if (!window.authInitialized) window.authInitialized = true;
-        window.currentUser = session?.user || null;
-
-        // === ЗАЩИТА ОТ БАНА И УДАЛЕНИЯ ===
-        if (window.currentUser) {
-            const { data: banCheck, error: profileError } = await supabase.from('profiles').select('is_banned, ban_reason').eq('id', window.currentUser.id).single();
-            if (profileError || !banCheck) {
-                await supabase.auth.signOut();
-                alert("Ваш аккаунт был удален. Сессия завершена.");
-                window.location.reload();
-                return;
-            }
-
-            if (banCheck && banCheck.is_banned) {
-                await supabase.auth.signOut();
-                alert(`Доступ к SVALKA ограничен.\n\nВаш аккаунт был заблокирован модератором.\nПричина: ${banCheck.ban_reason || 'Нарушение правил'}`);
-                window.location.reload();
-                return;
-            }
-        }
-
-        const loginBtns = document.querySelectorAll('#nav-login-btn, #mob-nav-login, #profile-login-wrapper');
-        const userControls = document.querySelectorAll('#nav-user-controls, #mob-user-controls, #profile-economy-section');
-        const profileLogoutBtn = document.getElementById('profile-logout-btn');
-
-        if (window.currentUser) {
-            // 1. ЖЕСТКО ПРЯЧЕМ КНОПКИ ВХОДА (Побеждаем Tailwind lg:flex)
-            loginBtns.forEach(el => {
-                el.style.display = 'none';
-                el.classList.add('hidden');
-                el.classList.remove('block', 'flex', 'lg:block', 'lg:flex');
-            });
-
-            // 2. ПОКАЗЫВАЕМ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ
-            userControls.forEach(el => {
-                el.style.display = '';
-                el.classList.remove('hidden');
-                el.classList.add('flex');
-            });
-            if (profileLogoutBtn) {
-                profileLogoutBtn.style.display = '';
-                profileLogoutBtn.classList.remove('hidden');
-                profileLogoutBtn.classList.add('flex');
-            }
-
-            const editBtn = document.getElementById('btn-edit-profile');
-            if (editBtn) editBtn.classList.remove('hidden');
-
-            const meta = window.currentUser.user_metadata || {};
-            document.querySelectorAll('#profile-name').forEach(el => el.innerText = meta.full_name || "Пользователь");
-            document.querySelectorAll('#profile-email').forEach(el => el.innerText = window.currentUser.email || "");
-
-            if (meta.avatar_url) {
-                document.querySelectorAll('#profile-avatar-container').forEach(el => {
-                    el.innerHTML = `<img src="${meta.avatar_url}" class="w-full h-full object-cover">`;
-                });
-            }
-
-            try {
-                const { data: profile } = await supabase.from('profiles').select('*').eq('id', window.currentUser.id).maybeSingle();
-                const isProActive = profile?.pro_until ? new Date(profile.pro_until) > new Date() : false;
-
-                window.currentUserData = profile || { wallet_balance: 0 };
-                window.currentUserData.is_pro = isProActive;
-
-                document.querySelectorAll('#profile-balance').forEach(el => el.innerText = `${window.currentUserData.bump_tokens || 0} шт.`);
-                if (isProActive) document.querySelectorAll('#profile-pro-badge').forEach(el => el.classList.remove('hidden'));
-            } catch (e) { }
-
-            try {
-                const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
-                window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
-            } catch (e) { }
-
-            window.updateChatBadges();
-            window.initGlobalChatListener();
-
-        } else {
-            // 3. ЕСЛИ НЕ АВТОРИЗОВАН — ВОЗВРАЩАЕМ КНОПКИ ВХОДА
-            loginBtns.forEach(el => {
-                el.style.display = '';
-                el.classList.remove('hidden');
-                if (el.id === 'nav-login-btn') el.classList.add('lg:flex');
-                else el.classList.add('flex');
-            });
-
-            // 4. ПРЯЧЕМ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ
-            userControls.forEach(el => {
-                el.style.display = 'none';
-                el.classList.add('hidden');
-                el.classList.remove('flex');
-            });
-            if (profileLogoutBtn) {
-                profileLogoutBtn.style.display = 'none';
-                profileLogoutBtn.classList.add('hidden');
-                profileLogoutBtn.classList.remove('flex');
-            }
-            if (window.globalChatSubscription) supabase.removeChannel(window.globalChatSubscription);
-        }
-
-        if (window.currentUser) window.switchProfileTab(window.currentProfileTab);
-    } catch (e) { console.error("Ошибка авторизации:", e); }
-};
-
-// Проверяем сессию при загрузке страницы
-supabase.auth.getSession().then(({ data: { session } }) => { window.handleAuthChange(session); });
-
-// === ОТСЛЕЖИВАНИЕ СТАТУСА АВТОРИЗАЦИИ ===
-supabase.auth.onAuthStateChange((event, session) => {
-    // Вызываем рабочую функцию вместо той опечатки
-    if (window.authInitialized) window.handleAuthChange(session);
-});
-
-// --- БОКОВОЙ АККОРДЕОН КАТЕГОРИЙ ---
-window.renderSidebarCategories = () => {
-    const container = document.getElementById('sidebar-categories');
-    if (!container || !window.subcategoriesMap) return;
-
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
-    const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-
-    for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
-
-        const isActiveMain = window.currentCategory.startsWith(mainCat);
-        html += `
-        <div class="sidebar-cat-group mt-1">
-            <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
-                <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
-            </div>
-            <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
-        subs.forEach(sub => {
-            const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
-        });
-        html += `</div></div>`;
-    }
-    container.innerHTML = html;
-};
-
-window.toggleSidebarCat = (el) => {
-    const subs = el.nextElementSibling;
-    const icon = el.querySelector('i');
-    icon.classList.toggle('rotate-180');
-
-    // Плавное переключение через max-height
-    if (subs.classList.contains('max-h-0')) {
-        subs.classList.remove('max-h-0', 'opacity-0');
-        subs.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-    } else {
-        subs.classList.add('max-h-0', 'opacity-0');
-        subs.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
-    }
-};
-
 window.applyCondition = (val) => {
     window.filterCondition = val;
 
@@ -3407,27 +2482,22 @@ window.renderSidebarCategories = () => {
     const container = document.getElementById('sidebar-categories');
     if (!container || !window.subcategoriesMap) return;
 
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">Все категории</button>`;
-
+    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
 
     for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
-        // ИСКЛЮЧАЕМ категории из сайдбара, если выбран фильтр состояния Б/У или Новое
-        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) {
-            continue;
-        }
-
+        if (window.filterCondition !== 'Все' && noConditionCats.includes(mainCat)) continue;
         const isActiveMain = window.currentCategory.startsWith(mainCat);
         html += `
         <div class="sidebar-cat-group mt-1">
             <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true); event.stopPropagation();" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${mainCat}</button>
+                <button onclick="window.filterByCategory('${mainCat}', event, true)" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
                 <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
             </div>
             <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
         subs.forEach(sub => {
             const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${sub.label || sub.val}</button>`;
+            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
         });
         html += `</div></div>`;
     }
@@ -3480,21 +2550,28 @@ window.renderCustomRadios = (id, name, options, currentVal, callbackName) => {
 window.applyCondition = (val) => { window.filterCondition = val; window.applyFilters(); };
 window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
 
-window.toggleSidebarCat = (el) => {
-    // Ищем родительский контейнер всей категории
-    const parentCat = el.closest('.mb-2') || el.parentElement;
-    // Ищем внутри него блок с подкатегориями (он обычно имеет класс pl-6 или mt-2)
-    const subCats = parentCat.querySelector('.pl-6, .mt-2.space-y-1, div[class*="pl-"]');
-
-    if (subCats) {
-        subCats.classList.toggle('hidden');
-    } else if (el.nextElementSibling) {
-        // Запасной вариант (старое поведение)
-        el.nextElementSibling.classList.toggle('hidden');
+window.toggleSidebarCat = (element) => {
+    // 1. Применяем фильтр (если клик был по галочке/строке, а не по самой кнопке)
+    const btn = element.querySelector('button');
+    if (btn && window.event && window.event.target !== btn) {
+        btn.click();
     }
 
-    const icon = el.querySelector('i.fa-chevron-down');
-    if (icon) icon.classList.toggle('rotate-180');
+    // 2. Независимое визуальное открытие/закрытие списка подкатегорий
+    const subWrap = element.nextElementSibling;
+    const icon = element.querySelector('i.fa-chevron-down');
+
+    if (subWrap) {
+        if (subWrap.classList.contains('max-h-0')) {
+            subWrap.classList.remove('max-h-0', 'opacity-0');
+            subWrap.classList.add('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
+            if (icon) icon.classList.add('rotate-180');
+        } else {
+            subWrap.classList.add('max-h-0', 'opacity-0');
+            subWrap.classList.remove('max-h-[500px]', 'mt-1', 'mb-2', 'opacity-100');
+            if (icon) icon.classList.remove('rotate-180');
+        }
+    }
 };
 
 // Инициализация при загрузке
@@ -3849,40 +2926,47 @@ window.completeShareTask = async () => {
     }
 };
 
-// --- ГЛОБАЛЬНЫЙ ТАЙМЕР РЕПОСТОВ (ПРЕВРАЩАЕТ КНОПКИ В ЧАСЫ) ---
+// Выносим ID интервала в глобальную область
+window.shareTimerInterval = null; 
+
 window.updateAllShareTimers = () => {
-    setInterval(() => {
+    // Жестко убиваем старый таймер, если он был запущен
+    if (window.shareTimerInterval) {
+        clearInterval(window.shareTimerInterval);
+    }
+
+    window.shareTimerInterval = setInterval(() => {
         try {
             if (!window.currentUser || !window.loadedItems) return;
-
+            
             window.loadedItems.forEach(item => {
                 // Защита: проверяем и user_id и userId
                 const itemOwnerId = item.user_id || item.userId;
                 if (itemOwnerId !== window.currentUser.id) return;
-
+                
                 let timePassedMs = 25 * 60 * 60 * 1000; // По умолчанию > 24 часов
                 if (item.last_shared_at) {
                     timePassedMs = Date.now() - new Date(item.last_shared_at).getTime();
                 }
-
+                
                 const cooldownMs = 24 * 60 * 60 * 1000;
                 const timeLeft = cooldownMs - timePassedMs;
-
+                
                 const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
                 const modalBtn = (window.activeModalItemId === item.id) ? document.getElementById('btn-owner-share') : null;
-
+                
                 if (timeLeft > 0) {
                     const h = Math.floor(timeLeft / (1000 * 60 * 60));
                     const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                     const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
                     const timeStr = `${h}ч ${m}м ${s}с`;
-
+                    
                     if (cardBtn) {
                         cardBtn.disabled = true;
                         cardBtn.className = "px-3 py-1.5 bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500 rounded-lg flex items-center justify-center border border-transparent text-[10px] font-bold cursor-not-allowed";
                         cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
                     }
-
+                    
                     if (modalBtn) {
                         modalBtn.disabled = true;
                         modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70";
@@ -3894,7 +2978,7 @@ window.updateAllShareTimers = () => {
                         cardBtn.className = "px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 cursor-pointer";
                         cardBtn.innerHTML = `<i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП`;
                     }
-
+                    
                     if (modalBtn && modalBtn.disabled) {
                         modalBtn.disabled = false;
                         modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden cursor-pointer";
@@ -4033,3 +3117,26 @@ window.navigatePhoto = (direction, event) => {
         carousel.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
     }
 };
+
+// ==========================================
+// ГЛАВНЫЙ СТАРТЕР ПРИЛОЖЕНИЯ
+// ==========================================
+function initSvalkaApp() {
+    window.isInitialLoad = true;
+    
+    if (typeof window.changeLanguage === 'function') window.changeLanguage(window.currentLang);
+    if (typeof window.initSidebar === 'function') window.initSidebar();
+    
+    // Запускаем из модулей!
+    if (typeof AuthModule !== 'undefined') AuthModule.checkUserSession();
+    if (typeof ItemsModule !== 'undefined') ItemsModule.fetchItems(false);
+    
+    setTimeout(() => { window.isInitialLoad = false; }, 1000);
+}
+
+// Запускаем двигатель
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSvalkaApp);
+} else {
+    initSvalkaApp();
+}
