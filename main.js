@@ -2788,40 +2788,6 @@ if (imgContainer) {
     }, { passive: true });
 }
 
-// Логика появления плавающей кнопки "Фильтры" на SVALKA
-// 1. Адаптивная sticky-шапка (сжимается при скролле)
-window.addEventListener('scroll', () => {
-    const headerContainer = document.getElementById('header-container');
-    const header = document.getElementById('main-header');
-    if (window.scrollY > 20) {
-        if (headerContainer) headerContainer.classList.replace('sm:py-4', 'sm:py-2');
-        if (headerContainer) headerContainer.classList.replace('py-3', 'py-2');
-        if (header) {
-            header.classList.add('bg-white/80', 'dark:bg-stone-900/90', 'shadow-md');
-            header.classList.remove('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
-        }
-    } else {
-        if (headerContainer) headerContainer.classList.replace('sm:py-2', 'sm:py-4');
-        if (headerContainer) headerContainer.classList.replace('py-2', 'py-3');
-        if (header) {
-            header.classList.add('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
-            header.classList.remove('bg-white/80', 'dark:bg-stone-900/90', 'shadow-md');
-        }
-    }
-    if (!document.body.classList.contains('modal-open')) {
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        // Если кнопка есть и она не скрыта (значит есть еще товары)
-        if (loadMoreBtn && !loadMoreBtn.classList.contains('hidden')) {
-            // Если до конца страницы осталось меньше 500 пикселей
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                // Чтобы не отправить 100 запросов подряд, временно прячем кнопку
-                loadMoreBtn.classList.add('hidden');
-                window.loadMoreItems();
-            }
-        }
-    }
-});
-
 // 1. ОТКРЫТИЕ ОКНА И ПРОВЕРКА КУЛДАУНА
 window.bumpViaShare = async (itemId = null) => {
     const targetId = itemId || window.activeModalItemId;
@@ -3077,30 +3043,48 @@ window.checkIncomingShareClick = async () => {
     }
 };
 
-// =====================================
-// АТМОСФЕРНАЯ ШАПКА И ЖИВОЙ ПОИСК
-// =====================================
-
-// 1. Адаптивная sticky-шапка (сжимается при скролле)
+// --- ОПТИМИЗИРОВАННЫЙ СКРОЛЛ (Sticky Header & Load More) ---
+let isScrolling = false;
 window.addEventListener('scroll', () => {
-    const headerContainer = document.getElementById('header-container');
-    const header = document.getElementById('main-header');
-    if (window.scrollY > 20) {
-        if (headerContainer) headerContainer.classList.replace('sm:py-4', 'sm:py-2');
-        if (headerContainer) headerContainer.classList.replace('py-3', 'py-2');
-        if (header) {
-            header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
-            header.classList.remove('bg-white/70', 'dark:bg-stone-900/70', 'shadow-[0_10px_30px_rgba(20,184,166,0.08)]');
-        }
-    } else {
-        if (headerContainer) headerContainer.classList.replace('sm:py-2', 'sm:py-4');
-        if (headerContainer) headerContainer.classList.replace('py-2', 'py-3');
-        if (header) {
-            header.classList.add('bg-white/70', 'dark:bg-stone-900/70', 'shadow-[0_10px_30px_rgba(20,184,166,0.08)]');
-            header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
-        }
+    if (!isScrolling) {
+        window.requestAnimationFrame(() => {
+            const isScrolled = window.scrollY > 20;
+            const headerContainer = document.getElementById('header-container');
+            const header = document.getElementById('main-header');
+
+            // 1. Анимация шапки
+            if (headerContainer) {
+                if (isScrolled) {
+                    headerContainer.classList.replace('sm:py-4', 'sm:py-2');
+                    headerContainer.classList.replace('py-3', 'py-2');
+                } else {
+                    headerContainer.classList.replace('sm:py-2', 'sm:py-4');
+                    headerContainer.classList.replace('py-2', 'py-3');
+                }
+            }
+            if (header) {
+                if (isScrolled) {
+                    header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                    header.classList.remove('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                } else {
+                    header.classList.add('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                    header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                }
+            }
+
+            // 2. Бесконечный скролл (Load More)
+            if (!document.body.classList.contains('modal-open')) {
+                const loadMoreBtn = document.getElementById('load-more-btn');
+                if (loadMoreBtn && !loadMoreBtn.classList.contains('hidden') && ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500)) {
+                    loadMoreBtn.classList.add('hidden');
+                    if (typeof window.loadMoreItems === 'function') window.loadMoreItems();
+                }
+            }
+            isScrolling = false;
+        });
+        isScrolling = true;
     }
-});
+}, { passive: true }); // passive: true отключает блокировку скролла браузером
 
 // 2. Анимированный плейсхолдер поиска (с динамическим переводом)
 const searchInputAtm = document.getElementById('main-search-input');
