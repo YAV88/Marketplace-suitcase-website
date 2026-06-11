@@ -2934,67 +2934,66 @@ window.completeShareTask = async () => {
     }
 };
 
-// Выносим ID интервала в глобальную область
-window.shareTimerInterval = null; 
-
+window.shareTimerInterval = null;
 window.updateAllShareTimers = () => {
-    // Жестко убиваем старый таймер, если он был запущен
-    if (window.shareTimerInterval) {
-        clearInterval(window.shareTimerInterval);
-    }
+    if (window.shareTimerInterval) clearInterval(window.shareTimerInterval);
 
     window.shareTimerInterval = setInterval(() => {
-        try {
-            if (!window.currentUser || !window.loadedItems) return;
+        if (!window.currentUser || !window.loadedItems) return;
+        
+        window.loadedItems.forEach(item => {
+            const itemOwnerId = item.user_id || item.userId;
+            if (itemOwnerId !== window.currentUser.id) return;
             
-            window.loadedItems.forEach(item => {
-                // Защита: проверяем и user_id и userId
-                const itemOwnerId = item.user_id || item.userId;
-                if (itemOwnerId !== window.currentUser.id) return;
+            let timePassedMs = 25 * 60 * 60 * 1000;
+            if (item.last_shared_at) timePassedMs = Date.now() - new Date(item.last_shared_at).getTime();
+            
+            const timeLeft = (24 * 60 * 60 * 1000) - timePassedMs;
+            
+            // ОПТИМИЗАЦИЯ: Ищем элементы только если они действительно сейчас на экране
+            if (timeLeft > 0) {
+                const h = Math.floor(timeLeft / (1000 * 60 * 60));
+                const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                const timeStr = `${h}ч ${m}м ${s}с`;
                 
-                let timePassedMs = 25 * 60 * 60 * 1000; // По умолчанию > 24 часов
-                if (item.last_shared_at) {
-                    timePassedMs = Date.now() - new Date(item.last_shared_at).getTime();
-                }
-                
-                const cooldownMs = 24 * 60 * 60 * 1000;
-                const timeLeft = cooldownMs - timePassedMs;
-                
-                const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
-                const modalBtn = (window.activeModalItemId === item.id) ? document.getElementById('btn-owner-share') : null;
-                
-                if (timeLeft > 0) {
-                    const h = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                    const timeStr = `${h}ч ${m}м ${s}с`;
-                    
-                    if (cardBtn) {
-                        cardBtn.disabled = true;
-                        cardBtn.className = "px-3 py-1.5 bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500 rounded-lg flex items-center justify-center border border-transparent text-[10px] font-bold cursor-not-allowed";
-                        cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
-                    }
-                    
-                    if (modalBtn) {
+                // Обновляем кнопку в модалке (только если она открыта)
+                if (window.activeModalItemId === item.id) {
+                    const modalBtn = document.getElementById('btn-owner-share');
+                    if (modalBtn && !modalBtn.disabled) {
                         modalBtn.disabled = true;
                         modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70";
-                        modalBtn.innerHTML = `<i class="fa-solid fa-clock text-lg mb-1"></i><span class="text-xs font-bold">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
                     }
-                } else {
-                    if (cardBtn && cardBtn.disabled) {
-                        cardBtn.disabled = false;
-                        cardBtn.className = "px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 cursor-pointer";
-                        cardBtn.innerHTML = `<i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП`;
+                    if (modalBtn) modalBtn.innerHTML = `<i class="fa-solid fa-clock text-lg mb-1"></i><span class="text-xs font-bold">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
+                }
+
+                // Обновляем кнопку в карточке (ищем ее только если товар на таймере)
+                const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
+                if (cardBtn) {
+                    if (!cardBtn.disabled) {
+                        cardBtn.disabled = true;
+                        cardBtn.className = "px-3 py-1.5 bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500 rounded-lg flex items-center justify-center border border-transparent text-[10px] font-bold cursor-not-allowed";
                     }
-                    
+                    cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
+                }
+            } else {
+                // Если таймер истек, активируем кнопки (один раз)
+                if (window.activeModalItemId === item.id) {
+                    const modalBtn = document.getElementById('btn-owner-share');
                     if (modalBtn && modalBtn.disabled) {
                         modalBtn.disabled = false;
                         modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden cursor-pointer";
                         modalBtn.innerHTML = `<div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div><i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i><span class="text-xs font-bold">Репост</span><span class="text-[9px] opacity-70 mt-0.5 transition-colors">+ Поднятие</span>`;
                     }
                 }
-            });
-        } catch (e) { console.error("Ошибка в таймере:", e); }
+                const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);
+                if (cardBtn && cardBtn.disabled) {
+                    cardBtn.disabled = false;
+                    cardBtn.className = "px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 cursor-pointer";
+                    cardBtn.innerHTML = `<i class="fa-solid fa-share-nodes mr-1.5"></i> В ТОП`;
+                }
+            }
+        });
     }, 1000);
 };
 
