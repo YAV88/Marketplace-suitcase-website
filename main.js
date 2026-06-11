@@ -58,7 +58,7 @@ window.i18n = {
         'search_placeholder': 'Я ищу...', 'btn_login': 'Войти', 'btn_publish': 'Пристроить добро', 'btn_publish_mob': 'Продать',
         'nav_info': 'Инфо', 'nav_about': 'О проекте', 'nav_rules': 'Правила', 'nav_security': 'Безопасность',
         'nav_faq': 'Помощь / FAQ', 'nav_privacy': 'Политика', 'nav_terms': 'Условия', 'nav_contacts': 'Контакты',
-        'nav_profile': 'Профиль', 'nav_messages': 'Сообщения', 'nav_logout': 'Выйти',
+        'nav_profile': 'Профиль', 'nav_messages': 'Сообщения', 'nav_logout': 'Выйти', 'Вы продаете': 'Вы продаете', 'Вы покупаете': 'Вы покупаете', 'Собеседник:': 'Собеседник:', 'Товар удален': 'Товар удален',
         'bot_nav_home': 'Главная', 'bot_nav_saved': 'Склад', 'bot_nav_chat': 'Чат', 'feed_title': 'Находки', 'feed_desc': 'Самые свежие объявления Сербии',
         'filter_btn': 'Фильтры', 'filter_cat': 'Категория', 'filter_city': 'Город', 'filter_condition': 'Состояние',
         'filter_price': 'Цена', 'filter_currency': 'Валюта', 'filter_payment': 'Оплата', 'filter_price_from': 'От',
@@ -122,7 +122,7 @@ window.i18n = {
     en: {
         'page_title': 'SVALKA — Classifieds in Serbia', 'og_desc': 'Great finds and quick sales in Serbia.', 'Например: велосипед, макбук...': 'For example: bicycle, macbook...', 'Базовый': 'Basic', 'ВИП': 'VIP',
         'search_placeholder': 'I am looking for...', 'btn_login': 'Log in', 'btn_publish': 'Post an Ad', 'btn_publish_mob': 'Sell',
-        'nav_info': 'Info', 'nav_about': 'About Project', 'nav_rules': 'Rules', 'nav_security': 'Security',
+        'nav_info': 'Info', 'nav_about': 'About Project', 'nav_rules': 'Rules', 'nav_security': 'Security', 'Вы продаете': 'Selling', 'Вы покупаете': 'Buying', 'Собеседник:': 'Chat with:', 'Товар удален': 'Item deleted',
         'nav_faq': 'Help / FAQ', 'nav_privacy': 'Privacy', 'nav_terms': 'Terms', 'nav_contacts': 'Contacts',
         'nav_profile': 'Profile', 'nav_messages': 'Messages', 'nav_logout': 'Log out', 'bot_nav_home': 'Home',
         'bot_nav_saved': 'Saved', 'bot_nav_chat': 'Chat', 'feed_title': 'Finds', 'feed_desc': 'Latest classifieds in Serbia',
@@ -210,7 +210,7 @@ window.i18n = {
         'faq_act_desc': 'Go to your profile and click the <strong>"Buy PRO"</strong> button. Choose a suitable token package and pay in 1 click. The system will credit the promotion to your account instantly.'
     },
     sr: {
-        'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.',
+        'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.', 'Вы продаете': 'Prodajete', 'Вы покупаете': 'Kupujete', 'Собеседник:': 'Sagovornik:', 'Товар удален': 'Oglas obrisan',
         'search_placeholder': 'Tražim...', 'btn_login': 'Prijavi se', 'btn_publish': 'Objavi oglas', 'btn_publish_mob': 'Prodaj',
         'nav_info': 'Info', 'nav_about': 'O projektu', 'nav_rules': 'Pravila', 'nav_security': 'Bezbednost', 'Например: велосипед, макбук...': 'Na primer: bicikl, macbook...', 'Базовый': 'Osnovni', 'ВИП': 'VIP',
         'nav_faq': 'Pomoć / FAQ', 'nav_privacy': 'Politika', 'nav_terms': 'Uslovi', 'nav_contacts': 'Kontakti', 
@@ -1127,8 +1127,8 @@ window.openChatListModal = async (silentLoad = false) => {
             const itemImg = chat.item_image || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
 
             const roleBadge = isSeller
-                ? `<span class="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200">Вы продаете</span>`
-                : `<span class="bg-brand-50 text-brand-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-brand-100">Вы покупаете</span>`;
+                ? `<span class="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200">${window.t('Вы продаете')}</span>`
+                : `<span class="bg-brand-50 text-brand-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-brand-100">${window.t('Вы покупаете')}</span>`;
 
             html += `
             <div onclick="window.openExistingChat('${chat.chat_id}', '${chat.item_id}', '${isSeller}', '${interlocutorName.replace(/'/g, "\\'")}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
@@ -1136,9 +1136,9 @@ window.openChatListModal = async (silentLoad = false) => {
                 <div class="flex-1 overflow-hidden text-left">
                     <div class="flex items-center gap-2 mb-1">
                         ${roleBadge}
-                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${chat.item_title || 'Товар удален'}</h4>
+                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${chat.item_title || window.t('Товар удален')}</h4>
                     </div>
-                    <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> Собеседник: <span class="text-stone-800 dark:text-stone-200">${interlocutorName}</span></p>
+                    <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> ${window.t('Собеседник:')} <span class="text-stone-800 dark:text-stone-200">${interlocutorName}</span></p>
                     <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${lastMsg}</p>
                 </div>
                 ${unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : ''}
