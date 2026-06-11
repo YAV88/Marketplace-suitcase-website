@@ -463,13 +463,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Запускаем двигатель (надежный метод для script type="module")
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSvalkaApp);
-} else {
-    initSvalkaApp();
-}
-
 // --- ГЕНЕРАТОР КАСТОМНЫХ ОКОН ПОДТВЕРЖДЕНИЯ ---
 window.customConfirm = (title, message, btnText, colorTheme, iconClass) => {
     return new Promise((resolve) => {
