@@ -3172,3 +3172,16 @@ window.loginWithProvider = async (provider) => {
         }
     }
 };
+
+// Регистрация Service Worker для PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('ServiceWorker успешно зарегистрирован! Scope:', registration.scope);
+            })
+            .catch(err => {
+                console.error('Ошибка регистрации ServiceWorker:', err);
+            });
+    });
+}
