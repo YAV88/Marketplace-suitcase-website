@@ -3148,3 +3148,27 @@ if (document.readyState === 'loading') {
 } else {
     initSvalkaApp();
 }
+
+// Функция входа через провайдеров (OAuth)
+window.loginWithProvider = async (provider) => {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: provider,
+            options: {
+                // После успешного входа Supabase вернет пользователя обратно на эту страницу
+                redirectTo: window.location.origin
+            }
+        });
+
+        if (error) throw error;
+        
+        // Supabase сам сделает редирект на страницу Google/Apple,
+        // поэтому тут делать ничего не нужно.
+
+    } catch (err) {
+        console.error('Ошибка входа через соцсеть:', err.message);
+        if (typeof window.showToast === 'function') {
+            window.showToast('Ошибка авторизации', true);
+        }
+    }
+};
