@@ -101,50 +101,26 @@
 
                 <!-- Переключатель языка -->
                 <div class="relative z-[110] shrink-0" id="lang-dropdown-wrapper">
-                    
-                    <style>
-                        /* Железобетонная гарантия одинаковых размеров (в обход кэша Tailwind) */
-                        .lang-btn-responsive {
-                            height: 2.5rem; /* h-10 для мобилок */
-                            padding-left: 0.625rem; /* px-2.5 */
-                            padding-right: 0.625rem;
-                            font-size: 0.75rem; /* text-xs */
-                        }
-                        @media (min-width: 1024px) {
-                            /* Строго точные размеры кнопки Инфо на ПК (lg) */
-                            .lang-btn-responsive {
-                                height: 2.75rem !important; /* h-11 */
-                                padding-left: 0.75rem !important; /* px-3 */
-                                padding-right: 0.75rem !important;
-                                font-size: 0.875rem !important; /* text-sm */
-                            }
-                        }
-                    </style>
-
-                    <button onclick="window.toggleLangMenu(event)" class="lang-btn-responsive flex items-center justify-center gap-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
-                        <i class="fa-solid fa-globe text-brand-500 text-sm lg:text-base"></i>
+                    <button onclick="window.toggleLangMenu(event)" class="flex items-center justify-center gap-1.5 px-2.5 sm:px-3 h-10 sm:h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-xs sm:text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                        <i class="fa-solid fa-globe text-brand-500 text-sm sm:text-base"></i>
                         <span id="lang-current">RU</span>
                         <i id="lang-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
                     </button>
                     
                     <div id="lang-dropdown" class="hidden absolute right-0 top-[calc(100%+8px)] w-40 z-[120]">
-                        <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
-                            
-                            <button onclick="window.changeLanguage('ru'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
-                                <span class="text-stone-400 w-5 text-center font-black text-[10px]">RU</span>
+                        <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2 gap-1">
+                            <button onclick="window.changeLanguage('ru'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
+                                <span class="text-stone-400 w-5 text-center font-black text-[10px] bg-stone-100/50 dark:bg-stone-800/50 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">RU</span>
                                 <span>Русский</span>
                             </button>
-
-                            <button onclick="window.changeLanguage('sr'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
-                                <span class="text-stone-400 w-5 text-center font-black text-[10px]">SR</span>
+                            <button onclick="window.changeLanguage('sr'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
+                                <span class="text-stone-400 w-5 text-center font-black text-[10px] bg-stone-100/50 dark:bg-stone-800/50 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">SR</span>
                                 <span>Srpski</span>
                             </button>
-
-                            <button onclick="window.changeLanguage('en'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
-                                <span class="text-stone-400 w-5 text-center font-black text-[10px]">EN</span>
+                            <button onclick="window.changeLanguage('en'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
+                                <span class="text-stone-400 w-5 text-center font-black text-[10px] bg-stone-100/50 dark:bg-stone-800/50 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">EN</span>
                                 <span>English</span>
                             </button>
-
                         </div>
                     </div>
                 </div>
@@ -154,22 +130,22 @@
                         <span data-i18n="nav_info">Инфо</span>
                         <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
                     </button>
+                    
                     <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[120]">
-                        <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
-                            <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> <span data-i18n="nav_about">О проекте</span></a>
-                            <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> <span data-i18n="nav_rules">Правила</span></a>
-                            <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> <span data-i18n="nav_security">Безопасность</span></a>
-                            <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> <span data-i18n="nav_faq">Помощь / FAQ</span></a>
-                            <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> <span data-i18n="nav_privacy">Политика</span></a>
-                            <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> <span data-i18n="nav_terms">Условия</span></a>
-                            <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
-                            <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> <span data-i18n="nav_contacts">Контакты</span></a>
+                        <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2 gap-1">
+                            <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> <span data-i18n="nav_about">О проекте</span></a>
+                            <a href="rules.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-list-check text-stone-400 w-4 text-center"></i> <span data-i18n="nav_rules">Правила</span></a>
+                            <a href="security.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-user-shield text-stone-400 w-4 text-center"></i> <span data-i18n="nav_security">Безопасность</span></a>
+                            <a href="faq.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-question text-stone-400 w-4 text-center"></i> <span data-i18n="nav_faq">Помощь / FAQ</span></a>
+                            <a href="privacy.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-shield-halved text-stone-400 w-4 text-center"></i> <span data-i18n="nav_privacy">Политика</span></a>
+                            <a href="terms.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-file-contract text-stone-400 w-4 text-center"></i> <span data-i18n="nav_terms">Условия</span></a>
+                            <div class="border-t border-stone-100/50 dark:border-stone-700/50 my-1"></div>
+                            <a href="contacts.html" class="text-left px-3 py-2.5 text-sm font-bold text-brand-600 dark:text-brand-400 hover:bg-brand-50/80 dark:hover:bg-brand-900/30 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-envelope text-brand-400 w-4 text-center"></i> <span data-i18n="nav_contacts">Контакты</span></a>
                         </div>
                     </div>
                 </div>
 
                 <script>
-                    // Блокировка сквозных кликов (e.stopPropagation()) решает баг неоткрывающегося меню
                     window.toggleLangMenu = (e) => {
                         if (e) e.stopPropagation();
                         const menu = document.getElementById('lang-dropdown');
@@ -208,7 +184,6 @@
                         }
                     };
 
-                    // Закрытие всех окон при клике в любую пустую область
                     document.addEventListener('click', () => {
                         const langMenu = document.getElementById('lang-dropdown');
                         const langIcon = document.getElementById('lang-dropdown-icon');
