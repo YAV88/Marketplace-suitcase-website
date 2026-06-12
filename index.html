@@ -99,27 +99,28 @@
                     <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
                 </button>
 
-                <div class="relative z-[110] shrink-0" id="lang-dropdown-wrapper">
-                    <button onclick="window.toggleLangMenu()" class="flex items-center justify-center gap-1.5 px-2.5 sm:px-3 h-10 sm:h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-xs sm:text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                <!-- Переключатель языка -->
+                <div class="relative group z-[110] shrink-0" id="lang-dropdown-wrapper">
+                    <button class="flex items-center justify-center gap-1.5 px-3 h-10 sm:h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-xs sm:text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
                         <i class="fa-solid fa-globe text-brand-500 text-sm sm:text-base"></i>
                         <span id="lang-current">RU</span>
-                        <i id="lang-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
                     </button>
                     
-                    <div id="lang-dropdown" class="hidden absolute right-0 top-[calc(100%+8px)] w-40 z-[120]">
-                        <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2 gap-1">
+                    <div class="absolute right-0 top-[calc(100%+8px)] w-40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[120]">
+                        <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2">
                             
-                            <button onclick="window.changeLanguage('ru'); document.getElementById('lang-dropdown-icon').classList.remove('rotate-180'); window.toggleLangMenu();" class="w-full flex items-center justify-between px-3 py-2 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
+                            <button onclick="window.changeLanguage('ru')" class="w-full flex items-center justify-between px-3 py-2.5 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
                                 <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover/btn:text-brand-600 dark:group-hover/btn:text-brand-400 transition-colors">Русский</span>
                                 <span class="text-[10px] font-black text-stone-400 bg-stone-100/50 dark:bg-stone-900/50 px-1.5 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">RU</span>
                             </button>
 
-                            <button onclick="window.changeLanguage('sr'); document.getElementById('lang-dropdown-icon').classList.remove('rotate-180'); window.toggleLangMenu();" class="w-full flex items-center justify-between px-3 py-2 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
+                            <button onclick="window.changeLanguage('sr')" class="w-full flex items-center justify-between px-3 py-2.5 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
                                 <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover/btn:text-brand-600 dark:group-hover/btn:text-brand-400 transition-colors">Srpski</span>
                                 <span class="text-[10px] font-black text-stone-400 bg-stone-100/50 dark:bg-stone-900/50 px-1.5 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">SR</span>
                             </button>
 
-                            <button onclick="window.changeLanguage('en'); document.getElementById('lang-dropdown-icon').classList.remove('rotate-180'); window.toggleLangMenu();" class="w-full flex items-center justify-between px-3 py-2 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
+                            <button onclick="window.changeLanguage('en')" class="w-full flex items-center justify-between px-3 py-2.5 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors cursor-pointer text-left group/btn">
                                 <span class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover/btn:text-brand-600 dark:group-hover/btn:text-brand-400 transition-colors">English</span>
                                 <span class="text-[10px] font-black text-stone-400 bg-stone-100/50 dark:bg-stone-900/50 px-1.5 py-0.5 rounded shadow-sm border border-stone-200/50 dark:border-stone-700/50">EN</span>
                             </button>
@@ -127,11 +128,13 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="hidden lg:flex relative shrink-0" id="info-dropdown-wrapper">
-                    <button onclick="window.toggleInfoMenu()" class="flex items-center justify-center gap-1.5 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                    <button onclick="window.toggleInfoMenu()"
+                        class="flex items-center justify-center gap-1.5 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 dark:hover:text-brand-400 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-sm transition-all duration-200 cursor-pointer">
                         <span data-i18n="nav_info">Инфо</span>
-                        <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
+                        <i id="info-dropdown-icon"
+                            class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200"></i>
                     </button>
                     <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[120]">
                         <div class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg flex flex-col p-2">
@@ -148,36 +151,19 @@
                 </div>
 
                 <script>
-                    window.toggleLangMenu = () => {
-                        const menu = document.getElementById('lang-dropdown');
-                        const icon = document.getElementById('lang-dropdown-icon');
-                        if (menu.classList.contains('hidden')) {
-                            menu.classList.remove('hidden'); if (icon) icon.classList.add('rotate-180');
-                        } else { menu.classList.add('hidden'); if (icon) icon.classList.remove('rotate-180'); }
-                    };
-
                     window.toggleInfoMenu = () => {
                         const menu = document.getElementById('info-dropdown-menu');
                         const icon = document.getElementById('info-dropdown-icon');
                         if (menu.classList.contains('hidden')) {
-                            menu.classList.remove('hidden'); if (icon) icon.classList.add('rotate-180');
-                        } else { menu.classList.add('hidden'); if (icon) icon.classList.remove('rotate-180'); }
+                            menu.classList.remove('hidden');
+                            icon.classList.add('rotate-180');
+                        } else { menu.classList.add('hidden'); icon.classList.remove('rotate-180'); }
                     };
-
                     document.addEventListener('click', (e) => {
-                        const langWrap = document.getElementById('lang-dropdown-wrapper');
-                        const langMenu = document.getElementById('lang-dropdown');
-                        const langIcon = document.getElementById('lang-dropdown-icon');
-                        if (langWrap && langMenu && !langWrap.contains(e.target)) {
-                            langMenu.classList.add('hidden'); if (langIcon) langIcon.classList.remove('rotate-180');
-                        }
-
-                        const infoWrap = document.getElementById('info-dropdown-wrapper');
-                        const infoMenu = document.getElementById('info-dropdown-menu');
-                        const infoIcon = document.getElementById('info-dropdown-icon');
-                        if (infoWrap && infoMenu && !infoWrap.contains(e.target)) {
-                            infoMenu.classList.add('hidden'); if (infoIcon) infoIcon.classList.remove('rotate-180');
-                        }
+                        const wrapper = document.getElementById('info-dropdown-wrapper');
+                        const menu = document.getElementById('info-dropdown-menu');
+                        const icon = document.getElementById('info-dropdown-icon');
+                        if (wrapper && menu && !wrapper.contains(e.target)) { menu.classList.add('hidden'); if (icon) icon.classList.remove('rotate-180'); }
                     });
                 </script>
 
