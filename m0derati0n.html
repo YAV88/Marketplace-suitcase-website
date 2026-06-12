@@ -162,6 +162,17 @@
             renderList();
         }
 
+        // Вспомогательная функция для подсчета оставшегося времени
+        function getTimeLeft(dateStr) {
+            if (!dateStr) return '';
+            const diff = new Date(dateStr) - new Date();
+            if (diff <= 0) return '';
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            if (days > 0) return `<i class="fa-regular fa-clock"></i> ${days}д ${hours}ч`;
+            return `<i class="fa-regular fa-clock"></i> ${hours}ч`;
+        }
+
         function renderList() {
             if (adminState.isLoading) return;
             const list = document.getElementById('admin-list');
@@ -175,18 +186,27 @@
                     const matchCat = catFilter === "" || (item.category && item.category.startsWith(catFilter));
                     return matchSearch && matchCat;
                 });
-                
+
                 if (filteredItems.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-30 block"></i>Товары не найдены</div>';
-                
+
                 filteredItems.forEach(item => {
                     const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
                     const isVIP = item.highlighted_until ? new Date(item.highlighted_until) > new Date() : false;
+                    const timeLeftHtml = isVIP ? `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] ml-2 animate-pulse">${getTimeLeft(item.highlighted_until)}</span>` : '';
+                    
+                    // Проверка на дубликаты (ищем товары этого же юзера с таким же названием)
+                    const isDuplicate = adminState.items.some(i => i.user_id === item.user_id && i.id !== item.id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
+                    const dupBadge = isDuplicate ? '<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm" title="У пользователя есть другой товар с таким же названием">Дубликат?</span>' : '';
+
                     list.insertAdjacentHTML('beforeend', `
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-stone-300 dark:hover:border-stone-500 transition gap-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border ${isDuplicate ? 'border-red-300 dark:border-red-800' : 'border-stone-200 dark:border-stone-700'} rounded-xl hover:border-stone-300 transition gap-4">
                             <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
                                 <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200 dark:border-stone-700">
                                 <div class="overflow-hidden">
-                                    <div class="font-black text-stone-800 dark:text-white truncate text-base">${isVIP ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}${item.title || 'Без названия'}</div>
+                                    <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center">
+                                        ${isVIP ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}
+                                        ${item.title || 'Без названия'} ${timeLeftHtml} ${dupBadge}
+                                    </div>
                                     <div class="text-xs text-stone-500 font-bold mt-1"><span class="bg-stone-200 dark:bg-stone-700 px-2 py-0.5 rounded text-[10px] text-stone-600 dark:text-stone-300 mr-1">${item.category || 'Другое'}</span> Автор: ${item.author_name}</div>
                                     <div class="text-sm font-bold text-brand-600 dark:text-brand-400 mt-0.5">${item.price} ${item.currency}</div>
                                 </div>
@@ -205,7 +225,7 @@
                 );
 
                 if (filteredUsers.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-users text-4xl mb-3 opacity-30 block"></i>Пользователи не найдены</div>';
-                
+
                 filteredUsers.forEach(user => {
                     const avatarUrl = user.avatar_url || 'https://via.placeholder.com/150';
                     const isPro = user.pro_until ? new Date(user.pro_until) > new Date() : false;
@@ -217,18 +237,20 @@
                     const cardClass = isBanned ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900 opacity-75" : "bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700";
                     const statusBadge = isBanned ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase ml-2">ЗАБЛОКИРОВАН</span>` : '';
                     const banInfo = isBanned ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-bold">Причина: ${user.ban_reason || 'Не указана'}</div>` : '';
+                    
+                    // Таймер PRO для пользователя
+                    const proTimer = isPro ? `<span class="text-amber-600 text-[10px] ml-1">(${getTimeLeft(user.pro_until)})</span>` : '';
 
                     list.insertAdjacentHTML('beforeend', `
                         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 ${cardClass} border rounded-xl hover:shadow-md transition gap-4">
                             <div class="flex items-center gap-4 overflow-hidden w-full lg:w-auto flex-1">
                                 <div class="relative shrink-0">
                                     <img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover bg-stone-100 border-2 border-stone-200 dark:border-stone-700">
-                                    ${user.is_admin ? '<div class="absolute -top-1 -right-1 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]" title="Модератор"><i class="fa-solid fa-shield"></i></div>' : ''}
                                 </div>
                                 <div class="overflow-hidden w-full">
                                     <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center gap-2 mb-1">
                                         ${user.full_name || 'Без имени'} 
-                                        ${isPro ? '<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest">VIP</span>' : ''}
+                                        ${isPro ? `<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest flex items-center gap-1">VIP ${proTimer}</span>` : ''}
                                         ${statusBadge}
                                     </div>
                                     <div class="flex flex-wrap gap-2 text-xs text-stone-500 font-bold items-center mb-1">
@@ -249,22 +271,17 @@
                                     <span class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mx-1" title="VIP токены">VIP</span>
                                     <input type="number" id="vip-${user.id}" value="${user.vip_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-purple-200 dark:border-purple-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
                                 </div>
-                                
                                 <button onclick="updateTokens('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 hover:bg-brand-500 hover:text-white px-3 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition shadow-sm" title="Сохранить токены">
                                     <i class="fa-solid fa-floppy-disk mr-1"></i> Сохранить
                                 </button>
-                                
                                 <div class="h-6 w-px bg-stone-200 dark:bg-stone-700 hidden sm:block"></div>
-                                
                                 <button onclick="togglePro('${user.id}', ${isPro}, this)" class="flex-1 sm:flex-none ${isPro ? 'bg-amber-100 text-amber-600 hover:bg-stone-200 dark:bg-amber-900/30' : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400 hover:bg-amber-500 hover:text-white'} px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-gem"></i> ${isPro ? '- VIP' : '+ VIP'}
                                 </button>
-                                
                                 ${isBanned 
                                     ? `<button onclick="unbanUser('${user.id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm" title="Разблокировать"><i class="fa-solid fa-unlock"></i></button>`
-                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-orange-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать (Скрывает товары и выкидывает с сайта)"><i class="fa-solid fa-ban"></i></button>`
+                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-orange-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать"><i class="fa-solid fa-ban"></i></button>`
                                 }
-                                
                                 <button onclick="deleteUser('${user.id}', this)" class="bg-red-50 dark:bg-red-900/20 text-red-500 border border-red-200 dark:border-red-800/50 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Удалить навсегда">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -272,6 +289,7 @@
                         </div>
                     `);
                 });
+            }
                 
             } else if (adminState.currentTab === 'reports') {
                 const filteredReports = adminState.reports.filter(r => 
