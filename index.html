@@ -214,10 +214,10 @@
                 </div>
 
                 <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()"
-                    class="hidden md:flex items-center justify-center gap-2 px-6 h-11 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 border border-brand-500">
-                    <i class="fa-solid fa-tag"></i>
-                    <span class="hidden xl:inline" data-i18n="btn_publish">Пристроить добро</span>
-                    <span class="xl:hidden" data-i18n="btn_publish_mob">Продать</span>
+                    class="hidden md:flex items-center justify-center gap-2 w-[130px] xl:w-[220px] px-2 h-11 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer shrink-0 border border-brand-500 overflow-hidden">
+                    <i class="fa-solid fa-tag shrink-0"></i>
+                    <span class="hidden xl:inline truncate" data-i18n="btn_publish">Пристроить добро</span>
+                    <span class="xl:hidden truncate" data-i18n="btn_publish_mob">Продать</span>
                 </button>
 
                 <button onclick="window.toggleDarkMode()"
@@ -859,42 +859,36 @@
                     </div>
                 </div>
 
-                <div
-                    class="bg-stone-800 dark:bg-black p-5 rounded-3xl border border-stone-700 text-center shadow-inner relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-stone-700/20 to-transparent">
-                    </div>
-                    <div class="text-stone-300 dark:text-stone-400 font-bold text-sm mb-1 relative"
-                        data-i18n="pro_price_label">Стоимость на 30 дней:</div>
-                    <div class="text-4xl font-black text-white relative drop-shadow-md">5.00 <span
-                            class="text-emerald-400">$</span></div>
+                <div class="bg-stone-50 dark:bg-stone-800/50 p-5 rounded-3xl border border-stone-200 dark:border-stone-700 text-center shadow-sm relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-stone-200/50 dark:via-stone-700/20 to-transparent"></div>
+                    
+                    <div class="text-stone-500 dark:text-stone-400 font-bold text-sm mb-1 relative" data-i18n="pro_price_label">Стоимость на 30 дней:</div>
+                    <div class="text-4xl font-black text-stone-900 dark:text-white relative drop-shadow-sm">5.00 <span class="text-emerald-500">$</span></div>
 
                     <div class="mt-5 relative z-20 text-left">
-                        <label class="text-[11px] uppercase tracking-wider font-bold text-stone-400 mb-2 block pl-1"
-                            data-i18n="pro_network_label">Выберите сеть оплаты:</label>
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-stone-400 mb-2 block pl-1" data-i18n="pro_network_label">Выберите сеть оплаты:</label>
 
                         <div class="relative group">
-                            <select id="plisio-currency-select"
-                                class="w-full bg-white dark:bg-stone-800 border-2 border-stone-100 dark:border-stone-700 rounded-xl px-4 py-3.5 text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer focus:border-emerald-500 transition-all duration-200 appearance-none shadow-sm">
-                                <option value="USDT_BSC">Tether (USDT) — сеть BEP-20 (BSC)</option>
-                                <option value="USDT">Tether (USDT) — сеть ERC-20</option>
-                                <option value="ETH">Ethereum (ETH)</option>
-                                <option value="TON">Toncoin (TON)</option>
+                            <select id="plisio-currency-select" class="w-full bg-white dark:bg-stone-800 border-2 border-stone-100 dark:border-stone-700 rounded-xl px-4 py-3.5 text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer focus:border-brand-500 transition-all duration-200 appearance-none shadow-sm">
+                                <option value="USDT_BSC" data-i18n="net_bep20">Tether (USDT) — сеть BEP-20 (BSC)</option>
+                                <option value="USDT" data-i18n="net_erc20">Tether (USDT) — сеть ERC-20</option>
+                                <option value="ETH" data-i18n="net_eth">Ethereum (ETH)</option>
+                                <option value="TON" data-i18n="net_ton">Toncoin (TON)</option>
                             </select>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-400">
                                 <i class="fa-solid fa-chevron-down text-xs"></i>
                             </div>
                         </div>
 
                         <p class="text-[10px] text-stone-400 mt-2 px-1">
-                            <i class="fa-solid fa-circle-info mr-1"></i> <span data-i18n="pro_network_hint">Комиссии
-                                сети BEP-20 самые низкие.</span>
+                            <i class="fa-solid fa-circle-info mr-1"></i> <span data-i18n="pro_network_hint">Комиссии сети BEP-20 самые низкие.</span>
                         </p>
                     </div>
-                    <div class="text-xs text-stone-400 mt-2 relative" data-i18n="pro_secure_label">Безопасная оплата
-                        криптовалютой</div>
+                    <div class="text-xs text-stone-400 mt-2 relative" data-i18n="pro_secure_label">Безопасная оплата криптовалютой</div>
                 </div>
+                
             </div>
+            
             <div class="p-6 bg-stone-50 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800">
                 <button id="btn-pay-plisio" onclick="window.payWithPlisio()"
                     class="bg-emerald-500 hover:bg-emerald-600 text-white w-full py-4 rounded-2xl font-black text-base transition shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer border border-emerald-400 dark:border-emerald-600">
