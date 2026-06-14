@@ -373,8 +373,14 @@
             </div>
         </div>
 
-        <div id="filter-panel-wrapper">
-            <div id="filter-panel">
+        <div id="filter-panel-wrapper" class="fixed inset-y-0 left-0 z-[100] w-[85vw] max-w-sm bg-white dark:bg-stone-900 shadow-2xl transform -translate-x-full transition-transform duration-300 overflow-y-auto custom-scrollbar lg:relative lg:translate-x-0 lg:w-full lg:max-w-none lg:bg-transparent lg:shadow-none lg:z-auto lg:overflow-visible">
+            
+            <div class="flex justify-between items-center lg:hidden p-5 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
+                <h3 class="font-black text-xl text-stone-900 dark:text-white" data-i18n="filter_btn">Фильтры</h3>
+                <button onclick="window.toggleMobileFilters()" class="text-stone-400 hover:text-brand-600 text-2xl w-8 h-8 flex items-center justify-center cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="filter-panel" class="p-5 lg:p-0">
                 <div
                     class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6 mb-8 shadow-sm relative">
                     <div id="filter-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -460,7 +466,7 @@
                             class="px-6 py-3 rounded-xl font-bold text-base text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition cursor-pointer"
                             data-i18n="btn_reset">Сбросить</button>
                         <button type="button"
-                            onclick="if(window.innerWidth < 1024 && typeof window.toggleFilters === 'function') window.toggleFilters();"
+                            onclick="if(window.innerWidth < 1024 && typeof window.toggleMobileFilters === 'function') window.toggleMobileFilters();"
                             class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm"
                             data-i18n="btn_show_results">Показать находки</button>
                     </div>
@@ -1886,11 +1892,11 @@
         </div>
     </div>
 
-    <button id="mobile-floating-filter" onclick="if(typeof window.toggleFilters === 'function') window.toggleFilters();"
-        class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 bg-brand-600 text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-[0_8px_20px_rgba(13,148,136,0.3)] flex items-center gap-2 z-[40] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none border border-brand-500">
-        <i class="fa-solid fa-sliders text-brand-50"></i>
-        <span data-i18n="filter_btn">Фильтры</span>
+    <button onclick="window.toggleMobileFilters()" class="lg:hidden fixed left-0 top-[40%] z-[90] bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 border-l-0 text-brand-600 px-3 py-4 rounded-r-2xl shadow-[5px_0_15px_rgba(0,0,0,0.08)] flex flex-col items-center gap-2 hover:bg-stone-50 transition-all cursor-pointer">
+        <i class="fa-solid fa-sliders text-xl"></i>
     </button>
+    
+    <div id="mobile-filter-backdrop" onclick="window.toggleMobileFilters()" class="fixed inset-0 bg-black/60 z-[95] hidden backdrop-blur-sm transition-opacity duration-300 opacity-0 lg:hidden"></div>
 
 </body>
 
