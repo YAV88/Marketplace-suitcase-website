@@ -3214,3 +3214,37 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+function initSmartHeader() {
+    const header = document.getElementById('main-header');
+    if (!header) return;
+
+    let lastScrollY = window.scrollY;
+    // Порог, чтобы шапка не пряталась при случайном микро-скролле
+    const scrollThreshold = 10; 
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        // Защита от "резинового скролла" (bouncing) на iOS в самом верху страницы
+        if (currentScrollY <= 0) {
+            header.classList.remove('-translate-y-full');
+            return;
+        }
+
+        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) return;
+
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+            // Скролл вниз (прячем шапку, сдвигая ее вверх на 100% своей высоты)
+            header.classList.add('-translate-y-full');
+        } else {
+            // Скролл вверх (показываем шапку)
+            header.classList.remove('-translate-y-full');
+        }
+
+        lastScrollY = currentScrollY;
+    }, { passive: true }); // passive: true критически важно для плавности на мобилках
+}
+
+// Запуск
+document.addEventListener('DOMContentLoaded', initSmartHeader);
