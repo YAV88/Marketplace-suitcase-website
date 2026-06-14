@@ -1507,12 +1507,41 @@ window.toggleFilters = () => {
     }
 };
 
-window.showToast = (msg, err = false) => {
-    const t = document.getElementById('toast'); const tMsg = document.getElementById('toast-msg'); const tIco = document.getElementById('toast-icon');
+window.showToast = (msg, type = 'info') => {
+    // Совместимость со старым кодом, если передавался boolean (true/false)
+    if (type === true) type = 'error';
+    if (type === false) type = 'info';
+    
+    // Авто-перехват позитивных сообщений (Успешный вход, сохранение и т.д.)
+    const positiveWords = ['возвращением', 'успешно', 'поздравляем', 'опубликован', 'сохранен', 'готово'];
+    if (positiveWords.some(word => msg.toLowerCase().includes(word))) {
+        type = 'success';
+    }
+
+    const t = document.getElementById('toast');
+    const tMsg = document.getElementById('toast-msg');
+    const tIco = document.getElementById('toast-icon');
+    
     if (tMsg) tMsg.innerText = msg;
-    if (tIco) tIco.className = `fa-solid ${err ? 'fa-circle-exclamation text-red-400' : 'fa-circle-check text-brand-400'} text-lg`;
+    
+    let bgClass = '', iconClass = '';
+    
+    if (type === 'error') {
+        bgClass = 'bg-red-600 text-white';
+        iconClass = 'fa-circle-exclamation text-white';
+    } else if (type === 'success') {
+        bgClass = 'bg-emerald-500 text-white';
+        iconClass = 'fa-circle-check text-white';
+    } else {
+        // Стандартный (инфо)
+        bgClass = 'bg-stone-900 dark:bg-white text-white dark:text-stone-900';
+        iconClass = 'fa-circle-check text-brand-400';
+    }
+    
+    if (tIco) tIco.className = `fa-solid ${iconClass} text-lg`;
+    
     if (t) {
-        t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 pointer-events-none ${err ? 'bg-red-600 text-white' : 'bg-stone-900 dark:bg-white text-white dark:text-stone-900'} opacity-100`;
+        t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 pointer-events-none ${bgClass} opacity-100`;
         setTimeout(() => t.classList.replace('opacity-100', 'opacity-0'), 3000);
     }
 };
