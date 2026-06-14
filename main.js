@@ -3162,26 +3162,30 @@ window.initSmartHeader = () => {
     const header = document.getElementById('main-header');
     if (!header) return;
 
-    let lastScrollY = window.scrollY;
-    const scrollThreshold = 15; 
-
+    let lastScroll = window.scrollY;
+    
     window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
+        const currentScroll = window.scrollY;
         
-        if (currentScrollY <= 0) {
-            header.style.transform = 'translateY(0)';
+        // В самом верху страницы - всегда показываем
+        if (currentScroll <= 0) {
+            header.classList.remove('-translate-y-full');
             return;
         }
-
-        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) return;
-
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            header.style.transform = 'translateY(-100%)';
-        } else {
-            header.style.transform = 'translateY(0)';
+        
+        // Игнорируем микро-скроллы для плавности
+        if (Math.abs(currentScroll - lastScroll) < 15) return;
+        
+        // Скроллим вниз - прячем шапку
+        if (currentScroll > lastScroll && currentScroll > 120) {
+            header.classList.add('-translate-y-full');
+        } 
+        // Скроллим вверх - показываем шапку и поиск
+        else if (currentScroll < lastScroll) {
+            header.classList.remove('-translate-y-full');
         }
-
-        lastScrollY = currentScrollY;
+        
+        lastScroll = currentScroll;
     }, { passive: true });
 };
 
