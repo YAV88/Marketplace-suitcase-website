@@ -3248,3 +3248,37 @@ function initSmartHeader() {
 
 // Запуск
 document.addEventListener('DOMContentLoaded', initSmartHeader);
+
+// ==========================================
+// УМНАЯ ШАПКА (Скрытие при скролле)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.getElementById('main-header');
+    if (!header) return;
+
+    let lastScrollY = window.scrollY;
+    const scrollThreshold = 15; 
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        // Защита от баунса в iOS
+        if (currentScrollY <= 0) {
+            header.style.transform = 'translateY(0)';
+            return;
+        }
+
+        // Игнорируем микро-скроллы
+        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) return;
+
+        // Если скроллим вниз и ушли от начала - прячем шапку
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            // Скроллим вверх - показываем шапку
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastScrollY = currentScrollY;
+    }, { passive: true });
+});
