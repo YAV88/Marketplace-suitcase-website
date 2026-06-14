@@ -3284,3 +3284,21 @@ function initSmartHeader() {
 // Запуск
 document.addEventListener('DOMContentLoaded', initSmartHeader);
 
+window.toggleMobileFilters = () => {
+    const panel = document.getElementById('filter-panel-wrapper');
+    const backdrop = document.getElementById('mobile-filter-backdrop');
+    
+    if (panel.classList.contains('-translate-x-full')) {
+        // Открываем
+        panel.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+        document.body.style.overflow = 'hidden'; // Блокируем скролл сайта
+    } else {
+        // Закрываем
+        panel.classList.add('-translate-x-full');
+        backdrop.classList.add('opacity-0');
+        setTimeout(() => backdrop.classList.add('hidden'), 300);
+        document.body.style.overflow = ''; 
+    }
+};
