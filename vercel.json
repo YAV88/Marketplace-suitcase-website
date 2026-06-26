@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/item/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(bot|telegram|whatsapp|viber|facebookexternalhit|skype).*"
+        }
+      ],
+      "destination": "https://jeinonooelndbtjalnwa.supabase.co/functions/v1/share-item?id=:id"
+    },
+    {
+      "source": "/item/:id",
+      "destination": "/?item=:id"
+    }
+  ]
+}

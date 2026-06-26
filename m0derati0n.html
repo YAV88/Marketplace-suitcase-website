@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVALKA - Патруль модерации</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2 { font-family: 'Montserrat', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #d6d3d1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #44403c; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-[#f5f5f4] dark:bg-[#1c1917] transition-colors min-h-screen">
+
+    <div class="max-w-5xl mx-auto">
+        
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-shield-halved text-red-600 text-3xl sm:text-4xl drop-shadow-sm"></i>
+                <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-stone-900 dark:text-white">Svalka <span class="text-red-600">Admin</span></h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleAdminTheme()" class="bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition w-10 h-10 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm flex items-center justify-center"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
+                <a href="index.html" class="text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-white font-bold transition flex items-center gap-2 bg-white dark:bg-stone-800 px-4 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm"><i class="fa-solid fa-arrow-left"></i> На сайт</a>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-stone-900 p-2 sm:p-6 rounded-[2rem] shadow-sm border border-stone-200 dark:border-stone-800 min-h-[500px] flex flex-col transition-colors">
+            
+            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
+                <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-xl w-full md:w-max shrink-0 overflow-x-auto custom-scrollbar border border-stone-200 dark:border-stone-700">
+                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-box-open text-brand-500"></i> Товары</button>
+                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-users text-indigo-500"></i> Пользователи</button>
+                    <button onclick="switchTab('reports')" id="tab-reports" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-dumpster-fire text-red-500"></i> Жалобы</button>
+                    <button onclick="switchTab('pro_requests')" id="tab-pro" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-crown text-amber-500"></i> PRO-заявки</button>
+                </div>
+                
+                <div class="flex gap-2 w-full md:w-auto">
+                    <select id="admin-category-filter" onchange="renderList()" class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition cursor-pointer max-w-[150px]">
+                        <option value="">Все категории</option>
+                        <option value="Одежда">Одежда</option> <option value="Электроника">Электроника</option> <option value="Интерьер">Интерьер</option>
+                        <option value="Транспорт">Транспорт</option> <option value="Услуги">Услуги</option> <option value="Жилье">Жилье</option>
+                        <option value="Работа">Работа</option> <option value="Бизнес">Бизнес</option> <option value="Детям">Детям</option>
+                    </select>
+
+                    <div class="relative flex-1 md:w-64 shrink-0">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                        <input type="text" id="admin-search" oninput="renderList()" placeholder="Поиск товаров..." class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-11 pr-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition shadow-inner">
+                    </div>
+                </div>
+            </div>
+            
+            <div id="admin-list" class="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2 pb-4">
+                <div class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-stone-300 dark:text-stone-600"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ИНИЦИАЛИЗАЦИЯ ТЕМЫ
+        function initTheme() {
+            const savedTheme = localStorage.getItem('admin_theme');
+            if(savedTheme === 'dark') document.documentElement.classList.add('dark');
+            updateThemeIcon();
+        }
+        function toggleAdminTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('admin_theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
+        }
+        initTheme();
+
+        // КЛЮЧИ SUPABASE
+        const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let adminState = { items: [], profiles: [], reports: [], proRequests: [], currentTab: 'items', isLoading: true };
+
+        async function initAdminPanel() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return showError("Доступ запрещен. Вы не вошли в аккаунт!");
+
+            const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', user.id).single();
+            if (!profile || profile.is_admin !== true) return showError("У вас нет прав модератора!");
+
+            await loadData();
+        }
+
+        function showError(msg) {
+            document.getElementById('admin-list').innerHTML = `<div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl font-bold text-center border border-red-200 dark:border-red-800/50 mt-10 max-w-lg mx-auto"><i class="fa-solid fa-hand-paper text-5xl mb-4 block opacity-50"></i> ${msg}</div>`;
+        }
+
+        async function loadData() {
+            try {
+                // ДОБАВИЛИ ЗАГРУЗКУ ЗАЯВОК PRO
+                const [itemsRes, profilesRes, reportsRes, proRes] = await Promise.all([
+                    supabaseClient.from('items').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.rpc('get_all_users_for_admin'),
+                    supabaseClient.from('reports').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('pro_requests').select('*').order('created_at', { ascending: false })
+                ]);
+
+                if (itemsRes.error) throw itemsRes.error;
+                if (profilesRes.error) throw profilesRes.error;
+                if (reportsRes.error && reportsRes.error.code !== '42P01') throw reportsRes.error;
+                if (proRes.error && proRes.error.code !== '42P01') throw proRes.error;
+
+                adminState.items = itemsRes.data || [];
+                adminState.profiles = profilesRes.data || [];
+                adminState.reports = reportsRes.data || [];
+                adminState.proRequests = proRes.data || [];
+                adminState.isLoading = false;
+                renderList();
+            } catch (e) { showError(`Ошибка: ${e.message}`); }
+        }
+
+        function switchTab(tab) {
+            adminState.currentTab = tab;
+            const tabs = ['items', 'users', 'reports', 'pro'];
+            const searchInput = document.getElementById('admin-search');
+            const catFilter = document.getElementById('admin-category-filter');
+            
+            const activeClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0";
+            const inactiveClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0";
+            
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if(btn) btn.className = tab === (t === 'pro' ? 'pro_requests' : t) ? activeClass : inactiveClass;
+            });
+
+            if (tab === 'items') {
+                searchInput.placeholder = "Поиск товаров...";
+                catFilter.style.display = "block"; 
+            } else if (tab === 'users') {
+                searchInput.placeholder = "Поиск по email или ID...";
+                catFilter.style.display = "none"; catFilter.value = ""; 
+            } else {
+                searchInput.placeholder = "Поиск...";
+                catFilter.style.display = "none"; catFilter.value = ""; 
+            }
+            
+            searchInput.value = '';
+            renderList();
+        }
+
+        // --- ФУНКЦИИ ДЛЯ ПЕРЕХОДОВ И ДУБЛИКАТОВ ---
+        window.findUser = function(userId) {
+            document.getElementById('admin-search').value = userId;
+            switchTab('users');
+        };
+
+        window.findUserItems = function(userId) {
+            document.getElementById('admin-category-filter').value = '';
+            document.getElementById('admin-search').value = userId;
+            switchTab('items');
+        };
+
+        window.showDuplicateInfo = function(origId) {
+            const orig = adminState.items.find(i => i.id === origId);
+            if (!orig) return;
+            const origDate = new Date(orig.created_at).toLocaleString('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+            const text = `ОРИГИНАЛЬНЫЙ ТОВАР:\nНазвание: ${orig.title}\nСоздан: ${origDate}\nЦена: ${orig.price} ${orig.currency}\n\nСКОПИРУЙТЕ ID НИЖЕ И ВСТАВЬТЕ В ПОИСК:`;
+            prompt(text, orig.id);
+        };
+        // ------------------------------------------
+
+        // Вспомогательная функция для подсчета оставшегося времени
+        function getTimeLeft(dateStr) {
+            if (!dateStr) return '';
+            const diff = new Date(dateStr) - new Date();
+            if (diff <= 0) return '';
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            if (days > 0) return `<i class="fa-regular fa-clock"></i> ${days}д ${hours}ч`;
+            return `<i class="fa-regular fa-clock"></i> ${hours}ч`;
+        }
+
+        function renderList() {
+            if (adminState.isLoading) return;
+            const list = document.getElementById('admin-list');
+            const searchTerm = document.getElementById('admin-search').value.toLowerCase().trim();
+            const catFilter = document.getElementById('admin-category-filter').value;
+            list.innerHTML = '';
+
+            if (adminState.currentTab === 'items') {
+                const filteredItems = adminState.items.filter(item => {
+                    const matchSearch = (item.title || '').toLowerCase().includes(searchTerm) || 
+                                        item.id.toLowerCase().includes(searchTerm) ||
+                                        (item.user_id || '').toLowerCase().includes(searchTerm); // Разрешаем поиск по ID пользователя
+                    const matchCat = catFilter === "" || (item.category && item.category.startsWith(catFilter));
+                    return matchSearch && matchCat;
+                });
+                
+                if (filteredItems.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-30 block"></i>Товары не найдены</div>';
+                
+                filteredItems.forEach(item => {
+                    const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
+                    const isVIP = item.highlighted_until ? new Date(item.highlighted_until) > new Date() : false;
+                    const timeLeftHtml = isVIP ? `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] ml-2 animate-pulse">${getTimeLeft(item.highlighted_until)}</span>` : '';
+                    
+                    // БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ
+                    const duplicateItem = adminState.items.find(i => i.user_id === item.user_id && i.id !== item.id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
+                    const isDuplicate = !!duplicateItem;
+                    
+                    const dupBadge = duplicateItem 
+                        ? `<span onclick="showDuplicateInfo('${duplicateItem.id}')" class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm cursor-pointer hover:bg-red-600 transition" title="Скопировать ID оригинала">Дубликат?</span>` 
+                        : '';
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border ${isDuplicate ? 'border-red-300 dark:border-red-800' : 'border-stone-200 dark:border-stone-700'} rounded-xl hover:border-stone-300 transition gap-4">
+                            <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
+                                <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+                                <div class="overflow-hidden">
+                                    <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center">
+                                        ${isVIP ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}
+                                        ${item.title || 'Без названия'} ${timeLeftHtml} ${dupBadge}
+                                    </div>
+                                    <div class="text-xs text-stone-500 font-bold mt-1">
+                                        <span class="bg-stone-200 dark:bg-stone-700 px-2 py-0.5 rounded text-[10px] text-stone-600 dark:text-stone-300 mr-1">${item.category || 'Другое'}</span> 
+                                        Автор: <span onclick="findUser('${item.user_id}')" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline cursor-pointer" title="Посмотреть профиль пользователя">${item.author_name}</span>
+                                    </div>
+                                    <div class="text-sm font-bold text-brand-600 dark:text-brand-400 mt-0.5">${item.price} ${item.currency}</div>
+                                </div>
+                            </div>
+                            <button onclick="deleteItem('${item.id}', this)" class="w-full sm:w-auto bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white px-5 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shrink-0">
+                                <i class="fa-solid fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    `);
+                });
+
+            } else if (adminState.currentTab === 'users') {
+                const filteredUsers = adminState.profiles.filter(user => 
+                    (user.full_name || '').toLowerCase().includes(searchTerm) || 
+                    (user.email || '').toLowerCase().includes(searchTerm) || 
+                    user.id.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredUsers.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-users text-4xl mb-3 opacity-30 block"></i>Пользователи не найдены</div>';
+
+                filteredUsers.forEach(user => {
+                    const avatarUrl = user.avatar_url || 'https://via.placeholder.com/150';
+                    const isPro = user.pro_until ? new Date(user.pro_until) > new Date() : false;
+                    const itemsCount = adminState.items.filter(i => i.user_id === user.id).length;
+                    const regDate = new Date(user.created_at).toLocaleDateString('ru-RU');
+                    const phoneDisplay = user.phone ? `<span class="bg-stone-100 dark:bg-stone-700 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-600"><i class="fa-solid fa-phone text-stone-400 text-[10px] mr-1"></i>${user.phone}</span>` : '';
+                    
+                    const isBanned = user.is_banned;
+                    const cardClass = isBanned ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900 opacity-75" : "bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700";
+                    const statusBadge = isBanned ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase ml-2">ЗАБЛОКИРОВАН</span>` : '';
+                    const banInfo = isBanned ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-bold">Причина: ${user.ban_reason || 'Не указана'}</div>` : '';
+                    
+                    // Таймер PRO для пользователя
+                    const proTimer = isPro ? `<span class="text-amber-600 text-[10px] ml-1">(${getTimeLeft(user.pro_until)})</span>` : '';
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 ${cardClass} border rounded-xl hover:shadow-md transition gap-4">
+                            <div class="flex items-center gap-4 overflow-hidden w-full lg:w-auto flex-1">
+                                <div class="relative shrink-0">
+                                    <img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover bg-stone-100 border-2 border-stone-200 dark:border-stone-700">
+                                </div>
+                                <div class="overflow-hidden w-full">
+                                    <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center gap-2 mb-1">
+                                        ${user.full_name || 'Без имени'} 
+                                        ${isPro ? `<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest flex items-center gap-1">VIP ${proTimer}</span>` : ''}
+                                        ${statusBadge}
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 text-xs text-stone-500 font-bold items-center mb-1">
+                                        <span><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</span>
+                                        ${phoneDisplay}
+                                    </div>
+                                    <div class="text-xs font-medium text-stone-400">Регистрация: ${regDate} • Товаров: <span onclick="findUserItems('${user.id}')" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 font-bold hover:underline cursor-pointer" title="Посмотреть все товары пользователя">${itemsCount}</span></div>
+                                    ${banInfo}
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 bg-stone-50 dark:bg-stone-900/50 p-2 rounded-xl border border-stone-100 dark:border-stone-800">
+                                <div class="flex items-center gap-1 bg-amber-50 dark:bg-amber-900/20 rounded-lg p-1 border border-amber-100 dark:border-amber-800/50">
+                                    <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mx-1" title="Токены поднятий">BUMP</span>
+                                    <input type="number" id="bump-${user.id}" value="${user.bump_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-amber-200 dark:border-amber-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
+                                </div>
+                                <div class="flex items-center gap-1 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-1 border border-purple-100 dark:border-purple-800/50">
+                                    <span class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mx-1" title="VIP токены">VIP</span>
+                                    <input type="number" id="vip-${user.id}" value="${user.vip_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-purple-200 dark:border-purple-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
+                                </div>
+                                <button onclick="updateTokens('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 hover:bg-brand-500 hover:text-white px-3 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition shadow-sm" title="Сохранить токены">
+                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Сохранить
+                                </button>
+                                <div class="h-6 w-px bg-stone-200 dark:bg-stone-700 hidden sm:block"></div>
+                                <button onclick="togglePro('${user.id}', ${isPro}, this)" class="flex-1 sm:flex-none ${isPro ? 'bg-amber-100 text-amber-600 hover:bg-stone-200 dark:bg-amber-900/30' : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400 hover:bg-amber-500 hover:text-white'} px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-gem"></i> ${isPro ? 'Забрать PRO' : 'Выдать PRO'}
+                                </button>
+                                ${isBanned 
+                                    ? `<button onclick="unbanUser('${user.id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm" title="Разблокировать"><i class="fa-solid fa-unlock"></i></button>`
+                                    : `<button onclick="banUser('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-orange-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Заблокировать"><i class="fa-solid fa-ban"></i></button>`
+                                }
+                                <button onclick="deleteUser('${user.id}', this)" class="bg-red-50 dark:bg-red-900/20 text-red-500 border border-red-200 dark:border-red-800/50 hover:bg-red-500 hover:text-white w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm" title="Удалить навсегда">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                });
+                
+            } else if (adminState.currentTab === 'reports') {
+                const filteredReports = adminState.reports.filter(r => 
+                    (r.reason || '').toLowerCase().includes(searchTerm) || 
+                    (r.comment || '').toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredReports.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-check-double text-4xl mb-3 opacity-30 block"></i>Новых жалоб нет</div>';
+                
+                filteredReports.forEach(report => {
+                    const reporter = adminState.profiles.find(p => p.id === report.reporter_id) || { full_name: 'Удаленный', email: 'нет' };
+                    const reported = adminState.profiles.find(p => p.id === report.reported_user_id) || { full_name: 'Удаленный', email: 'нет' };
+                    const date = new Date(report.created_at).toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    const isNew = report.status === 'new';
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col p-4 bg-white dark:bg-stone-800 border ${isNew ? 'border-red-300 dark:border-red-800 shadow-md' : 'border-stone-200 dark:border-stone-700 opacity-60'} rounded-xl hover:shadow-lg hover:opacity-100 transition gap-3 relative overflow-hidden">
+                            ${isNew ? '<div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>' : ''}
+                            
+                            <div class="flex justify-between items-start pl-2">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest"><i class="fa-solid fa-dumpster-fire mr-1"></i> ${report.reason}</span>
+                                        <span class="text-xs text-stone-400 font-bold">${date}</span>
+                                    </div>
+                                    <div class="text-sm font-medium text-stone-800 dark:text-stone-200 mt-2 bg-stone-50 dark:bg-stone-900/50 p-3 rounded-lg border border-stone-100 dark:border-stone-700">
+                                        ${report.comment ? `«${report.comment}»` : '<span class="text-stone-400 italic">Жалоба отправлена без комментария</span>'}
+                                    </div>
+                                </div>
+                                <div class="flex flex-col sm:flex-row gap-2 shrink-0">
+                                    ${isNew ? `<button onclick="resolveReport('${report.id}', this)" class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white px-3 py-1.5 rounded-lg font-bold text-xs transition flex items-center justify-center" title="Отметить как решенную"><i class="fa-solid fa-check mr-1"></i> Решено</button>` : ''}
+                                    <button onclick="deleteReport('${report.id}', this)" class="bg-stone-100 dark:bg-stone-700 text-stone-400 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg font-bold text-xs transition flex items-center justify-center" title="Удалить жалобу"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-4 mt-2 pl-2 border-t border-stone-100 dark:border-stone-700 pt-3">
+                                <div class="flex-1">
+                                    <div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest mb-1">Кто жалуется:</div>
+                                    <div class="text-sm font-bold text-stone-700 dark:text-stone-300"><i class="fa-solid fa-user text-stone-300 dark:text-stone-600 mr-1"></i> ${reporter.full_name}</div>
+                                    <div class="text-xs text-stone-500">${reporter.email}</div>
+                                </div>
+                                <div class="hidden sm:flex items-center text-stone-300 dark:text-stone-600"><i class="fa-solid fa-arrow-right"></i></div>
+                                <div class="flex-1 bg-red-50 dark:bg-red-900/10 p-2 rounded-lg border border-red-100 dark:border-red-900/30 flex flex-col justify-between items-start">
+                                    <div>
+                                        <div class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-1">На кого:</div>
+                                        <div class="text-sm font-bold text-red-700 dark:text-red-400"><i class="fa-solid fa-user-slash text-red-300 dark:text-red-800 mr-1"></i> ${reported.full_name}</div>
+                                        <div class="text-xs text-red-500 mb-2">${reported.email}</div>
+                                    </div>
+                                    <button onclick="deleteUser('${report.reported_user_id}', this)" class="w-full sm:w-auto bg-red-500 text-white hover:bg-red-600 px-3 py-1.5 rounded-md font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm"><i class="fa-solid fa-ban"></i> Забанить</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            } else if (adminState.currentTab === 'pro_requests') {
+                // НОВАЯ ЛОГИКА ДЛЯ ЗАЯВОК НА PRO
+                const pendingRequests = adminState.proRequests.filter(r => r.status === 'pending');
+                
+                if (pendingRequests.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-crown text-4xl mb-3 opacity-30 block"></i>Новых заявок на PRO нет</div>';
+                
+                pendingRequests.forEach(req => {
+                    const user = adminState.profiles.find(p => p.id === req.user_id) || { full_name: 'Неизвестный', email: '---', id: req.user_id };
+                    const date = new Date(req.created_at).toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white dark:bg-stone-800 border border-amber-200 dark:border-amber-900/50 rounded-xl shadow-sm gap-4 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                            <div class="pl-2">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1"><i class="fa-solid fa-crown"></i> Заявка на PRO</div>
+                                <div class="font-bold text-stone-800 dark:text-white text-base">${user.full_name}</div>
+                                <div class="text-xs text-stone-500 font-mono mt-1 select-all cursor-text p-1 bg-stone-50 dark:bg-stone-900 rounded">ID: ${user.id}</div>
+                                <div class="text-xs text-stone-400 font-bold mt-2">${date}</div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
+                                <button onclick="approveProRequest('${req.id}', '${req.user_id}', this)" class="bg-emerald-500 text-white hover:bg-emerald-600 px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 shadow-sm"><i class="fa-solid fa-check"></i> Подтвердить</button>
+                                <button onclick="rejectProRequest('${req.id}', this)" class="bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-300 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2"><i class="fa-solid fa-xmark"></i> Отклонить</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        // --- ЛОГИКА ЗАЯВОК PRO ---
+        async function approveProRequest(reqId, userId, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            try {
+                // 1. Вызываем серверную функцию для выдачи VIP
+                const { error: rpcErr } = await supabaseClient.rpc('admin_set_vip_v2', { target_user_id: userId, make_vip: true });
+                if (rpcErr) throw new Error("Сервер: " + rpcErr.message);
+                
+                // 2. Закрываем заявку
+                const { error: reqErr } = await supabaseClient.from('pro_requests').update({ status: 'approved' }).eq('id', reqId);
+                if (reqErr) throw new Error("Заявка: " + reqErr.message);
+                
+                // Обновляем админку
+                const newDate = new Date(new Date().setDate(new Date().getDate() + 30)).toISOString();
+                const reqIndex = adminState.proRequests.findIndex(r => r.id === reqId);
+                if(reqIndex > -1) adminState.proRequests[reqIndex].status = 'approved';
+                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
+                if(userIndex > -1) {
+                    adminState.profiles[userIndex].pro_until = newDate;
+                    adminState.profiles[userIndex].is_pro = true;
+                }
+                adminState.items.forEach(i => { if (i.user_id === userId) i.highlighted_until = newDate; });
+                
+                renderList();
+            } catch (err) {
+                alert("Ошибка: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Подтвердить';
+            }
+        }
+
+        async function rejectProRequest(reqId, btn) {
+            if(!confirm("Точно отклонить заявку?")) return;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            await supabaseClient.from('pro_requests').update({ status: 'rejected' }).eq('id', reqId);
+            const reqIndex = adminState.proRequests.findIndex(r => r.id === reqId);
+            if(reqIndex > -1) adminState.proRequests[reqIndex].status = 'rejected';
+            
+            renderList();
+        }
+
+
+        // СОХРАНЕНИЕ ТОКЕНОВ (BUMP и VIP)
+        async function updateTokens(userId, btn) {
+            const bumpInput = document.getElementById(`bump-${userId}`);
+            const vipInput = document.getElementById(`vip-${userId}`);
+            
+            const newBump = parseInt(bumpInput.value) || 0;
+            const newVip = parseInt(vipInput.value) || 0;
+            
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            const { error } = await supabaseClient.from('profiles').update({ 
+                bump_tokens: newBump, 
+                vip_tokens: newVip 
+            }).eq('id', userId);
+
+            if (error) { 
+                alert("Ошибка: " + error.message);
+            } else { 
+                const index = adminState.profiles.findIndex(p => p.id === userId);
+                if(index > -1) {
+                    adminState.profiles[index].bump_tokens = newBump;
+                    adminState.profiles[index].vip_tokens = newVip;
+                }
+                
+                btn.classList.remove('bg-stone-200', 'dark:bg-stone-700', 'text-stone-700', 'dark:text-stone-300');
+                btn.classList.add('bg-green-500', 'text-white');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                setTimeout(() => {
+                    btn.classList.remove('bg-green-500', 'text-white');
+                    btn.classList.add('bg-stone-200', 'dark:bg-stone-700', 'text-stone-700', 'dark:text-stone-300');
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }, 2000);
+            }
+        }
+
+        async function deleteItem(itemId, btn) {
+            if(!confirm("Удалить это объявление?")) return;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                // 1. Вытягиваем точные пути файлов из ПРАВИЛЬНЫХ переменных
+                const item = adminState.items.find(i => i.id === itemId);
+                let filesToDelete = [];
+                
+                if (item) {
+                    let urls = [];
+                    if (Array.isArray(item.images)) urls.push(...item.images);
+                    if (item.image_url) urls.push(item.image_url);
+                    
+                    urls.forEach(url => {
+                        if (typeof url === 'string' && url.includes('item-images/')) {
+                            const match = url.match(/item-images\/(.+?)(?:\?|$)/);
+                            if (match && match[1]) filesToDelete.push(decodeURIComponent(match[1]));
+                        }
+                    });
+                }
+                
+                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ JAVASCRIPT API
+                if (filesToDelete.length > 0) {
+                    const { data, error: storageError } = await supabaseClient.storage.from('item-images').remove(filesToDelete);
+                    if (storageError) console.error("Ошибка удаления фото:", storageError);
+                    else console.log("Успешно удалены фото:", data);
+                }
+
+                // 3. Удаляем товар из базы
+                const { error } = await supabaseClient.rpc('admin_delete_item', { target_item_id: itemId });
+                if (error) throw error;
+                
+                // 4. Обновляем интерфейс
+                adminState.items = adminState.items.filter(i => i.id !== itemId);
+                btn.closest('.border').style.opacity = '0'; 
+                setTimeout(() => renderList(), 300);
+                
+            } catch (err) {
+                alert("Ошибка: " + err.message);
+                renderList();
+            }
+        }
+        
+        async function togglePro(userId, currentStatus, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            try {
+                const makeVip = !currentStatus; // Если был PRO (true), значит забираем (false)
+                
+                // Вызываем нашу мощную серверную функцию
+                const { error } = await supabaseClient.rpc('admin_set_vip_v2', {
+                    target_user_id: userId,
+                    make_vip: makeVip
+                });
+                
+                if (error) throw new Error(error.message);
+                
+                // Локальное обновление для перерисовки кнопок в админке
+                const newDate = makeVip ? new Date(new Date().setDate(new Date().getDate() + 30)).toISOString() : null;
+                adminState.items.forEach(i => { if (i.user_id === userId) i.highlighted_until = newDate; });
+                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
+                if (userIndex > -1) {
+                    adminState.profiles[userIndex].pro_until = newDate;
+                    adminState.profiles[userIndex].is_pro = makeVip;
+                }
+                
+                alert(makeVip ? 'VIP успешно выдан! (Профиль + Товары)' : 'VIP жестко снят! (Профиль + Товары)');
+                renderList();
+            } catch (err) {
+                alert('Ошибка сервера: ' + err.message);
+                renderList();
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function banUser(userId, btn) {
+            const reason = prompt("Укажите причину блокировки (пользователь будет выкинут с сайта):");
+            if (reason === null) return; 
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // Используем защищенный серверный метод RPC
+            const { error } = await supabaseClient.rpc('admin_ban_user', { target_user_id: userId, reason: reason });
+            
+            if (error) { 
+                alert("Ошибка: " + error.message);
+                renderList(); 
+            } else { 
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user) {
+                    user.is_banned = true;
+                    user.ban_reason = reason;
+                }
+                renderList();
+            }
+        }
+
+        async function unbanUser(userId, btn) {
+            if(!confirm("Разблокировать пользователя? Его товары снова появятся в ленте.")) return;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // Используем защищенный серверный метод RPC
+            const { error } = await supabaseClient.rpc('admin_unban_user', { target_user_id: userId });
+            
+            if (error) { 
+                alert("Ошибка: " + error.message);
+            } else { 
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user) {
+                    user.is_banned = false;
+                    user.ban_reason = null;
+                }
+                renderList();
+            }
+        }
+
+        async function deleteUser(userId, btn) {
+            if(!confirm("ВНИМАНИЕ! Окончательно удалить пользователя и все его товары? Это действие необратимо!")) return;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                // 1. СОБИРАЕМ КАРТИНКИ ИЗ ПРАВИЛЬНЫХ ПЕРЕМЕННЫХ
+                const userItems = adminState.items.filter(i => i.user_id === userId);
+                let itemFilesToDelete = [];
+                
+                userItems.forEach(item => {
+                    let urls = [];
+                    if (Array.isArray(item.images)) urls.push(...item.images);
+                    if (item.image_url) urls.push(item.image_url);
+                    
+                    urls.forEach(url => {
+                        if (typeof url === 'string' && url.includes('item-images/')) {
+                            const match = url.match(/item-images\/(.+?)(?:\?|$)/);
+                            if (match && match[1]) itemFilesToDelete.push(decodeURIComponent(match[1]));
+                        }
+                    });
+                });
+
+                const user = adminState.profiles.find(p => p.id === userId);
+                let avatarToDelete = null;
+                if (user && typeof user.avatar_url === 'string' && user.avatar_url.includes('avatars/')) {
+                    const match = user.avatar_url.match(/avatars\/(.+?)(?:\?|$)/);
+                    if (match && match[1]) avatarToDelete = decodeURIComponent(match[1]);
+                }
+
+                // 2. УДАЛЯЕМ ФОТОГРАФИИ ТОВАРОВ
+                if (itemFilesToDelete.length > 0) {
+                    for (let i = 0; i < itemFilesToDelete.length; i += 50) {
+                        const chunk = itemFilesToDelete.slice(i, i + 50);
+                        await supabaseClient.storage.from('item-images').remove(chunk);
+                    }
+                }
+                
+                // 3. УДАЛЯЕМ АВАТАР
+                if (avatarToDelete) {
+                    await supabaseClient.storage.from('avatars').remove([avatarToDelete]);
+                }
+
+                // 4. УДАЛЯЕМ САМ АККАУНТ ИЗ БАЗЫ
+                const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
+                if (error) throw error;
+                
+                adminState.profiles = adminState.profiles.filter(p => p.id !== userId);
+                adminState.items = adminState.items.filter(i => i.user_id !== userId);
+                btn.closest('.flex-col, .flex, .border').style.opacity = '0'; 
+                setTimeout(() => renderList(), 300); 
+                
+            } catch (err) { 
+                alert("Ошибка при удалении: " + err.message); 
+                renderList(); 
+            }
+        }
+        
+        async function resolveReport(reportId, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const { error } = await supabaseClient.from('reports').update({ status: 'resolved' }).eq('id', reportId);
+            if (error) { alert("Ошибка: " + error.message); renderList(); } 
+            else { 
+                const index = adminState.reports.findIndex(r => r.id === reportId);
+                if(index > -1) adminState.reports[index].status = 'resolved'; 
+                renderList(); 
+            }
+        }
+
+        async function deleteReport(reportId, btn) {
+            if(!confirm("Окончательно удалить жалобу из базы?")) return;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const { error } = await supabaseClient.from('reports').delete().eq('id', reportId);
+            if (error) { alert("Ошибка: " + error.message); renderList(); } 
+            else { adminState.reports = adminState.reports.filter(r => r.id !== reportId);
+            renderList(); }
+        }
+
+        initAdminPanel();
+    </script>
+</body>
+</html>
