@@ -304,45 +304,27 @@ button, a, .cursor-pointer { cursor: pointer !important; }
 .disable-transitions, .disable-transitions * { transition: none !important; }
 
 /* ==========================================
-   VIP ЛЕНТА (БЕСКОНЕЧНАЯ БЕГУЩАЯ СТРОКА)
+   VIP КАРУСЕЛЬ (СВАЙП НА МОБИЛЬНЫХ)
    ========================================== */
-.vip-marquee-container {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    padding-bottom: 15px; /* Чтобы не обрезалась нижняя тень при наведении */
-    /* Эффект выцветания по краям (как у Renault) */
-    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+#vip-items-grid.flex {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
-.vip-marquee-track {
-    display: flex;
-    gap: 1rem;
-    width: max-content;
-    /* Анимация: 30 секунд на полный круг, бесконечно */
-    animation: marquee 30s linear infinite;
-}
-
-/* Пауза при наведении мыши или пальца, чтобы юзер мог кликнуть */
-.vip-marquee-track:hover,
-.vip-marquee-track:active {
-    animation-play-state: paused;
-}
-
-@keyframes marquee {
-    0% { transform: translateX(0); }
-    /* Сдвигаем ровно на 50% длины трека минус половина gap */
-    100% { transform: translateX(calc(-50% - 0.5rem)); } 
-}
-
-/* Жестко фиксируем размеры карточек внутри бегущей строки */
-.vip-marquee-track .item-card {
-    width: 260px !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
-}
-
-@media (min-width: 640px) {
-    .vip-marquee-track .item-card { width: 280px !important; }
+/* Настраиваем карточки и прячем скроллбар только для мобильных экранов */
+@media (max-width: 1279px) {
+    #vip-items-grid .item-card {
+        width: 240px !important;      /* Фиксируем ширину карточки для свайпа */
+        min-width: 240px !important;
+        flex-shrink: 0 !important;
+        scroll-snap-align: start;     /* Карточки будут магнититься к левому краю */
+    }
+    
+    /* Скрываем системную полосу прокрутки для красоты */
+    .hide-scrollbar-on-mobile::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar-on-mobile {
+        scrollbar-width: none;
+    }
 }

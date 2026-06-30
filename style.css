@@ -887,11 +887,6 @@ video {
   order: 3;
 }
 
-.-mx-4{
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-
 .mx-2{
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -1846,6 +1841,11 @@ video {
   border-color: rgb(216 207 192 / var(--tw-border-opacity, 1));
 }
 
+.border-amber-100{
+  --tw-border-opacity: 1;
+  border-color: rgb(254 243 199 / var(--tw-border-opacity, 1));
+}
+
 .border-amber-200{
   --tw-border-opacity: 1;
   border-color: rgb(253 230 138 / var(--tw-border-opacity, 1));
@@ -2263,6 +2263,12 @@ video {
 .from-amber-400{
   --tw-gradient-from: #fbbf24 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(251 191 36 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-amber-50{
+  --tw-gradient-from: #fffbeb var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 251 235 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -3053,6 +3059,11 @@ video {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-amber-500\/30{
+  --tw-shadow-color: rgb(245 158 11 / 0.3);
+  --tw-shadow: var(--tw-shadow-colored);
 }
 
 .shadow-emerald-500\/30{
@@ -3949,59 +3960,34 @@ button, a, .cursor-pointer {
 }
 
 /* ==========================================
-   VIP ЛЕНТА (БЕСКОНЕЧНАЯ БЕГУЩАЯ СТРОКА)
+   VIP КАРУСЕЛЬ (СВАЙП НА МОБИЛЬНЫХ)
    ========================================== */
 
-.vip-marquee-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  padding-bottom: 15px;
-  /* Чтобы не обрезалась нижняя тень при наведении */
-  /* Эффект выцветания по краям (как у Renault) */
-  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+#vip-items-grid.flex {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
-.vip-marquee-track {
-  display: flex;
-  gap: 1rem;
-  width: -moz-max-content;
-  width: max-content;
-  /* Анимация: 30 секунд на полный круг, бесконечно */
-  animation: marquee 30s linear infinite;
-}
+/* Настраиваем карточки и прячем скроллбар только для мобильных экранов */
 
-/* Пауза при наведении мыши или пальца, чтобы юзер мог кликнуть */
-
-.vip-marquee-track:hover,
-.vip-marquee-track:active {
-  animation-play-state: paused;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
+@media (max-width: 1279px) {
+  #vip-items-grid .item-card {
+    width: 240px !important;
+    /* Фиксируем ширину карточки для свайпа */
+    min-width: 240px !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: start;
+    /* Карточки будут магнититься к левому краю */
   }
 
-  /* Сдвигаем ровно на 50% длины трека минус половина gap */
+  /* Скрываем системную полосу прокрутки для красоты */
 
-  100% {
-    transform: translateX(calc(-50% - 0.5rem));
+  .hide-scrollbar-on-mobile::-webkit-scrollbar {
+    display: none;
   }
-}
 
-/* Жестко фиксируем размеры карточек внутри бегущей строки */
-
-.vip-marquee-track .item-card {
-  width: 260px !important;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-}
-
-@media (min-width: 640px) {
-  .vip-marquee-track .item-card {
-    width: 280px !important;
+  .hide-scrollbar-on-mobile {
+    scrollbar-width: none;
   }
 }
 
@@ -4688,6 +4674,12 @@ button, a, .cursor-pointer {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
+.dark\:from-amber-900\/10:is(.dark *){
+  --tw-gradient-from: rgb(120 53 15 / 0.1) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(120 53 15 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 .dark\:from-stone-800:is(.dark *){
   --tw-gradient-from: #292524 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(41 37 36 / 0) var(--tw-gradient-to-position);
@@ -4965,11 +4957,6 @@ button, a, .cursor-pointer {
     right: 1.5rem;
   }
 
-  .sm\:mx-0{
-    margin-left: 0px;
-    margin-right: 0px;
-  }
-
   .sm\:my-10{
     margin-top: 2.5rem;
     margin-bottom: 2.5rem;
@@ -5142,11 +5129,6 @@ button, a, .cursor-pointer {
 
   .sm\:p-8{
     padding: 2rem;
-  }
-
-  .sm\:px-0{
-    padding-left: 0px;
-    padding-right: 0px;
   }
 
   .sm\:px-3{
@@ -5448,11 +5430,23 @@ button, a, .cursor-pointer {
     display: block;
   }
 
+  .xl\:grid{
+    display: grid;
+  }
+
   .xl\:hidden{
     display: none;
   }
 
   .xl\:w-64{
     width: 16rem;
+  }
+
+  .xl\:grid-cols-4{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .xl\:overflow-visible{
+    overflow: visible;
   }
 }
