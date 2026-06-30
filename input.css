@@ -464,9 +464,27 @@ body.modal-open { overflow: hidden; }
    ПРОФИЛЬ (МОБИЛЬНАЯ ВЕРСИЯ) И ПРОЧЕЕ
    ========================================== */
 @media (max-width: 768px) {
-    .view-grid-city { border-top: none !important; padding-top: 0 !important; margin-top: 0.25rem !important; }
-    .view-grid-city .fa-chevron-right { display: none !important; }
-    .view-grid-city .text-\[11px\] { font-size: 12px !important; opacity: 0.85; }
+    #profile-items-grid { 
+        grid-template-columns: 1fr !important; 
+    }
+    
+    #profile-items-grid .item-card { 
+        flex-direction: row !important; 
+        height: 140px !important; /* Фиксированная высота для списка */
+        align-items: center !important; 
+        overflow: hidden !important; 
+    }
+
+    #profile-items-grid .card-img-wrap { 
+        width: 120px !important; 
+        height: 100% !important; 
+        flex-shrink: 0 !important;
+    }
+    
+    #profile-items-grid .card-img-wrap img { 
+        height: 100% !important; 
+        object-fit: cover !important; 
+    }
 }
 
 /* ==========================================
@@ -644,4 +662,52 @@ button:hover > i, a:hover > i {
 #chat-input-container {
     border: none !important;
     box-shadow: none !important;
+}
+
+/* Выравниваем все карточки в ленте по высоте */
+.view-grid .item-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important; 
+}
+
+/* Прижимаем цену и город к низу карточки */
+.view-grid .card-body-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+    justify-content: space-between !important;
+}
+
+/* Исправляем "корону" и текст */
+.item-card h4 {
+    display: flex !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+    min-height: 2.8em !important; /* Фиксируем высоту заголовка */
+}
+
+/* Иконка короны теперь внутри строки, а не переносит текст */
+.item-card h4 i.fa-crown, 
+.item-card h4 i.fa-gem {
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+    margin-right: 6px !important;
+}
+
+/* Гарантируем белый цвет текста в поле ввода чата для тёмной темы */
+.dark #chat-input-field,
+.dark #chat-input-field * {
+    color: #ffffff !important;
+}
+
+/* Если вставка текста происходит через JS, принудительно задаем цвет для контейнера сообщений */
+#chat-messages .break-words {
+    color: #ffffff !important;
 }
