@@ -464,14 +464,6 @@ body.modal-open { overflow: hidden; }
    ПРОФИЛЬ (МОБИЛЬНАЯ ВЕРСИЯ) И ПРОЧЕЕ
    ========================================== */
 @media (max-width: 768px) {
-    #profile-items-grid { grid-template-columns: 1fr !important; }
-    #profile-items-grid .item-card { flex-direction: row !important; height: auto !important; min-height: 140px !important; align-items: stretch; overflow: hidden !important; }
-    #profile-items-grid .card-img-wrap { width: 130px !important; height: auto !important; min-height: 140px !important; border-radius: 1.25rem 0 0 1.25rem; flex-shrink: 0; position: relative; }
-    #profile-items-grid .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; }
-    #profile-items-grid .view-grid-city { border-top: none !important; padding-top: 0 !important; }
-    #profile-items-grid .view-grid-city span { display: none !important; }
-    #profile-items-grid .view-list-city { display: block !important; font-size: 11px; color: #a8a29e; }
-    #profile-items-grid .view-badges { margin-bottom: 4px; }
     .view-grid-city { border-top: none !important; padding-top: 0 !important; margin-top: 0.25rem !important; }
     .view-grid-city .fa-chevron-right { display: none !important; }
     .view-grid-city .text-\[11px\] { font-size: 12px !important; opacity: 0.85; }
@@ -584,4 +576,24 @@ i.fa-solid, i.fa-regular, i.fa-brands {
 /* При наведении на кнопку иконка становится ярче */
 button:hover > i, a:hover > i {
     opacity: 1;
+}
+
+/* Жестко толкаем нижнюю часть карточки (цену, город) вниз */
+.view-grid .card-body-wrap {
+    justify-content: space-between !important;
+}
+
+/* Исправление обтекания иконки VIP (Короны) в названиях товаров */
+.item-card h4 i.fa-crown, 
+.item-card h4 i.fa-gem {
+    display: inline-block !important;
+    vertical-align: baseline !important;
+    margin-right: 4px !important;
+}
+
+/* Делаем скролл категорий плавным и защищаем от зависаний (iOS Safari) */
+#main-cats-container, #sub-cats-container {
+    -webkit-overflow-scrolling: touch !important; 
+    touch-action: pan-x !important; /* Разрешаем только горизонтальный свайп, блокируя конфликты */
+    overscroll-behavior-x: contain !important; /* Убираем эффект "резинки", который вешает браузер */
 }

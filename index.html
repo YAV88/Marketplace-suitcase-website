@@ -2023,6 +2023,24 @@
         </div>
     </div>
 
+    <script>
+        // Умная шапка: скрывается при скролле вниз, появляется при скролле вверх
+        let lastScrollTop = 0;
+        const header = document.getElementById('main-header');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Если скроллим вниз и ушли ниже 100px — прячем (сдвигаем вверх)
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
 </body>
 
 </html>

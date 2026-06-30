@@ -1531,7 +1531,19 @@ window.toggleFavoriteModal = async (event) => {
     }
 };
 
-window.toggleMobileMenu = () => { const el = document.getElementById('mobile-menu'); if (el) el.classList.toggle('translate-x-full'); };
+window.toggleMobileMenu = () => { 
+    const el = document.getElementById('mobile-menu'); 
+    if (el) {
+        el.classList.toggle('translate-x-full'); 
+        
+        // НОВОЕ: Блокировка прокрутки фона при открытом меню
+        if (!el.classList.contains('translate-x-full')) {
+            document.body.classList.add('overflow-hidden');
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+    }
+};
 
 // Единая защищенная функция для мобильных фильтров
 window.toggleMobileFilters = () => {
