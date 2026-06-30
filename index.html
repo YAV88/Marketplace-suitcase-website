@@ -1032,12 +1032,15 @@
                 id="chat-messages"></div>
             <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
                 <form onsubmit="event.preventDefault(); window.sendChatMessage();"
-                    class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-full border border-stone-200 dark:border-stone-700 focus-within:border-brand-500 transition-colors">
+                    class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-2xl focus-within:ring-2 focus-within:ring-brand-500 transition-all">
+                    
                     <input type="text" id="chat-input-field" data-i18n="chat_ph" placeholder="Написать сообщение..."
-                        class="flex-1 bg-transparent border-none outline-none px-4 text-base font-medium text-stone-900 dark:text-white cursor-text caret-brand-600">
+                        class="flex-1 bg-transparent border-none outline-none focus:outline-none px-4 py-2 text-base font-medium text-stone-900 dark:text-white caret-brand-600">
+                        
                     <button type="submit"
-                        class="w-12 h-12 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer"><i
-                            class="fa-solid fa-paper-plane text-lg -ml-0.5"></i></button>
+                            class="w-12 h-12 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer">
+                        <i class="fa-solid fa-paper-plane text-lg -ml-0.5"></i>
+                    </button>
                 </form>
             </div>
         </div>

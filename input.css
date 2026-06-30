@@ -631,3 +631,17 @@ button:hover > i, a:hover > i {
     touch-action: pan-x !important; /* Разрешаем только горизонтальный свайп, блокируя конфликты */
     overscroll-behavior-x: contain !important; /* Убираем эффект "резинки", который вешает браузер */
 }
+
+/* Убираем лишние рамки и обводки у поля ввода в чате */
+#chat-input-field {
+    border: none !important;      /* Убираем рамку */
+    outline: none !important;     /* Убираем синюю/серую обводку при клике */
+    box-shadow: none !important;  /* Убираем любые тени */
+    background: transparent !important; /* Делаем фон поля ввода прозрачным, чтобы оно слилось с контейнером */
+}
+
+/* Если прямоугольник создает родительский контейнер */
+#chat-input-container {
+    border: none !important;
+    box-shadow: none !important;
+}
