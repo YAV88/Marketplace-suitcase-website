@@ -75,14 +75,12 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 input[type="number"] { -moz-appearance: textfield; }
 
 /* ==========================================
-   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА (ФИКС ВЫСОТЫ И КОРОНЫ)
+   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА
    ========================================== */
 .item-card {
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important; /* Намертво фиксируем высоту */
-    content-visibility: auto;
-    contain-intrinsic-size: 350px;
+    height: 100% !important; /* Автоматическое выравнивание в Grid */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-radius: 1rem;
     overflow: hidden;
@@ -105,22 +103,25 @@ input[type="number"] { -moz-appearance: textfield; }
 
 .view-grid-city { margin-top: auto !important; }
 
+/* ФИКС ПЕРЕНОСА И КОРОНЫ */
 .item-card h4 {
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
-    word-break: break-word !important; /* Умный перенос без разрывов */
+    word-break: break-word !important; 
     white-space: normal !important;
-    line-height: 1.3 !important;
-    height: 2.6em !important;
+    line-height: 1.4 !important;
+    min-height: 2.8em !important;
     margin-bottom: 6px !important;
+    /* СТРОГО БЕЗ flex-свойств, они ломают обрезку многоточием */
 }
 
 .item-card h4 i.fa-crown, 
 .item-card h4 i.fa-gem {
-    display: inline !important; /* Строчный режим: корона не ломает текст */
-    margin-right: 4px !important;
+    display: inline-block !important; /* Только так работает внутри -webkit-box */
+    vertical-align: text-bottom !important;
+    margin-right: 6px !important;
 }
 
 /* ==========================================
@@ -132,7 +133,7 @@ input[type="number"] { -moz-appearance: textfield; }
 @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
 @media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
 
-.view-grid .card-img-wrap { height: 120px !important; min-height: 120px !important; max-height: 120px !important; position: relative; }
+.view-grid .card-img-wrap { height: 120px !important; min-height: 120px !important; max-height: 120px !important; position: relative; flex-shrink: 0 !important; }
 @media (min-width: 640px) { .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; max-height: 150px !important; } }
 @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; max-height: 190px !important; } }
 
@@ -171,7 +172,7 @@ input[type="number"] { -moz-appearance: textfield; }
     #profile-items-grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
     #profile-items-grid .item-card { 
         flex-direction: row !important; 
-        height: 140px !important; /* Увеличенная высота для кнопок */
+        height: 140px !important; 
         min-height: 140px !important;
         align-items: stretch !important; 
     }
@@ -205,13 +206,18 @@ i.fa-solid, i.fa-regular, i.fa-brands { opacity: 0.85; text-shadow: 0px 1px 0px 
 button:hover > i, a:hover > i { opacity: 1; }
 
 /* ==========================================
-   МОДАЛЬНЫЕ ОКНА И МЕНЮ (РЕТРО)
+   МОДАЛЬНЫЕ ОКНА И ЗАПРЕТ ПРОКРУТКИ ФОНА
    ========================================== */
 .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 body.modal-open { overflow: hidden; }
+
+/* ЗАПРЕТ ПРОКРУТКИ ФОНА (OVERSCROLL BLEED) ДЛЯ ВСЕХ МЕНЮ И ОВЕРЛЕЕВ */
+#mobile-menu, #filter-panel-wrapper, #profile-panel, .modal-content, #chat-modal, .fixed, .absolute {
+    overscroll-behavior: contain !important;
+}
 
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
     background-color: #FDFBF7 !important; border: 2px solid #D8CFC0 !important; border-radius: 8px !important;
@@ -234,7 +240,6 @@ body.modal-open { overflow: hidden; }
     border-color: #0d9488 !important; box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
 }
 
-/* Заголовок модалки */
 #add-modal-title {
     width: 100% !important; text-align: center !important; font-size: 1.5rem !important; line-height: 1.2 !important;
     margin-top: 0.75rem !important; margin-bottom: 1.5rem !important; padding-left: 2.5rem !important; padding-right: 2.5rem !important;
@@ -249,14 +254,12 @@ body.modal-open { overflow: hidden; }
 }
 #chat-input-container { border: none !important; box-shadow: none !important; }
 
-/* Гарантированный белый текст в чате для ТЕМНОЙ темы */
+/* ПОЛНЫЙ ФИКС БЕЛОГО ТЕКСТА В ЧАТЕ (ИСТОРИЯ, ИНПУТ, СООБЩЕНИЯ) */
 .dark #chat-input-field,
 .dark #chat-input-field::placeholder,
-.dark #chat-input-field * {
-    color: #ffffff !important;
-}
-/* Перехватываем вставленный готовый текст сообщений, чтобы он не был черным */
-.dark #chat-messages .break-words {
+.dark #chat-messages *,
+.dark .chat-history-item,
+.dark .chat-history-item * {
     color: #ffffff !important;
 }
 

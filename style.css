@@ -3306,16 +3306,14 @@ input[type="number"] {
 }
 
 /* ==========================================
-   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА (ФИКС ВЫСОТЫ И КОРОНЫ)
+   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА
    ========================================== */
 
 .item-card {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
-  /* Намертво фиксируем высоту */
-  content-visibility: auto;
-  contain-intrinsic-size: 350px;
+  /* Автоматическое выравнивание в Grid */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 1rem;
   overflow: hidden;
@@ -3340,24 +3338,27 @@ input[type="number"] {
   margin-top: auto !important;
 }
 
+/* ФИКС ПЕРЕНОСА И КОРОНЫ */
+
 .item-card h4 {
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   word-break: break-word !important;
-  /* Умный перенос без разрывов */
   white-space: normal !important;
-  line-height: 1.3 !important;
-  height: 2.6em !important;
+  line-height: 1.4 !important;
+  min-height: 2.8em !important;
   margin-bottom: 6px !important;
+  /* СТРОГО БЕЗ flex-свойств, они ломают обрезку многоточием */
 }
 
 .item-card h4 i.fa-crown, 
 .item-card h4 i.fa-gem {
-  display: inline !important;
-  /* Строчный режим: корона не ломает текст */
-  margin-right: 4px !important;
+  display: inline-block !important;
+  /* Только так работает внутри -webkit-box */
+  vertical-align: text-bottom !important;
+  margin-right: 6px !important;
 }
 
 /* ==========================================
@@ -3400,6 +3401,7 @@ input[type="number"] {
   min-height: 120px !important;
   max-height: 120px !important;
   position: relative;
+  flex-shrink: 0 !important;
 }
 
 @media (min-width: 640px) {
@@ -3570,7 +3572,6 @@ input[type="number"] {
   #profile-items-grid .item-card {
     flex-direction: row !important;
     height: 140px !important;
-    /* Увеличенная высота для кнопок */
     min-height: 140px !important;
     align-items: stretch !important;
   }
@@ -3681,7 +3682,7 @@ button:hover > i, a:hover > i {
 }
 
 /* ==========================================
-   МОДАЛЬНЫЕ ОКНА И МЕНЮ (РЕТРО)
+   МОДАЛЬНЫЕ ОКНА И ЗАПРЕТ ПРОКРУТКИ ФОНА
    ========================================== */
 
 .modal-overlay {
@@ -3707,6 +3708,12 @@ button:hover > i, a:hover > i {
 
 body.modal-open {
   overflow: hidden;
+}
+
+/* ЗАПРЕТ ПРОКРУТКИ ФОНА (OVERSCROLL BLEED) ДЛЯ ВСЕХ МЕНЮ И ОВЕРЛЕЕВ */
+
+#mobile-menu, #filter-panel-wrapper, #profile-panel, .modal-content, #chat-modal, .fixed, .absolute {
+  overscroll-behavior: contain !important;
 }
 
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
@@ -3744,8 +3751,6 @@ body.modal-open {
   box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
 }
 
-/* Заголовок модалки */
-
 #add-modal-title {
   width: 100% !important;
   text-align: center !important;
@@ -3781,7 +3786,7 @@ body.modal-open {
   box-shadow: none !important;
 }
 
-/* Гарантированный белый текст в чате для ТЕМНОЙ темы */
+/* ПОЛНЫЙ ФИКС БЕЛОГО ТЕКСТА В ЧАТЕ (ИСТОРИЯ, ИНПУТ, СООБЩЕНИЯ) */
 
 .dark #chat-input-field::-moz-placeholder {
   color: #ffffff !important;
@@ -3789,13 +3794,9 @@ body.modal-open {
 
 .dark #chat-input-field,
 .dark #chat-input-field::placeholder,
-.dark #chat-input-field * {
-  color: #ffffff !important;
-}
-
-/* Перехватываем вставленный готовый текст сообщений, чтобы он не был черным */
-
-.dark #chat-messages .break-words {
+.dark #chat-messages *,
+.dark .chat-history-item,
+.dark .chat-history-item * {
   color: #ffffff !important;
 }
 
