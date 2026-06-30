@@ -887,6 +887,11 @@ video {
   order: 3;
 }
 
+.-mx-4{
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
 .mx-2{
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -3943,6 +3948,63 @@ button, a, .cursor-pointer {
   transition: none !important;
 }
 
+/* ==========================================
+   VIP ЛЕНТА (БЕСКОНЕЧНАЯ БЕГУЩАЯ СТРОКА)
+   ========================================== */
+
+.vip-marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 15px;
+  /* Чтобы не обрезалась нижняя тень при наведении */
+  /* Эффект выцветания по краям (как у Renault) */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.vip-marquee-track {
+  display: flex;
+  gap: 1rem;
+  width: -moz-max-content;
+  width: max-content;
+  /* Анимация: 30 секунд на полный круг, бесконечно */
+  animation: marquee 30s linear infinite;
+}
+
+/* Пауза при наведении мыши или пальца, чтобы юзер мог кликнуть */
+
+.vip-marquee-track:hover,
+.vip-marquee-track:active {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  /* Сдвигаем ровно на 50% длины трека минус половина gap */
+
+  100% {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+/* Жестко фиксируем размеры карточек внутри бегущей строки */
+
+.vip-marquee-track .item-card {
+  width: 260px !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+}
+
+@media (min-width: 640px) {
+  .vip-marquee-track .item-card {
+    width: 280px !important;
+  }
+}
+
 .empty\:hidden:empty{
   display: none;
 }
@@ -4903,6 +4965,11 @@ button, a, .cursor-pointer {
     right: 1.5rem;
   }
 
+  .sm\:mx-0{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
   .sm\:my-10{
     margin-top: 2.5rem;
     margin-bottom: 2.5rem;
@@ -5075,6 +5142,11 @@ button, a, .cursor-pointer {
 
   .sm\:p-8{
     padding: 2rem;
+  }
+
+  .sm\:px-0{
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   .sm\:px-3{

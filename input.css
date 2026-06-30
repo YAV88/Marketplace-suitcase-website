@@ -302,3 +302,47 @@ body.modal-open { overflow: hidden; }
 .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
 button, a, .cursor-pointer { cursor: pointer !important; }
 .disable-transitions, .disable-transitions * { transition: none !important; }
+
+/* ==========================================
+   VIP ЛЕНТА (БЕСКОНЕЧНАЯ БЕГУЩАЯ СТРОКА)
+   ========================================== */
+.vip-marquee-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 15px; /* Чтобы не обрезалась нижняя тень при наведении */
+    /* Эффект выцветания по краям (как у Renault) */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.vip-marquee-track {
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+    /* Анимация: 30 секунд на полный круг, бесконечно */
+    animation: marquee 30s linear infinite;
+}
+
+/* Пауза при наведении мыши или пальца, чтобы юзер мог кликнуть */
+.vip-marquee-track:hover,
+.vip-marquee-track:active {
+    animation-play-state: paused;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    /* Сдвигаем ровно на 50% длины трека минус половина gap */
+    100% { transform: translateX(calc(-50% - 0.5rem)); } 
+}
+
+/* Жестко фиксируем размеры карточек внутри бегущей строки */
+.vip-marquee-track .item-card {
+    width: 260px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+}
+
+@media (min-width: 640px) {
+    .vip-marquee-track .item-card { width: 280px !important; }
+}
