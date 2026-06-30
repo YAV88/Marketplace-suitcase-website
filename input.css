@@ -578,17 +578,51 @@ button:hover > i, a:hover > i {
     opacity: 1;
 }
 
-/* Жестко толкаем нижнюю часть карточки (цену, город) вниз */
-.view-grid .card-body-wrap {
-    justify-content: space-between !important;
+/* ==========================================
+   ИДЕАЛЬНАЯ ВЫСОТА КАРТОЧЕК (МОБИЛЬНЫЕ И ПК)
+   ========================================== */
+.item-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important; /* Карточка всегда тянется на 100% сетки */
 }
 
-/* Исправление обтекания иконки VIP (Короны) в названиях товаров */
+.card-body-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important; /* Тело карточки занимает всё доступное пространство */
+}
+
+/* Принудительно отталкиваем нижнюю часть (город, цену) в самый низ */
+.view-grid-city {
+    margin-top: auto !important; 
+}
+
+/* ==========================================
+   ФИКС ПЕРЕНОСА КОРОНЫ И ОБРЕЗКИ ТЕКСТА
+   ========================================== */
+.item-card h4 {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    word-break: break-word !important; /* Эта строка не даст слову разорвать строку */
+    white-space: normal !important;
+}
+
+/* А это правило говорит: "Корона, веди себя как обычная буква" */
 .item-card h4 i.fa-crown, 
 .item-card h4 i.fa-gem {
-    display: inline-block !important;
-    vertical-align: baseline !important;
-    margin-right: 4px !important;
+    display: inline !important; 
+    margin-right: 6px !important;
+}
+
+/* Меняем inline-block на inline, чтобы корона стала частью текста и не ломала строку */
+.item-card h4 i.fa-crown, 
+.item-card h4 i.fa-gem {
+    display: inline !important; 
+    margin-right: 6px !important;
 }
 
 /* Делаем скролл категорий плавным и защищаем от зависаний (iOS Safari) */
