@@ -555,16 +555,16 @@
             style="scrollbar-width: none; -ms-overflow-style: none;">
         </div>
 
-        <div id="vip-section" class="mb-8 hidden relative bg-gradient-to-b from-amber-50 dark:from-amber-900/10 to-transparent rounded-3xl p-4 sm:p-5 border border-amber-100 dark:border-amber-800/50 shadow-sm">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 shrink-0">
-                    <i class="fa-solid fa-crown text-xl"></i>
-                </div>
-                <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight" data-i18n="vip_title">ТОП Находки</h4>
+        <!-- VIP ЛЕНТА (БЕЗ РАМОК, ТОЛЬКО АКЦЕНТ НА ТОВАР) -->
+        <div id="vip-section" class="mb-8 hidden relative bg-transparent py-2">
+            <div class="flex items-center gap-3 mb-4 px-4 sm:px-0">
+                <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight">
+                    <i class="fa-solid fa-crown text-amber-500 mr-2 drop-shadow-md"></i>ТОП Находки
+                </h4>
             </div>
             
-            <!-- Лента: Свайп-карусель на мобилках, обычная сетка на больших экранах -->
-            <div id="vip-items-grid" class="flex overflow-x-auto gap-3 pb-2 xl:grid xl:grid-cols-4 xl:overflow-visible hide-scrollbar-on-mobile"></div>
+            <!-- Карусель для автоскролла -->
+            <div id="vip-items-grid" class="flex overflow-x-auto gap-4 pb-6 px-4 sm:px-0 hide-scrollbar-on-mobile vip-auto-scroll" style="scroll-behavior: auto;"></div>
         </div>
 
         <div class="mb-4 sm:mb-6 rounded-[2rem] bg-gradient-to-r from-brand-500 to-brand-600 p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4 group"
@@ -2045,6 +2045,38 @@
                 header.style.transform = 'translateY(0)';
             }
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <script>
+        // Плавная авто-прокрутка VIP-ленты с возможностью ручного свайпа
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('vip-items-grid');
+            if (!track) return;
+            
+            let isAutoScrolling = true;
+            let scrollSpeed = 0.6; // Скорость (чем меньше, тем медленнее)
+
+            const scrollLoop = () => {
+                if (isAutoScrolling && track.scrollWidth > track.clientWidth) {
+                    track.scrollLeft += scrollSpeed;
+                    // Если дошли до конца — плавно перебрасываем в начало
+                    if (track.scrollLeft >= (track.scrollWidth - track.clientWidth - 1)) {
+                        track.scrollLeft = 0;
+                    }
+                }
+                requestAnimationFrame(scrollLoop);
+            };
+
+            // Останавливаем движение, когда пользователь листает сам
+            track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
+            track.addEventListener('mousedown', () => isAutoScrolling = false);
+            
+            // Возобновляем через 2 секунды после того, как убрали палец/курсор
+            track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 2000));
+            track.addEventListener('mouseleave', () => setTimeout(() => isAutoScrolling = true, 2000));
+
+            requestAnimationFrame(scrollLoop);
         });
     </script>
 

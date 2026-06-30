@@ -311,3 +311,64 @@ body.modal-open {
 .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
 button, a, .cursor-pointer { cursor: pointer !important; }
 .disable-transitions, .disable-transitions * { transition: none !important; }
+
+/* ==========================================
+   ФИКС ВЫСОТЫ КАРТОЧЕК НА МОБИЛЬНЫХ (ЖЕСТКО)
+   ========================================== */
+.view-grid {
+    align-items: stretch !important; /* Насильно выравниваем ряды */
+}
+
+@media (max-width: 639px) {
+    /* Чтобы карточки были ровными, прячем лишний мусор со статусами в мобильной сетке */
+    .view-grid .item-card .mt-2.flex.flex-wrap, 
+    .view-grid .item-card .text-[10px].text-stone-500 {
+        display: none !important;
+    }
+    
+    .view-grid .card-body-wrap {
+        min-height: 90px !important; /* Фиксируем одинаковое окно для текста */
+        padding: 0.5rem !important;
+    }
+}
+
+/* ==========================================
+   ПРЕМИАЛЬНЫЕ VIP-КАРТОЧКИ (ПОСТЕРЫ)
+   ========================================== */
+/* Убираем рамки и фоны у VIP карточек, оставляем только фото и текст */
+#vip-items-grid .item-card {
+    width: 180px !important;
+    min-width: 180px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Делаем фото крупным и вытянутым (как обложка журнала) */
+#vip-items-grid .card-img-wrap {
+    height: 220px !important;
+    min-height: 220px !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important; /* Золотая тень */
+}
+
+/* Текст под фото: минимализм */
+#vip-items-grid .card-body-wrap {
+    padding: 0.5rem 0 0 0 !important;
+}
+
+#vip-items-grid h4 {
+    font-size: 0.95rem !important;
+    min-height: auto !important;
+    height: auto !important;
+    margin-bottom: 2px !important;
+}
+
+/* Прячем АБСОЛЮТНО ВСЕ ЛИШНЕЕ из VIP-карт (города, статусы доставки, мелкий текст) */
+#vip-items-grid .view-grid-city,
+#vip-items-grid .mt-2.flex.flex-wrap,
+#vip-items-grid .text-[10px],
+#vip-items-grid .vip-card::after {
+    display: none !important; 
+}

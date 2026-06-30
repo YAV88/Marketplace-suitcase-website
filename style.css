@@ -1841,11 +1841,6 @@ video {
   border-color: rgb(216 207 192 / var(--tw-border-opacity, 1));
 }
 
-.border-amber-100{
-  --tw-border-opacity: 1;
-  border-color: rgb(254 243 199 / var(--tw-border-opacity, 1));
-}
-
 .border-amber-200{
   --tw-border-opacity: 1;
   border-color: rgb(253 230 138 / var(--tw-border-opacity, 1));
@@ -2263,12 +2258,6 @@ video {
 .from-amber-400{
   --tw-gradient-from: #fbbf24 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(251 191 36 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.from-amber-50{
-  --tw-gradient-from: #fffbeb var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(255 251 235 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -3059,11 +3048,6 @@ video {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-amber-500\/30{
-  --tw-shadow-color: rgb(245 158 11 / 0.3);
-  --tw-shadow: var(--tw-shadow-colored);
 }
 
 .shadow-emerald-500\/30{
@@ -4005,6 +3989,77 @@ button, a, .cursor-pointer {
   transition: none !important;
 }
 
+/* ==========================================
+   ФИКС ВЫСОТЫ КАРТОЧЕК НА МОБИЛЬНЫХ (ЖЕСТКО)
+   ========================================== */
+
+.view-grid {
+  align-items: stretch !important;
+  /* Насильно выравниваем ряды */
+}
+
+@media (max-width: 639px) {
+  /* Чтобы карточки были ровными, прячем лишний мусор со статусами в мобильной сетке */
+
+  .view-grid .item-card .mt-2.flex.flex-wrap, 
+    .view-grid .item-card .text-[10px].text-stone-500 {
+    display: none !important;
+  }
+
+  .view-grid .card-body-wrap {
+    min-height: 90px !important;
+    /* Фиксируем одинаковое окно для текста */
+    padding: 0.5rem !important;
+  }
+}
+
+/* ==========================================
+   ПРЕМИАЛЬНЫЕ VIP-КАРТОЧКИ (ПОСТЕРЫ)
+   ========================================== */
+
+/* Убираем рамки и фоны у VIP карточек, оставляем только фото и текст */
+
+#vip-items-grid .item-card {
+  width: 180px !important;
+  min-width: 180px !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Делаем фото крупным и вытянутым (как обложка журнала) */
+
+#vip-items-grid .card-img-wrap {
+  height: 220px !important;
+  min-height: 220px !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important;
+  /* Золотая тень */
+}
+
+/* Текст под фото: минимализм */
+
+#vip-items-grid .card-body-wrap {
+  padding: 0.5rem 0 0 0 !important;
+}
+
+#vip-items-grid h4 {
+  font-size: 0.95rem !important;
+  min-height: auto !important;
+  height: auto !important;
+  margin-bottom: 2px !important;
+}
+
+/* Прячем АБСОЛЮТНО ВСЕ ЛИШНЕЕ из VIP-карт (города, статусы доставки, мелкий текст) */
+
+#vip-items-grid .view-grid-city,
+#vip-items-grid .mt-2.flex.flex-wrap,
+#vip-items-grid .text-[10px],
+#vip-items-grid .vip-card::after {
+  display: none !important;
+}
+
 .empty\:hidden:empty{
   display: none;
 }
@@ -4688,12 +4743,6 @@ button, a, .cursor-pointer {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.dark\:from-amber-900\/10:is(.dark *){
-  --tw-gradient-from: rgb(120 53 15 / 0.1) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(120 53 15 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
 .dark\:from-stone-800:is(.dark *){
   --tw-gradient-from: #292524 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(41 37 36 / 0) var(--tw-gradient-to-position);
@@ -5145,6 +5194,11 @@ button, a, .cursor-pointer {
     padding: 2rem;
   }
 
+  .sm\:px-0{
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
   .sm\:px-3{
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -5444,23 +5498,11 @@ button, a, .cursor-pointer {
     display: block;
   }
 
-  .xl\:grid{
-    display: grid;
-  }
-
   .xl\:hidden{
     display: none;
   }
 
   .xl\:w-64{
     width: 16rem;
-  }
-
-  .xl\:grid-cols-4{
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .xl\:overflow-visible{
-    overflow: visible;
   }
 }
