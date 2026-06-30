@@ -119,9 +119,8 @@ input[type="number"] { -moz-appearance: textfield; }
 
 .item-card h4 i.fa-crown, 
 .item-card h4 i.fa-gem {
-    display: inline-block !important; /* Только так работает внутри -webkit-box */
-    vertical-align: text-bottom !important;
-    margin-right: 6px !important;
+    display: inline !important; /* Только так работает внутри -webkit-box */
+    margin-right: 4px !important;
 }
 
 /* ==========================================
@@ -206,65 +205,81 @@ i.fa-solid, i.fa-regular, i.fa-brands { opacity: 0.85; text-shadow: 0px 1px 0px 
 button:hover > i, a:hover > i { opacity: 1; }
 
 /* ==========================================
-   МОДАЛЬНЫЕ ОКНА И ЗАПРЕТ ПРОКРУТКИ ФОНА
+   ЗАПРЕТ ПРОКРУТКИ ФОНА (МОДАЛКИ, МЕНЮ)
    ========================================== */
+body.modal-open { 
+    overflow: hidden !important; 
+    touch-action: none !important; /* Блокировка свайпа фона на телефонах */
+}
+.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar { 
+    touch-action: auto !important; /* Внутри окон скроллить можно */
+    overscroll-behavior: contain !important; /* Скролл не передается на фон */
+}
 .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-body.modal-open { overflow: hidden; }
-
-/* ЗАПРЕТ ПРОКРУТКИ ФОНА (OVERSCROLL BLEED) ДЛЯ ВСЕХ МЕНЮ И ОВЕРЛЕЕВ */
-#mobile-menu, #filter-panel-wrapper, #profile-panel, .modal-content, #chat-modal, .fixed, .absolute {
-    overscroll-behavior: contain !important;
-}
 
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
     background-color: #FDFBF7 !important; border: 2px solid #D8CFC0 !important; border-radius: 8px !important;
     box-shadow: 6px 6px 0px 0px rgba(62, 54, 46, 0.15) !important; color: #3E362E !important;
     backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
 }
-
 .dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div, .dark #filter-panel>div {
     background-color: #322A24 !important; border: 2px solid #4A3F35 !important;
     box-shadow: 6px 6px 0px 0px rgba(20, 16, 13, 0.6) !important; color: #E8E2D9 !important;
 }
 
-.modal-content input, .modal-content textarea, .modal-content select {
-    background-color: #F4EFE6 !important; border: 1px solid #D8CFC0 !important; border-radius: 4px !important; color: #3E362E !important;
-}
-.dark .modal-content input, .dark .modal-content textarea, .dark .modal-content select {
-    background-color: #2A241F !important; border: 1px solid #4A3F35 !important; color: #E8E2D9 !important;
-}
-.modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus {
-    border-color: #0d9488 !important; box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
-}
+.modal-content input, .modal-content textarea, .modal-content select { background-color: #F4EFE6 !important; border: 1px solid #D8CFC0 !important; border-radius: 4px !important; color: #3E362E !important; }
+.dark .modal-content input, .dark .modal-content textarea, .dark .modal-content select { background-color: #2A241F !important; border: 1px solid #4A3F35 !important; color: #E8E2D9 !important; }
+.modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus { border-color: #0d9488 !important; box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important; }
 
-#add-modal-title {
-    width: 100% !important; text-align: center !important; font-size: 1.5rem !important; line-height: 1.2 !important;
-    margin-top: 0.75rem !important; margin-bottom: 1.5rem !important; padding-left: 2.5rem !important; padding-right: 2.5rem !important;
-}
+#add-modal-title { width: 100% !important; text-align: center !important; font-size: 1.5rem !important; line-height: 1.2 !important; margin-top: 0.75rem !important; margin-bottom: 1.5rem !important; padding-left: 2.5rem !important; padding-right: 2.5rem !important; }
 @media (min-width: 640px) { #add-modal-title { font-size: 1.8rem !important; margin-top: 1rem !important; margin-bottom: 2rem !important; } }
 
 /* ==========================================
-   ЧАТ И ПОЛЕ ВВОДА СООБЩЕНИЙ
+   ЧАТ: ИНПУТ И АВТОЗАПОЛНЕНИЕ В ТЕМНОЙ ТЕМЕ
    ========================================== */
-#chat-input-field {
-    border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important;
-}
+#chat-input-field { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
 #chat-input-container { border: none !important; box-shadow: none !important; }
 
-/* ПОЛНЫЙ ФИКС БЕЛОГО ТЕКСТА В ЧАТЕ (ИСТОРИЯ, ИНПУТ, СООБЩЕНИЯ) */
-.dark #chat-input-field,
-.dark #chat-input-field::placeholder,
+/* Жесткий фикс автозаполнения браузера, чтобы текст был белым */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Гарантированный белый цвет для любых сообщений в чате в темной теме */
 .dark #chat-messages *,
-.dark .chat-history-item,
-.dark .chat-history-item * {
-    color: #ffffff !important;
+.dark #chat-input-field,
+.dark #chat-input-field::placeholder { color: #ffffff !important; }
+
+/* ==========================================
+   VIP КАРУСЕЛЬ (СВОБОДНЫЙ СВАЙП, ОДИНАКОВАЯ ВЫСОТА)
+   ========================================== */
+#vip-items-grid.flex {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    align-items: stretch !important; /* Все карты в ряду одной высоты! */
+}
+
+@media (max-width: 1279px) {
+    #vip-items-grid .item-card {
+        width: 160px !important;      /* Делаем карты компактнее */
+        min-width: 160px !important;
+        flex-shrink: 0 !important;
+        height: auto !important;      /* Тянемся за счет align-items: stretch родителя */
+    }
+    #vip-items-grid .card-img-wrap { height: 130px !important; min-height: 130px !important; }
+    .hide-scrollbar-on-mobile::-webkit-scrollbar { display: none; }
+    .hide-scrollbar-on-mobile { scrollbar-width: none; }
 }
 
 /* ==========================================
-   САЙДБАР ФИЛЬТРОВ И СКРОЛЛЫ
+   САЙДБАР И СКРОЛЛЫ
    ========================================== */
 #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; overflow: hidden; }
 #filter-panel-wrapper.active { grid-template-rows: 1fr; }
@@ -287,44 +302,12 @@ body.modal-open { overflow: hidden; }
     #fresh-ads-section { grid-column: 2 !important; grid-row: 8 !important; }
 }
 
-#main-cats-container, #sub-cats-container {
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x !important;
-    overscroll-behavior-x: contain !important;
-}
-
+#main-cats-container, #sub-cats-container { -webkit-overflow-scrolling: touch !important; touch-action: pan-x !important; overscroll-behavior-x: contain !important; }
 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #d6d3d1; border-radius: 10px; }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #44403c; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #14b8a6; }
-
 .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
 button, a, .cursor-pointer { cursor: pointer !important; }
 .disable-transitions, .disable-transitions * { transition: none !important; }
-
-/* ==========================================
-   VIP КАРУСЕЛЬ (СВАЙП НА МОБИЛЬНЫХ)
-   ========================================== */
-#vip-items-grid.flex {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-}
-
-/* Настраиваем карточки и прячем скроллбар только для мобильных экранов */
-@media (max-width: 1279px) {
-    #vip-items-grid .item-card {
-        width: 240px !important;      /* Фиксируем ширину карточки для свайпа */
-        min-width: 240px !important;
-        flex-shrink: 0 !important;
-        scroll-snap-align: start;     /* Карточки будут магнититься к левому краю */
-    }
-    
-    /* Скрываем системную полосу прокрутки для красоты */
-    .hide-scrollbar-on-mobile::-webkit-scrollbar {
-        display: none;
-    }
-    .hide-scrollbar-on-mobile {
-        scrollbar-width: none;
-    }
-}

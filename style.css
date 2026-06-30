@@ -3371,10 +3371,9 @@ input[type="number"] {
 
 .item-card h4 i.fa-crown, 
 .item-card h4 i.fa-gem {
-  display: inline-block !important;
+  display: inline !important;
   /* Только так работает внутри -webkit-box */
-  vertical-align: text-bottom !important;
-  margin-right: 6px !important;
+  margin-right: 4px !important;
 }
 
 /* ==========================================
@@ -3698,8 +3697,21 @@ button:hover > i, a:hover > i {
 }
 
 /* ==========================================
-   МОДАЛЬНЫЕ ОКНА И ЗАПРЕТ ПРОКРУТКИ ФОНА
+   ЗАПРЕТ ПРОКРУТКИ ФОНА (МОДАЛКИ, МЕНЮ)
    ========================================== */
+
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+  /* Блокировка свайпа фона на телефонах */
+}
+
+.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar {
+  touch-action: auto !important;
+  /* Внутри окон скроллить можно */
+  overscroll-behavior: contain !important;
+  /* Скролл не передается на фон */
+}
 
 .modal-overlay {
   opacity: 0;
@@ -3720,16 +3732,6 @@ button:hover > i, a:hover > i {
 
 .modal-overlay.active .modal-content {
   transform: scale(1) translateY(0);
-}
-
-body.modal-open {
-  overflow: hidden;
-}
-
-/* ЗАПРЕТ ПРОКРУТКИ ФОНА (OVERSCROLL BLEED) ДЛЯ ВСЕХ МЕНЮ И ОВЕРЛЕЕВ */
-
-#mobile-menu, #filter-panel-wrapper, #profile-panel, .modal-content, #chat-modal, .fixed, .absolute {
-  overscroll-behavior: contain !important;
 }
 
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
@@ -3787,7 +3789,7 @@ body.modal-open {
 }
 
 /* ==========================================
-   ЧАТ И ПОЛЕ ВВОДА СООБЩЕНИЙ
+   ЧАТ: ИНПУТ И АВТОЗАПОЛНЕНИЕ В ТЕМНОЙ ТЕМЕ
    ========================================== */
 
 #chat-input-field {
@@ -3802,22 +3804,66 @@ body.modal-open {
   box-shadow: none !important;
 }
 
-/* ПОЛНЫЙ ФИКС БЕЛОГО ТЕКСТА В ЧАТЕ (ИСТОРИЯ, ИНПУТ, СООБЩЕНИЯ) */
+/* Жесткий фикс автозаполнения браузера, чтобы текст был белым */
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Гарантированный белый цвет для любых сообщений в чате в темной теме */
 
 .dark #chat-input-field::-moz-placeholder {
   color: #ffffff !important;
 }
 
-.dark #chat-input-field,
-.dark #chat-input-field::placeholder,
 .dark #chat-messages *,
-.dark .chat-history-item,
-.dark .chat-history-item * {
+.dark #chat-input-field,
+.dark #chat-input-field::placeholder {
   color: #ffffff !important;
 }
 
 /* ==========================================
-   САЙДБАР ФИЛЬТРОВ И СКРОЛЛЫ
+   VIP КАРУСЕЛЬ (СВОБОДНЫЙ СВАЙП, ОДИНАКОВАЯ ВЫСОТА)
+   ========================================== */
+
+#vip-items-grid.flex {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  align-items: stretch !important;
+  /* Все карты в ряду одной высоты! */
+}
+
+@media (max-width: 1279px) {
+  #vip-items-grid .item-card {
+    width: 160px !important;
+    /* Делаем карты компактнее */
+    min-width: 160px !important;
+    flex-shrink: 0 !important;
+    height: auto !important;
+    /* Тянемся за счет align-items: stretch родителя */
+  }
+
+  #vip-items-grid .card-img-wrap {
+    height: 130px !important;
+    min-height: 130px !important;
+  }
+
+  .hide-scrollbar-on-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar-on-mobile {
+    scrollbar-width: none;
+  }
+}
+
+/* ==========================================
+   САЙДБАР И СКРОЛЛЫ
    ========================================== */
 
 #filter-panel-wrapper {
@@ -3957,38 +4003,6 @@ button, a, .cursor-pointer {
 
 .disable-transitions, .disable-transitions * {
   transition: none !important;
-}
-
-/* ==========================================
-   VIP КАРУСЕЛЬ (СВАЙП НА МОБИЛЬНЫХ)
-   ========================================== */
-
-#vip-items-grid.flex {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-}
-
-/* Настраиваем карточки и прячем скроллбар только для мобильных экранов */
-
-@media (max-width: 1279px) {
-  #vip-items-grid .item-card {
-    width: 240px !important;
-    /* Фиксируем ширину карточки для свайпа */
-    min-width: 240px !important;
-    flex-shrink: 0 !important;
-    scroll-snap-align: start;
-    /* Карточки будут магнититься к левому краю */
-  }
-
-  /* Скрываем системную полосу прокрутки для красоты */
-
-  .hide-scrollbar-on-mobile::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hide-scrollbar-on-mobile {
-    scrollbar-width: none;
-  }
 }
 
 .empty\:hidden:empty{
