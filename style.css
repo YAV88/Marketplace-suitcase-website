@@ -3176,7 +3176,7 @@ video {
 }
 
 /* ==========================================
-   БАЗОВАЯ ТИПОГРАФИКА И ФИКСАЦИИ (РЕТРО-ЦВЕТА + СОВРЕМЕННЫЙ ШРИФТ)
+   БАЗОВАЯ ТИПОГРАФИКА И ФОН
    ========================================== */
 
 body, button, input, select, textarea, span, p, div {
@@ -3202,9 +3202,7 @@ html {
 body {
   transition: background-color 0.3s, color 0.3s;
   background-color: #F4EFE6 !important;
-  /* Цвет теплой винтажной бумаги */
   color: #3E362E !important;
-  /* Теплый темно-коричневый цвет (выцветшие чернила) */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -3215,21 +3213,14 @@ body {
 
 .dark body {
   background-color: #2A241F !important;
-  /* Темная сепия / теплый графит */
   color: #E8E2D9 !important;
-  /* Светло-кремовый текст */
 }
 
 main {
   flex: 1;
 }
 
-/* ==========================================
-   ФИКС КАЧЕСТВА КАРТИНОК ПРИ АНИМАЦИИ (ЛОГОТИПЫ)
-   ========================================== */
-
 img {
-  /* Жестко фиксируем картинку в 3D-пространстве, чтобы она не размывалась при анимации */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
@@ -3237,8 +3228,7 @@ img {
 }
 
 /* ==========================================
-   ГЛОБАЛЬНЫЕ ЭЛЕМЕНТЫ ФОРМ И СЕЛЕКТЫ
-   (Жесткое подавление системных стилей)
+   ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ
    ========================================== */
 
 input[type="text"], input[type="number"], input[type="email"],
@@ -3246,7 +3236,6 @@ input[type="password"], input[type="tel"], textarea {
   cursor: text !important;
   caret-color: #0d9488;
   font-size: 16px !important;
-  /* Предотвращает зум на iOS */
 }
 
 input:focus, textarea:focus, select:focus {
@@ -3255,15 +3244,12 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
 }
 
-/* Полная кастомизация Select и скрытие системных стилей */
-
 select {
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
   background-color: transparent !important;
   background-image: none !important;
-  /* Жестко убиваем двойную стрелку */
   cursor: pointer !important;
   -webkit-tap-highlight-color: transparent !important;
 }
@@ -3274,41 +3260,43 @@ select::-ms-expand {
 
 .dark select {
   background-image: none !important;
-  /* Убиваем стрелку и в темной теме */
 }
 
-/* Стилизация выпадающего списка опций */
-
 select optgroup {
-  font-weight: 800;
-  color: #0d9488;
-  background: #f0fdfa;
-  padding: 5px;
+  font-weight: 800 !important;
+  color: #0d9488 !important;
+  background: #f0fdfa !important;
+  padding: 5px !important;
+  font-size: 16px !important;
 }
 
 select option {
-  font-weight: 500;
-  color: #3E362E;
-  /* Обновлено под ретро-стиль */
-  background: #fff;
-  padding: 5px;
+  font-weight: 500 !important;
+  color: #1c1917 !important;
+  background: #fff !important;
+  padding: 5px !important;
+  font-size: 16px !important;
 }
 
 .dark select optgroup {
-  background: #134e4a;
-  color: #ccfbf1;
+  background: #134e4a !important;
+  color: #ccfbf1 !important;
 }
 
 .dark select option {
-  background: #2A241F;
-  /* Обновлено под ретро-стиль */
-  color: #E8E2D9;
+  background: #2A241F !important;
+  color: #E8E2D9 !important;
 }
 
-/* Убираем стрелочки у полей ввода чисел */
+.bg-stone-800 select, .bg-stone-900 select, .bg-stone-950 select, .bg-black select {
+  color: #ffffff !important;
+}
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+.bg-stone-800 select option, .bg-stone-900 select option, .bg-stone-950 select option, .bg-black select option {
+  color: #1c1917 !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -3318,7 +3306,62 @@ input[type="number"] {
 }
 
 /* ==========================================
-   РЕЖИМ СЕТКИ (НОВЫЙ СТАНДАРТ)
+   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА (ФИКС ВЫСОТЫ И КОРОНЫ)
+   ========================================== */
+
+.item-card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  /* Намертво фиксируем высоту */
+  content-visibility: auto;
+  contain-intrinsic-size: 350px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.12);
+  border-color: #0d9488;
+}
+
+.card-body-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+  justify-content: space-between !important;
+  padding: 0.75rem !important;
+}
+
+.view-grid-city {
+  margin-top: auto !important;
+}
+
+.item-card h4 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  word-break: break-word !important;
+  /* Умный перенос без разрывов */
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  height: 2.6em !important;
+  margin-bottom: 6px !important;
+}
+
+.item-card h4 i.fa-crown, 
+.item-card h4 i.fa-gem {
+  display: inline !important;
+  /* Строчный режим: корона не ломает текст */
+  margin-right: 4px !important;
+}
+
+/* ==========================================
+   РЕЖИМ СЕТКИ (GRID)
    ========================================== */
 
 .view-grid {
@@ -3356,6 +3399,7 @@ input[type="number"] {
   height: 120px !important;
   min-height: 120px !important;
   max-height: 120px !important;
+  position: relative;
 }
 
 @media (min-width: 640px) {
@@ -3384,35 +3428,12 @@ input[type="number"] {
   left: 0;
 }
 
-.view-grid .card-body-wrap {
-  padding: 0.75rem !important;
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.view-grid h4 {
-  font-size: 0.85rem !important;
-  line-height: 1.3 !important;
-  height: 2.6em !important;
-  white-space: normal !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  margin-bottom: 6px !important;
-  flex-shrink: 0 !important;
-}
-
-.view-grid .item-card {
-  height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
+.view-grid .view-list-city, .view-grid .view-list-desc {
+  display: none !important;
 }
 
 /* ==========================================
-   РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ)
+   РЕЖИМ СПИСКА (LIST) И МОБИЛЬНЫЙ ПРОФИЛЬ
    ========================================== */
 
 .view-list {
@@ -3425,7 +3446,6 @@ input[type="number"] {
   height: auto !important;
   min-height: 140px !important;
   align-items: stretch;
-  overflow: hidden !important;
 }
 
 .view-list .card-img-wrap {
@@ -3442,8 +3462,6 @@ input[type="number"] {
   height: 100% !important;
   -o-object-fit: cover !important;
      object-fit: cover !important;
-  -o-object-position: center !important;
-     object-position: center !important;
   position: absolute !important;
   top: 0;
   left: 0;
@@ -3452,12 +3470,6 @@ input[type="number"] {
 .view-list h4 {
   font-size: 1.15rem !important;
   margin-bottom: 0.5rem !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  white-space: normal !important;
-  flex-shrink: 0 !important;
 }
 
 .view-list .price-text {
@@ -3467,10 +3479,6 @@ input[type="number"] {
 }
 
 .view-list .view-grid-city {
-  display: none !important;
-}
-
-.view-grid .view-list-city, .view-grid .view-list-desc {
   display: none !important;
 }
 
@@ -3494,13 +3502,11 @@ input[type="number"] {
 
 @media (min-width: 1024px) {
   .view-list .item-card {
-    height: auto !important;
     min-height: 190px !important;
   }
 
   .view-list .card-img-wrap {
     width: 250px !important;
-    height: auto !important;
     min-height: 190px !important;
     display: block !important;
   }
@@ -3553,28 +3559,51 @@ input[type="number"] {
   }
 }
 
+/* Мобильный Профиль: Принудительный список */
+
+@media (max-width: 768px) {
+  #profile-items-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  #profile-items-grid .item-card {
+    flex-direction: row !important;
+    height: 140px !important;
+    /* Увеличенная высота для кнопок */
+    min-height: 140px !important;
+    align-items: stretch !important;
+  }
+
+  #profile-items-grid .card-img-wrap {
+    width: 130px !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    flex-shrink: 0 !important;
+  }
+
+  #profile-items-grid .card-body-wrap {
+    padding: 0.5rem 0.75rem !important;
+    justify-content: space-between !important;
+  }
+
+  #profile-items-grid h4 {
+    font-size: 0.9rem !important;
+    height: 2.6em !important;
+    margin-bottom: 4px !important;
+  }
+
+  #profile-items-grid .view-grid-city {
+    margin-top: auto !important;
+  }
+}
+
 /* ==========================================
-   КАРТОЧКИ ТОВАРОВ И VIP-ЭФФЕКТЫ
+   VIP КАРТОЧКИ И ЭФФЕКТЫ
    ========================================== */
-
-.item-card {
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.item-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.12);
-  border-color: #0d9488;
-}
 
 .vip-card {
   position: relative;
-  overflow: hidden;
   border: 2px solid #f59e0b;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
   background: linear-gradient(180deg, rgba(254, 252, 232, 1) 0%, #ffffff 100%);
@@ -3637,11 +3666,23 @@ input[type="number"] {
   animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
 }
 
-/* ==========================================
-   РЕТРО-СТИЛЬ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (MODALS)
-   ========================================== */
+i.fa-solid, i.fa-regular, i.fa-brands {
+  opacity: 0.85;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.6) !important;
+  transition: transform 0.2s ease, opacity 0.2s ease !important;
+}
 
-/* Базовые анимации появления и оверлей */
+.dark i.fa-solid, .dark i.fa-regular, .dark i.fa-brands {
+  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8) !important;
+}
+
+button:hover > i, a:hover > i {
+  opacity: 1;
+}
+
+/* ==========================================
+   МОДАЛЬНЫЕ ОКНА И МЕНЮ (РЕТРО)
+   ========================================== */
 
 .modal-overlay {
   opacity: 0;
@@ -3668,8 +3709,6 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Винтажный дизайн самих окон и выпадающих меню (без размытия, с жесткими тенями) */
-
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
   background-color: #FDFBF7 !important;
   border: 2px solid #D8CFC0 !important;
@@ -3680,8 +3719,6 @@ body.modal-open {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Темная тема для окон (плотный картон) */
-
 .dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div, .dark #filter-panel>div {
   background-color: #322A24 !important;
   border: 2px solid #4A3F35 !important;
@@ -3689,36 +3726,81 @@ body.modal-open {
   color: #E8E2D9 !important;
 }
 
-/* Стилизация полей ввода внутри окон под ретро-стиль */
-
-.modal-content input, 
-.modal-content textarea, 
-.modal-content select {
+.modal-content input, .modal-content textarea, .modal-content select {
   background-color: #F4EFE6 !important;
   border: 1px solid #D8CFC0 !important;
   border-radius: 4px !important;
   color: #3E362E !important;
 }
 
-.dark .modal-content input, 
-.dark .modal-content textarea, 
-.dark .modal-content select {
+.dark .modal-content input, .dark .modal-content textarea, .dark .modal-content select {
   background-color: #2A241F !important;
   border: 1px solid #4A3F35 !important;
   color: #E8E2D9 !important;
 }
 
-/* Эффект фокуса на полях ввода внутри модалок */
-
-.modal-content input:focus, 
-.modal-content textarea:focus, 
-.modal-content select:focus {
+.modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus {
   border-color: #0d9488 !important;
   box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
 }
 
+/* Заголовок модалки */
+
+#add-modal-title {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 1.5rem !important;
+  line-height: 1.2 !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 1.5rem !important;
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+@media (min-width: 640px) {
+  #add-modal-title {
+    font-size: 1.8rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+}
+
 /* ==========================================
-   САЙДБАР ФИЛЬТРОВ И МАКЕТ НА ПК
+   ЧАТ И ПОЛЕ ВВОДА СООБЩЕНИЙ
+   ========================================== */
+
+#chat-input-field {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+#chat-input-container {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Гарантированный белый текст в чате для ТЕМНОЙ темы */
+
+.dark #chat-input-field::-moz-placeholder {
+  color: #ffffff !important;
+}
+
+.dark #chat-input-field,
+.dark #chat-input-field::placeholder,
+.dark #chat-input-field * {
+  color: #ffffff !important;
+}
+
+/* Перехватываем вставленный готовый текст сообщений, чтобы он не был черным */
+
+.dark #chat-messages .break-words {
+  color: #ffffff !important;
+}
+
+/* ==========================================
+   САЙДБАР ФИЛЬТРОВ И СКРОЛЛЫ
    ========================================== */
 
 #filter-panel-wrapper {
@@ -3772,18 +3854,12 @@ body.modal-open {
     margin-bottom: 1.5rem !important;
   }
 
-  /* ЖЕСТКОЕ УДАЛЕНИЕ ФОНА И РАМОК НА ПК (СВЕТЛАЯ И ТЕМНАЯ ТЕМА) */
-
-  #filter-panel-wrapper, 
-    .dark #filter-panel-wrapper, 
-    html.dark #filter-panel-wrapper {
+  #filter-panel-wrapper, .dark #filter-panel-wrapper, html.dark #filter-panel-wrapper {
     background-color: transparent !important;
     box-shadow: none !important;
   }
 
-  #filter-panel>div, 
-    .dark #filter-panel>div, 
-    html.dark #filter-panel>div {
+  #filter-panel>div, .dark #filter-panel>div, html.dark #filter-panel>div {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -3825,39 +3901,11 @@ body.modal-open {
   }
 }
 
-/* ==========================================
-   ПРОФИЛЬ (МОБИЛЬНАЯ ВЕРСИЯ) И ПРОЧЕЕ
-   ========================================== */
-
-@media (max-width: 768px) {
-  #profile-items-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  #profile-items-grid .item-card {
-    flex-direction: row !important;
-    height: 140px !important;
-    /* Фиксированная высота для списка */
-    align-items: center !important;
-    overflow: hidden !important;
-  }
-
-  #profile-items-grid .card-img-wrap {
-    width: 120px !important;
-    height: 100% !important;
-    flex-shrink: 0 !important;
-  }
-
-  #profile-items-grid .card-img-wrap img {
-    height: 100% !important;
-    -o-object-fit: cover !important;
-       object-fit: cover !important;
-  }
+#main-cats-container, #sub-cats-container {
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x !important;
+  overscroll-behavior-x: contain !important;
 }
-
-/* ==========================================
-   СКРОЛЛБАР И ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ
-   ========================================== */
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -3890,257 +3938,8 @@ button, a, .cursor-pointer {
   cursor: pointer !important;
 }
 
-/* Жесткая блокировка анимаций при смене темы */
-
-.disable-transitions,
-.disable-transitions * {
+.disable-transitions, .disable-transitions * {
   transition: none !important;
-}
-
-/* ==========================================
-   ФИКСЫ МОБИЛЬНОГО SAFARI И НАЛОЖЕНИЙ
-   ========================================== */
-
-/* 1. Укрощаем Safari: жестко выравниваем шрифты в выпадающем списке */
-
-select optgroup {
-  font-weight: 800 !important;
-  color: #0d9488 !important;
-  background: #f0fdfa !important;
-  padding: 5px !important;
-  font-size: 16px !important;
-  /* Убиваем микрошрифт Safari */
-}
-
-select option {
-  font-weight: 500 !important;
-  color: #1c1917 !important;
-  background: #fff !important;
-  padding: 5px !important;
-  font-size: 16px !important;
-  /* Выравниваем размер с категорией */
-}
-
-/* 2. Идеальное центрирование и балансировка заголовка "Пристроить добро" */
-
-#add-modal-title {
-  width: 100% !important;
-  text-align: center !important;
-  font-size: 1.5rem !important;
-  /* Увеличили шрифт для мобильных (было 1.25) */
-  line-height: 1.2 !important;
-  /* Вертикальная балансировка */
-  margin-top: 0.75rem !important;
-  /* Слегка опускаем от верхнего края */
-  margin-bottom: 1.5rem !important;
-  /* Воздух до блока фотографий */
-  /* Математически точная симметрия */
-  padding-left: 2.5rem !important;
-  /* Фейковый отступ слева для баланса */
-  padding-right: 2.5rem !important;
-  /* Отступ справа под реальный крестик */
-}
-
-/* Для планшетов и ПК делаем еще крупнее */
-
-@media (min-width: 640px) {
-  #add-modal-title {
-    font-size: 1.8rem !important;
-    margin-top: 1rem !important;
-    margin-bottom: 2rem !important;
-  }
-}
-
-/* ==========================================
-   ФИКС КОНТРАСТА ДЛЯ ТЁМНЫХ БЛОКОВ (SVALKA PRO)
-   ========================================== */
-
-.bg-stone-800 select, 
-.bg-stone-900 select, 
-.bg-stone-950 select,
-.bg-black select {
-  color: #ffffff !important;
-  /* Делаем текст белым на темном фоне */
-}
-
-/* Но внутри выпадающего списка опций текст должен оставаться темным для читаемости на белом фоне */
-
-.bg-stone-800 select option, 
-.bg-stone-900 select option, 
-.bg-stone-950 select option,
-.bg-black select option {
-  color: #1c1917 !important;
-}
-
-.item-card {
-  /* Браузер не будет тратить ресурсы на отрисовку карточек, пока до них не докрутят экран */
-  content-visibility: auto;
-  contain-intrinsic-size: 350px;
-  /* Примерная высота карточки, чтобы скролл не прыгал */
-}
-
-/* ==========================================
-   СТИЛЬ ИКОНОК (ЭФФЕКТ ТИПОГРАФСКОЙ ПЕЧАТИ)
-   ========================================== */
-
-i.fa-solid, i.fa-regular, i.fa-brands {
-  /* Легкая прозрачность для имитации впитавшихся чернил */
-  opacity: 0.85;
-  /* Эффект вдавленности в бумагу (светлый блик снизу) */
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.6) !important;
-  transition: transform 0.2s ease, opacity 0.2s ease !important;
-}
-
-/* Темная тема (блик становится темным) */
-
-.dark i.fa-solid, .dark i.fa-regular, .dark i.fa-brands {
-  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8) !important;
-}
-
-/* При наведении на кнопку иконка становится ярче */
-
-button:hover > i, a:hover > i {
-  opacity: 1;
-}
-
-/* ==========================================
-   ИДЕАЛЬНАЯ ВЫСОТА КАРТОЧЕК (МОБИЛЬНЫЕ И ПК)
-   ========================================== */
-
-.item-card {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-  /* Карточка всегда тянется на 100% сетки */
-}
-
-.card-body-wrap {
-  display: flex !important;
-  flex-direction: column !important;
-  flex-grow: 1 !important;
-  /* Тело карточки занимает всё доступное пространство */
-}
-
-/* Принудительно отталкиваем нижнюю часть (город, цену) в самый низ */
-
-.view-grid-city {
-  margin-top: auto !important;
-}
-
-/* ==========================================
-   ФИКС ПЕРЕНОСА КОРОНЫ И ОБРЕЗКИ ТЕКСТА
-   ========================================== */
-
-.item-card h4 {
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  word-break: break-word !important;
-  /* Эта строка не даст слову разорвать строку */
-  white-space: normal !important;
-}
-
-/* А это правило говорит: "Корона, веди себя как обычная буква" */
-
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-  display: inline !important;
-  margin-right: 6px !important;
-}
-
-/* Меняем inline-block на inline, чтобы корона стала частью текста и не ломала строку */
-
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-  display: inline !important;
-  margin-right: 6px !important;
-}
-
-/* Делаем скролл категорий плавным и защищаем от зависаний (iOS Safari) */
-
-#main-cats-container, #sub-cats-container {
-  -webkit-overflow-scrolling: touch !important;
-  touch-action: pan-x !important;
-  /* Разрешаем только горизонтальный свайп, блокируя конфликты */
-  overscroll-behavior-x: contain !important;
-  /* Убираем эффект "резинки", который вешает браузер */
-}
-
-/* Убираем лишние рамки и обводки у поля ввода в чате */
-
-#chat-input-field {
-  border: none !important;
-  /* Убираем рамку */
-  outline: none !important;
-  /* Убираем синюю/серую обводку при клике */
-  box-shadow: none !important;
-  /* Убираем любые тени */
-  background: transparent !important;
-  /* Делаем фон поля ввода прозрачным, чтобы оно слилось с контейнером */
-}
-
-/* Если прямоугольник создает родительский контейнер */
-
-#chat-input-container {
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* Выравниваем все карточки в ленте по высоте */
-
-.view-grid .item-card {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-}
-
-/* Прижимаем цену и город к низу карточки */
-
-.view-grid .card-body-wrap {
-  display: flex !important;
-  flex-direction: column !important;
-  flex-grow: 1 !important;
-  justify-content: space-between !important;
-}
-
-/* Исправляем "корону" и текст */
-
-.item-card h4 {
-  display: flex !important;
-  align-items: flex-start !important;
-  flex-wrap: wrap !important;
-  overflow: hidden !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  word-break: break-word !important;
-  line-height: 1.4 !important;
-  min-height: 2.8em !important;
-  /* Фиксируем высоту заголовка */
-}
-
-/* Иконка короны теперь внутри строки, а не переносит текст */
-
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-  display: inline-block !important;
-  flex-shrink: 0 !important;
-  margin-right: 6px !important;
-}
-
-/* Гарантируем белый цвет текста в поле ввода чата для тёмной темы */
-
-.dark #chat-input-field,
-.dark #chat-input-field * {
-  color: #ffffff !important;
-}
-
-/* Если вставка текста происходит через JS, принудительно задаем цвет для контейнера сообщений */
-
-#chat-messages .break-words {
-  color: #ffffff !important;
 }
 
 .empty\:hidden:empty{

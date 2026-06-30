@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 /* ==========================================
-   БАЗОВАЯ ТИПОГРАФИКА И ФИКСАЦИИ (РЕТРО-ЦВЕТА + СОВРЕМЕННЫЙ ШРИФТ)
+   БАЗОВАЯ ТИПОГРАФИКА И ФОН
    ========================================== */
 body, button, input, select, textarea, span, p, div {
     font-family: 'Inter', sans-serif !important;
@@ -22,287 +22,67 @@ h1, h2, h3, h4, h5, h6,
     text-transform: uppercase !important; 
 }
 
-
-html {
-    scrollbar-gutter: stable;
-    overflow-x: hidden;
-    max-width: 100vw;
-}
+html { scrollbar-gutter: stable; overflow-x: hidden; max-width: 100vw; }
 
 body {
     transition: background-color 0.3s, color 0.3s;
-    background-color: #F4EFE6 !important; /* Цвет теплой винтажной бумаги */
-    color: #3E362E !important; /* Теплый темно-коричневый цвет (выцветшие чернила) */
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow-x: hidden;
-    max-width: 100%;
-    position: relative;
+    background-color: #F4EFE6 !important;
+    color: #3E362E !important;
+    display: flex; flex-direction: column; min-height: 100vh;
+    overflow-x: hidden; max-width: 100%; position: relative;
 }
 
-.dark body {
-    background-color: #2A241F !important; /* Темная сепия / теплый графит */
-    color: #E8E2D9 !important; /* Светло-кремовый текст */
-}
+.dark body { background-color: #2A241F !important; color: #E8E2D9 !important; }
+main { flex: 1; }
 
-main {
-    flex: 1;
-}
-
-/* ==========================================
-   ФИКС КАЧЕСТВА КАРТИНОК ПРИ АНИМАЦИИ (ЛОГОТИПЫ)
-   ========================================== */
 img {
-    /* Жестко фиксируем картинку в 3D-пространстве, чтобы она не размывалась при анимации */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
+    transform: translateZ(0); -webkit-transform: translateZ(0);
 }
 
 /* ==========================================
-   ГЛОБАЛЬНЫЕ ЭЛЕМЕНТЫ ФОРМ И СЕЛЕКТЫ
-   (Жесткое подавление системных стилей)
+   ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ
    ========================================== */
 input[type="text"], input[type="number"], input[type="email"],
 input[type="password"], input[type="tel"], textarea {
-    cursor: text !important;
-    caret-color: #0d9488;
-    font-size: 16px !important; /* Предотвращает зум на iOS */
+    cursor: text !important; caret-color: #0d9488; font-size: 16px !important;
 }
 
 input:focus, textarea:focus, select:focus {
-    border-color: #0d9488 !important;
-    outline: none !important;
+    border-color: #0d9488 !important; outline: none !important;
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
 }
 
-/* Полная кастомизация Select и скрытие системных стилей */
 select {
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    background-color: transparent !important;
-    background-image: none !important; /* Жестко убиваем двойную стрелку */
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important;
+    background-color: transparent !important; background-image: none !important;
+    cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;
 }
+select::-ms-expand { display: none !important; }
+.dark select { background-image: none !important; }
 
-select::-ms-expand {
-    display: none !important;
-}
+select optgroup { font-weight: 800 !important; color: #0d9488 !important; background: #f0fdfa !important; padding: 5px !important; font-size: 16px !important; }
+select option { font-weight: 500 !important; color: #1c1917 !important; background: #fff !important; padding: 5px !important; font-size: 16px !important; }
 
-.dark select {
-    background-image: none !important; /* Убиваем стрелку и в темной теме */
-}
+.dark select optgroup { background: #134e4a !important; color: #ccfbf1 !important; }
+.dark select option { background: #2A241F !important; color: #E8E2D9 !important; }
 
-/* Стилизация выпадающего списка опций */
-select optgroup {
-    font-weight: 800;
-    color: #0d9488;
-    background: #f0fdfa;
-    padding: 5px;
-}
+.bg-stone-800 select, .bg-stone-900 select, .bg-stone-950 select, .bg-black select { color: #ffffff !important; }
+.bg-stone-800 select option, .bg-stone-900 select option, .bg-stone-950 select option, .bg-black select option { color: #1c1917 !important; }
 
-select option {
-    font-weight: 500;
-    color: #3E362E; /* Обновлено под ретро-стиль */
-    background: #fff;
-    padding: 5px;
-}
-
-.dark select optgroup {
-    background: #134e4a;
-    color: #ccfbf1;
-}
-
-.dark select option {
-    background: #2A241F; /* Обновлено под ретро-стиль */
-    color: #E8E2D9;
-}
-
-/* Убираем стрелочки у полей ввода чисел */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance: textfield;
-}
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
 
 /* ==========================================
-   РЕЖИМ СЕТКИ (НОВЫЙ СТАНДАРТ)
-   ========================================== */
-.view-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.5rem !important;
-}
-
-@media (min-width: 480px) {
-    .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.75rem !important; }
-}
-
-@media (min-width: 768px) {
-    .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1rem !important; }
-}
-
-@media (min-width: 1024px) {
-    .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
-}
-
-@media (min-width: 1280px) {
-    .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
-}
-
-.view-grid .card-img-wrap {
-    height: 120px !important;
-    min-height: 120px !important;
-    max-height: 120px !important;
-}
-
-@media (min-width: 640px) {
-    .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; max-height: 150px !important; }
-}
-
-@media (min-width: 1024px) {
-    .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; max-height: 190px !important; }
-}
-
-.view-grid .card-img-wrap img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    position: absolute !important;
-    top: 0;
-    left: 0;
-}
-
-.view-grid .card-body-wrap {
-    padding: 0.75rem !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-.view-grid h4 {
-    font-size: 0.85rem !important;
-    line-height: 1.3 !important;
-    height: 2.6em !important;
-    white-space: normal !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    margin-bottom: 6px !important;
-    flex-shrink: 0 !important;
-}
-
-.view-grid .item-card {
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-}
-
-/* ==========================================
-   РЕЖИМ СПИСКА (ГОРИЗОНТАЛЬНЫЕ КАРТЫ)
-   ========================================== */
-.view-list {
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem !important;
-}
-
-.view-list .item-card {
-    flex-direction: row !important;
-    height: auto !important;
-    min-height: 140px !important;
-    align-items: stretch;
-    overflow: hidden !important;
-}
-
-.view-list .card-img-wrap {
-    width: 140px !important;
-    height: auto !important;
-    min-height: 140px !important;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden !important;
-}
-
-.view-list .card-img-wrap img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    position: absolute !important;
-    top: 0;
-    left: 0;
-}
-
-.view-list h4 {
-    font-size: 1.15rem !important;
-    margin-bottom: 0.5rem !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    white-space: normal !important;
-    flex-shrink: 0 !important;
-}
-
-.view-list .price-text {
-    font-size: 1.2rem !important;
-    font-weight: 900;
-    margin-bottom: 2px !important;
-}
-
-.view-list .view-grid-city { display: none !important; }
-.view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
-
-.view-list .view-list-city {
-    display: block !important;
-    color: #6b7280;
-    font-size: 0.8rem !important;
-    margin-top: 4px;
-}
-
-.view-list .view-list-desc { display: none !important; }
-.view-list .mt-auto.pt-3.border-t {
-    border-top: none !important;
-    padding-top: 0 !important;
-    font-size: 0.9rem !important;
-    color: #9ca3af;
-}
-
-@media (min-width: 1024px) {
-    .view-list .item-card { height: auto !important; min-height: 190px !important; }
-    .view-list .card-img-wrap { width: 250px !important; height: auto !important; min-height: 190px !important; display: block !important; }
-    .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; flex-direction: row !important; align-items: stretch !important; gap: 1.5rem; }
-    .view-list .view-list-col-2 { flex: 0 0 35% !important; border-right: 1px solid #e7e5e4; padding-right: 1.5rem; }
-    .dark .view-list .view-list-col-2 { border-color: #44403c; }
-    .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
-    .view-list h4 { font-size: 1.25rem !important; }
-    .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
-    .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
-    .view-list .view-list-desc {
-        display: -webkit-box !important;
-        -webkit-line-clamp: 5;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: #6b7280;
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-}
-
-/* ==========================================
-   КАРТОЧКИ ТОВАРОВ И VIP-ЭФФЕКТЫ
+   УНИВЕРСАЛЬНАЯ КАРТОЧКА ТОВАРА (ФИКС ВЫСОТЫ И КОРОНЫ)
    ========================================== */
 .item-card {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important; /* Намертво фиксируем высоту */
+    content-visibility: auto;
+    contain-intrinsic-size: 350px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-radius: 1rem;
     overflow: hidden;
@@ -315,99 +95,173 @@ input[type="number"] {
     border-color: #0d9488;
 }
 
-.vip-card {
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #f59e0b;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
-    background: linear-gradient(180deg, rgba(254, 252, 232, 1) 0%, #ffffff 100%);
+.card-body-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+    justify-content: space-between !important;
+    padding: 0.75rem !important;
 }
 
-.dark .vip-card {
-    border-color: #d97706;
-    background: linear-gradient(180deg, rgba(69, 26, 3, 0.3) 0%, #1c1917 100%);
+.view-grid-city { margin-top: auto !important; }
+
+.item-card h4 {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    word-break: break-word !important; /* Умный перенос без разрывов */
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    height: 2.6em !important;
+    margin-bottom: 6px !important;
 }
 
-.vip-card:hover {
-    border-color: #0d9488;
-    box-shadow: 0 0 15px rgba(13, 148, 136, 0.25);
+.item-card h4 i.fa-crown, 
+.item-card h4 i.fa-gem {
+    display: inline !important; /* Строчный режим: корона не ломает текст */
+    margin-right: 4px !important;
 }
 
-.vip-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%);
-    transform: skewX(-25deg);
-    animation: shimmer 4s infinite;
-    z-index: 10;
-    pointer-events: none;
+/* ==========================================
+   РЕЖИМ СЕТКИ (GRID)
+   ========================================== */
+.view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.5rem !important; }
+@media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.75rem !important; } }
+@media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+@media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
+
+.view-grid .card-img-wrap { height: 120px !important; min-height: 120px !important; max-height: 120px !important; position: relative; }
+@media (min-width: 640px) { .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; max-height: 150px !important; } }
+@media (min-width: 1024px) { .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; max-height: 190px !important; } }
+
+.view-grid .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; }
+.view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
+
+/* ==========================================
+   РЕЖИМ СПИСКА (LIST) И МОБИЛЬНЫЙ ПРОФИЛЬ
+   ========================================== */
+.view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+.view-list .item-card { flex-direction: row !important; height: auto !important; min-height: 140px !important; align-items: stretch; }
+.view-list .card-img-wrap { width: 140px !important; height: auto !important; min-height: 140px !important; flex-shrink: 0; position: relative; overflow: hidden !important; }
+.view-list .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; }
+.view-list h4 { font-size: 1.15rem !important; margin-bottom: 0.5rem !important; }
+.view-list .price-text { font-size: 1.2rem !important; font-weight: 900; margin-bottom: 2px !important; }
+.view-list .view-grid-city { display: none !important; }
+.view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
+.view-list .view-list-desc { display: none !important; }
+.view-list .mt-auto.pt-3.border-t { border-top: none !important; padding-top: 0 !important; font-size: 0.9rem !important; color: #9ca3af; }
+
+@media (min-width: 1024px) {
+    .view-list .item-card { min-height: 190px !important; }
+    .view-list .card-img-wrap { width: 250px !important; min-height: 190px !important; display: block !important; }
+    .view-list .card-body-wrap { padding: 1.25rem 1.5rem !important; flex-direction: row !important; align-items: stretch !important; gap: 1.5rem; }
+    .view-list .view-list-col-2 { flex: 0 0 35% !important; border-right: 1px solid #e7e5e4; padding-right: 1.5rem; }
+    .dark .view-list .view-list-col-2 { border-color: #44403c; }
+    .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
+    .view-list h4 { font-size: 1.25rem !important; }
+    .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
+    .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
+    .view-list .view-list-desc { display: -webkit-box !important; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; color: #6b7280; font-size: 0.9rem; line-height: 1.5; }
 }
 
+/* Мобильный Профиль: Принудительный список */
+@media (max-width: 768px) {
+    #profile-items-grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+    #profile-items-grid .item-card { 
+        flex-direction: row !important; 
+        height: 140px !important; /* Увеличенная высота для кнопок */
+        min-height: 140px !important;
+        align-items: stretch !important; 
+    }
+    #profile-items-grid .card-img-wrap { 
+        width: 130px !important; 
+        height: 100% !important; 
+        max-height: 100% !important; 
+        flex-shrink: 0 !important; 
+    }
+    #profile-items-grid .card-body-wrap { 
+        padding: 0.5rem 0.75rem !important; 
+        justify-content: space-between !important; 
+    }
+    #profile-items-grid h4 { font-size: 0.9rem !important; height: 2.6em !important; margin-bottom: 4px !important; }
+    #profile-items-grid .view-grid-city { margin-top: auto !important; }
+}
+
+/* ==========================================
+   VIP КАРТОЧКИ И ЭФФЕКТЫ
+   ========================================== */
+.vip-card { position: relative; border: 2px solid #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.15); background: linear-gradient(180deg, rgba(254, 252, 232, 1) 0%, #ffffff 100%); }
+.dark .vip-card { border-color: #d97706; background: linear-gradient(180deg, rgba(69, 26, 3, 0.3) 0%, #1c1917 100%); }
+.vip-card:hover { border-color: #0d9488; box-shadow: 0 0 15px rgba(13, 148, 136, 0.25); }
+.vip-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; z-index: 10; pointer-events: none; }
 @keyframes shimmer { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
 @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f43f5e; } 100% { transform: scale(1); } }
 .animate-pop { animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
 
+i.fa-solid, i.fa-regular, i.fa-brands { opacity: 0.85; text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.6) !important; transition: transform 0.2s ease, opacity 0.2s ease !important; }
+.dark i.fa-solid, .dark i.fa-regular, .dark i.fa-brands { text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8) !important; }
+button:hover > i, a:hover > i { opacity: 1; }
+
 /* ==========================================
-   РЕТРО-СТИЛЬ ДЛЯ ВСПЛЫВАЮЩИХ ОКОН (MODALS)
+   МОДАЛЬНЫЕ ОКНА И МЕНЮ (РЕТРО)
    ========================================== */
-/* Базовые анимации появления и оверлей */
 .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 body.modal-open { overflow: hidden; }
 
-/* Винтажный дизайн самих окон и выпадающих меню (без размытия, с жесткими тенями) */
 .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel>div {
-    background-color: #FDFBF7 !important;
-    border: 2px solid #D8CFC0 !important;
-    border-radius: 8px !important;
-    box-shadow: 6px 6px 0px 0px rgba(62, 54, 46, 0.15) !important;
-    color: #3E362E !important;
-    backdrop-filter: none !important; 
-    -webkit-backdrop-filter: none !important;
+    background-color: #FDFBF7 !important; border: 2px solid #D8CFC0 !important; border-radius: 8px !important;
+    box-shadow: 6px 6px 0px 0px rgba(62, 54, 46, 0.15) !important; color: #3E362E !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
 }
 
-/* Темная тема для окон (плотный картон) */
 .dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div, .dark #filter-panel>div {
-    background-color: #322A24 !important;
-    border: 2px solid #4A3F35 !important;
-    box-shadow: 6px 6px 0px 0px rgba(20, 16, 13, 0.6) !important;
-    color: #E8E2D9 !important;
+    background-color: #322A24 !important; border: 2px solid #4A3F35 !important;
+    box-shadow: 6px 6px 0px 0px rgba(20, 16, 13, 0.6) !important; color: #E8E2D9 !important;
 }
 
-/* Стилизация полей ввода внутри окон под ретро-стиль */
-.modal-content input, 
-.modal-content textarea, 
-.modal-content select {
-    background-color: #F4EFE6 !important;
-    border: 1px solid #D8CFC0 !important;
-    border-radius: 4px !important;
-    color: #3E362E !important;
+.modal-content input, .modal-content textarea, .modal-content select {
+    background-color: #F4EFE6 !important; border: 1px solid #D8CFC0 !important; border-radius: 4px !important; color: #3E362E !important;
+}
+.dark .modal-content input, .dark .modal-content textarea, .dark .modal-content select {
+    background-color: #2A241F !important; border: 1px solid #4A3F35 !important; color: #E8E2D9 !important;
+}
+.modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus {
+    border-color: #0d9488 !important; box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
 }
 
-.dark .modal-content input, 
-.dark .modal-content textarea, 
-.dark .modal-content select {
-    background-color: #2A241F !important;
-    border: 1px solid #4A3F35 !important;
-    color: #E8E2D9 !important;
+/* Заголовок модалки */
+#add-modal-title {
+    width: 100% !important; text-align: center !important; font-size: 1.5rem !important; line-height: 1.2 !important;
+    margin-top: 0.75rem !important; margin-bottom: 1.5rem !important; padding-left: 2.5rem !important; padding-right: 2.5rem !important;
 }
+@media (min-width: 640px) { #add-modal-title { font-size: 1.8rem !important; margin-top: 1rem !important; margin-bottom: 2rem !important; } }
 
-/* Эффект фокуса на полях ввода внутри модалок */
-.modal-content input:focus, 
-.modal-content textarea:focus, 
-.modal-content select:focus {
-    border-color: #0d9488 !important;
-    box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important;
+/* ==========================================
+   ЧАТ И ПОЛЕ ВВОДА СООБЩЕНИЙ
+   ========================================== */
+#chat-input-field {
+    border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important;
+}
+#chat-input-container { border: none !important; box-shadow: none !important; }
+
+/* Гарантированный белый текст в чате для ТЕМНОЙ темы */
+.dark #chat-input-field,
+.dark #chat-input-field::placeholder,
+.dark #chat-input-field * {
+    color: #ffffff !important;
+}
+/* Перехватываем вставленный готовый текст сообщений, чтобы он не был черным */
+.dark #chat-messages .break-words {
+    color: #ffffff !important;
 }
 
 /* ==========================================
-   САЙДБАР ФИЛЬТРОВ И МАКЕТ НА ПК
+   САЙДБАР ФИЛЬТРОВ И СКРОЛЛЫ
    ========================================== */
 #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; overflow: hidden; }
 #filter-panel-wrapper.active { grid-template-rows: 1fr; }
@@ -416,41 +270,11 @@ body.modal-open { overflow: hidden; }
 @media (min-width: 1024px) {
     main { display: grid !important; grid-template-columns: 250px 1fr !important; gap: 0 2.5rem !important; align-items: start; }
     main>* { grid-column: 1 / -1 !important; }
-    
-    #filter-panel-wrapper {
-        position: sticky !important;
-        top: 90px !important;
-        grid-column: 1 !important;
-        grid-row: 8 !important;
-        width: 100% !important;
-        height: calc(100vh - 120px) !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-        margin-top: 0 !important;
-        scrollbar-width: thin;
-        scrollbar-color: #d6d3d1 transparent;
-        display: block !important;
-    }
+    #filter-panel-wrapper { position: sticky !important; top: 90px !important; grid-column: 1 !important; grid-row: 8 !important; width: 100% !important; height: calc(100vh - 120px) !important; max-height: none !important; overflow-y: auto !important; margin-top: 0 !important; scrollbar-width: thin; scrollbar-color: #d6d3d1 transparent; display: block !important; }
     .dark #filter-panel-wrapper { scrollbar-color: #44403c transparent; }
     #filter-panel h4:first-child { padding-top: 2px; margin-bottom: 1.5rem !important; }
-    
-    /* ЖЕСТКОЕ УДАЛЕНИЕ ФОНА И РАМОК НА ПК (СВЕТЛАЯ И ТЕМНАЯ ТЕМА) */
-    #filter-panel-wrapper, 
-    .dark #filter-panel-wrapper, 
-    html.dark #filter-panel-wrapper {
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-    
-    #filter-panel>div, 
-    .dark #filter-panel>div, 
-    html.dark #filter-panel>div { 
-        background-color: transparent !important; 
-        border: none !important; 
-        box-shadow: none !important; 
-        padding: 0 !important; 
-    }
-   
+    #filter-panel-wrapper, .dark #filter-panel-wrapper, html.dark #filter-panel-wrapper { background-color: transparent !important; box-shadow: none !important; }
+    #filter-panel>div, .dark #filter-panel>div, html.dark #filter-panel>div { background-color: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
     #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
     #btn-toggle-filters { display: none !important; }
     .sidebar-divider { border-bottom: 1px solid rgba(20, 184, 166, 0.2); margin: 1.5rem 0; }
@@ -460,36 +284,12 @@ body.modal-open { overflow: hidden; }
     #fresh-ads-section { grid-column: 2 !important; grid-row: 8 !important; }
 }
 
-/* ==========================================
-   ПРОФИЛЬ (МОБИЛЬНАЯ ВЕРСИЯ) И ПРОЧЕЕ
-   ========================================== */
-@media (max-width: 768px) {
-    #profile-items-grid { 
-        grid-template-columns: 1fr !important; 
-    }
-    
-    #profile-items-grid .item-card { 
-        flex-direction: row !important; 
-        height: 140px !important; /* Фиксированная высота для списка */
-        align-items: center !important; 
-        overflow: hidden !important; 
-    }
-
-    #profile-items-grid .card-img-wrap { 
-        width: 120px !important; 
-        height: 100% !important; 
-        flex-shrink: 0 !important;
-    }
-    
-    #profile-items-grid .card-img-wrap img { 
-        height: 100% !important; 
-        object-fit: cover !important; 
-    }
+#main-cats-container, #sub-cats-container {
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain !important;
 }
 
-/* ==========================================
-   СКРОЛЛБАР И ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ
-   ========================================== */
 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #d6d3d1; border-radius: 10px; }
@@ -498,216 +298,4 @@ body.modal-open { overflow: hidden; }
 
 .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
 button, a, .cursor-pointer { cursor: pointer !important; }
-
-/* Жесткая блокировка анимаций при смене темы */
-.disable-transitions,
-.disable-transitions * {
-    transition: none !important;
-}
-
-/* ==========================================
-   ФИКСЫ МОБИЛЬНОГО SAFARI И НАЛОЖЕНИЙ
-   ========================================== */
-
-/* 1. Укрощаем Safari: жестко выравниваем шрифты в выпадающем списке */
-select optgroup {
-    font-weight: 800 !important;
-    color: #0d9488 !important;
-    background: #f0fdfa !important;
-    padding: 5px !important;
-    font-size: 16px !important; /* Убиваем микрошрифт Safari */
-}
-
-select option {
-    font-weight: 500 !important;
-    color: #1c1917 !important;
-    background: #fff !important;
-    padding: 5px !important;
-    font-size: 16px !important; /* Выравниваем размер с категорией */
-}
-
-/* 2. Идеальное центрирование и балансировка заголовка "Пристроить добро" */
-#add-modal-title {
-    width: 100% !important;
-    text-align: center !important;
-    font-size: 1.5rem !important; /* Увеличили шрифт для мобильных (было 1.25) */
-    line-height: 1.2 !important;
-    
-    /* Вертикальная балансировка */
-    margin-top: 0.75rem !important;    /* Слегка опускаем от верхнего края */
-    margin-bottom: 1.5rem !important;  /* Воздух до блока фотографий */
-    
-    /* Математически точная симметрия */
-    padding-left: 2.5rem !important;  /* Фейковый отступ слева для баланса */
-    padding-right: 2.5rem !important; /* Отступ справа под реальный крестик */
-}
-
-/* Для планшетов и ПК делаем еще крупнее */
-@media (min-width: 640px) {
-    #add-modal-title {
-        font-size: 1.8rem !important; 
-        margin-top: 1rem !important;
-        margin-bottom: 2rem !important;
-    }
-}
-
-/* ==========================================
-   ФИКС КОНТРАСТА ДЛЯ ТЁМНЫХ БЛОКОВ (SVALKA PRO)
-   ========================================== */
-.bg-stone-800 select, 
-.bg-stone-900 select, 
-.bg-stone-950 select,
-.bg-black select {
-    color: #ffffff !important; /* Делаем текст белым на темном фоне */
-}
-
-/* Но внутри выпадающего списка опций текст должен оставаться темным для читаемости на белом фоне */
-.bg-stone-800 select option, 
-.bg-stone-900 select option, 
-.bg-stone-950 select option,
-.bg-black select option {
-    color: #1c1917 !important; 
-}
-
-.item-card {
-    /* Браузер не будет тратить ресурсы на отрисовку карточек, пока до них не докрутят экран */
-    content-visibility: auto;
-    contain-intrinsic-size: 350px; /* Примерная высота карточки, чтобы скролл не прыгал */
-}
-
-/* ==========================================
-   СТИЛЬ ИКОНОК (ЭФФЕКТ ТИПОГРАФСКОЙ ПЕЧАТИ)
-   ========================================== */
-i.fa-solid, i.fa-regular, i.fa-brands {
-    /* Легкая прозрачность для имитации впитавшихся чернил */
-    opacity: 0.85; 
-    /* Эффект вдавленности в бумагу (светлый блик снизу) */
-    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.6) !important;
-    transition: transform 0.2s ease, opacity 0.2s ease !important;
-}
-
-/* Темная тема (блик становится темным) */
-.dark i.fa-solid, .dark i.fa-regular, .dark i.fa-brands {
-    text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8) !important;
-}
-
-/* При наведении на кнопку иконка становится ярче */
-button:hover > i, a:hover > i {
-    opacity: 1;
-}
-
-/* ==========================================
-   ИДЕАЛЬНАЯ ВЫСОТА КАРТОЧЕК (МОБИЛЬНЫЕ И ПК)
-   ========================================== */
-.item-card {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important; /* Карточка всегда тянется на 100% сетки */
-}
-
-.card-body-wrap {
-    display: flex !important;
-    flex-direction: column !important;
-    flex-grow: 1 !important; /* Тело карточки занимает всё доступное пространство */
-}
-
-/* Принудительно отталкиваем нижнюю часть (город, цену) в самый низ */
-.view-grid-city {
-    margin-top: auto !important; 
-}
-
-/* ==========================================
-   ФИКС ПЕРЕНОСА КОРОНЫ И ОБРЕЗКИ ТЕКСТА
-   ========================================== */
-.item-card h4 {
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    word-break: break-word !important; /* Эта строка не даст слову разорвать строку */
-    white-space: normal !important;
-}
-
-/* А это правило говорит: "Корона, веди себя как обычная буква" */
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-    display: inline !important; 
-    margin-right: 6px !important;
-}
-
-/* Меняем inline-block на inline, чтобы корона стала частью текста и не ломала строку */
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-    display: inline !important; 
-    margin-right: 6px !important;
-}
-
-/* Делаем скролл категорий плавным и защищаем от зависаний (iOS Safari) */
-#main-cats-container, #sub-cats-container {
-    -webkit-overflow-scrolling: touch !important; 
-    touch-action: pan-x !important; /* Разрешаем только горизонтальный свайп, блокируя конфликты */
-    overscroll-behavior-x: contain !important; /* Убираем эффект "резинки", который вешает браузер */
-}
-
-/* Убираем лишние рамки и обводки у поля ввода в чате */
-#chat-input-field {
-    border: none !important;      /* Убираем рамку */
-    outline: none !important;     /* Убираем синюю/серую обводку при клике */
-    box-shadow: none !important;  /* Убираем любые тени */
-    background: transparent !important; /* Делаем фон поля ввода прозрачным, чтобы оно слилось с контейнером */
-}
-
-/* Если прямоугольник создает родительский контейнер */
-#chat-input-container {
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Выравниваем все карточки в ленте по высоте */
-.view-grid .item-card {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important; 
-}
-
-/* Прижимаем цену и город к низу карточки */
-.view-grid .card-body-wrap {
-    display: flex !important;
-    flex-direction: column !important;
-    flex-grow: 1 !important;
-    justify-content: space-between !important;
-}
-
-/* Исправляем "корону" и текст */
-.item-card h4 {
-    display: flex !important;
-    align-items: flex-start !important;
-    flex-wrap: wrap !important;
-    overflow: hidden !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    word-break: break-word !important;
-    line-height: 1.4 !important;
-    min-height: 2.8em !important; /* Фиксируем высоту заголовка */
-}
-
-/* Иконка короны теперь внутри строки, а не переносит текст */
-.item-card h4 i.fa-crown, 
-.item-card h4 i.fa-gem {
-    display: inline-block !important;
-    flex-shrink: 0 !important;
-    margin-right: 6px !important;
-}
-
-/* Гарантируем белый цвет текста в поле ввода чата для тёмной темы */
-.dark #chat-input-field,
-.dark #chat-input-field * {
-    color: #ffffff !important;
-}
-
-/* Если вставка текста происходит через JS, принудительно задаем цвет для контейнера сообщений */
-#chat-messages .break-words {
-    color: #ffffff !important;
-}
+.disable-transitions, .disable-transitions * { transition: none !important; }
