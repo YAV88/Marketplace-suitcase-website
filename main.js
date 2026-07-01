@@ -3443,7 +3443,7 @@ window.navigatePhoto = (direction, event) => {
 };
 
 // ==========================================
-// УМНАЯ ШАПКА И ЕДИНЫЙ КОНТРОЛЛЕР СКРОЛЛА (Идеальная архитектура)
+// УМНАЯ ШАПКА И ЕДИНЫЙ КОНТРОЛЛЕР СКРОЛЛА (Финальная архитектура)
 // ==========================================
 window.initSmartHeader = () => {
     const header = document.getElementById('main-header');
@@ -3453,15 +3453,28 @@ window.initSmartHeader = () => {
 
     if (!header) return;
 
-    // Сбрасываем жесткие стили от прошлого скрипта, если они успели примениться.
-    // Теперь шапка использует родной класс "sticky top-0" из вашего HTML,
-    // который ИДЕАЛЬНО резервирует высоту и никогда не наезжает на контент.
-    header.style.position = '';
-    header.style.top = '';
-    header.style.left = '';
-    header.style.width = '';
-    header.style.zIndex = '50';
-    document.body.style.paddingTop = '';
+    // 1. Возвращаем жесткую фиксацию. Только fixed гарантирует плавный выезд из-за экрана.
+    header.style.position = 'fixed';
+    header.style.top = '0';
+    header.style.left = '0';
+    header.style.width = '100%';
+    header.style.zIndex = '100'; // Усиленный z-index
+    header.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease';
+
+    // 2. ИДЕАЛЬНОЕ РЕШЕНИЕ проблемы перекрытия:
+    // ResizeObserver следит за реальной высотой шапки и задает точный отступ для сайта.
+    if (!window.headerObserverAdded) {
+        document.body.style.paddingTop = `${header.offsetHeight}px`; // Базовый отступ при загрузке
+        
+        const ro = new ResizeObserver(() => {
+            // Обновляем отступ только если мы на самом верху, чтобы страница не "дергалась" при скролле вниз
+            if (window.scrollY <= 10) {
+                document.body.style.paddingTop = `${header.offsetHeight}px`;
+            }
+        });
+        ro.observe(header);
+        window.headerObserverAdded = true;
+    }
 
     let lastScrollY = window.scrollY;
     let isScrolling = false;
@@ -3493,15 +3506,13 @@ window.initSmartHeader = () => {
 
                 // --- ЛОГИКА УМНОЙ ШАПКИ (Выезд при скролле вверх) ---
                 if (currentScrollY <= 0) {
-                    // В самом верху - всегда на месте
                     header.style.transform = 'translateY(0)';
                 } else if (Math.abs(currentScrollY - lastScrollY) > 10) { 
-                    // Игнорируем микро-скроллы пальцем
                     if (currentScrollY > lastScrollY && currentScrollY > 150) {
-                        // Скролл вниз - шапка уезжает за пределы экрана
+                        // Скролл вниз - прячем шапку
                         header.style.transform = 'translateY(-100%)'; 
                     } else {
-                        // Скролл вверх - шапка плавно выезжает обратно
+                        // Скролл вверх - показываем шапку
                         header.style.transform = 'translateY(0)'; 
                     }
                 }
