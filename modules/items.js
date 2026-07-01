@@ -149,8 +149,8 @@ export const ItemsModule = {
             opacityClass = 'opacity-70 grayscale-[0.5]'; 
         }
 
-        // ЗАМЕНА КОРОНЫ НА "ОГОНЬ" (HOT FIND) ПЕРЕД НАЗВАНИЕМ
-        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire text-orange-500 drop-shadow-sm"></i></span>` : '';
+        // ИКОНКА КОРОНЫ "ОГОНЬ" (HOT FIND) ПЕРЕД НАЗВАНИЕМ
+        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
         
         const imgHeight = 'h-40 sm:h-48 shrink-0';
         const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
@@ -159,7 +159,7 @@ export const ItemsModule = {
 
         // СТАТУСЫ ПЛАТЕЖА И ДОСТАВКИ (Для вывода в строку)
         let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast mr-1"></i> Post</span>`;
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
         let paymentBadges = '';

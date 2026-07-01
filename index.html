@@ -559,7 +559,7 @@
         <div id="vip-section" class="mb-8 hidden relative bg-transparent py-2">
             <div class="flex items-center gap-3 mb-4 px-4 sm:px-0">
                 <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight">
-                    <i class="fa-solid fa-crown text-amber-500 mr-2 drop-shadow-md"></i>ТОП Находки
+                    <i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2 drop-shadow-md"></i>ТОП Находки
                 </h4>
             </div>
             
@@ -2095,11 +2095,10 @@
                 track.addEventListener('mouseenter', () => isAutoScrolling = false);
                 track.addEventListener('mouseleave', () => isAutoScrolling = true);
 
-                // ФИКС ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+                // ФИКС ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (Сброс залипания мыши)
                 document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        isAutoScrolling = false; // Ставим на паузу, когда вкладка неактивна
-                    } else {
+                    if (!document.hidden) {
+                        isHovered = false; // Принудительно сбрасываем состояние наведения
                         exactScroll = track.scrollLeft; // Синхронизируем позицию
                         isAutoScrolling = true;         // Запускаем заново
                     }
