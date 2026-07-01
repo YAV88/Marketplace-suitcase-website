@@ -3443,7 +3443,7 @@ window.navigatePhoto = (direction, event) => {
 };
 
 // ==========================================
-// УМНАЯ ШАПКА И ЕДИНЫЙ КОНТРОЛЛЕР СКРОЛЛА
+// УМНАЯ ШАПКА И ЕДИНЫЙ КОНТРОЛЛЕР СКРОЛЛА (Идеальная архитектура)
 // ==========================================
 window.initSmartHeader = () => {
     const header = document.getElementById('main-header');
@@ -3453,17 +3453,15 @@ window.initSmartHeader = () => {
 
     if (!header) return;
 
-    // 1. Делаем шапку фиксированной (чтобы она всегда ездила поверх контента)
-    if (getComputedStyle(header).position !== 'fixed') {
-        // Добавляем отступ сайту, чтобы контент не прыгнул под шапку
-        document.body.style.paddingTop = `${header.offsetHeight}px`;
-        header.style.position = 'fixed';
-        header.style.top = '0';
-        header.style.left = '0';
-        header.style.width = '100%';
-        header.style.zIndex = '100'; // Поверх всего сайта
-        header.style.transition = 'transform 0.3s ease-in-out, background-color 0.3s ease, padding 0.3s ease';
-    }
+    // Сбрасываем жесткие стили от прошлого скрипта, если они успели примениться.
+    // Теперь шапка использует родной класс "sticky top-0" из вашего HTML,
+    // который ИДЕАЛЬНО резервирует высоту и никогда не наезжает на контент.
+    header.style.position = '';
+    header.style.top = '';
+    header.style.left = '';
+    header.style.width = '';
+    header.style.zIndex = '50';
+    document.body.style.paddingTop = '';
 
     let lastScrollY = window.scrollY;
     let isScrolling = false;
@@ -3474,7 +3472,7 @@ window.initSmartHeader = () => {
                 const currentScrollY = window.scrollY;
                 const isScrolled = currentScrollY > 20;
 
-                // --- Анимация фона шапки ---
+                // --- Анимация фона и размеров шапки ---
                 if (headerContainer) {
                     if (isScrolled) {
                         headerContainer.classList.replace('sm:py-4', 'sm:py-2');
@@ -3493,17 +3491,17 @@ window.initSmartHeader = () => {
                     header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
                 }
 
-                // --- ЛОГИКА УМНОЙ ШАПКИ ---
+                // --- ЛОГИКА УМНОЙ ШАПКИ (Выезд при скролле вверх) ---
                 if (currentScrollY <= 0) {
-                    // В самом верху - показываем
+                    // В самом верху - всегда на месте
                     header.style.transform = 'translateY(0)';
                 } else if (Math.abs(currentScrollY - lastScrollY) > 10) { 
                     // Игнорируем микро-скроллы пальцем
-                    if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                        // Скролл вниз - прячем шапку
+                    if (currentScrollY > lastScrollY && currentScrollY > 150) {
+                        // Скролл вниз - шапка уезжает за пределы экрана
                         header.style.transform = 'translateY(-100%)'; 
                     } else {
-                        // Скролл вверх - показываем шапку
+                        // Скролл вверх - шапка плавно выезжает обратно
                         header.style.transform = 'translateY(0)'; 
                     }
                 }
