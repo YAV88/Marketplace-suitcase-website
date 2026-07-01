@@ -2049,7 +2049,7 @@
     </script>
 
     <script>
-        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ЗАВИСАНИЯ ВКЛАДОК)
+        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ЗАВИСАНИЙ И УМНЫМ МОБИЛЬНЫМ СВАЙПОМ)
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
             if (!track) return;
@@ -2059,11 +2059,13 @@
                 if (originalCards.length === 0 || track.dataset.scrolling === 'true') return;
                 track.dataset.scrolling = 'true';
 
+                // 1. Рандомизация оригиналов
                 originalCards.sort(() => Math.random() - 0.5);
                 track.innerHTML = ''; 
                 originalCards.forEach(card => track.appendChild(card));
 
-                const cloneCount = originalCards.length < 4 ? 4 : 2; 
+                // 2. Клонируем карты (для мобильных нужно больше клонов, чтобы заполнить весь свайп)
+                const cloneCount = Math.max(4, Math.ceil(window.innerWidth / 150)); 
                 for (let i = 0; i < cloneCount; i++) {
                     originalCards.forEach(card => {
                         const clone = card.cloneNode(true);
@@ -2073,34 +2075,58 @@
                 }
 
                 let isAutoScrolling = true;
-                let exactScroll = 0;
-                
-                const scrollLoop = () => {
-                    if (isAutoScrolling && track.scrollWidth > 0) {
-                        exactScroll += 0.5; // Скорость прокрутки
-                        track.scrollLeft = exactScroll;
+                let exactScroll = track.scrollLeft;
+                let lastTime = performance.now();
 
-                        const singleSetWidth = track.scrollWidth / (cloneCount + 1);
-                        
-                        if (track.scrollLeft >= singleSetWidth) {
-                            exactScroll = track.scrollLeft - singleSetWidth; 
-                            track.scrollLeft = exactScroll;
-                        }
+                const scrollLoop = (time) => {
+                    const deltaTime = time - lastTime;
+                    lastTime = time;
+
+                    // Защита от зависаний при переключении вкладок браузера (пропускаем кадр, если был долгий фриз)
+                    if (deltaTime > 100) {
+                        requestAnimationFrame(scrollLoop);
+                        return;
                     }
+
+                    // Синхронизация: если пользователь свайпнул пальцем, перехватываем новую координату
+                    if (Math.abs(exactScroll - track.scrollLeft) > 2) {
+                        exactScroll = track.scrollLeft;
+                    }
+
+                    // Двигаем ленту
+                    if (isAutoScrolling && track.scrollWidth > 0) {
+                        exactScroll += 0.5; 
+                        track.scrollLeft = exactScroll;
+                    }
+
+                    // БЕСШОВНЫЙ ЦИКЛ: Проверяем позицию всегда (даже если пользователь крутит сам!)
+                    const singleSetWidth = track.scrollWidth / (cloneCount + 1);
+                    
+                    if (track.scrollLeft >= singleSetWidth) {
+                        // Незаметно перескакиваем назад
+                        exactScroll -= singleSetWidth;
+                        track.scrollLeft = exactScroll;
+                    } else if (track.scrollLeft <= 0 && !isAutoScrolling) {
+                        // Если пользователь свайпнул влево в самое начало - перебрасываем в конец
+                        exactScroll += singleSetWidth;
+                        track.scrollLeft = exactScroll;
+                    }
+
                     requestAnimationFrame(scrollLoop);
                 };
 
+                // Управление паузой
                 track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
-                track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
-                track.addEventListener('mouseenter', () => isAutoScrolling = false);
+                track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 2000));
+                track.addEventListener('mousedown', () => isAutoScrolling = false);
+                track.addEventListener('mouseup', () => setTimeout(() => isAutoScrolling = true, 2000));
                 track.addEventListener('mouseleave', () => isAutoScrolling = true);
 
-                // ФИКС ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (Сброс залипания мыши)
+                // Мгновенное пробуждение ленты при возврате на вкладку
                 document.addEventListener('visibilitychange', () => {
                     if (!document.hidden) {
-                        isHovered = false; // Принудительно сбрасываем состояние наведения
-                        exactScroll = track.scrollLeft; // Синхронизируем позицию
-                        isAutoScrolling = true;         // Запускаем заново
+                        lastTime = performance.now();
+                        isAutoScrolling = true;
                     }
                 });
 

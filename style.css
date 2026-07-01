@@ -4119,7 +4119,7 @@ button, a, .cursor-pointer {
 
 /* Делаем значок "Огня" в названии ярче и добавляем ему собственную тень */
 
-.item-card h4 i.fa-fire {
+.item-card h4 i.fa-fire-flame-curved {
   color: #f97316 !important;
   font-size: 1.1em !important;
   filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4)) !important;
@@ -4197,46 +4197,56 @@ button, a, .cursor-pointer {
 }
 
 /* ==========================================
-   УЛУЧШЕНИЕ МОБИЛЬНОГО СПИСКА (LIST VIEW) - КОМПАКТНАЯ ВЕРСИЯ
+   УЛУЧШЕНИЕ МОБИЛЬНОГО СПИСКА (УМНАЯ АДАПТАЦИЯ ВЫСОТЫ)
    ========================================== */
 
 @media (max-width: 768px) {
-  /* 1. Максимально сжимаем карточку по вертикали (было 165px) */
+  /* Меняем жесткую высоту на auto. Карточка сама подстроится под размер текста! */
 
   .view-list .item-card {
-    height: 125px !important;
+    height: auto !important;
     min-height: 125px !important;
+    align-items: stretch !important;
   }
 
-  /* 2. Растягиваем фото по горизонтали (делаем красивый прямоугольник) */
-
   .view-list .card-img-wrap {
-    width: 170px !important;
-    min-width: 170px !important;
+    width: 155px !important;
+    min-width: 155px !important;
+    height: auto !important;
+    /* Фото будет растягиваться на всю новую высоту карточки */
   }
 
   #profile-items-grid .card-img-wrap {
-    width: 155px !important;
-    min-width: 155px !important;
+    width: 145px !important;
+    min-width: 145px !important;
   }
 
-  /* 3. Убираем "дыры" и придвигаем текст ближе к картинке */
+  /* Добавляем внутренние отступы, чтобы текст "дышал" */
 
   .view-list .card-body-wrap {
-    padding: 0 0 0 0.75rem !important;
-    justify-content: space-between !important;
+    padding: 0.5rem 0.5rem 0.5rem 0.75rem !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
   }
-
-  /* 4. Убираем "пустоту сверху" (разрешаем заголовку быть в 1 строку) */
 
   .view-list h4 {
     min-height: auto !important;
     margin-bottom: 2px !important;
-    margin-top: -2px !important;
-    /* Чуть подтягиваем текст к самому верху */
+    margin-top: 0 !important;
+    font-size: 0.88rem !important;
+    /* Оптимальный размер названия */
   }
 
-  /* 5. Так как карта теперь компактная, прячем описание (оно больше не нужно для заполнения пустоты) */
+  /* Цена работает как пружина, отталкивая футер с городом в самый низ */
+
+  .view-list .price-text {
+    margin-bottom: auto !important;
+  }
+
+  .view-list .mt-auto {
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
 
   .view-list .view-list-desc-mobile {
     display: none !important;
