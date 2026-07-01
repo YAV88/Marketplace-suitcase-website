@@ -598,23 +598,24 @@ button, a, .cursor-pointer { cursor: pointer !important; }
 }
 
 /* ==========================================
-   УВЕЛИЧЕННОЕ ОКНО ЧАТА ДЛЯ ПК
+   УВЕЛИЧЕННОЕ ОКНО ЧАТА ДЛЯ ПК (Бронебойный вариант)
    ========================================== */
 @media (min-width: 1024px) {
-    /* Настраиваем главную обертку модального окна чата */
-    #chat-modal .modal-content {
-        max-width: 900px !important; /* Максимальная ширина */
-        width: 90vw !important;      /* Занимает 90% ширины экрана, если экран меньше 900px */
-        height: 85vh !important;     /* Занимает 85% высоты экрана */
-        max-height: 900px !important;
+    /* Делаем селектор максимально сильным, чтобы перебить Tailwind-классы в HTML */
+    div#chat-modal > div.modal-content {
+        max-width: 1100px !important; /* Увеличили до 1100px для комфорта */
+        width: 85vw !important;      /* Берем 85% от ширины монитора */
+        height: 85vh !important;     /* Берем 85% от высоты экрана */
+        max-height: 1100px !important;
         display: flex !important;
         flex-direction: column !important;
     }
     
-    /* Растягиваем блок с сообщениями (историей), чтобы он заполнял всю новую высоту */
-    #chat-messages {
+    /* Растягиваем центральную часть с перепиской на всю доступную высоту */
+    div#chat-modal #chat-messages {
         flex-grow: 1 !important;
         max-height: none !important;
         height: auto !important;
+        overflow-y: auto !important; /* Гарантируем скролл внутри истории */
     }
 }
