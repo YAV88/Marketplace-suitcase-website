@@ -2049,42 +2049,72 @@
     </script>
 
     <script>
-        // АВТО-ПРОКРУТКА VIP-ЛЕНТЫ
+        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С РАНДОМОМ И БЕСШОВНЫМ ЦИКЛОМ)
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
             if (!track) return;
 
-            // Рандомизация
-            const cards = Array.from(track.children);
-            if (cards.length > 0) {
-                cards.sort(() => Math.random() - 0.5);
-                cards.forEach(card => track.appendChild(card));
-            }
+            const initInfiniteScroll = () => {
+                const originalCards = Array.from(track.children);
+                // Защита от двойного запуска
+                if (originalCards.length === 0 || track.dataset.scrolling === 'true') return;
+                track.dataset.scrolling = 'true';
 
-            let isAutoScrolling = true;
-            let exactScroll = 0; // Точная позиция (защита от багов округления в браузерах)
+                // 1. Рандомизируем оригинальные карты
+                originalCards.sort(() => Math.random() - 0.5);
+                track.innerHTML = ''; 
+                originalCards.forEach(card => track.appendChild(card));
 
-            const scrollLoop = () => {
-                if (isAutoScrolling && track.scrollWidth > track.clientWidth) {
-                    exactScroll += 0.5; // Скорость прокрутки
-                    track.scrollLeft = exactScroll;
-                    
-                    // Если дошли до конца — плавно возвращаем в начало
-                    if (track.scrollLeft >= (track.scrollWidth - track.clientWidth - 1)) {
-                        exactScroll = 0;
-                        track.scrollLeft = 0; 
-                    }
+                // 2. Клонируем карты для бесшовного эффекта бесконечности
+                // Делаем столько копий, чтобы они заполнили минимум 3 ширины экрана
+                const cloneCount = originalCards.length < 4 ? 4 : 2; 
+                for (let i = 0; i < cloneCount; i++) {
+                    originalCards.forEach(card => {
+                        const clone = card.cloneNode(true);
+                        // Удаляем ID у клонов, чтобы не ломать логику кнопок
+                        clone.removeAttribute('id'); 
+                        track.appendChild(clone);
+                    });
                 }
+
+                let isAutoScrolling = true;
+                let exactScroll = 0;
+                
+                const scrollLoop = () => {
+                    if (isAutoScrolling && track.scrollWidth > 0) {
+                        exactScroll += 0.5; // Скорость прокрутки
+                        track.scrollLeft = exactScroll;
+
+                        // Вычисляем ширину одного оригинального блока карт
+                        const singleSetWidth = track.scrollWidth / (cloneCount + 1);
+                        
+                        // БЕСШОВНЫЙ ЛУП: как только проехали оригиналы, незаметно откидываем на начало
+                        if (track.scrollLeft >= singleSetWidth) {
+                            exactScroll = track.scrollLeft - singleSetWidth; 
+                            track.scrollLeft = exactScroll;
+                        }
+                    }
+                    requestAnimationFrame(scrollLoop);
+                };
+
+                // Пауза, если человек листает ленту сам или читает
+                track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
+                track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
+                track.addEventListener('mouseenter', () => isAutoScrolling = false);
+                track.addEventListener('mouseleave', () => isAutoScrolling = true);
+
                 requestAnimationFrame(scrollLoop);
             };
 
-            track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
-            track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
-            track.addEventListener('mouseenter', () => isAutoScrolling = false);
-            track.addEventListener('mouseleave', () => isAutoScrolling = true);
-
-            // Запуск с небольшой задержкой, чтобы DOM точно отрисовался
-            setTimeout(() => requestAnimationFrame(scrollLoop), 500);
+            // Поскольку товары грузятся из базы данных с задержкой, 
+            // мы ждем появления карточек в контейнере через MutationObserver
+            const observer = new MutationObserver(() => {
+                if (track.children.length > 0) {
+                    setTimeout(initInfiniteScroll, 300); // Даем 300мс на отрисовку картинок
+                    observer.disconnect(); // Отключаем слежку после запуска
+                }
+            });
+            observer.observe(track, { childList: true });
         });
     </script>
 

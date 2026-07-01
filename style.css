@@ -4089,16 +4089,28 @@ button, a, .cursor-pointer {
   box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.35) !important;
 }
 
-/* Для VIP карточек сохраняем золотое свечение картинки */
+/* УСИЛЕННАЯ ПОДСВЕТКА ТОП-КАРТ (VIP) */
 
 .vip-card .card-img-wrap,
 #vip-items-grid .card-img-wrap {
-  box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important;
+  border: 2px solid #f59e0b !important;
+  /* Яркая оранжевая рамка */
+  box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.4) !important;
+  /* Плотное свечение */
 }
 
 .vip-card:hover .card-img-wrap,
 #vip-items-grid .item-card:hover .card-img-wrap {
-  box-shadow: 0 14px 28px -4px rgba(245, 158, 11, 0.6) !important;
+  border-color: #d97706 !important;
+  box-shadow: 0 0 25px 4px rgba(245, 158, 11, 0.6) !important;
+}
+
+/* Делаем значок "Огня" в названии ярче и добавляем ему собственную тень */
+
+.item-card h4 i.fa-fire {
+  color: #f97316 !important;
+  font-size: 1.1em !important;
+  filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4)) !important;
 }
 
 /* 3. Прозрачная нижняя часть: настраиваем отступы текста от картинки */
@@ -4169,6 +4181,44 @@ button, a, .cursor-pointer {
 
   #vip-items-grid {
     scrollbar-width: none;
+  }
+}
+
+/* ==========================================
+   УЛУЧШЕНИЕ МОБИЛЬНОГО СПИСКА (LIST VIEW)
+   ========================================== */
+
+@media (max-width: 768px) {
+  .view-list .item-card {
+    height: 165px !important;
+    min-height: 165px !important;
+  }
+
+  /* Увеличиваем ширину фото, чтобы ВСЕ статусы и иконки влезали идеально в ряд */
+
+  .view-list .card-img-wrap {
+    width: 165px !important;
+    min-width: 165px !important;
+  }
+
+  #profile-items-grid .card-img-wrap {
+    width: 150px !important;
+    min-width: 150px !important;
+  }
+
+  /* Описание работает как "пружина", заполняя пустые пространства справа */
+
+  .view-list .view-list-desc-mobile {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    font-size: 0.75rem !important;
+    color: #78716c !important;
+    line-height: 1.3 !important;
+    margin-top: 4px !important;
+    flex-grow: 1 !important;
+    /* Главный фикс пустого пространства */
   }
 }
 
