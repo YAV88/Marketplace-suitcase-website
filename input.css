@@ -596,26 +596,3 @@ button, a, .cursor-pointer { cursor: pointer !important; }
         padding-right: 3rem !important;
     }
 }
-
-/* ==========================================
-   УВЕЛИЧЕННОЕ ОКНО ЧАТА ДЛЯ ПК (Бронебойный вариант)
-   ========================================== */
-@media (min-width: 1024px) {
-    /* Делаем селектор максимально сильным, чтобы перебить Tailwind-классы в HTML */
-    div#chat-modal > div.modal-content {
-        max-width: 1100px !important; /* Увеличили до 1100px для комфорта */
-        width: 85vw !important;      /* Берем 85% от ширины монитора */
-        height: 85vh !important;     /* Берем 85% от высоты экрана */
-        max-height: 1100px !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
-    
-    /* Растягиваем центральную часть с перепиской на всю доступную высоту */
-    div#chat-modal #chat-messages {
-        flex-grow: 1 !important;
-        max-height: none !important;
-        height: auto !important;
-        overflow-y: auto !important; /* Гарантируем скролл внутри истории */
-    }
-}
