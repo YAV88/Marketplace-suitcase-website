@@ -559,7 +559,8 @@
         <div id="vip-section" class="mb-8 hidden relative bg-transparent py-2">
             <div class="flex items-center gap-3 mb-4 px-4 sm:px-0">
                 <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight">
-                    <i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2 drop-shadow-md"></i>ТОП Находки
+                    <i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2 drop-shadow-md"></i>
+                    <span data-i18n="vip_title">ТОП Находки</span>
                 </h4>
             </div>
             
@@ -2049,27 +2050,33 @@
     </script>
 
     <script>
-        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ЗАВИСАНИЙ И УМНЫМ МОБИЛЬНЫМ СВАЙПОМ)
+        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ПЕРЕЗАГРУЗОК ДАННЫХ ПРИ СМЕНЕ ВКЛАДКИ)
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
             if (!track) return;
 
-            const initInfiniteScroll = () => {
-                const originalCards = Array.from(track.children);
-                if (originalCards.length === 0 || track.dataset.scrolling === 'true') return;
-                track.dataset.scrolling = 'true';
+            let animationId; // Переменная для хранения текущей анимации
 
+            const initInfiniteScroll = () => {
+                // Ищем только оригинальные карточки (игнорируем клоны)
+                const originalCards = Array.from(track.children).filter(c => !c.classList.contains('vip-clone'));
+                if (originalCards.length === 0) return;
+
+                // Если анимация уже шла — сбрасываем ее, так как данные обновились
+                if (animationId) cancelAnimationFrame(animationId);
+                
                 // 1. Рандомизация оригиналов
                 originalCards.sort(() => Math.random() - 0.5);
                 track.innerHTML = ''; 
                 originalCards.forEach(card => track.appendChild(card));
 
-                // 2. Клонируем карты (для мобильных нужно больше клонов, чтобы заполнить весь свайп)
+                // 2. Создаем клоны с пометкой класса 'vip-clone'
                 const cloneCount = Math.max(4, Math.ceil(window.innerWidth / 150)); 
                 for (let i = 0; i < cloneCount; i++) {
                     originalCards.forEach(card => {
                         const clone = card.cloneNode(true);
                         clone.removeAttribute('id'); 
+                        clone.classList.add('vip-clone'); // Ставим метку, чтобы отличать от оригиналов!
                         track.appendChild(clone);
                     });
                 }
@@ -2082,63 +2089,65 @@
                     const deltaTime = time - lastTime;
                     lastTime = time;
 
-                    // Защита от зависаний при переключении вкладок браузера (пропускаем кадр, если был долгий фриз)
                     if (deltaTime > 100) {
-                        requestAnimationFrame(scrollLoop);
+                        animationId = requestAnimationFrame(scrollLoop);
                         return;
                     }
 
-                    // Синхронизация: если пользователь свайпнул пальцем, перехватываем новую координату
                     if (Math.abs(exactScroll - track.scrollLeft) > 2) {
                         exactScroll = track.scrollLeft;
                     }
 
-                    // Двигаем ленту
                     if (isAutoScrolling && track.scrollWidth > 0) {
                         exactScroll += 0.5; 
                         track.scrollLeft = exactScroll;
                     }
 
-                    // БЕСШОВНЫЙ ЦИКЛ: Проверяем позицию всегда (даже если пользователь крутит сам!)
                     const singleSetWidth = track.scrollWidth / (cloneCount + 1);
                     
                     if (track.scrollLeft >= singleSetWidth) {
-                        // Незаметно перескакиваем назад
                         exactScroll -= singleSetWidth;
                         track.scrollLeft = exactScroll;
                     } else if (track.scrollLeft <= 0 && !isAutoScrolling) {
-                        // Если пользователь свайпнул влево в самое начало - перебрасываем в конец
                         exactScroll += singleSetWidth;
                         track.scrollLeft = exactScroll;
                     }
 
-                    requestAnimationFrame(scrollLoop);
+                    animationId = requestAnimationFrame(scrollLoop);
                 };
 
-                // Управление паузой
-                track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
-                track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 2000));
-                track.addEventListener('mousedown', () => isAutoScrolling = false);
-                track.addEventListener('mouseup', () => setTimeout(() => isAutoScrolling = true, 2000));
-                track.addEventListener('mouseleave', () => isAutoScrolling = true);
+                // Вешаем слушатели только один раз
+                if (!track.dataset.listenersAdded) {
+                    track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
+                    track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 2000));
+                    track.addEventListener('mousedown', () => isAutoScrolling = false);
+                    track.addEventListener('mouseup', () => setTimeout(() => isAutoScrolling = true, 2000));
+                    track.addEventListener('mouseleave', () => isAutoScrolling = true);
+                    
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) {
+                            lastTime = performance.now();
+                            isAutoScrolling = true;
+                        }
+                    });
+                    track.dataset.listenersAdded = 'true';
+                }
 
-                // Мгновенное пробуждение ленты при возврате на вкладку
-                document.addEventListener('visibilitychange', () => {
-                    if (!document.hidden) {
-                        lastTime = performance.now();
-                        isAutoScrolling = true;
-                    }
-                });
-
-                requestAnimationFrame(scrollLoop);
+                animationId = requestAnimationFrame(scrollLoop);
             };
 
+            // НЕ отключаем Observer! Следим за сайтом постоянно.
             const observer = new MutationObserver(() => {
-                if (track.children.length > 0) {
+                // Проверяем: если приложение добавило новые карточки без метки 'vip-clone', значит база обновилась!
+                const hasNewOriginals = Array.from(track.children).some(c => !c.classList.contains('vip-clone'));
+                const hasClones = Array.from(track.children).some(c => c.classList.contains('vip-clone'));
+                
+                // Запускаем движок только если есть оригиналы, но клоны еще не созданы
+                if (hasNewOriginals && !hasClones) {
                     setTimeout(initInfiniteScroll, 300);
-                    observer.disconnect(); 
                 }
             });
+            
             observer.observe(track, { childList: true });
         });
     </script>

@@ -362,8 +362,11 @@ button, a, .cursor-pointer { cursor: pointer !important; }
 
 #vip-items-grid h4 {
     font-size: 0.95rem !important;
-    min-height: auto !important;
-    height: auto !important;
+    min-height: 2.6em !important; /* Жестко резервируем место ровно под 2 строки */
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
     margin-bottom: 2px !important;
 }
 
