@@ -119,7 +119,7 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (VIP-корона и статусы перенесены на фото)
+    // 2. КАРТОЧКА ТОВАРА
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const t = window.t || (text => text);
@@ -137,23 +137,30 @@ export const ItemsModule = {
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
 
-        let statusBadge = ''; let opacityClass = '';
-        if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 w-max">${t('В РЕЗЕРВЕ')}</div>`; }
-        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-20 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
-        opacityClass = 'opacity-70 grayscale-[0.5]'; }
+        let statusBadgeOverlay = ''; 
+        let statusBadgeRow = '';
+        let opacityClass = '';
+        
+        if (i.status === 'reserved') { 
+            statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; 
+        }
+        else if (i.status === 'sold') { 
+            statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
+            opacityClass = 'opacity-70 grayscale-[0.5]'; 
+        }
 
-        // КОРОНА ПОВЕРХ ФОТО (Справа, рядом с кнопкой лайка)
-        const vipCrown = isVIP ? `<div class="absolute top-2 right-[3.25rem] z-20 w-8 h-8 bg-stone-900/60 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm" title="VIP Товар"><i class="fa-solid fa-crown text-amber-400 text-[13px] drop-shadow-md"></i></div>` : '';
+        // ЗАМЕНА КОРОНЫ НА "ОГОНЬ" (HOT FIND) ПЕРЕД НАЗВАНИЕМ
+        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire text-orange-500 drop-shadow-sm"></i></span>` : '';
         
         const imgHeight = 'h-40 sm:h-48 shrink-0';
         const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
         const titleClass = 'text-sm sm:text-base leading-tight';
         const priceClass = 'text-base sm:text-lg shrink-0';
 
-        // СТАТУСЫ ТЕПЕРЬ СТИЛИЗОВАНЫ ПОД ФОТО (Темные, полупрозрачные)
+        // СТАТУСЫ ПЛАТЕЖА И ДОСТАВКИ (Для вывода в строку)
         let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast mr-1"></i> Post</span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
         let paymentBadges = '';
         if (i.payment) {
@@ -199,29 +206,34 @@ export const ItemsModule = {
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0 w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${favHtml}
-                ${vipCrown}
-                ${statusBadge}
+                ${statusBadgeOverlay}
                 ${condBadge}
                 
-                ${(deliveryBadges || paymentBadges) ? `
-                <div class="absolute bottom-2 right-2 flex flex-col items-end gap-1 z-20">
-                    ${deliveryBadges ? `<div class="flex gap-1">${deliveryBadges}</div>` : ''}
-                    ${paymentBadges ? `<div class="flex gap-1">${paymentBadges}</div>` : ''}
+                ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
+                <div class="absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
+                    ${statusBadgeRow}
+                    ${deliveryBadges}
+                    ${paymentBadges}
                 </div>` : ''}
             </div>
             
             <div class="card-body-wrap ${pClass} w-full">
                 <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
                     
-                    <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-11 sm:h-12 overflow-hidden">
-                        ${i.title || 'Без названия'}
+                    <h4 class="font-bold ${titleClass} mb-1 pr-1 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-11 sm:h-12 overflow-hidden">
+                        ${vipCrown}${i.title || 'Без названия'}
                     </h4>
                     
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5 mb-2 font-black shrink-0">
                         ${i.price || 0} ${i.currency || 'RSD'}
                     </div>
                     
-                    <div class="flex flex-col gap-2 mt-auto shrink-0 w-full">
+                    <div class="flex flex-col gap-1.5 mt-auto shrink-0 w-full">
+                        
+                        <div class="view-list-desc-mobile hidden">
+                            ${safeDesc}
+                        </div>
+
                         <div class="flex items-center justify-between w-full">
                             <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide truncate max-w-full">
                                 <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}
