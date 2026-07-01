@@ -2049,29 +2049,24 @@
     </script>
 
     <script>
-        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С РАНДОМОМ И БЕСШОВНЫМ ЦИКЛОМ)
+        // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ЗАВИСАНИЯ ВКЛАДОК)
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
             if (!track) return;
 
             const initInfiniteScroll = () => {
                 const originalCards = Array.from(track.children);
-                // Защита от двойного запуска
                 if (originalCards.length === 0 || track.dataset.scrolling === 'true') return;
                 track.dataset.scrolling = 'true';
 
-                // 1. Рандомизируем оригинальные карты
                 originalCards.sort(() => Math.random() - 0.5);
                 track.innerHTML = ''; 
                 originalCards.forEach(card => track.appendChild(card));
 
-                // 2. Клонируем карты для бесшовного эффекта бесконечности
-                // Делаем столько копий, чтобы они заполнили минимум 3 ширины экрана
                 const cloneCount = originalCards.length < 4 ? 4 : 2; 
                 for (let i = 0; i < cloneCount; i++) {
                     originalCards.forEach(card => {
                         const clone = card.cloneNode(true);
-                        // Удаляем ID у клонов, чтобы не ломать логику кнопок
                         clone.removeAttribute('id'); 
                         track.appendChild(clone);
                     });
@@ -2085,10 +2080,8 @@
                         exactScroll += 0.5; // Скорость прокрутки
                         track.scrollLeft = exactScroll;
 
-                        // Вычисляем ширину одного оригинального блока карт
                         const singleSetWidth = track.scrollWidth / (cloneCount + 1);
                         
-                        // БЕСШОВНЫЙ ЛУП: как только проехали оригиналы, незаметно откидываем на начало
                         if (track.scrollLeft >= singleSetWidth) {
                             exactScroll = track.scrollLeft - singleSetWidth; 
                             track.scrollLeft = exactScroll;
@@ -2097,21 +2090,28 @@
                     requestAnimationFrame(scrollLoop);
                 };
 
-                // Пауза, если человек листает ленту сам или читает
                 track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
                 track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
                 track.addEventListener('mouseenter', () => isAutoScrolling = false);
                 track.addEventListener('mouseleave', () => isAutoScrolling = true);
 
+                // ФИКС ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        isAutoScrolling = false; // Ставим на паузу, когда вкладка неактивна
+                    } else {
+                        exactScroll = track.scrollLeft; // Синхронизируем позицию
+                        isAutoScrolling = true;         // Запускаем заново
+                    }
+                });
+
                 requestAnimationFrame(scrollLoop);
             };
 
-            // Поскольку товары грузятся из базы данных с задержкой, 
-            // мы ждем появления карточек в контейнере через MutationObserver
             const observer = new MutationObserver(() => {
                 if (track.children.length > 0) {
-                    setTimeout(initInfiniteScroll, 300); // Даем 300мс на отрисовку картинок
-                    observer.disconnect(); // Отключаем слежку после запуска
+                    setTimeout(initInfiniteScroll, 300);
+                    observer.disconnect(); 
                 }
             });
             observer.observe(track, { childList: true });
