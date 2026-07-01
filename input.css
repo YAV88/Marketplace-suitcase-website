@@ -372,3 +372,87 @@ button, a, .cursor-pointer { cursor: pointer !important; }
 #vip-items-grid .vip-card::after {
     display: none !important; 
 }
+
+/* ==========================================
+   ГЛОБАЛЬНЫЙ ПРЕМИУМ-СТИЛЬ КАРТОЧЕК (POSTER STYLE)
+   ========================================== */
+
+/* 1. Убираем белый фон и рамки у всех карточек (и обычных, и VIP) */
+.item-card {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* 2. Тень, свечение и эффекты наведения теперь принадлежат только картинке */
+.card-img-wrap {
+    border-radius: 1rem !important;
+    box-shadow: 0 6px 14px -2px rgba(13, 148, 136, 0.15) !important; /* Базовая тиловая тень для обычных товаров */
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    z-index: 1;
+    overflow: hidden !important;
+}
+
+/* Анимация всплытия картинки при наведении */
+.item-card:hover .card-img-wrap {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.35) !important;
+}
+
+/* Для VIP карточек сохраняем золотое свечение картинки */
+.vip-card .card-img-wrap,
+#vip-items-grid .card-img-wrap {
+    box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important;
+}
+.vip-card:hover .card-img-wrap,
+#vip-items-grid .item-card:hover .card-img-wrap {
+    box-shadow: 0 14px 28px -4px rgba(245, 158, 11, 0.6) !important;
+}
+
+/* 3. Прозрачная нижняя часть: настраиваем отступы текста от картинки */
+.view-grid .card-body-wrap {
+    padding: 0.75rem 0 0 0 !important; /* Отступ только сверху от фото */
+    background: transparent !important;
+}
+
+.view-list .card-body-wrap {
+    padding: 0 0 0 1.25rem !important; /* Отступ слева от фото (горизонтальный режим) */
+    justify-content: flex-start !important;
+    background: transparent !important;
+}
+
+/* ==========================================
+   УДАЛЕНИЕ СТАТУСОВ (ОПЛАТА/ДОСТАВКА) ИЗ ЛЕНТЫ
+   ========================================== */
+/* Глобально скрываем контейнеры с бейджиками в ленте */
+.item-card .mt-2.flex.flex-wrap, 
+.item-card .text-[10px],
+.item-card .text-xs.gap-2 {
+    display: none !important; 
+}
+
+/* ==========================================
+   РАЗМЕРЫ ШРИФТОВ НА МОБИЛЬНЫХ (СЕТКА = СПИСОК)
+   ========================================== */
+@media (max-width: 768px) {
+    /* Делаем шрифт заголовков крупным и одинаковым везде */
+    .view-grid h4, 
+    .view-list h4,
+    #profile-items-grid h4 {
+        font-size: 1.1rem !important; /* Крупный размер как в плитке */
+        line-height: 1.3 !important;
+        min-height: 2.6em !important; /* Идеальное место под 2 строки */
+        margin-bottom: 4px !important;
+    }
+    
+    /* Слегка увеличиваем цену в сетке, чтобы она тоже соответствовала */
+    .view-grid .price-text {
+        font-size: 1.15rem !important;
+    }
+    
+    /* Чуть уменьшаем отступ сверху от текста на мобильных */
+    .view-grid .card-body-wrap {
+        padding: 0.5rem 0 0 0 !important;
+    }
+}
