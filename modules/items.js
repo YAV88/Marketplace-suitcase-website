@@ -604,9 +604,11 @@ export const ItemsModule = {
                 }
             }
 
-            const vipCrown = item.isHighlighted ? `<span class="text-amber-500 ml-3 text-2xl" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-            const titleEl = document.getElementById('modal-title');
-            if (titleEl) titleEl.innerHTML = `${item.title || 'Без названия'} ${vipCrown}`;
+            const titleEl = document.getElementById('modal-title'); 
+            if (titleEl) {
+                const fireIcon = item.isHighlighted ? '<i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2.5 drop-shadow-sm text-xl"></i>' : '';
+                titleEl.innerHTML = fireIcon + (item.title || 'Без названия');
+            }
 
             const isService = item.category && item.category.includes('Услуги');
             const isJob = item.category && item.category.includes('Работа');
