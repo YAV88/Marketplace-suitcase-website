@@ -4297,6 +4297,34 @@ button, a, .cursor-pointer {
   }
 }
 
+/* ==========================================
+   УВЕЛИЧЕННОЕ ОКНО ЧАТА ДЛЯ ПК
+   ========================================== */
+
+@media (min-width: 1024px) {
+  /* Настраиваем главную обертку модального окна чата */
+
+  #chat-modal .modal-content {
+    max-width: 900px !important;
+    /* Максимальная ширина */
+    width: 90vw !important;
+    /* Занимает 90% ширины экрана, если экран меньше 900px */
+    height: 85vh !important;
+    /* Занимает 85% высоты экрана */
+    max-height: 900px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Растягиваем блок с сообщениями (историей), чтобы он заполнял всю новую высоту */
+
+  #chat-messages {
+    flex-grow: 1 !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+}
+
 .empty\:hidden:empty{
   display: none;
 }
