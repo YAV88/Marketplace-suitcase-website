@@ -564,7 +564,7 @@
             </div>
             
             <!-- Карусель для автоскролла -->
-            <div id="vip-items-grid" class="flex overflow-x-auto gap-4 pb-6 px-4 sm:px-0 hide-scrollbar-on-mobile vip-auto-scroll" style="scroll-behavior: auto;"></div>
+            <div id="vip-items-grid" class="flex overflow-x-auto gap-4 pb-6 px-4 sm:px-0 hide-scrollbar-on-mobile" style="scroll-behavior: auto;"></div>
         </div>
 
         <div class="mb-4 sm:mb-6 rounded-[2rem] bg-gradient-to-r from-brand-500 to-brand-600 p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4 group"
@@ -2049,32 +2049,37 @@
     </script>
 
     <script>
-        // Плавная авто-прокрутка VIP-ленты с возможностью ручного свайпа
+        // ПРОДВИНУТАЯ VIP-ЛЕНТА: Рандом + Автоскролл
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
-            if (!track) return;
-            
+            if (!track || track.children.length === 0) return;
+
+            // 1. Рандомизация: перемешиваем карты при загрузке страницы
+            const cards = Array.from(track.children);
+            cards.sort(() => Math.random() - 0.5);
+            cards.forEach(card => track.appendChild(card));
+
+            // 2. Плавная прокрутка
             let isAutoScrolling = true;
-            let scrollSpeed = 0.6; // Скорость (чем меньше, тем медленнее)
+            let scrollSpeed = 0.5; // Идеальная скорость (не слишком быстро)
 
             const scrollLoop = () => {
                 if (isAutoScrolling && track.scrollWidth > track.clientWidth) {
                     track.scrollLeft += scrollSpeed;
-                    // Если дошли до конца — плавно перебрасываем в начало
+                    
+                    // Возврат в начало, когда дошли до конца
                     if (track.scrollLeft >= (track.scrollWidth - track.clientWidth - 1)) {
-                        track.scrollLeft = 0;
+                        track.scrollLeft = 0; 
                     }
                 }
                 requestAnimationFrame(scrollLoop);
             };
 
-            // Останавливаем движение, когда пользователь листает сам
+            // Пользовательское управление (останавливаем при касании/наведении)
             track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
-            track.addEventListener('mousedown', () => isAutoScrolling = false);
-            
-            // Возобновляем через 2 секунды после того, как убрали палец/курсор
-            track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 2000));
-            track.addEventListener('mouseleave', () => setTimeout(() => isAutoScrolling = true, 2000));
+            track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
+            track.addEventListener('mouseenter', () => isAutoScrolling = false);
+            track.addEventListener('mouseleave', () => isAutoScrolling = true);
 
             requestAnimationFrame(scrollLoop);
         });

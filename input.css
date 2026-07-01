@@ -433,26 +433,61 @@ button, a, .cursor-pointer { cursor: pointer !important; }
 }
 
 /* ==========================================
-   РАЗМЕРЫ ШРИФТОВ НА МОБИЛЬНЫХ (СЕТКА = СПИСОК)
+   ТОТАЛЬНОЕ УДАЛЕНИЕ МУСОРА С КАРТОЧЕК
+   ========================================== */
+/* Скрываем бейджики (оплата/доставка/состояния) с внешнего вида */
+.item-card .flex.flex-wrap.gap-1,
+.item-card .mt-2.flex.flex-wrap,
+.item-card .text-\[10px\],
+.item-card .text-xs.gap-2 {
+    display: none !important; 
+}
+
+/* ==========================================
+   ЕДИНЫЙ ОПТИМАЛЬНЫЙ ШРИФТ ДЛЯ МОБИЛЬНЫХ
    ========================================== */
 @media (max-width: 768px) {
-    /* Делаем шрифт заголовков крупным и одинаковым везде */
     .view-grid h4, 
     .view-list h4,
     #profile-items-grid h4 {
-        font-size: 1.1rem !important; /* Крупный размер как в плитке */
-        line-height: 1.3 !important;
-        min-height: 2.6em !important; /* Идеальное место под 2 строки */
-        margin-bottom: 4px !important;
+        font-size: 0.85rem !important; /* Идеальный размер: читаемо, но не громоздко */
+        line-height: 1.25 !important;
+        min-height: 2.5em !important;
+        margin-bottom: 2px !important;
     }
     
-    /* Слегка увеличиваем цену в сетке, чтобы она тоже соответствовала */
     .view-grid .price-text {
-        font-size: 1.15rem !important;
-    }
-    
-    /* Чуть уменьшаем отступ сверху от текста на мобильных */
-    .view-grid .card-body-wrap {
-        padding: 0.5rem 0 0 0 !important;
+        font-size: 1rem !important; /* Аккуратная цена без кричащего размера */
     }
 }
+
+/* ==========================================
+   ТОП-ЛЕНТА: ПРЕМИАЛЬНЫЙ ВИД НА ПК
+   ========================================== */
+@media (min-width: 1024px) {
+    /* На ПК карточки становятся солидными постерами */
+    #vip-items-grid .item-card {
+        width: 220px !important;
+        min-width: 220px !important;
+    }
+    
+    #vip-items-grid .card-img-wrap {
+        height: 280px !important;
+        min-height: 280px !important;
+        border-radius: 1.25rem !important; /* Элегантное скругление */
+    }
+    
+    #vip-items-grid h4 {
+        font-size: 1.05rem !important;
+        margin-top: 6px !important;
+    }
+
+    /* На ПК прячем скроллбар у карусели, чтобы выглядело чисто */
+    #vip-items-grid::-webkit-scrollbar {
+        display: none;
+    }
+    #vip-items-grid {
+        scrollbar-width: none;
+    }
+}
+
