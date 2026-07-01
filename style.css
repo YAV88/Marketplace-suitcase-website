@@ -3695,11 +3695,12 @@ body.modal-open {
   /* Блокировка свайпа фона на телефонах */
 }
 
-.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar {
+/* Добавили #chat-messages и аппаратное ускорение для iOS */
+
+.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar, #chat-messages {
   touch-action: auto !important;
-  /* Внутри окон скроллить можно */
   overscroll-behavior: contain !important;
-  /* Скролл не передается на фон */
+  -webkit-overflow-scrolling: touch !important;
 }
 
 .modal-overlay {

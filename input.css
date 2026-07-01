@@ -213,10 +213,13 @@ body.modal-open {
     overflow: hidden !important; 
     touch-action: none !important; /* Блокировка свайпа фона на телефонах */
 }
-.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar { 
-    touch-action: auto !important; /* Внутри окон скроллить можно */
-    overscroll-behavior: contain !important; /* Скролл не передается на фон */
+/* Добавили #chat-messages и аппаратное ускорение для iOS */
+.modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar, #chat-messages { 
+    touch-action: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important; 
 }
+
 .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }

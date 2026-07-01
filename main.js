@@ -1280,6 +1280,7 @@ window.openModal = id => {
         // --- НОВАЯ БЛОКИРОВКА СКРОЛЛА ---
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
         document.body.style.paddingRight = `${scrollbarWidth}px`;
 
         // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, чтобы не было наложения теней
@@ -1353,6 +1354,7 @@ window.closeModal = id => {
                 document.body.classList.remove('modal-open');
                 // --- СНИМАЕМ БЛОКИРОВКУ СКРОЛЛА ПРИ ЗАКРЫТИИ ПОСЛЕДНЕГО ОКНА ---
                 document.body.style.overflow = '';
+                document.body.classList.remove('modal-open');
                 document.body.style.paddingRight = '';
             }
         }
@@ -1568,6 +1570,7 @@ window.toggleMobileFilters = () => {
         }
         // Снимаем блокировку с основной страницы
         document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
         document.documentElement.style.overflow = '';
     } else {
         // ОТКРЫВАЕМ ПАНЕЛЬ
@@ -1578,6 +1581,7 @@ window.toggleMobileFilters = () => {
         }
         // Жестко блокируем фон (работает и на iOS, и на Android)
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
         document.documentElement.style.overflow = 'hidden';
     }
 };
