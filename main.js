@@ -1277,11 +1277,13 @@ window.modalStack = []; // Инициализируем стек открыты�
 window.openModal = id => {
     const el = document.getElementById(id);
     if (el) {
-        // --- НОВАЯ БЛОКИРОВКА СКРОЛЛА ---
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.overflow = 'hidden';
+        // --- ИСТИННАЯ БРОНЕБОЙНАЯ БЛОКИРОВКА СКРОЛЛА ---
+        if (window.modalStack.length === 0) {
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            window.toggleBodyScroll(true); // Запускаем хард-лок для iOS/Android
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+        }
         document.body.classList.add('modal-open');
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
 
         // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, чтобы не было наложения теней
         if (window.modalStack.length > 0) {
@@ -1352,9 +1354,8 @@ window.closeModal = id => {
         } else {
             if (!document.querySelector('.modal-overlay.active')) {
                 document.body.classList.remove('modal-open');
-                // --- СНИМАЕМ БЛОКИРОВКУ СКРОЛЛА ПРИ ЗАКРЫТИИ ПОСЛЕДНЕГО ОКНА ---
-                document.body.style.overflow = '';
-                document.body.classList.remove('modal-open');
+                // --- СНИМАЕМ БРОНЕБОЙНУЮ БЛОКИРОВКУ ---
+                window.toggleBodyScroll(false); 
                 document.body.style.paddingRight = '';
             }
         }

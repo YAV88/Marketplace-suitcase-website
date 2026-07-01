@@ -18,12 +18,12 @@ export const ChatModule = {
         window.currentChatRecipientId = recipientId;
         window.currentChatItemId = itemId;
 
-        const modal = document.getElementById('chat-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            document.body.classList.add('modal-open'); /* <-- Блокирует фон на мобилках */
+        // Вызываем централизованный менеджер модалок (он сам всё заблокирует)
+        if (typeof window.openModal === 'function') {
+            window.openModal('chat-modal');
+        } else {
+            const modal = document.getElementById('chat-modal');
+            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
         }
 
         await ChatModule.loadMessages(chatId);
