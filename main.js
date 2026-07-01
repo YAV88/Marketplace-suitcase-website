@@ -3371,49 +3371,6 @@ window.checkIncomingShareClick = async () => {
     }
 };
 
-// --- ОПТИМИЗИРОВАННЫЙ СКРОЛЛ (Sticky Header & Load More) ---
-let isScrolling = false;
-window.addEventListener('scroll', () => {
-    if (!isScrolling) {
-        window.requestAnimationFrame(() => {
-            const isScrolled = window.scrollY > 20;
-            const headerContainer = document.getElementById('header-container');
-            const header = document.getElementById('main-header');
-
-            // 1. Анимация шапки
-            if (headerContainer) {
-                if (isScrolled) {
-                    headerContainer.classList.replace('sm:py-4', 'sm:py-2');
-                    headerContainer.classList.replace('py-3', 'py-2');
-                } else {
-                    headerContainer.classList.replace('sm:py-2', 'sm:py-4');
-                    headerContainer.classList.replace('py-2', 'py-3');
-                }
-            }
-            if (header) {
-                if (isScrolled) {
-                    header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
-                    header.classList.remove('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
-                } else {
-                    header.classList.add('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
-                    header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
-                }
-            }
-
-            // 2. Бесконечный скролл (Load More)
-            if (!document.body.classList.contains('modal-open')) {
-                const loadMoreBtn = document.getElementById('load-more-btn');
-                if (loadMoreBtn && !loadMoreBtn.classList.contains('hidden') && ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500)) {
-                    loadMoreBtn.classList.add('hidden');
-                    if (typeof window.loadMoreItems === 'function') window.loadMoreItems();
-                }
-            }
-            isScrolling = false;
-        });
-        isScrolling = true;
-    }
-}, { passive: true }); // passive: true отключает блокировку скролла браузером
-
 // 2. Анимированный плейсхолдер поиска (с динамическим переводом)
 const searchInputAtm = document.getElementById('main-search-input');
 const searchPhrases = ['iPhone 13 Pro', 'Кроссовки Nike', 'PlayStation 5', 'Велосипед', 'Квартира в Нови-Саде', 'Услуги электрика', 'Диван IKEA', 'MacBook Air'];
@@ -3486,36 +3443,93 @@ window.navigatePhoto = (direction, event) => {
 };
 
 // ==========================================
-// УМНАЯ ШАПКА (Скрытие при скролле)
+// УМНАЯ ШАПКА И ЕДИНЫЙ КОНТРОЛЛЕР СКРОЛЛА
 // ==========================================
 window.initSmartHeader = () => {
     const header = document.getElementById('main-header');
+    const headerContainer = document.getElementById('header-container');
+    const floatingBtn = document.getElementById('floating-filter-btn');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+
     if (!header) return;
 
-    let lastScroll = window.scrollY;
-    
+    // 1. Делаем шапку фиксированной (чтобы она всегда ездила поверх контента)
+    if (getComputedStyle(header).position !== 'fixed') {
+        // Добавляем отступ сайту, чтобы контент не прыгнул под шапку
+        document.body.style.paddingTop = `${header.offsetHeight}px`;
+        header.style.position = 'fixed';
+        header.style.top = '0';
+        header.style.left = '0';
+        header.style.width = '100%';
+        header.style.zIndex = '100'; // Поверх всего сайта
+        header.style.transition = 'transform 0.3s ease-in-out, background-color 0.3s ease, padding 0.3s ease';
+    }
+
+    let lastScrollY = window.scrollY;
+    let isScrolling = false;
+
     window.addEventListener('scroll', () => {
-        const currentScroll = window.scrollY;
-        
-        // В самом верху страницы - всегда показываем
-        if (currentScroll <= 0) {
-            header.classList.remove('-translate-y-full');
-            return;
+        if (!isScrolling) {
+            window.requestAnimationFrame(() => {
+                const currentScrollY = window.scrollY;
+                const isScrolled = currentScrollY > 20;
+
+                // --- Анимация фона шапки ---
+                if (headerContainer) {
+                    if (isScrolled) {
+                        headerContainer.classList.replace('sm:py-4', 'sm:py-2');
+                        headerContainer.classList.replace('py-3', 'py-2');
+                    } else {
+                        headerContainer.classList.replace('sm:py-2', 'sm:py-4');
+                        headerContainer.classList.replace('py-2', 'py-3');
+                    }
+                }
+
+                if (isScrolled) {
+                    header.classList.add('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                    header.classList.remove('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                } else {
+                    header.classList.add('bg-white/40', 'dark:bg-stone-900/70', 'shadow-[0_4px_30px_rgba(20,184,166,0.08)]', 'dark:shadow-[0_10px_40px_rgba(20,184,166,0.05)]');
+                    header.classList.remove('bg-white/95', 'dark:bg-stone-900/95', 'shadow-md');
+                }
+
+                // --- ЛОГИКА УМНОЙ ШАПКИ ---
+                if (currentScrollY <= 0) {
+                    // В самом верху - показываем
+                    header.style.transform = 'translateY(0)';
+                } else if (Math.abs(currentScrollY - lastScrollY) > 10) { 
+                    // Игнорируем микро-скроллы пальцем
+                    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                        // Скролл вниз - прячем шапку
+                        header.style.transform = 'translateY(-100%)'; 
+                    } else {
+                        // Скролл вверх - показываем шапку
+                        header.style.transform = 'translateY(0)'; 
+                    }
+                }
+
+                // --- Плавающая кнопка мобильных фильтров ---
+                if (floatingBtn) {
+                    if (currentScrollY > 150) {
+                        floatingBtn.classList.remove('-translate-x-full');
+                    } else {
+                        floatingBtn.classList.add('-translate-x-full');
+                    }
+                }
+
+                // --- Подгрузка товаров (Load More) ---
+                if (!document.body.classList.contains('modal-open')) {
+                    if (loadMoreBtn && !loadMoreBtn.classList.contains('hidden') && ((window.innerHeight + currentScrollY) >= document.body.offsetHeight - 500)) {
+                        loadMoreBtn.classList.add('hidden');
+                        if (typeof window.loadMoreItems === 'function') window.loadMoreItems();
+                    }
+                }
+
+                lastScrollY = currentScrollY;
+                isScrolling = false;
+            });
+            isScrolling = true;
         }
-        
-        // Игнорируем микро-скроллы для плавности
-        if (Math.abs(currentScroll - lastScroll) < 15) return;
-        
-        // Скроллим вниз - прячем шапку
-        if (currentScroll > lastScroll && currentScroll > 120) {
-            header.classList.add('-translate-y-full');
-        } 
-        // Скроллим вверх - показываем шапку и поиск
-        else if (currentScroll < lastScroll) {
-            header.classList.remove('-translate-y-full');
-        }
-        
-        lastScroll = currentScroll;
     }, { passive: true });
 };
 
@@ -3583,50 +3597,6 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
-
-function initSmartHeader() {
-    const header = document.getElementById('main-header');
-    const floatingBtn = document.getElementById('floating-filter-btn');
-
-    if (!header) return;
-
-    let lastScrollY = window.scrollY;
-    const scrollThreshold = 10;
-    
-    window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
-
-        // --- ЛОГИКА БОКОВОЙ КНОПКИ (Чистые классы Tailwind) ---
-        if (floatingBtn) {
-            if (currentScrollY > 150) {
-                // Убираем сдвиг - кнопка выезжает
-                floatingBtn.classList.remove('-translate-x-full');
-            } else {
-                // Добавляем сдвиг - кнопка прячется за край
-                floatingBtn.classList.add('-translate-x-full');
-            }
-        }
-
-        // --- ЛОГИКА ШАПКИ ---
-        if (currentScrollY <= 0) {
-            header.classList.remove('-translate-y-full');
-            return;
-        }
-
-        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) return;
-
-        if (currentScrollY > lastScrollY && currentScrollY > 80) {
-            header.classList.add('-translate-y-full');
-        } else {
-            header.classList.remove('-translate-y-full');
-        }
-
-        lastScrollY = currentScrollY;
-    }, { passive: true });
-}
-
-// Запуск
-document.addEventListener('DOMContentLoaded', initSmartHeader);
 
 // ==========================================
 // ПОХОЖИЕ ТОВАРЫ (СВАЙП-КАРУСЕЛЬ) И АНАЛИТИКА ПРОСМОТРОВ
