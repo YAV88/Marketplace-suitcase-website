@@ -1535,15 +1535,19 @@ window.toggleFavoriteModal = async (event) => {
 };
 
 window.toggleMobileMenu = () => { 
-    const el = document.getElementById('mobile-menu'); 
+    const el = document.getElementById('mobile-menu');
     if (el) {
-        el.classList.toggle('translate-x-full'); 
-        
-        // НОВОЕ: Блокировка прокрутки фона при открытом меню
-        if (!el.classList.contains('translate-x-full')) {
-            document.body.classList.add('overflow-hidden');
+        // Проверяем, открываем мы меню или закрываем
+        const isOpening = el.classList.contains('translate-x-full');
+        el.classList.toggle('translate-x-full');
+
+        // Используем наш централизованный локер скролла
+        if (isOpening) {
+            window.toggleBodyScroll(true);
+            document.body.classList.add('modal-open');
         } else {
-            document.body.classList.remove('overflow-hidden');
+            window.toggleBodyScroll(false);
+            document.body.classList.remove('modal-open');
         }
     }
 };
@@ -1555,13 +1559,12 @@ window.toggleMobileFilters = () => {
     
     if (!panel) return;
 
-    // ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ СКРОЛЛ ПАНЕЛИ (перебивает старые баги)
     panel.style.overflowY = 'auto';
-    panel.style.height = '100dvh'; // Строго на всю высоту экрана
-    panel.style.overscrollBehaviorY = 'contain'; // Блокирует передачу прокрутки на задний фон
+    panel.style.height = '100dvh'; 
+    panel.style.overscrollBehaviorY = 'contain';
 
     const isOpen = !panel.classList.contains('-translate-x-full');
-
+    
     if (isOpen) {
         // ЗАКРЫВАЕМ ПАНЕЛЬ
         panel.classList.add('-translate-x-full');
@@ -1569,10 +1572,9 @@ window.toggleMobileFilters = () => {
             backdrop.classList.add('opacity-0');
             setTimeout(() => backdrop.classList.add('hidden'), 300);
         }
-        // Снимаем блокировку с основной страницы
-        document.body.style.overflow = '';
+        // --- СНИМАЕМ БРОНЕБОЙНУЮ БЛОКИРОВКУ ---
+        window.toggleBodyScroll(false);
         document.body.classList.remove('modal-open');
-        document.documentElement.style.overflow = '';
     } else {
         // ОТКРЫВАЕМ ПАНЕЛЬ
         panel.classList.remove('-translate-x-full');
@@ -1580,10 +1582,9 @@ window.toggleMobileFilters = () => {
             backdrop.classList.remove('hidden');
             setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
         }
-        // Жестко блокируем фон (работает и на iOS, и на Android)
-        document.body.style.overflow = 'hidden';
+        // --- ВКЛЮЧАЕМ БРОНЕБОЙНУЮ БЛОКИРОВКУ ---
+        window.toggleBodyScroll(true);
         document.body.classList.add('modal-open');
-        document.documentElement.style.overflow = 'hidden';
     }
 };
 
