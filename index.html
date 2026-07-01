@@ -2049,39 +2049,42 @@
     </script>
 
     <script>
-        // ПРОДВИНУТАЯ VIP-ЛЕНТА: Рандом + Автоскролл
+        // АВТО-ПРОКРУТКА VIP-ЛЕНТЫ
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('vip-items-grid');
-            if (!track || track.children.length === 0) return;
+            if (!track) return;
 
-            // 1. Рандомизация: перемешиваем карты при загрузке страницы
+            // Рандомизация
             const cards = Array.from(track.children);
-            cards.sort(() => Math.random() - 0.5);
-            cards.forEach(card => track.appendChild(card));
+            if (cards.length > 0) {
+                cards.sort(() => Math.random() - 0.5);
+                cards.forEach(card => track.appendChild(card));
+            }
 
-            // 2. Плавная прокрутка
             let isAutoScrolling = true;
-            let scrollSpeed = 0.5; // Идеальная скорость (не слишком быстро)
+            let exactScroll = 0; // Точная позиция (защита от багов округления в браузерах)
 
             const scrollLoop = () => {
                 if (isAutoScrolling && track.scrollWidth > track.clientWidth) {
-                    track.scrollLeft += scrollSpeed;
+                    exactScroll += 0.5; // Скорость прокрутки
+                    track.scrollLeft = exactScroll;
                     
-                    // Возврат в начало, когда дошли до конца
+                    // Если дошли до конца — плавно возвращаем в начало
                     if (track.scrollLeft >= (track.scrollWidth - track.clientWidth - 1)) {
+                        exactScroll = 0;
                         track.scrollLeft = 0; 
                     }
                 }
                 requestAnimationFrame(scrollLoop);
             };
 
-            // Пользовательское управление (останавливаем при касании/наведении)
             track.addEventListener('touchstart', () => isAutoScrolling = false, { passive: true });
             track.addEventListener('touchend', () => setTimeout(() => isAutoScrolling = true, 1500));
             track.addEventListener('mouseenter', () => isAutoScrolling = false);
             track.addEventListener('mouseleave', () => isAutoScrolling = true);
 
-            requestAnimationFrame(scrollLoop);
+            // Запуск с небольшой задержкой, чтобы DOM точно отрисовался
+            setTimeout(() => requestAnimationFrame(scrollLoop), 500);
         });
     </script>
 

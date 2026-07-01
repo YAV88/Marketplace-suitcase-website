@@ -119,12 +119,10 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (Исправлен баг с функцией t)
+    // 2. ИДЕАЛЬНАЯ КАРТОЧКА (VIP-корона и статусы перенесены на фото)
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
-        // === ИСПРАВЛЕНИЕ: Функция перевода теперь в самом начале! ===
-        const t = window.t || (text => text); 
-
+        const t = window.t || (text => text);
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
         const isJob = i.category && i.category.includes('Работа');
@@ -134,58 +132,58 @@ export const ItemsModule = {
         const cardClass = isVIP ?
             'item-card vip-card cursor-pointer flex flex-col relative h-full w-full' : 
             'item-card bg-white dark:bg-stone-800 cursor-pointer flex flex-col relative h-full w-full';
-            
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
 
         let statusBadge = ''; let opacityClass = '';
-        if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 w-max">${t('В РЕЗЕРВЕ')}</div>`; }
-        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-10 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
+        if (i.status === 'reserved') { statusBadge = `<div class="absolute bottom-2 left-2 bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 w-max">${t('В РЕЗЕРВЕ')}</div>`; }
+        else if (i.status === 'sold') { statusBadge = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-20 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
         opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
-        const vipCrown = isVIP ? `<span class="text-amber-500 mr-1.5 text-sm inline-block" title="VIP Товар"><i class="fa-solid fa-crown"></i></span>` : '';
-        const imgHeight = 'h-40 sm:h-48 shrink-0'; 
+        // КОРОНА ПОВЕРХ ФОТО (Справа, рядом с кнопкой лайка)
+        const vipCrown = isVIP ? `<div class="absolute top-2 right-[3.25rem] z-20 w-8 h-8 bg-stone-900/60 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm" title="VIP Товар"><i class="fa-solid fa-crown text-amber-400 text-[13px] drop-shadow-md"></i></div>` : '';
+        
+        const imgHeight = 'h-40 sm:h-48 shrink-0';
         const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
-        const titleClass = 'text-sm sm:text-base leading-tight'; 
+        const titleClass = 'text-sm sm:text-base leading-tight';
         const priceClass = 'text-base sm:text-lg shrink-0';
 
+        // СТАТУСЫ ТЕПЕРЬ СТИЛИЗОВАНЫ ПОД ФОТО (Темные, полупрозрачные)
         let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-[12px] rounded-md border border-brand-200 dark:border-brand-800/50 cursor-help transition-transform hover:scale-110" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[12px] rounded-md border border-stone-200 dark:border-stone-700 cursor-help transition-transform hover:scale-110" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
         let paymentBadges = '';
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
             const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[12px] rounded-md border border-emerald-200 dark:border-emerald-800/50 cursor-help transition-transform hover:scale-110" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
-            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[12px] rounded-md border border-indigo-200 dark:border-indigo-800/50 cursor-help transition-transform hover:scale-110" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
+            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-emerald-400 text-[12px] rounded-md shadow-sm" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
+            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-indigo-400 text-[12px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
         }
 
         let condBadge = '';
-        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Услуги')}</div>`;
-        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Работа')}</div>`;
-        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Недвижимость')}</div>`;
+        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Услуги')}</div>`;
+        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Работа')}</div>`;
+        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Недвижимость')}</div>`;
         else if (isAnimalEntity) condBadge = '';
         else {
-            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Новое')}</div>`;
-            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-10 uppercase">${t('Б/У')}</div>`;
+            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Новое')}</div>`;
+            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Б/У')}</div>`;
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
-        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
+        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
         
         const cardFooter = (isOwner && isProfileView) ? `
             <div class="view-grid-city mt-auto pt-3 flex flex-row items-center gap-1.5 shrink-0 border-t border-stone-100 dark:border-stone-700 w-full">
                 <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="flex-1 px-3 py-2 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 text-[11px] font-bold uppercase tracking-wider">
                     <i class="fa-solid fa-share-nodes mr-1.5"></i> ${t('В ТОП')}
                 </button>
-                
                 <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="w-9 h-9 shrink-0 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700" title="${t('Редакт.')}">
                     <i class="fa-solid fa-pen"></i>
                 </button>
-
                 <button type="button" onclick="event.stopPropagation(); window.deleteItem('${i.id}')" class="w-9 h-9 shrink-0 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-lg transition hover:bg-red-100 flex items-center justify-center border border-red-200 dark:border-red-800/50" title="Удалить">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
@@ -197,18 +195,26 @@ export const ItemsModule = {
 
         return `
         <div class="${cardClass} ${opacityClass} overflow-hidden transform-gpu will-change-transform" onclick="window.openItemDetails('${i.id}')">
-            ${favHtml}
+            
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0 w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+                ${favHtml}
+                ${vipCrown}
                 ${statusBadge}
                 ${condBadge}
+                
+                ${(deliveryBadges || paymentBadges) ? `
+                <div class="absolute bottom-2 right-2 flex flex-col items-end gap-1 z-20">
+                    ${deliveryBadges ? `<div class="flex gap-1">${deliveryBadges}</div>` : ''}
+                    ${paymentBadges ? `<div class="flex gap-1">${paymentBadges}</div>` : ''}
+                </div>` : ''}
             </div>
             
             <div class="card-body-wrap ${pClass} w-full">
                 <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
                     
                     <h4 class="font-bold ${titleClass} mb-1 pr-7 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-11 sm:h-12 overflow-hidden">
-                        ${vipCrown}${i.title || 'Без названия'}
+                        ${i.title || 'Без названия'}
                     </h4>
                     
                     <div class="text-brand-600 price-text ${priceClass} mt-0.5 mb-2 font-black shrink-0">
@@ -226,12 +232,6 @@ export const ItemsModule = {
                                 <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box"></i> ${i.favoritesCount || 0}</span>
                             </div>
                         </div>
-                        
-                        ${(deliveryBadges || paymentBadges) ? `
-                        <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                            ${deliveryBadges}
-                            ${paymentBadges}
-                        </div>` : ''}
                     </div>
                 </div>
 
