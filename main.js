@@ -58,7 +58,11 @@ window.logout = AuthModule.logout;
 window.checkUserSession = AuthModule.checkUserSession;
 window.handleAuthChange = AuthModule.handleAuthChange;
 
-// Модуль Товаров (Без createCardHtml профиль крашится!)
+window.loadMoreItems = ItemsModule.loadMoreItems;
+window.bumpViaShare = ItemsModule.bumpViaShare;
+window.editItem = ItemsModule.editItem;
+window.deleteItemConfirm = ItemsModule.deleteItemConfirm; // или просто deleteItem, смотря как у вас в ItemsModule
+window.toggleFavorite = ItemsModule.toggleFavorite;
 window.fetchItems = ItemsModule.fetchItems;
 window.openItemDetails = ItemsModule.openItemDetails;
 window.filterByCategory = ItemsModule.filterByCategory;
@@ -2934,7 +2938,6 @@ window.updateAllShareTimers = () => {
 
 // ==========================================
 // 2. ГЛОБАЛЬНЫЙ ПЕРЕХВАТЧИК СОБЫТИЙ (Event Delegator)
-// Защита от XSS и избавление от inline-обработчиков (onclick)
 // ==========================================
 document.body.addEventListener('click', (e) => {
     // Ищем ближайший элемент с атрибутом data-action
@@ -2963,6 +2966,11 @@ document.body.addEventListener('click', (e) => {
         case 'toggle-favorite':
             e.stopPropagation();
             window.toggleFavorite(btn, e, id);
+            break;
+        // ---> ВАШ НОВЫЙ БЛОК ДЛЯ КАРТЫ <---
+        case 'select-address':
+            // Передаем данные из атрибутов (lat, lon, name), которые мы задали в модуле карты
+            window.selectAddress(btn.dataset.lat, btn.dataset.lon, btn.dataset.name);
             break;
     }
 });
