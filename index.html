@@ -915,10 +915,6 @@
                                 <i class="fa-solid fa-chevron-down text-xs"></i>
                             </div>
                         </div>
-
-                        <p class="text-[10px] text-stone-400 mt-2 px-1">
-                            <i class="fa-solid fa-circle-info mr-1"></i> <span data-i18n="pro_network_hint">Комиссии сети BEP-20 самые низкие.</span>
-                        </p>
                     </div>
                     <div class="text-xs text-stone-400 mt-2 relative" data-i18n="pro_secure_label">Безопасная оплата криптовалютой</div>
                 </div>
@@ -2027,6 +2023,23 @@
             <div class="px-6 pb-2">
                 <label class="text-[11px] uppercase tracking-wider font-bold text-stone-400 mb-2 block pl-1">Выберите сеть оплаты:</label>
                 <div class="relative group">
+
+                    <!-- ИНФОБЛОК: Предупреждение о биржах и кошельках -->
+                    <div class="mt-4 bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/60 dark:border-amber-800/50 rounded-xl p-3 sm:p-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 text-sm md:text-base shrink-0"></i>
+                            <div class="flex-1">
+                                <h5 class="text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-500 mb-1">Важно при оплате с бирж</h5>
+                                <p class="text-[10px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium leading-relaxed">
+                                    Криптобиржи (Bybit, Binance и др.) имеют <strong>минимальный порог вывода (от 5 до 10 USDT)</strong>. Если сумма вашего заказа меньше лимита биржи, биржа не даст совершить перевод.
+                                </p>
+                                <div class="mt-2 text-[10px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium bg-white dark:bg-stone-800 p-2 rounded-lg border border-stone-100 dark:border-stone-700 shadow-sm">
+                                    <span class="text-emerald-500 font-bold"><i class="fa-solid fa-wallet mr-1"></i> Совет:</span> Используйте личные криптокошельки (Trust Wallet, SafePal, Tonkeeper) — у них нет минимальных лимитов на отправку.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <select id="token-currency-select" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-100 dark:border-stone-700 rounded-xl px-4 py-3.5 text-sm font-bold text-stone-900 dark:text-white outline-none cursor-pointer focus:border-brand-500 transition-all duration-200 appearance-none shadow-sm">
                         <option value="USDT_BSC">Tether (USDT) — сеть BEP-20 (BSC)</option>
                         <option value="USDT">Tether (USDT) — сеть ERC-20</option>
