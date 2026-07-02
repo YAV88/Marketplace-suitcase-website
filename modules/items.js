@@ -610,6 +610,41 @@ export const ItemsModule = {
                 titleEl.innerHTML = fireIcon + (item.title || 'Без названия');
             }
 
+            // ==========================================
+            // ХЛЕБНЫЕ КРОШКИ (Кликабельные категории для поиска похожих)
+            // ==========================================
+            const breadcrumbsEl = document.getElementById('modal-breadcrumbs');
+            if (breadcrumbsEl) {
+                if (item.category) {
+                    // Разбиваем категорию (например: "Одежда - Мужская" -> ["Одежда", "Мужская"])
+                    const parts = item.category.split(' - ');
+                    const mainCat = parts[0];
+                    const subCat = parts[1] || '';
+                    const t = window.t || (txt => txt);
+
+                    // Создаем кликабельную кнопку главной категории
+                    let html = `
+                        <button type="button" data-action="filter-category" data-cat="${mainCat}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
+                            ${t(mainCat)}
+                        </button>`;
+                    
+                    // Если есть подкатегория, добавляем стрелочку и вторую кнопку
+                    if (subCat) {
+                        html += `
+                            <i class="fa-solid fa-chevron-right text-[8px] opacity-40 pt-0.5"></i>
+                            <button type="button" data-action="filter-category" data-cat="${item.category}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
+                                ${t(subCat)}
+                            </button>
+                        `;
+                    }
+                    breadcrumbsEl.innerHTML = html;
+                    breadcrumbsEl.classList.remove('hidden');
+                } else {
+                    breadcrumbsEl.innerHTML = '';
+                    breadcrumbsEl.classList.add('hidden');
+                }
+            }
+
             const isService = item.category && item.category.includes('Услуги');
             const isJob = item.category && item.category.includes('Работа');
             const isEstate = item.category && (item.category.includes('Жилье') || item.category.includes('Недвижимость'));

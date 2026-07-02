@@ -2965,6 +2965,13 @@ document.body.addEventListener('click', (e) => {
             // Передаем данные из атрибутов (lat, lon, name), которые мы задали в модуле карты
             window.selectAddress(btn.dataset.lat, btn.dataset.lon, btn.dataset.name);
             break;
+        // ---> Клик по хлебным крошкам (Категории) <---
+        case 'filter-category':
+            e.stopPropagation();
+            window.closeModal('item-modal'); // Закрываем карточку товара
+            window.filterByCategory(btn.dataset.cat, e); // Запускаем фильтрацию ленты
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Плавно возвращаем пользователя в самый верх ленты
+            break;
     }
 });
 
