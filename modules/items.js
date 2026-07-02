@@ -646,65 +646,104 @@ export const ItemsModule = {
             const priceEl = document.getElementById('modal-price');
             if (priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
 
-            const delCont = document.getElementById('modal-delivery-container');
-            if (delCont) {
-                let delHtml = '';
-                const delList = item.delivery || ['Личная встреча'];
-                if (delList.includes('PostExpress')) delHtml += `<span class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-brand-200 dark:border-brand-800/50"><i class="fa-solid fa-box mr-1.5"></i> Отправка PostExpress</span>`;
-                if (delList.includes('Личная встреча')) delHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-handshake mr-1.5"></i> Личная встреча</span>`;
-                delCont.innerHTML = delHtml;
-            }
-
             // ==========================================
-            // ДИНАМИЧЕСКИЕ ХАРАКТЕРИСТИКИ (Недвижимость и Вакансии)
+            // 1. СЕТКА ХАРАКТЕРИСТИК (Как на Авито)
             // ==========================================
-            const dynamicPropsContainer = document.getElementById('view-item-dynamic-props');
-            const conditionBlock = document.getElementById('modal-condition-block'); // Блок состояния
-            const deliveryBlock = document.getElementById('modal-delivery-container'); // Блок доставки
-
-            if (dynamicPropsContainer) {
-                let propsHtml = '';
+            const specsContainer = document.getElementById('modal-detailed-specs');
+            if (specsContainer) {
+                let specsHtml = '';
+                const t = window.t || (txt => txt);
                 
+                // Функция-генератор красивой плитки
+                const addSpec = (label, val, icon, colorClass) => {
+                    if (val) {
+                        specsHtml += `
+                        <div class="flex flex-col justify-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-3 sm:p-3.5 border border-stone-200/50 dark:border-stone-700/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                            <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5 truncate">${t(label)}</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid ${icon} ${colorClass} text-sm"></i>
+                                <span class="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">${t(val)}</span>
+                            </div>
+                        </div>`;
+                    }
+                };
+
+                // Категорию выводим всегда
+                const catName = item.category ? item.category.split(' - ').pop() : 'Другое';
+                addSpec('Категория', catName, 'fa-tags', 'text-brand-500');
+
+                // Динамические поля в зависимости от типа
                 if (item.item_type === 'estate' || (item.category && item.category.includes('Жилье'))) {
-                    if (item.deal_type) propsHtml += `<span class="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-xl text-sm font-bold border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-key mr-1"></i> ${item.deal_type}</span>`;
-                    if (item.area) propsHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-xl text-sm font-bold border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-ruler-combined mr-1"></i> ${item.area} м²</span>`;
-                    if (item.rooms) propsHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-xl text-sm font-bold border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-door-open mr-1"></i> ${item.rooms} комн.</span>`;
-                    
-                    if (conditionBlock) conditionBlock.style.display = 'none';
-                    if (deliveryBlock) deliveryBlock.style.display = 'none';
+                    addSpec('Сделка', item.deal_type, 'fa-key', 'text-blue-500');
+                    if (item.area) addSpec('Площадь', `${item.area} м²`, 'fa-ruler-combined', 'text-indigo-500');
+                    if (item.rooms) addSpec('Комнаты', item.rooms, 'fa-door-open', 'text-cyan-500');
                 } 
                 else if (item.item_type === 'job' || (item.category && item.category.includes('Работа'))) {
-                    if (item.salary) propsHtml += `<span class="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-3 py-1.5 rounded-xl text-sm font-bold border border-amber-200 dark:border-amber-800"><i class="fa-solid fa-sack-dollar mr-1"></i> ${item.salary} ${item.currency || ''}</span>`;
-                    if (item.schedule) propsHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-xl text-sm font-bold border border-stone-200 dark:border-stone-700"><i class="fa-regular fa-clock mr-1"></i> ${item.schedule}</span>`;
-                    if (item.work_format) propsHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-xl text-sm font-bold border border-stone-200 dark:border-stone-700"><i class="fa-solid fa-laptop-house mr-1"></i> ${item.work_format}</span>`;
-                    if (item.company_name) propsHtml += `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-3 py-1.5 rounded-xl text-sm font-bold border border-stone-200 dark:border-stone-700"><i class="fa-regular fa-building mr-1"></i> ${item.company_name}</span>`;
-                    
-                    if (conditionBlock) conditionBlock.style.display = 'none';
-                    if (deliveryBlock) deliveryBlock.style.display = 'none';
+                    addSpec('Формат', item.work_format, 'fa-laptop-house', 'text-amber-500');
+                    addSpec('График', item.schedule, 'fa-clock', 'text-orange-500');
+                    if (item.company_name) addSpec('Компания', item.company_name, 'fa-building', 'text-stone-500');
                 }
                 else {
-                    if (conditionBlock) conditionBlock.style.display = '';
-                    if (deliveryBlock) deliveryBlock.style.display = '';
-                }
-                
-                dynamicPropsContainer.innerHTML = propsHtml;
-            }
-            
-            const phoneContainer = document.getElementById('modal-phone-container');
-            if (phoneContainer) {
-                if (item.phone) {
-                    phoneContainer.classList.remove('hidden');
-                    phoneContainer.classList.add('flex');
-                    const phoneEl = document.getElementById('modal-phone');
-                    const phoneText = document.getElementById('modal-phone-text');
-                    if (phoneEl && phoneText) {
-                        phoneEl.href = `tel:${item.phone}`;
-                        phoneText.innerText = item.phone; 
+                    // Для обычных вещей выводим Состояние
+                    const noConditionCats = ['Услуги', 'Животные'];
+                    const isNoCondCat = noConditionCats.some(c => (item.category || '').startsWith(c));
+                    if (!isNoCondCat && item.condition) {
+                        const isNew = item.condition === 'Новое';
+                        addSpec('Состояние', item.condition, isNew ? 'fa-sparkles' : 'fa-recycle', isNew ? 'text-emerald-500' : 'text-stone-500');
                     }
-                } else {
-                    phoneContainer.classList.add('hidden');
-                    phoneContainer.classList.remove('flex');
                 }
+
+                specsContainer.innerHTML = specsHtml;
+            }
+
+            // ==========================================
+            // 2. ПАНЕЛЬ "УСЛОВИЯ СДЕЛКИ" (Оплата и Доставка)
+            // ==========================================
+            const transContainer = document.getElementById('modal-transaction-info');
+            if (transContainer) {
+                const t = window.t || (txt => txt);
+                let html = '';
+
+                // Блок ДОСТАВКИ
+                const delList = item.delivery || ['Личная встреча'];
+                if (delList.length > 0) {
+                    let delItems = '';
+                    if (delList.includes('Личная встреча')) {
+                        delItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-handshake"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Личная встреча')}</span></div>`;
+                    }
+                    if (delList.includes('PostExpress')) {
+                        delItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-box-open"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">PostExpress</span></div>`;
+                    }
+                    
+                    html += `
+                    <div class="flex-1">
+                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest"><i class="fa-solid fa-truck-fast mr-1.5"></i> ${t('Способ получения')}</span>
+                        <div class="flex flex-col gap-1">${delItems}</div>
+                    </div>`;
+                }
+
+                // Блок ОПЛАТЫ
+                const payList = item.payment || ['Наличные'];
+                if (payList.length > 0) {
+                    let payItems = '';
+                    if (payList.includes('Наличные')) {
+                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-money-bill-wave"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Наличные')}</span></div>`;
+                    }
+                    if (payList.includes('Перевод на карту')) {
+                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 flex items-center justify-center"><i class="fa-regular fa-credit-card"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Перевод на карту')}</span></div>`;
+                    }
+                    if (payList.includes('Криптоперевод')) {
+                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center text-lg"><i class="fa-brands fa-bitcoin"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Криптовалюта')}</span></div>`;
+                    }
+                    
+                    html += `
+                    <div class="flex-1 border-t sm:border-t-0 sm:border-l border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-6">
+                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest"><i class="fa-solid fa-wallet mr-1.5"></i> ${t('Варианты оплаты')}</span>
+                        <div class="flex flex-col gap-1">${payItems}</div>
+                    </div>`;
+                }
+
+                transContainer.innerHTML = html;
             }
 
             // --- СТАТУСЫ ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
