@@ -219,10 +219,13 @@
                     
                     // БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ
                     const duplicateItem = adminState.items.find(i => i.user_id === item.user_id && i.id !== item.id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
-                    const isDuplicate = !!duplicateItem;
-                    
-                    const dupBadge = duplicateItem 
-                        ? `<span onclick="showDuplicateInfo('${duplicateItem.id}')" class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm cursor-pointer hover:bg-red-600 transition" title="Скопировать ID оригинала">Дубликат?</span>` 
+                    // --- БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ (Умная группировка) ---
+                    const duplicates = adminState.items.filter(i => i.user_id === item.user_id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
+                    const hasDuplicates = duplicates.length > 1;
+
+                    // Если дублей больше 1, показываем кнопку. Сохраняем title в data-атрибут, чтобы не сломать кавычки.
+                    const dupBadge = hasDuplicates 
+                        ? `<button data-title="${(item.title || '').replace(/"/g, '&quot;')}" onclick="document.getElementById('admin-search').value = this.dataset.title; renderList();" class="bg-red-100 text-red-600 border border-red-200 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm cursor-pointer hover:bg-red-200 hover:scale-105 transition" title="Отфильтровать и показать копии">📦 ${duplicates.length} копий</button>` 
                         : '';
 
                     list.insertAdjacentHTML('beforeend', `
@@ -403,23 +406,66 @@
             }
         }
 
-        // --- ЛОГИКА ЗАЯВОК PRO ---
-        async function approveProRequest(reqId, userId, btn) {
+        async function togglePro(userId, currentStatus, btn) {
+            let days = 30; // По умолчанию
+            const makeVip = !currentStatus;
+            
+            if (makeVip) {
+                const inputDays = prompt("На сколько дней выдать VIP?", "30");
+                if (inputDays === null) return; // Отмена
+                days = parseInt(inputDays, 10);
+                if (isNaN(days) || days <= 0) return alert("Введите корректное число дней!");
+            }
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             try {
-                // 1. Вызываем серверную функцию для выдачи VIP
-                const { error: rpcErr } = await supabaseClient.rpc('admin_set_vip_v2', { target_user_id: userId, make_vip: true });
+                // Передаем новый параметр days в Supabase
+                const { error } = await supabaseClient.rpc('admin_set_vip_v2', {
+                    target_user_id: userId,
+                    make_vip: makeVip,
+                    vip_days: days // <--- Новый параметр
+                });
+                
+                if (error) throw new Error(error.message);
+                
+                const newDate = makeVip ? new Date(new Date().setDate(new Date().getDate() + days)).toISOString() : null;
+                adminState.items.forEach(i => { if (i.user_id === userId) i.highlighted_until = newDate; });
+                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
+                if (userIndex > -1) {
+                    adminState.profiles[userIndex].pro_until = newDate;
+                    adminState.profiles[userIndex].is_pro = makeVip;
+                }
+                
+                renderList();
+            } catch (err) {
+                alert('Ошибка сервера: ' + err.message);
+                renderList();
+            }
+        }
+
+        async function approveProRequest(reqId, userId, btn) {
+            const inputDays = prompt("На сколько дней выдаем VIP за эту заявку?", "30");
+            if (inputDays === null) return;
+            const days = parseInt(inputDays, 10);
+            if (isNaN(days) || days <= 0) return alert("Неверное число дней");
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            try {
+                const { error: rpcErr } = await supabaseClient.rpc('admin_set_vip_v2', { 
+                    target_user_id: userId, 
+                    make_vip: true,
+                    vip_days: days // <--- Новый параметр
+                });
                 if (rpcErr) throw new Error("Сервер: " + rpcErr.message);
                 
-                // 2. Закрываем заявку
-                const { error: reqErr } = await supabaseClient.from('pro_requests').update({ status: 'approved' }).eq('id', reqId);
-                if (reqErr) throw new Error("Заявка: " + reqErr.message);
+                await supabaseClient.from('pro_requests').update({ status: 'approved' }).eq('id', reqId);
                 
-                // Обновляем админку
-                const newDate = new Date(new Date().setDate(new Date().getDate() + 30)).toISOString();
+                const newDate = new Date(new Date().setDate(new Date().getDate() + days)).toISOString();
                 const reqIndex = adminState.proRequests.findIndex(r => r.id === reqId);
                 if(reqIndex > -1) adminState.proRequests[reqIndex].status = 'approved';
+                
                 const userIndex = adminState.profiles.findIndex(p => p.id === userId);
                 if(userIndex > -1) {
                     adminState.profiles[userIndex].pro_until = newDate;
@@ -430,8 +476,7 @@
                 renderList();
             } catch (err) {
                 alert("Ошибка: " + err.message);
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Подтвердить';
+                renderList();
             }
         }
 
@@ -528,39 +573,6 @@
             } catch (err) {
                 alert("Ошибка: " + err.message);
                 renderList();
-            }
-        }
-        
-        async function togglePro(userId, currentStatus, btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            try {
-                const makeVip = !currentStatus; // Если был PRO (true), значит забираем (false)
-                
-                // Вызываем нашу мощную серверную функцию
-                const { error } = await supabaseClient.rpc('admin_set_vip_v2', {
-                    target_user_id: userId,
-                    make_vip: makeVip
-                });
-                
-                if (error) throw new Error(error.message);
-                
-                // Локальное обновление для перерисовки кнопок в админке
-                const newDate = makeVip ? new Date(new Date().setDate(new Date().getDate() + 30)).toISOString() : null;
-                adminState.items.forEach(i => { if (i.user_id === userId) i.highlighted_until = newDate; });
-                const userIndex = adminState.profiles.findIndex(p => p.id === userId);
-                if (userIndex > -1) {
-                    adminState.profiles[userIndex].pro_until = newDate;
-                    adminState.profiles[userIndex].is_pro = makeVip;
-                }
-                
-                alert(makeVip ? 'VIP успешно выдан! (Профиль + Товары)' : 'VIP жестко снят! (Профиль + Товары)');
-                renderList();
-            } catch (err) {
-                alert('Ошибка сервера: ' + err.message);
-                renderList();
-            } finally {
-                btn.disabled = false;
             }
         }
 
