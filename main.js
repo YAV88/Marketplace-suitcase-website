@@ -92,13 +92,6 @@ window.buyProSubscription = PaymentsModule.buyProSubscription;
 window.payWithPlisio = PaymentsModule.payWithPlisio;
 // ==========================================
 
-// ==========================================
-// ГЛОБАЛЬНЫЙ ДВИЖОК МУЛЬТИЯЗЫЧНОСТИ (i18n)
-// ==========================================
-window.currentLang = localStorage.getItem('svalka_lang') || 'ru';
-
-window.t = (key) => { return window.i18n[window.currentLang][key] || key; };
-
 // Закрываем меню при клике в пустую область
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('lang-dropdown');
