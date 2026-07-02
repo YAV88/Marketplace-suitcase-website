@@ -8,15 +8,15 @@ import { ItemsModule } from './modules/items.js';
 // ==========================================
 window.AppStore = {
     state: {
-        category: 'Все',
-        cities: [],
+        currentCategory: 'Все',
+        filterCities: [],
         searchQuery: '',
         showUrgentOnly: false,
-        condition: 'Все',
-        priceMin: '',
-        priceMax: '',
-        currency: 'Все',
-        sortMode: 'new',
+        filterCondition: 'Все',
+        filterPriceMin: '',
+        filterPriceMax: '',
+        filterCurrency: 'Все',
+        currentSortMode: 'new',
         displayedCount: 12,
         loadedItems: [],
         currentUser: null,
@@ -28,14 +28,13 @@ window.AppStore = {
         return this.state[key]; 
     },
     
-    // Безопасное изменение данных (в будущем сюда можно добавить триггеры обновления UI)
+    // Безопасное изменение данных
     set(key, value) { 
         this.state[key] = value; 
     }
 };
 
-// ВРЕМЕННЫЙ МОСТ:
-// Эти свойства проксируют запросы из старых window.xxx напрямую в новый AppStore.
+// ВРЕМЕННЫЙ МОСТ: связываем старый код с новым хранилищем без потери данных
 ['currentCategory', 'filterCities', 'searchQuery', 'showUrgentOnly', 'filterCondition', 
  'filterPriceMin', 'filterPriceMax', 'filterCurrency', 'currentSortMode', 'displayedCount', 
  'loadedItems', 'currentUser', 'userFavorites'].forEach(key => {
