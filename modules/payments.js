@@ -90,7 +90,12 @@ export const PaymentsModule = {
 
         try {
             const { data, error } = await window.supabase.functions.invoke('create-plisio-invoice', {
-                body: { userId: window.currentUser.id, currency: selectedCurrency }
+                body: { 
+                    userId: window.currentUser.id, 
+                    currency: selectedCurrency,
+                    order_type: 'buy_pro', // Добавлено: Флаг покупки VIP
+                    amount_usd: 5.00       // Добавлено: Сумма для VIP
+                }
             });
             if (error) throw error;
 
