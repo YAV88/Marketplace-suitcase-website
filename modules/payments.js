@@ -59,7 +59,7 @@ export const PaymentsModule = {
                 btn.innerHTML = originalBtnHtml;
             }
         }
-    }
+    },
     
     buyProSubscription: async () => {
         try {
