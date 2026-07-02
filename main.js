@@ -92,6 +92,29 @@ window.buyProSubscription = PaymentsModule.buyProSubscription;
 window.payWithPlisio = PaymentsModule.payWithPlisio;
 // ==========================================
 
+// Платежи
+window.buyProSubscription = PaymentsModule.buyProSubscription;
+window.payWithPlisio = PaymentsModule.payWithPlisio;
+// ---> ДОБАВЛЯЕМ НОВУЮ ФУНКЦИЮ:
+window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
+
+window.openTokenPurchaseModal = () => {
+    window.openModal('token-purchase-modal');
+    
+    const radioButtons = document.querySelectorAll('input[name="token_package"]');
+    const totalSpan = document.getElementById('token-purchase-total');
+    
+    radioButtons.forEach(radio => {
+        radio.replaceWith(radio.cloneNode(true));
+    });
+    
+    document.querySelectorAll('input[name="token_package"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) totalSpan.innerText = e.target.dataset.price;
+        });
+    });
+};
+
 // Закрываем меню при клике в пустую область
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('lang-dropdown');
@@ -3510,63 +3533,6 @@ window.applyVipToItem = async (itemId, btnElement) => {
         btnElement.disabled = false;
         btnElement.innerHTML = originalText;
     }
-};
-
-// ==========================================
-// МОДУЛЬ ПОКУПКИ VIP-ТОКЕНОВ
-// ==========================================
-window.openTokenPurchaseModal = () => {
-    window.openModal('token-purchase-modal');
-    
-    // Навешиваем слушатели на карточки, чтобы динамически менять цену на главной кнопке "Оплатить"
-    const radioButtons = document.querySelectorAll('input[name="token_package"]');
-    const totalSpan = document.getElementById('token-purchase-total');
-    
-    radioButtons.forEach(radio => {
-        // Удаляем старые слушатели, чтобы они не дублировались при повторном открытии
-        radio.replaceWith(radio.cloneNode(true));
-    });
-    
-    // Навешиваем новые
-    document.querySelectorAll('input[name="token_package"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                totalSpan.innerText = e.target.dataset.price;
-            }
-        });
-    });
-};
-
-window.initiateTokenPurchase = () => {
-    const selectedPackage = document.querySelector('input[name="token_package"]:checked');
-    if (!selectedPackage) return;
-    
-    const amount = selectedPackage.value;
-    const price = selectedPackage.dataset.price;
-    
-    // ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ТЕСТИРОВАНИЯ
-    alert(`Подготовка к оплате через Plisio!\n\nТип: Покупка токенов\nКоличество: ${amount} шт.\nК оплате: ${price}\n\nКак только будет готов API Plisio, здесь произойдет перенаправление на страницу крипто-оплаты.`);
-    
-    // БУДУЩИЙ РАБОЧИЙ КОД:
-    /*
-    try {
-        const response = await fetch('ВАШ_СЕРВЕР_API/create_plisio_invoice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                user_id: window.currentUser.id,
-                order_type: 'buy_tokens', 
-                amount: amount 
-            })
-        });
-        const data = await response.json();
-        if (data.invoice_url) {
-            window.location.href = data.invoice_url;
-        }
-    } catch(err) {
-        alert('Ошибка создания платежа');
-    }
-    */
 };
 
 // В main.js найдите вашу функцию handleSearch и оберните ее логику:
