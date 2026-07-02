@@ -744,6 +744,26 @@ export const ItemsModule = {
                 }
 
                 transContainer.innerHTML = html;
+
+                // ==========================================
+                // КНОПКА ТЕЛЕФОНА ПРОДАВЦА
+                // ==========================================
+                const phoneContainer = document.getElementById('modal-phone-container');
+                if (phoneContainer) {
+                    if (item.phone) {
+                        phoneContainer.classList.remove('hidden');
+                        phoneContainer.classList.add('flex');
+                        const phoneEl = document.getElementById('modal-phone');
+                        const phoneText = document.getElementById('modal-phone-text');
+                        if (phoneEl && phoneText) {
+                            phoneEl.href = `tel:${item.phone}`;
+                            phoneText.innerText = item.phone; 
+                        }
+                    } else {
+                        phoneContainer.classList.add('hidden');
+                        phoneContainer.classList.remove('flex');
+                    }
+                }
             }
 
             // --- СТАТУСЫ ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
