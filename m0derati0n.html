@@ -221,10 +221,10 @@
                     const duplicateItem = adminState.items.find(i => i.user_id === item.user_id && i.id !== item.id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
                     // --- БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ (Умная группировка) ---
                     const duplicates = adminState.items.filter(i => i.user_id === item.user_id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
-                    const hasDuplicates = duplicates.length > 1;
+                    const isDuplicate = duplicates.length > 1;
 
                     // Если дублей больше 1, показываем кнопку. Сохраняем title в data-атрибут, чтобы не сломать кавычки.
-                    const dupBadge = hasDuplicates 
+                    const dupBadge = isDuplicate 
                         ? `<button data-title="${(item.title || '').replace(/"/g, '&quot;')}" onclick="document.getElementById('admin-search').value = this.dataset.title; renderList();" class="bg-red-100 text-red-600 border border-red-200 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm cursor-pointer hover:bg-red-200 hover:scale-105 transition" title="Отфильтровать и показать копии">📦 ${duplicates.length} копий</button>` 
                         : '';
 
