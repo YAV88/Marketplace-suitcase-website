@@ -4,21 +4,46 @@ import { ChatModule } from './modules/chat.js';
 import { ItemsModule } from './modules/items.js';
 
 // ==========================================
-// БЛОК ПРЕДОХРАНИТЕЛЯ: ГАРАНТИЯ ГЛОБАЛЬНОГО СОСТОЯНИЯ
+// 1. STATE MANAGER (Единый источник истины)
 // ==========================================
-window.currentCategory = window.currentCategory || 'Все';
-window.filterCities = window.filterCities || [];
-window.searchQuery = window.searchQuery || '';
-window.showUrgentOnly = window.showUrgentOnly || false;
-window.filterCondition = window.filterCondition || 'Все';
-window.filterPriceMin = window.filterPriceMin || '';
-window.filterPriceMax = window.filterPriceMax || '';
-window.filterCurrency = window.filterCurrency || 'Все';
-window.currentSortMode = window.currentSortMode || 'new';
-window.displayedCount = window.displayedCount || 12;
-window.loadedItems = window.loadedItems || [];
-window.currentUser = window.currentUser || null;
-window.userFavorites = window.userFavorites || new Set();
+window.AppStore = {
+    state: {
+        category: 'Все',
+        cities: [],
+        searchQuery: '',
+        showUrgentOnly: false,
+        condition: 'Все',
+        priceMin: '',
+        priceMax: '',
+        currency: 'Все',
+        sortMode: 'new',
+        displayedCount: 12,
+        loadedItems: [],
+        currentUser: null,
+        userFavorites: new Set()
+    },
+    
+    // Безопасный доступ к данным
+    get(key) { 
+        return this.state[key]; 
+    },
+    
+    // Безопасное изменение данных (в будущем сюда можно добавить триггеры обновления UI)
+    set(key, value) { 
+        this.state[key] = value; 
+    }
+};
+
+// ВРЕМЕННЫЙ МОСТ:
+// Эти свойства проксируют запросы из старых window.xxx напрямую в новый AppStore.
+['currentCategory', 'filterCities', 'searchQuery', 'showUrgentOnly', 'filterCondition', 
+ 'filterPriceMin', 'filterPriceMax', 'filterCurrency', 'currentSortMode', 'displayedCount', 
+ 'loadedItems', 'currentUser', 'userFavorites'].forEach(key => {
+    Object.defineProperty(window, key, {
+        get: () => window.AppStore.get(key),
+        set: (val) => window.AppStore.set(key, val)
+    });
+});
 
 // ==========================================
 // ГЛОБАЛЬНЫЙ МОСТ: СВЯЗЬ МОДУЛЕЙ И ИНТЕРФЕЙСА
@@ -2502,33 +2527,49 @@ window.backToAddStep1 = () => {
     document.getElementById('add-modal-title').innerText = 'Что публикуем?';
 };
 
+// ==========================================
+// 3. БЕЗТАЙМЕРНАЯ ИНИЦИАЛИЗАЦИЯ КАРТЫ (ResizeObserver)
+// ==========================================
 window.initAddMap = async () => {
     if (typeof window.loadMapLibrary === 'function') {
         await window.loadMapLibrary();
     }
     if (typeof L === 'undefined') return;
-    
-    setTimeout(() => {
-        if (!window.addMapObj) {
-            window.addMapObj = L.map('add-map').setView(window.itemCoords || [44.8125, 20.4612], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.addMapObj);
-            window.addMarkerObj = L.marker(window.itemCoords || [44.8125, 20.4612], { draggable: true }).addTo(window.addMapObj);
-            window.addMarkerObj.on('dragend', async function () {
-                const pos = window.addMarkerObj.getLatLng();
-                window.itemCoords = [pos.lat, pos.lng];
-                await window.reverseGeocode(pos.lat, pos.lng);
-            });
-            window.addMapObj.on('click', async function (event) {
-                window.itemCoords = [event.latlng.lat, event.latlng.lng];
-                window.addMarkerObj.setLatLng(window.itemCoords);
-                await window.reverseGeocode(window.itemCoords[0], window.itemCoords[1]);
-            });
-        } else {
-            window.addMarkerObj.setLatLng(window.itemCoords || [44.8125, 20.4612]);
-            window.addMapObj.setView(window.itemCoords || [44.8125, 20.4612], 13);
-        }
-        window.addMapObj.invalidateSize();
-    }, 150);
+
+    const mapContainer = document.getElementById('add-map');
+    if (!mapContainer) return;
+
+    // Инициализируем или обновляем объект карты
+    if (!window.addMapObj) {
+        window.addMapObj = L.map('add-map').setView(window.itemCoords || [44.8125, 20.4612], 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.addMapObj);
+        window.addMarkerObj = L.marker(window.itemCoords || [44.8125, 20.4612], { draggable: true }).addTo(window.addMapObj);
+        
+        window.addMarkerObj.on('dragend', async function () {
+            const pos = window.addMarkerObj.getLatLng();
+            window.itemCoords = [pos.lat, pos.lng];
+            await window.reverseGeocode(pos.lat, pos.lng);
+        });
+        
+        window.addMapObj.on('click', async function (event) {
+            window.itemCoords = [event.latlng.lat, event.latlng.lng];
+            window.addMarkerObj.setLatLng(window.itemCoords);
+            await window.reverseGeocode(window.itemCoords[0], window.itemCoords[1]);
+        });
+    } else {
+        window.addMarkerObj.setLatLng(window.itemCoords || [44.8125, 20.4612]);
+        window.addMapObj.setView(window.itemCoords || [44.8125, 20.4612], 13);
+    }
+
+    // Уничтожаем setTimeout. Используем ResizeObserver, который сам поймет, когда DOM отрисовался
+    if (!window.addMapObserver) {
+        window.addMapObserver = new ResizeObserver(() => {
+            if (window.addMapObj && mapContainer.clientWidth > 0) {
+                window.addMapObj.invalidateSize();
+            }
+        });
+        window.addMapObserver.observe(mapContainer);
+    }
 };
 
 window.submitNewItem = async (event) => {
@@ -3335,6 +3376,41 @@ window.updateAllShareTimers = () => {
         });
     }, 1000);
 };
+
+// ==========================================
+// 2. ГЛОБАЛЬНЫЙ ПЕРЕХВАТЧИК СОБЫТИЙ (Event Delegator)
+// Защита от XSS и избавление от inline-обработчиков (onclick)
+// ==========================================
+document.body.addEventListener('click', (e) => {
+    // Ищем ближайший элемент с атрибутом data-action
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const id = btn.dataset.id;
+
+    switch (action) {
+        case 'open-item':
+            window.openItemDetails(id);
+            break;
+        case 'bump-item':
+            e.stopPropagation();
+            window.bumpViaShare(id);
+            break;
+        case 'edit-item':
+            e.stopPropagation();
+            window.editItem(id);
+            break;
+        case 'delete-item':
+            e.stopPropagation();
+            window.deleteItemConfirm(id); // Вызываем функцию с подтверждением
+            break;
+        case 'toggle-favorite':
+            e.stopPropagation();
+            window.toggleFavorite(btn, e, id);
+            break;
+    }
+});
 
 // БЕЗОПАСНЫЙ ЗАПУСК ФУНКЦИЙ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ
 document.addEventListener('DOMContentLoaded', () => {

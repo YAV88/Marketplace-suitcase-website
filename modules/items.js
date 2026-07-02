@@ -181,18 +181,18 @@ export const ItemsModule = {
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
-        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer" onclick="window.toggleFavorite(this, event, '${i.id}')"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm"></i></button>`;
+        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
         
         const cardFooter = (isOwner && isProfileView) ? `
             <div class="view-grid-city mt-auto pt-3 flex flex-row items-center gap-1.5 shrink-0 border-t border-stone-100 dark:border-stone-700 w-full">
-                <button id="bump-btn-card-${i.id}" type="button" onclick="event.stopPropagation(); window.bumpViaShare('${i.id}')" class="flex-1 px-3 py-2 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 text-[11px] font-bold uppercase tracking-wider">
-                    <i class="fa-solid fa-share-nodes mr-1.5"></i> ${t('В ТОП')}
+                <button id="bump-btn-card-${i.id}" type="button" data-action="bump-item" data-id="${i.id}" class="flex-1 px-3 py-2 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg transition hover:bg-brand-100 flex items-center justify-center border border-brand-200 dark:border-brand-800/50 text-[11px] font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-share-nodes mr-1.5 pointer-events-none"></i> ${t('В ТОП')}
                 </button>
-                <button type="button" onclick="event.stopPropagation(); window.editItem('${i.id}')" class="w-9 h-9 shrink-0 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700" title="${t('Редакт.')}">
-                    <i class="fa-solid fa-pen"></i>
+                <button type="button" data-action="edit-item" data-id="${i.id}" class="w-9 h-9 shrink-0 bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 rounded-lg transition hover:bg-stone-200 flex items-center justify-center border border-stone-200 dark:border-stone-700" title="${t('Редакт.')}">
+                    <i class="fa-solid fa-pen pointer-events-none"></i>
                 </button>
-                <button type="button" onclick="event.stopPropagation(); window.deleteItem('${i.id}')" class="w-9 h-9 shrink-0 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-lg transition hover:bg-red-100 flex items-center justify-center border border-red-200 dark:border-red-800/50" title="Удалить">
-                    <i class="fa-solid fa-trash-can"></i>
+                <button type="button" data-action="delete-item" data-id="${i.id}" class="w-9 h-9 shrink-0 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400 rounded-lg transition hover:bg-red-100 flex items-center justify-center border border-red-200 dark:border-red-800/50" title="Удалить">
+                    <i class="fa-solid fa-trash-can pointer-events-none"></i>
                 </button>
             </div>
         ` : ``;
@@ -201,7 +201,7 @@ export const ItemsModule = {
         if (safeDesc.length > 400) safeDesc = safeDesc.substring(0, 400) + '...';
 
         return `
-        <div class="${cardClass} ${opacityClass} overflow-hidden transform-gpu will-change-transform" onclick="window.openItemDetails('${i.id}')">
+        <div class="${cardClass} ${opacityClass} overflow-hidden transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
             
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0 w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
