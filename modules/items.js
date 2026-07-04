@@ -220,12 +220,12 @@ export const ItemsModule = {
                             ${safeDesc}
                         </div>
 
-                        <div class="flex items-center justify-between w-full mt-1">
-                            <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase tracking-wide truncate flex-1 min-w-0 text-left">
-                                <i class="fa-solid fa-location-dot mr-1 text-stone-300 dark:text-stone-600"></i>${t(i.city)}
+                        <div class="flex items-center justify-between w-full mt-1 px-1">
+                            <span class="text-stone-500 dark:text-stone-400 text-xs font-bold uppercase tracking-wide truncate flex-1 min-w-0 text-left">
+                                <i class="fa-solid fa-location-dot mr-1 text-stone-400 dark:text-stone-500"></i>${t(i.city)}
                             </span>
                             
-                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 ml-2">
+                            <div class="flex items-center gap-3 text-xs font-bold text-stone-400 shrink-0">
                                 <span title="Просмотры"><i class="fa-solid fa-eye"></i> ${i.views || 0}</span>
                                 <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box"></i> ${i.favoritesCount || 0}</span>
                             </div>
