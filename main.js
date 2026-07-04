@@ -1734,7 +1734,7 @@ window.itemCoords = [44.8125, 20.4612];
 
 window.handleCategoryChange = (e) => {
     const val = e.target ? e.target.value : e;
-    const reFields = document.getElementById('re-fields'); const condBlock = document.getElementById('add-condition-block');
+    const condBlock = document.getElementById('add-condition-block');
 
     // --- БЛОКИРОВКА ЦЕНЫ ДЛЯ "ОТДАМ ДАРОМ" ---
     const priceInput = document.getElementById('item-price');
@@ -1747,43 +1747,18 @@ window.handleCategoryChange = (e) => {
             if (priceInput.value === '0') priceInput.value = ''; // Сбрасываем 0, если передумали
         }
     }
-    // ------------------------------------------
 
+    // --- УПРАВЛЕНИЕ БЛОКОМ "СОСТОЯНИЕ" ---
     if (condBlock) {
-        // Если это питомец, но НЕ зоотовары — прячем выбор "Новое/БУ"
         const isAnimalNoCond = val && val.startsWith('Животные') && !val.includes('Товары');
-
         if (val && (val.includes('Жилье') || val.includes('Недвижимость') || val.includes('Услуги') || val.includes('Работа') || isAnimalNoCond)) {
             condBlock.classList.add('hidden'); condBlock.classList.remove('flex');
         } else {
             condBlock.classList.remove('hidden'); condBlock.classList.add('flex');
         }
     }
-
-    if (val && (val.includes('Жилье') || val.includes('Недвижимость'))) {
-        reFields.classList.remove('hidden'); reFields.classList.add('flex');
-        setTimeout(() => {
-            if (!window.addMapObj) {
-                window.addMapObj = L.map('add-map').setView(window.itemCoords, 13);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(window.addMapObj);
-                window.addMarkerObj = L.marker(window.itemCoords, { draggable: true }).addTo(window.addMapObj);
-                window.addMarkerObj.on('dragend', async function () {
-                    const pos = window.addMarkerObj.getLatLng();
-                    window.itemCoords = [pos.lat, pos.lng];
-                    await window.reverseGeocode(pos.lat, pos.lng); // НОВОЕ: Автозаполнение адреса
-                });
-
-                window.addMapObj.on('click', async function (event) {
-                    window.itemCoords = [event.latlng.lat, event.latlng.lng];
-                    window.addMarkerObj.setLatLng(window.itemCoords);
-                    await window.reverseGeocode(window.itemCoords[0], window.itemCoords[1]); // НОВОЕ: Автозаполнение адреса
-                });
-            } else {
-                window.addMarkerObj.setLatLng(window.itemCoords); window.addMapObj.setView(window.itemCoords, 13);
-            }
-            window.addMapObj.invalidateSize();
-        }, 150);
-    } else { reFields.classList.add('hidden'); reFields.classList.remove('flex'); window.itemCoords = [0, 0]; }
+    
+    // Старый код с картами удален, так как этим теперь управляет функция selectAddType!
 };
 
 // =====================================
