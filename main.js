@@ -2040,13 +2040,62 @@ window.editItem = async (id) => {
     const item = window.loadedItems.find(i => i.id === id);
     if (!item) return;
     window.editingItemId = id;
-    document.getElementById('item-title').value = item.title || ''; document.getElementById('item-category').value = item.category || ''; document.getElementById('item-city').value = item.city || ''; document.getElementById('item-price').value = item.price || ''; document.getElementById('item-desc').value = item.description || ''; document.getElementById('item-currency').value = item.currency || 'RSD'; document.getElementById('item-phone').value = item.phone || '';
-    document.getElementById('add-modal-title').innerText = "Редактировать"; document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
+
+    // 1. СРАЗУ ВКЛЮЧАЕМ НУЖНЫЙ РЕЖИМ (Пропускаем выбор "Что публикуем?")
+    const itemType = item.item_type || 'product';
+    window.selectAddType(itemType);
+
+    // 2. ЗАПОЛНЯЕМ ОБЩИЕ ПОЛЯ
+    document.getElementById('item-title').value = item.title || '';
+    document.getElementById('item-city').value = item.city || '';
+    document.getElementById('item-price').value = item.price || '';
+    document.getElementById('item-currency').value = item.currency || 'RSD';
+    document.getElementById('item-phone').value = item.phone || '';
+    document.getElementById('item-desc').value = item.description || '';
+
+    // 3. ЗАПОЛНЯЕМ СПЕЦИФИЧЕСКИЕ ПОЛЯ И ПЕРЕСТРАИВАЕМ ФОРМУ
+    if (itemType === 'product') {
+        document.getElementById('item-category').value = item.category || '';
+        // Вызываем проверку, чтобы скрыть/показать блок "Состояние" 
+        if (typeof window.handleCategoryChange === 'function') {
+            window.handleCategoryChange(item.category || '');
+        }
+    } else if (itemType === 'estate') {
+        document.getElementById('estate-deal-type').value = item.deal_type || 'Аренда';
+        document.getElementById('estate-area').value = item.area || '';
+        document.getElementById('estate-rooms').value = item.rooms || '';
+    } else if (itemType === 'job') {
+        document.getElementById('job-company').value = item.company_name || '';
+        document.getElementById('job-format').value = item.work_format || '';
+        document.getElementById('job-schedule').value = item.schedule || '';
+    }
+
+    const addressInput = document.getElementById('item-address');
+    if (addressInput) addressInput.value = item.address || '';
+    
+    if (item.coords && Array.isArray(item.coords) && item.coords[0] !== 0) {
+        window.itemCoords = item.coords;
+    }
+
+    // 4. МЕНЯЕМ ЗАГОЛОВКИ (selectAddType их сбрасывает, поэтому меняем после него)
+    document.getElementById('add-modal-title').innerText = "Редактировать";
+    document.getElementById('add-submit-btn').innerText = "Сохранить изменения";
+
     window.editExistingImages = item.images || [];
-    window.tempPhotos = []; window.renderPhotoPreviews();
+    window.tempPhotos = []; 
+    window.renderPhotoPreviews();
+
     document.getElementById('del-meet').checked = item.delivery ? item.delivery.includes('Личная встреча') : true;
     document.getElementById('del-post').checked = item.delivery ? item.delivery.includes('PostExpress') : false;
-    window.closeModal('item-modal'); window.openModal('add-modal');
+    
+    // 5. ПЕРЕКЛЮЧАЕМ ОКНА
+    window.closeModal('item-modal'); 
+    window.openModal('add-modal');
+    
+    // Для недвижимости и вакансий рендерим карту после открытия окна, чтобы не сбились размеры
+    if (itemType === 'estate' || itemType === 'job') {
+        setTimeout(() => { if (typeof window.initAddMap === 'function') window.initAddMap(); }, 300);
+    }
 };
 
 window.currentAddType = 'product';

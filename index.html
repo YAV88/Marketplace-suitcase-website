@@ -1269,7 +1269,7 @@
                 <div id="add-block-product" class="flex-col gap-5">
     
                     <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                        <select id="item-category" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
+                        <select id="item-category" onchange="window.handleCategoryChange(event)" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
                             <option value="" disabled selected>Категория...</option>
                             <optgroup label="Одежда и Обувь">
                                 <option value="Одежда - Женская">Женская</option>
@@ -1347,7 +1347,7 @@
                         <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400"><i class="fa-solid fa-chevron-down text-sm"></i></div>
                     </div>
 
-                    <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
+                    <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
                         <span class="text-sm font-bold text-stone-500">Состояние</span>
                         <div id="modal-condition-block" class="flex flex-col gap-1">
                             <label class="cursor-pointer relative">
