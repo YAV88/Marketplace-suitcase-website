@@ -220,12 +220,12 @@ export const ItemsModule = {
                             ${safeDesc}
                         </div>
 
-                        <div class="flex items-center justify-between w-full gap-3 mt-1">
-                            <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-stone-200 dark:border-stone-700 uppercase tracking-wide truncate flex-1 min-w-0 text-left">
-                                <i class="fa-solid fa-location-dot mr-1 text-stone-400"></i>${t(i.city)}
+                        <div class="flex items-center justify-between w-full mt-1">
+                            <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase tracking-wide truncate flex-1 min-w-0 text-left">
+                                <i class="fa-solid fa-location-dot mr-1 text-stone-300 dark:text-stone-600"></i>${t(i.city)}
                             </span>
                             
-                            <div class="flex items-center gap-3 text-[10px] font-bold text-stone-400 shrink-0">
+                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 ml-2">
                                 <span title="Просмотры"><i class="fa-solid fa-eye"></i> ${i.views || 0}</span>
                                 <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box"></i> ${i.favoritesCount || 0}</span>
                             </div>
@@ -939,6 +939,8 @@ export const ItemsModule = {
             const chatBtn = document.getElementById('btn-contact-seller'); 
 
             if (isOwner) {
+                const editBtn = document.getElementById('btn-owner-edit');
+                if (editBtn) editBtn.dataset.id = item.id;
                 if (ownerControls) ownerControls.classList.remove('hidden');
                 if (chatBtn) chatBtn.classList.add('hidden');
 
