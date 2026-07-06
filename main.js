@@ -92,9 +92,6 @@ window.buyProSubscription = PaymentsModule.buyProSubscription;
 window.payWithPlisio = PaymentsModule.payWithPlisio;
 // ==========================================
 
-// Платежи
-window.buyProSubscription = PaymentsModule.buyProSubscription;
-window.payWithPlisio = PaymentsModule.payWithPlisio;
 // ---> ДОБАВЛЯЕМ НОВУЮ ФУНКЦИЮ:
 window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
 
@@ -957,7 +954,7 @@ window.goHome = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTime
 
 window.modalStack = []; // Инициализируем стек открытых окон
 
-window.openModal = id => {
+window.openModal = async id => {
     const el = document.getElementById(id);
     if (el) {
         // --- ИСТИННАЯ БРОНЕБОЙНАЯ БЛОКИРОВКА СКРОЛЛА ---
@@ -989,23 +986,46 @@ window.openModal = id => {
             if (boostyInput) boostyInput.value = window.currentUser.id;
         }
 
-        // Динамическое обновление статуса PRO в профиле
-        if (id === 'profile-modal') {
+        // === ОБЪЕДИНЕННАЯ ЛОГИКА: Динамическое обновление статуса PRO в профиле ===
+        if (id === 'profile-modal' && window.currentUser) {
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
-
-            if (statusText && proBtn) {
-                const t = window.t || (txt => txt); 
+            const tokensEl = document.getElementById('profile-vip-tokens'); // Контейнер токенов
+            
+            if (statusText) statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-stone-400"></i>';
+            
+            try {
+                // Запрашиваем актуальные данные напрямую из Supabase
+                const { data } = await window.supabase.from('profiles').select('pro_until, vip_tokens').eq('id', window.currentUser.id).single();
                 
-                if (window.currentUserData && window.currentUserData.is_pro) {
-                    statusText.innerText = t('PRO (Активен)');
-                    statusText.className = 'text-sm font-black text-amber-500';
-                    proBtn.classList.add('hidden');
-                } else {
-                    statusText.innerText = t('Базовый');
-                    statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
-                    proBtn.classList.remove('hidden');
+                if (data && statusText && proBtn) {
+                    if (!window.currentUserData) window.currentUserData = {}; 
+                    window.currentUserData.pro_until = data.pro_until;
+                    window.currentUserData.vip_tokens = data.vip_tokens || 0;
+                    
+                    // СРАЗУ ОБНОВЛЯЕМ ФЛАГ is_pro ЧТОБЫ КНОПКА ТОПА РАБОТАЛА
+                    window.currentUserData.is_pro = window.checkRealVipStatus ? window.checkRealVipStatus(data) : false;
+                    
+                    if (tokensEl) tokensEl.innerText = `${data.vip_tokens || 0} шт.`;
+                    
+                    if (window.currentUserData.is_pro) {
+                        // Высчитываем оставшиеся дни
+                        const proUntilDate = new Date(data.pro_until);
+                        const today = new Date();
+                        const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
+                        
+                        statusText.innerText = `PRO (Активен еще ${diffDays} дн.)`;
+                        statusText.className = 'text-sm font-black text-amber-500';
+                        proBtn.classList.add('hidden');
+                    } else {
+                        statusText.innerText = 'Базовый';
+                        statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
+                        proBtn.classList.remove('hidden');
+                    }
                 }
+            } catch(e) {
+                console.error("Ошибка загрузки профиля:", e);
+                if (statusText) statusText.innerText = 'Ошибка';
             }
         }
 
@@ -1118,61 +1138,6 @@ window.checkAuthAndOpenAddModal = async () => {
         window.openModal('add-modal');
     } finally {
         if (addBtn) addBtn.style.opacity = '1';
-    }
-};
-
-window.toggleFavorite = async (btn, event, itemId) => {
-    if (event) event.stopPropagation();
-
-    if (!window.currentUser) {
-        window.openModal('auth-modal');
-        window.showToast((typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт", true);
-        return;
-    }
-
-    if (!itemId) return;
-
-    const isLiked = window.userFavorites.has(itemId);
-    const icon = btn ? btn.querySelector('i') : null;
-
-    try {
-        if (isLiked) {
-            await supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
-            window.userFavorites.delete(itemId);
-            if (icon) {
-                icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
-            }
-            if (btn) btn.title = "Добавить на склад";
-        } else {
-            await supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
-            window.userFavorites.add(itemId);
-            if (icon) {
-                icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110 animate-pop';
-                setTimeout(() => icon.classList.remove('animate-pop'), 300);
-            }
-            if (btn) btn.title = "Убрать со склада";
-        }
-
-        if (window.renderProfileTabs) window.renderProfileTabs();
-
-        // Синхронизация с открытой карточкой товара
-        if (window.activeModalItemId === itemId) {
-            const modalFavBtn = document.getElementById('modal-fav-btn');
-            const modalFavIcon = document.querySelector('#modal-fav-btn i');
-
-            if (modalFavIcon) {
-                const isNowLiked = window.userFavorites.has(itemId);
-                modalFavIcon.className = isNowLiked
-                    ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110 animate-pop'
-                    : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform hover:scale-110';
-
-                if (modalFavBtn) modalFavBtn.title = isNowLiked ? "Убрать со склада" : "Добавить на склад";
-                setTimeout(() => modalFavIcon.classList.remove('animate-pop'), 300);
-            }
-        }
-    } catch (e) {
-        console.error("Ошибка при сохранении:", e);
-        window.showToast("Ошибка сохранения", true);
     }
 };
 
@@ -1558,110 +1523,6 @@ window.resetFilters = () => {
 
     // Используем applyCondition, чтобы перерисовать UI чекбоксов и запустить fetchItems
     window.applyCondition('Все');
-};
-
-// --- ИСПРАВЛЕНИЕ: ГЛОБАЛЬНАЯ ФУНКЦИЯ ФИЛЬТРАЦИИ КАТЕГОРИЙ ---
-window.filterByCategory = (cat, event, isSubCat = false) => {
-    if (event) event.preventDefault();
-
-    // Сеньор-логика: Умное закрытие при повторном клике
-    if (window.currentCategory === cat && cat !== 'Все') {
-        if (cat.includes(' - ')) {
-            // Если это подкатегория, сбрасываем до главной
-            cat = cat.split(' - ')[0];
-        } else {
-            // Если это главная категория, сбрасываем до "Все"
-            cat = 'Все';
-        }
-    }
-
-    // Обновляем глобальное состояние
-    window.currentCategory = cat;
-    
-    // Принудительно отключаем срочный фильтр при смене категории
-    window.showUrgentOnly = false;
-    const btnUrgent = document.getElementById('btn-cat-urgent');
-    if (btnUrgent) {
-        btnUrgent.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-    }
-
-    // 1. ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ КНОПОК (Мобильная лента)
-    document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-        if (b.dataset.cat === cat || (cat === 'Все' && b.dataset.cat === 'Все')) {
-            // Активная кнопка
-            b.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-        } else {
-            // Неактивная кнопка
-            b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
-        }
-    });
-
-    // 2. УПРАВЛЕНИЕ ПОДКАТЕГОРИЯМИ (Мобильная лента)
-    const subContainer = document.getElementById('sub-cats-container');
-    if (subContainer) {
-        if (cat !== 'Все' && !cat.includes(' - ') && window.subcategoriesMap[cat]) {
-            // Если выбрана главная категория и у нее есть подкатегории - рисуем их
-            let html = '';
-            window.subcategoriesMap[cat].forEach(sub => {
-                const fullCat = `${cat} - ${sub.val}`;
-                html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:text-brand-600 hover:border-brand-300 dark:hover:border-brand-700 rounded-lg font-bold text-xs transition cursor-pointer whitespace-nowrap shrink-0 snap-start">${window.t(sub.label || sub.val)}</button>`;
-            });
-            subContainer.innerHTML = html;
-            subContainer.classList.remove('hidden');
-        } else if (cat.includes(' - ')) {
-            // Если выбрали подкатегорию, подсвечиваем ее
-            Array.from(subContainer.children).forEach(btn => {
-                if (btn.getAttribute('onclick').includes(`'${cat}'`)) {
-                    btn.className = "px-4 py-2 bg-brand-50 dark:bg-brand-900/30 border border-brand-300 dark:border-brand-700 text-brand-600 dark:text-brand-400 rounded-lg font-bold text-xs transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                } else {
-                    btn.className = "px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:text-brand-600 hover:border-brand-300 dark:hover:border-brand-700 rounded-lg font-bold text-xs transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                }
-            });
-        } else {
-            // Если нажали "Все" или категорию без подкатегорий
-            subContainer.innerHTML = '';
-            subContainer.classList.add('hidden');
-        }
-    }
-
-    // 3. ПРИМЕНЯЕМ ПРАВИЛА СОСТОЯНИЙ (Скрываем "Новое/БУ" для услуг и жилья)
-    const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
-    const condRadios = document.getElementById('condition-radios-wrap');
-    
-    if (condRadios) {
-        const condBlock = condRadios.parentElement;
-        const prevDivider = condBlock.previousElementSibling;
-        const isNoCondCat = noConditionCats.some(c => cat.startsWith(c));
-
-        if (isNoCondCat) {
-            window.filterCondition = 'Все'; // Сбрасываем фильтр
-            condBlock.style.display = 'none';
-            if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = 'none';
-        } else {
-            condBlock.style.display = 'block';
-            if (prevDivider && prevDivider.classList.contains('sidebar-divider')) prevDivider.style.display = '';
-            
-            // Восстанавливаем отрисовку чекбоксов состояния
-            if (typeof window.renderCustomRadios === 'function') {
-                 window.renderCustomRadios('condition-radios-wrap', 'cond', [{ val: 'Все', label: window.t('Любое') }, { val: 'Новое', label: '✨ ' + window.t('Новое') }, { val: 'Б/У', label: '♻️ ' + window.t('Б/У') }], window.filterCondition, 'applyCondition');
-            }
-        }
-    }
-
-    // Синхронизируем боковую панель (десктоп/бургер)
-    if (typeof window.renderSidebarCategories === 'function') window.renderSidebarCategories();
-
-    // Если клик был из боковой панели (isSubCat), на мобилках закрываем панель
-    if (isSubCat && window.innerWidth < 1024) {
-        const panel = document.getElementById('filter-panel-wrapper');
-        if (panel && !panel.classList.contains('-translate-x-full')) {
-            window.toggleMobileFilters();
-        }
-    }
-
-    // 4. Запускаем загрузку данных
-    window.displayedCount = 12;
-    if (typeof window.fetchItems === 'function') window.fetchItems(false);
 };
 
 window.subcategoriesMap = {
@@ -2568,7 +2429,6 @@ window.renderCustomRadios = (id, name, options, currentVal, callbackName) => {
     `).join('');
 };
 
-window.applyCondition = (val) => { window.filterCondition = val; window.applyFilters(); };
 window.applyCurrency = (val) => { window.filterCurrency = val; window.applyFilters(); };
 
 window.toggleSidebarCat = (element) => {
@@ -3429,115 +3289,12 @@ window.applySvalkaWatermark = (file) => {
     });
 };
 
-// ==========================================
-// ПАТЧ: АБСОЛЮТНАЯ ЗАЩИТА ТАЙМЕРОВ И ТОП-ТОВАРОВ
-// ==========================================
-
 // Главное правило сайта: VIP существует, ТОЛЬКО если таймер больше текущей секунды
 window.checkRealVipStatus = (userData) => {
     if (!userData || !userData.pro_until) return false;
     // Как только пройдет 30 дней, это условие само отключит VIP везде!
     return new Date(userData.pro_until) > new Date();
 };
-
-// 1. ЖЕСТКИЙ ФИЛЬТР ТОВАРОВ В ЛЕНТЕ И ТОПЕ
-if (typeof window.mapItemData === 'function' && !window.mapItemData.isTimerPatched) {
-    const _origMapItem = window.mapItemData;
-    window.mapItemData = (dbItem) => {
-        const item = _origMapItem(dbItem);
-        if (item) {
-            // Товар получает статус ТОП, только если дата highlighted_until в будущем!
-            if (dbItem.highlighted_until && new Date(dbItem.highlighted_until) > new Date()) {
-                item.isHighlighted = true;
-            } else {
-                item.isHighlighted = false;
-            }
-        }
-        return item;
-    };
-    window.mapItemData.isTimerPatched = true;
-}
-
-// 2. АВТО-ОБНОВЛЕНИЕ ЛИЧНОГО ПРОФИЛЯ (С таймером и токенами)
-if (typeof window.openModal === 'function' && !window.openModal.isVipPatchedV2) {
-    const _origOpenModal = window.openModal;
-    window.openModal = async (id) => {
-        _origOpenModal(id);
-        if (id === 'profile-modal' && window.currentUser) {
-            const statusText = document.getElementById('profile-account-status');
-            const proBtn = document.getElementById('profile-buy-pro-btn');
-            
-            // Контейнер для отображения токенов (если его нет - создадим позже в HTML)
-            let tokensEl = document.getElementById('profile-vip-tokens');
-            
-            if (statusText) statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-stone-400"></i>';
-            
-            try {
-                // Добавили запрос колонки vip_tokens
-                const { data } = await window.supabase.from('profiles').select('pro_until, vip_tokens').eq('id', window.currentUser.id).single();
-                if (data && statusText && proBtn) {
-                    if (!window.currentUserData) window.currentUserData = {}; 
-                    window.currentUserData.pro_until = data.pro_until;
-                    window.currentUserData.vip_tokens = data.vip_tokens || 0;
-                    window.currentUserData.is_pro = window.checkRealVipStatus(data);
-                    
-                    if (tokensEl) tokensEl.innerText = `${data.vip_tokens || 0} шт.`;
-                    
-                    if (window.checkRealVipStatus(data)) {
-                        // Высчитываем оставшиеся дни
-                        const proUntilDate = new Date(data.pro_until);
-                        const today = new Date();
-                        const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
-                        
-                        statusText.innerText = `PRO (Активен еще ${diffDays} дн.)`;
-                        statusText.className = 'text-sm font-black text-amber-500';
-                        proBtn.classList.add('hidden');
-                    } else {
-                        statusText.innerText = 'Базовый';
-                        statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
-                        proBtn.classList.remove('hidden');
-                    }
-                }
-            } catch(e) {}
-        }
-    };
-    window.openModal.isVipPatchedV2 = true;
-}
-
-// 3. АВТО-ОБНОВЛЕНИЕ ЧУЖИХ КАРТОЧЕК И ПРОФИЛЕЙ
-if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVipPatchedV2) {
-    const _origOpenItem = window.openItemDetails;
-    window.openItemDetails = async (id) => {
-        await _origOpenItem(id);
-        const item = window.loadedItems.find(i => i.id === id);
-        if (item && item.userId) {
-            try {
-                const { data } = await window.supabase.from('profiles').select('pro_until, is_verified').eq('id', item.userId).single();
-                const isVip = window.checkRealVipStatus(data);
-                const authorSubEl = document.getElementById('modal-author-sub');
-                
-                if (authorSubEl) {
-                    let badgesHtml = '';
-                    
-                    // Независимая проверка VIP
-                    if (isVip) {
-                        badgesHtml += '<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">VIP ПРОДАВЕЦ</span> ';
-                    } else {
-                        badgesHtml += '<span class="shrink-0">Продавец SVALKA</span> ';
-                    }
-                    
-                    // Независимая проверка Верификации
-                    if (data && data.is_verified) {
-                        badgesHtml += '<span class="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0 flex items-center gap-1 border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-shield-check"></i> Проверен</span>';
-                    }
-
-                    authorSubEl.innerHTML = badgesHtml;
-                }
-            } catch(e) {}
-        }
-    };
-    window.openItemDetails.isVipPatchedV2 = true;
-}
 
 window.applyVipToItem = async (itemId, btnElement) => {
     btnElement.disabled = true;
