@@ -3393,25 +3393,24 @@ window.applySvalkaWatermark = (file) => {
                 // Рисуем оригинальное изображение
                 ctx.drawImage(img, 0, 0);
 
-                // 1. Размер шрифта (оставляем маленьким)
-                const fontSize = Math.floor(canvas.width / 25);
+                // --- НАСТРОЙКИ ВОДЯНОГО ЗНАКА ---
+                
+                // 1. Делаем шрифт совсем маленьким (1/40 от ширины фото)
+                const fontSize = Math.floor(canvas.width / 40);
                 ctx.font = `bold ${fontSize}px Montserrat, sans-serif`;
                 
                 // 2. Выравнивание по правому нижнему краю
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'bottom';
                 
-                // 3. Делаем надпись почти прозрачной (12% видимости)
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                // 3. Ультра-прозрачность (10% видимости)
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.10)';
                 
-                // 4. Тень делаем максимально легкой, чтобы не было "грязи"
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
-                ctx.shadowBlur = 4;
-                ctx.shadowOffsetX = 1;
-                ctx.shadowOffsetY = 1;
-
-                // 5. Динамический отступ от края (3% от ширины)
-                const margin = Math.floor(canvas.width * 0.03);
+                // 4. ТЕНЬ ПОЛНОСТЬЮ УДАЛЕНА 
+                // Без тени текст будет максимально сливаться с фотографией
+                
+                // 5. Отступ от края делаем тоже чуть меньше (2% от ширины)
+                const margin = Math.floor(canvas.width * 0.02);
 
                 // 6. Печатаем текст
                 ctx.fillText('SVALKA.TRADE', canvas.width - margin, canvas.height - margin);
