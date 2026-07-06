@@ -3344,13 +3344,6 @@ window.toggleItemVip = async (itemId, btnElement) => {
     const item = window.loadedItems.find(i => i.id === itemId);
     if (!item) return;
 
-    // Проверяем наличие PRO-статуса
-    if (!window.currentUserData || !window.currentUserData.is_pro) {
-        window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
-        setTimeout(() => window.openModal('crypto-modal'), 1000);
-        return;
-    }
-
     const originalText = btnElement ? btnElement.innerHTML : '';
     if (btnElement) {
         btnElement.disabled = true;
@@ -3358,31 +3351,52 @@ window.toggleItemVip = async (itemId, btnElement) => {
     }
 
     try {
+        // 1. УМНАЯ ПРОВЕРКА PRO-СТАТУСА (Спасает при пустом кэше после F5)
+        let isPro = window.currentUserData && window.currentUserData.is_pro;
+        if (!isPro) {
+            const { data } = await supabase.from('profiles').select('pro_until').eq('id', window.currentUser.id).single();
+            isPro = window.checkRealVipStatus ? window.checkRealVipStatus(data) : false;
+            
+            if (!window.currentUserData) window.currentUserData = {};
+            window.currentUserData.is_pro = isPro;
+        }
+
+        // 2. Блокируем кассой ТОЛЬКО если юзер пытается ДОБАВИТЬ товар, и у него нет PRO
+        if (!item.isHighlighted && !isPro) {
+            window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
+            setTimeout(() => window.openModal('crypto-modal'), 1000);
+            if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
+            return;
+        }
+
+        // 3. Выполняем снятие или добавление
         if (item.isHighlighted) {
-            // СНИМАЕМ ТОВАР ИЗ ТОПА (Освобождаем слот)
+            // СНИМАЕМ ИЗ ТОПА
             const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
             if (error) throw error;
             window.showToast("Слот освобожден! Товар убран из VIP-ленты.");
+            item.isHighlighted = false; 
         } else {
-            // ДОБАВЛЯЕМ В ТОП (Через защищенную SQL-функцию с лимитом 5)
+            // ДОБАВЛЯЕМ В ТОП
             const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
             if (error) throw error;
 
             if (data === 'success') {
                 window.showToast('Товар размещен в VIP-блоке на 7 дней!');
+                item.isHighlighted = true; 
             } else if (data === 'not_pro') {
                 window.showToast('Для размещения требуется SVALKA PRO.', true);
                 if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
                 return;
             } else {
-                // Если лимит превышен (больше 5 товаров), база вернет ошибку текстом
-                window.showToast(data, true);
+                // База вернула ошибку о лимите в 5 товаров
+                window.showToast(data, true); 
                 if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
                 return;
             }
         }
 
-        // Если все прошло успешно — закрываем карточку и обновляем ленту
+        // Успех - закрываем модалку и обновляем списки
         window.closeModal('item-modal');
         if (window.fetchItems) window.fetchItems(false);
         if (window.renderProfileTabs) window.renderProfileTabs();
@@ -3390,11 +3404,7 @@ window.toggleItemVip = async (itemId, btnElement) => {
     } catch (e) {
         console.error("VIP Toggle Error:", e);
         window.showToast("Произошла ошибка связи с сервером", true);
-    } finally {
-        if (btnElement) {
-            btnElement.disabled = false;
-            // Текст восстановится сам при следующем открытии карточки
-        }
+        if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
     }
 };
 
