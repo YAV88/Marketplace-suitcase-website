@@ -3550,13 +3550,14 @@ window.applyVipToItem = async (itemId, btnElement) => {
 
         if (data === 'success') {
             alert('Успех! Товар размещен в VIP-блоке на 7 дней.');
-            window.location.reload(); // Перезагружаем страницу для обновления ленты
-        } else if (data === 'insufficient_funds') {
-            alert('У вас закончились VIP-токены! Пожалуйста, докупите их в профиле.');
-            // Здесь можно сразу открывать модалку покупки токенов:
-            // window.openTokenPurchaseModal();
+            window.location.reload(); 
+        } else if (data === 'not_pro') {
+            // Если каким-то образом юзер без PRO нажал кнопку
+            alert('Для размещения в VIP-блоке требуется SVALKA PRO.');
+            // window.openModal('payment'); // Можешь раскомментировать, чтобы сразу открывать кассу
         } else {
-            alert(data); // Вывод кастомных ошибок безопасности
+            // Здесь выведутся наши кастомные ошибки из SQL (например, про лимит в 5 товаров)
+            alert(data); 
         }
     } catch (e) {
         alert('Произошла ошибка при связке с сервером.');
