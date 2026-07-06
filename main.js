@@ -3365,8 +3365,7 @@ window.toggleItemVip = async (itemId, btnElement) => {
         if (!item.isHighlighted && !isPro) {
             window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
             setTimeout(() => window.openModal('crypto-modal'), 1000);
-            if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
-            return;
+            return; // Уходим в блок finally для разблокировки
         }
 
         // 3. Выполняем снятие или добавление
@@ -3386,12 +3385,10 @@ window.toggleItemVip = async (itemId, btnElement) => {
                 item.isHighlighted = true; 
             } else if (data === 'not_pro') {
                 window.showToast('Для размещения требуется SVALKA PRO.', true);
-                if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
                 return;
             } else {
                 // База вернула ошибку о лимите в 5 товаров
                 window.showToast(data, true); 
-                if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
                 return;
             }
         }
@@ -3404,7 +3401,15 @@ window.toggleItemVip = async (itemId, btnElement) => {
     } catch (e) {
         console.error("VIP Toggle Error:", e);
         window.showToast("Произошла ошибка связи с сервером", true);
-        if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
+    } finally {
+        // === ИСПРАВЛЕНИЕ: ЖЕСТКО СНИМАЕМ БЛОКИРОВКУ С КНОПКИ ===
+        if (btnElement) { 
+            btnElement.disabled = false; 
+            // Возвращаем старый текст только если это была ошибка (чтобы не моргало перед закрытием модалки)
+            if (btnElement.innerHTML.includes('fa-spinner')) {
+                btnElement.innerHTML = originalText;
+            }
+        }
     }
 };
 
@@ -3420,10 +3425,13 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
         await _origOpenItemForVip(id);
         
         const item = window.loadedItems.find(i => i.id === id);
-        // Ищем кнопку VIP в DOM-дереве
         const btnVip = document.getElementById('btn-owner-vip') || document.querySelector('[onclick*="promoteToVip"]') || document.querySelector('[onclick*="highlightItem"]');
         
         if (item && btnVip && window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
+            
+            // === ИСПРАВЛЕНИЕ: Очищаем старую блокировку при каждом открытии окна ===
+            btnVip.disabled = false; 
+
             // Если товар уже в ТОПе
             if (item.isHighlighted) {
                 btnVip.innerHTML = '<i class="fa-solid fa-arrow-down mr-1.5"></i> Убрать из ТОПа';
@@ -3434,7 +3442,6 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
                 btnVip.className = "px-4 py-2 bg-amber-500 text-white rounded-lg font-bold text-sm transition hover:bg-amber-600 flex-1 flex items-center justify-center shadow-sm";
             }
             
-            // Назначаем правильное действие по клику
             btnVip.onclick = (e) => {
                 e.preventDefault();
                 window.toggleItemVip(item.id, btnVip);
