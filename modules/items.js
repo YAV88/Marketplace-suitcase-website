@@ -480,7 +480,7 @@ export const ItemsModule = {
                 itemsToDisplay.forEach(item => { html += ItemsModule.createCardHtml(item, item.isHighlighted); });
                 if (mainGrid) {
                     mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto';
-                    if (!isLoadMore) mainGrid.innerHTML = html; else mainGrid.insertAdjacentHTML('beforeend', html);
+                    mainGrid.innerHTML = html;
                     mainGrid.classList.remove('hidden');
                 }
                 if (loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }

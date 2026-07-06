@@ -3479,6 +3479,7 @@ if (typeof window.openModal === 'function' && !window.openModal.isVipPatchedV2) 
                     if (!window.currentUserData) window.currentUserData = {}; 
                     window.currentUserData.pro_until = data.pro_until;
                     window.currentUserData.vip_tokens = data.vip_tokens || 0;
+                    window.currentUserData.is_pro = window.checkRealVipStatus(data);
                     
                     if (tokensEl) tokensEl.innerText = `${data.vip_tokens || 0} шт.`;
                     
