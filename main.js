@@ -3402,7 +3402,7 @@ window.applySvalkaWatermark = (file) => {
                 ctx.textBaseline = 'bottom';
                 
                 // 3. Делаем надпись почти прозрачной (12% видимости)
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
                 
                 // 4. Тень делаем максимально легкой, чтобы не было "грязи"
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
