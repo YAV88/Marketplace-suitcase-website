@@ -3578,3 +3578,101 @@ window.handleSearch = (event) => {
         window.fetchItems(); 
     }, 300); // Ждем 300мс после последнего нажатия клавиши
 };
+
+// ==========================================
+// ПАТЧ: ЕДИНАЯ ЛОГИКА ДОБАВЛЕНИЯ И УДАЛЕНИЯ ИЗ ТОПА
+// ==========================================
+window.toggleItemVip = async (itemId, btnElement) => {
+    if (!window.currentUser) return;
+    const item = window.loadedItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    // Проверяем наличие PRO-статуса
+    if (!window.currentUserData || !window.currentUserData.is_pro) {
+        window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
+        setTimeout(() => window.openModal('crypto-modal'), 1000);
+        return;
+    }
+
+    const originalText = btnElement ? btnElement.innerHTML : '';
+    if (btnElement) {
+        btnElement.disabled = true;
+        btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Обработка...';
+    }
+
+    try {
+        if (item.isHighlighted) {
+            // СНИМАЕМ ТОВАР ИЗ ТОПА (Освобождаем слот)
+            const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
+            if (error) throw error;
+            window.showToast("Слот освобожден! Товар убран из VIP-ленты.");
+        } else {
+            // ДОБАВЛЯЕМ В ТОП (Через защищенную SQL-функцию с лимитом 5)
+            const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
+            if (error) throw error;
+
+            if (data === 'success') {
+                window.showToast('Товар размещен в VIP-блоке на 7 дней!');
+            } else if (data === 'not_pro') {
+                window.showToast('Для размещения требуется SVALKA PRO.', true);
+                if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
+                return;
+            } else {
+                // Если лимит превышен (больше 5 товаров), база вернет ошибку текстом
+                window.showToast(data, true);
+                if (btnElement) { btnElement.disabled = false; btnElement.innerHTML = originalText; }
+                return;
+            }
+        }
+
+        // Если все прошло успешно — закрываем карточку и обновляем ленту
+        window.closeModal('item-modal');
+        if (window.fetchItems) window.fetchItems(false);
+        if (window.renderProfileTabs) window.renderProfileTabs();
+        
+    } catch (e) {
+        console.error("VIP Toggle Error:", e);
+        window.showToast("Произошла ошибка связи с сервером", true);
+    } finally {
+        if (btnElement) {
+            btnElement.disabled = false;
+            // Текст восстановится сам при следующем открытии карточки
+        }
+    }
+};
+
+// Жестко перенаправляем ВСЕ старые кнопки на нашу новую умную функцию
+window.promoteToVip = () => window.toggleItemVip(window.activeModalItemId, document.getElementById('btn-owner-vip'));
+window.highlightItem = window.promoteToVip;
+window.applyVipToItem = window.toggleItemVip;
+
+// --- АВТОМАТИЧЕСКАЯ СМЕНА КНОПКИ (В ТОП / УБРАТЬ ИЗ ТОПА) ---
+if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVipButtonPatched) {
+    const _origOpenItemForVip = window.openItemDetails;
+    window.openItemDetails = async (id) => {
+        await _origOpenItemForVip(id);
+        
+        const item = window.loadedItems.find(i => i.id === id);
+        // Ищем кнопку VIP в DOM-дереве
+        const btnVip = document.getElementById('btn-owner-vip') || document.querySelector('[onclick*="promoteToVip"]') || document.querySelector('[onclick*="highlightItem"]');
+        
+        if (item && btnVip && window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
+            // Если товар уже в ТОПе
+            if (item.isHighlighted) {
+                btnVip.innerHTML = '<i class="fa-solid fa-arrow-down mr-1.5"></i> Убрать из ТОПа';
+                btnVip.className = "px-4 py-2 bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300 rounded-lg font-bold text-sm transition hover:bg-stone-300 dark:hover:bg-stone-600 flex-1 flex items-center justify-center shadow-inner";
+            } else {
+            // Если товар обычный
+                btnVip.innerHTML = '<i class="fa-solid fa-crown mr-1.5"></i> В ТОП';
+                btnVip.className = "px-4 py-2 bg-amber-500 text-white rounded-lg font-bold text-sm transition hover:bg-amber-600 flex-1 flex items-center justify-center shadow-sm";
+            }
+            
+            // Назначаем правильное действие по клику
+            btnVip.onclick = (e) => {
+                e.preventDefault();
+                window.toggleItemVip(item.id, btnVip);
+            };
+        }
+    };
+    window.openItemDetails.isVipButtonPatched = true;
+}
