@@ -3353,7 +3353,7 @@ window.toggleItemVip = async (itemId, btnElement) => {
     }
 
     try {
-        // 1. УМНАЯ ПРОВЕРКА PRO-СТАТУСА (Спасает при пустом кэше после F5)
+        // 1. УМНАЯ ПРОВЕРКА PRO-СТАТУСА
         let isPro = window.currentUserData && window.currentUserData.is_pro;
         if (!isPro) {
             const { data } = await supabase.from('profiles').select('pro_until').eq('id', window.currentUser.id).single();
@@ -3367,23 +3367,16 @@ window.toggleItemVip = async (itemId, btnElement) => {
         if (!item.isHighlighted && !isPro) {
             window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
             setTimeout(() => window.openModal('crypto-modal'), 1000);
-            return; // Уходим в блок finally для разблокировки
+            return; 
         }
 
-        // 3. Выполняем снятие или добавление
-        const t = window.t || (txt => txt); // Подключаем переводчик
-
-        // Если товар уже в ТОПе
+        // 3. ЗАПРОСЫ К БАЗЕ ДАННЫХ (Без визуального оформления кнопок!)
         if (item.isHighlighted) {
-            btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из ТОПа')}`;
-            // Элегантная кнопка отмены: серая, при наведении слегка краснеет
-            btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
-        } else {
-        // Если товар обычный (ПРЕМИУМ ДИЗАЙН)
-            btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В ТОП')}`;
-            // Градиент, тень со свечением, анимация нажатия (scale)
-            btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-black text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 active:scale-95";
-        }
+            // СНИМАЕМ ИЗ ТОПА
+            const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
+            if (error) throw error;
+            window.showToast("Слот освобожден! Товар убран из VIP-ленты.");
+            item.isHighlighted = false; 
         } else {
             // ДОБАВЛЯЕМ В ТОП
             const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
@@ -3396,13 +3389,11 @@ window.toggleItemVip = async (itemId, btnElement) => {
                 window.showToast('Для размещения требуется SVALKA PRO.', true);
                 return;
             } else {
-                // База вернула ошибку о лимите в 5 товаров
                 window.showToast(data, true); 
                 return;
             }
         }
 
-        // Успех - закрываем модалку и обновляем списки
         window.closeModal('item-modal');
         if (window.fetchItems) window.fetchItems(false);
         if (window.renderProfileTabs) window.renderProfileTabs();
@@ -3411,10 +3402,8 @@ window.toggleItemVip = async (itemId, btnElement) => {
         console.error("VIP Toggle Error:", e);
         window.showToast("Произошла ошибка связи с сервером", true);
     } finally {
-        // === ИСПРАВЛЕНИЕ: ЖЕСТКО СНИМАЕМ БЛОКИРОВКУ С КНОПКИ ===
         if (btnElement) { 
             btnElement.disabled = false; 
-            // Возвращаем старый текст только если это была ошибка (чтобы не моргало перед закрытием модалки)
             if (btnElement.innerHTML.includes('fa-spinner')) {
                 btnElement.innerHTML = originalText;
             }
@@ -3422,7 +3411,6 @@ window.toggleItemVip = async (itemId, btnElement) => {
     }
 };
 
-// Жестко перенаправляем ВСЕ старые кнопки на нашу новую умную функцию
 window.promoteToVip = () => window.toggleItemVip(window.activeModalItemId, document.getElementById('btn-owner-vip'));
 window.highlightItem = window.promoteToVip;
 window.applyVipToItem = window.toggleItemVip;
@@ -3439,17 +3427,14 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
         if (item && btnVip && window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
             
             btnVip.disabled = false; 
-            const t = window.t || (txt => txt); // Подключаем переводчик
+            const t = window.t || (txt => txt);
 
-            // Если товар уже в ТОПе
+            // ВИЗУАЛЬНОЕ ОФОРМЛЕНИЕ ПРОИСХОДИТ ТОЛЬКО ЗДЕСЬ
             if (item.isHighlighted) {
                 btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из ТОПа')}`;
-                // Элегантная кнопка отмены
                 btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
             } else {
-            // Если товар обычный (ПРЕМИУМ ДИЗАЙН)
                 btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В ТОП')}`;
-                // Градиент, тень со свечением, анимация нажатия
                 btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-black text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 active:scale-95";
             }
             
