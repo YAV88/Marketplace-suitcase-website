@@ -28,31 +28,24 @@ export const PaymentsModule = {
         }
 
         try {
-            // Вызываем ту же функцию Plisio, но с дополнительными параметрами
+            // ИСПРАВЛЕНИЕ: Теперь берем реальную цену (priceUsd) и передаем тип 'buy_tokens'
             const { data, error } = await window.supabase.functions.invoke('create-plisio-invoice', {
-                body: {
-                    userId: window.currentUser.id,
+                body: { 
+                    userId: window.currentUser.id, 
                     currency: selectedCurrency,
-                    order_type: 'buy_tokens',   // Флаг для бэкенда: что именно покупаем
-                    amount_usd: priceUsd,       // Сумма к оплате
-                    tokens_count: tokensAmount  // Сколько токенов начислить после успешной оплаты
+                    order_type: 'buy_tokens',      // Это покупка токенов
+                    tokens_amount: tokensAmount,   // Количество токенов (5, 15, 30)
+                    amount_usd: priceUsd           // Правильная цена из HTML (6, 12, 20)
                 }
             });
-
             if (error) throw error;
 
             if (data && data.url) {
-                // Пытаемся открыть в новой вкладке, если браузер блокирует — открываем в текущей
                 const opened = window.open(data.url, '_blank');
                 if (!opened) window.location.href = data.url;
-            } else if (data && data.error) {
-                throw new Error(data.error);
-            } else {
-                throw new Error("Неизвестная ошибка генерации ссылки");
-            }
+            } else throw new Error(data?.error || "Ошибка генерации ссылки");
         } catch (e) {
-            console.error("Token Purchase Error:", e);
-            window.showToast("Ошибка: " + (e.message || "Не удалось создать счет"), true);
+            window.showToast("Ошибка: " + e.message, true);
         } finally {
             if (btn) {
                 btn.disabled = false;
