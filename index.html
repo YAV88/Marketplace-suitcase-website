@@ -1214,7 +1214,7 @@
             </div>
 
             <form id="add-form" class="hidden flex-col gap-5" onsubmit="window.submitNewItem(event);">
-                <button type="button" onclick="window.backToAddStep1()" class="text-sm font-bold text-stone-400 hover:text-brand-600 transition flex items-center gap-2 w-max -mt-2 mb-2"><i class="fa-solid fa-arrow-left"></i> Назад к выбору</button>
+                <button type="button" onclick="window.backToAddStep1()" class="text-sm font-bold text-stone-400 hover:text-brand-600 transition flex items-center gap-2 w-max -mt-2 mb-2" data-i18n="btn_back_add"><i class="fa-solid fa-arrow-left"></i> Назад к выбору</button>
                 
                 <div class="flex gap-3 overflow-x-auto pb-2 custom-scrollbar" id="photo-preview-list"></div>
 
@@ -1227,7 +1227,7 @@
                 </label>
 
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="text" id="item-title" placeholder="Название объявления" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                    <input type="text" id="item-title" data-i18n="ph_title" placeholder="Название объявления" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1254,7 +1254,7 @@
                     
                     <div class="flex gap-2">
                         <div class="flex-1 bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                            <input type="number" id="item-price" placeholder="Цена / Зарплата" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
+                            <input type="number" id="item-price" data-i18n="ph_price" placeholder="Цена / Зарплата" oninput="this.value = this.value.replace(/,/g, '')" class="bg-transparent p-3 w-full font-medium outline-none text-base cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
                         </div>
                         <div class="relative bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 w-24">
                             <select id="item-currency" class="appearance-none bg-transparent p-3 w-full font-bold text-base outline-none cursor-pointer text-stone-900 dark:text-white">
@@ -1267,10 +1267,9 @@
                 </div>
 
                 <div id="add-block-product" class="flex-col gap-5">
-    
                     <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
                         <select id="item-category" onchange="window.handleCategoryChange(event)" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                            <option value="" disabled selected>Категория...</option>
+                            <option value="" disabled selected data-i18n="ph_category">Категория...</option>
                             <optgroup label="Одежда и Обувь">
                                 <option value="Одежда - Женская">Женская</option>
                                 <option value="Одежда - Мужская">Мужская</option>
@@ -1348,43 +1347,43 @@
                     </div>
 
                     <div id="add-condition-block" class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                        <span class="text-sm font-bold text-stone-500">Состояние</span>
+                        <span class="text-sm font-bold text-stone-500" data-i18n="lbl_condition">Состояние</span>
                         <div id="modal-condition-block" class="flex flex-col gap-1">
                             <label class="cursor-pointer relative">
                                 <input type="radio" name="item-condition" value="Новое" class="peer hidden">
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">✨ Новое</div>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">✨ <span data-i18n="Новое">Новое</span></div>
                             </label>
                             <label class="cursor-pointer relative">
                                 <input type="radio" name="item-condition" value="Б/У" class="peer hidden" checked>
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">♻️ Б/У</div>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">♻️ <span data-i18n="Б/У">Б/У</span></div>
                             </label>
                         </div>
                     </div>
                     
                     <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                        <span class="text-sm font-bold text-stone-500">Оплата</span>
+                        <span class="text-sm font-bold text-stone-500" data-i18n="lbl_payment">Оплата</span>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <label class="cursor-pointer relative">
                                 <input type="checkbox" id="pay-cash" value="Наличные" class="peer hidden" checked>
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-solid fa-money-bill-wave"></i> Наличные</div>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-solid fa-money-bill-wave"></i> <span data-i18n="pay_cash">Наличные</span></div>
                             </label>
                             <label class="cursor-pointer relative">
                                 <input type="checkbox" id="pay-card" value="Перевод на карту" class="peer hidden">
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-regular fa-credit-card"></i> На карту</div>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-regular fa-credit-card"></i> <span data-i18n="pay_card">На карту</span></div>
                             </label>
                             <label class="cursor-pointer relative">
                                 <input type="checkbox" id="pay-crypto" value="Криптоперевод" class="peer hidden">
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-brands fa-bitcoin"></i> Крипто</div>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm"><i class="fa-brands fa-bitcoin"></i> <span data-i18n="pay_crypto">Крипто</span></div>
                             </label>
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-2 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700">
-                        <span class="text-sm font-bold text-stone-500">Способ передачи</span>
+                        <span class="text-sm font-bold text-stone-500" data-i18n="lbl_delivery">Способ передачи</span>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <label class="cursor-pointer relative">
                                 <input type="checkbox" id="del-meet" value="Личная встреча" class="peer hidden" checked>
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">🤝 Личная встреча</div>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-stone-900 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-500 dark:text-stone-400 peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-600 dark:peer-checked:border-brand-500 dark:peer-checked:bg-brand-900/40 dark:peer-checked:text-white transition-all shadow-sm">🤝 <span data-i18n="del_meet">Личная встреча</span></div>
                             </label>
                             <label class="cursor-pointer relative">
                                 <input type="checkbox" id="del-post" value="PostExpress" class="peer hidden">
@@ -1398,20 +1397,20 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-blue-500 transition-colors">
                             <select id="estate-deal-type" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                                <option value="Аренда">Аренда (Долгосрок)</option>
-                                <option value="Посуточно">Аренда (Посуточно)</option>
-                                <option value="Покупка">Продажа</option>
-                                <option value="Коммерция">Коммерческая</option>
+                                <option value="Аренда" data-i18n="est_rent_long">Аренда (Долгосрок)</option>
+                                <option value="Посуточно" data-i18n="est_rent_short">Аренда (Посуточно)</option>
+                                <option value="Покупка" data-i18n="est_buy">Продажа</option>
+                                <option value="Коммерция" data-i18n="est_commercial">Коммерческая</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400"><i class="fa-solid fa-chevron-down text-sm"></i></div>
                         </div>
                         <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-blue-500 transition-colors">
-                            <input type="number" id="estate-area" placeholder="Площадь (м²)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-blue-600 text-stone-900 dark:text-white">
+                            <input type="number" id="estate-area" data-i18n="ph_area" placeholder="Площадь (м²)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-blue-600 text-stone-900 dark:text-white">
                         </div>
                         <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-blue-500 transition-colors">
                             <select id="estate-rooms" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                                <option value="" disabled selected>Комнаты...</option>
-                                <option value="Студия">Студия</option>
+                                <option value="" disabled selected data-i18n="ph_rooms">Комнаты...</option>
+                                <option value="Студия" data-i18n="room_studio">Студия</option>
                                 <option value="1">1 комната</option>
                                 <option value="1.5">1.5 комнаты</option>
                                 <option value="2">2 комнаты</option>
@@ -1426,25 +1425,25 @@
 
                 <div id="add-block-job" class="hidden flex-col gap-4">
                     <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-amber-500 transition-colors">
-                        <input type="text" id="job-company" placeholder="Название компании" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-amber-600 text-stone-900 dark:text-white">
+                        <input type="text" id="job-company" data-i18n="ph_company" placeholder="Название компании" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-amber-600 text-stone-900 dark:text-white">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-amber-500 transition-colors">
                             <select id="job-format" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                                <option value="" disabled selected>Формат работы...</option>
-                                <option value="Офис">В офисе</option>
-                                <option value="Удаленка">Удаленная работа</option>
-                                <option value="Гибрид">Гибрид</option>
+                                <option value="" disabled selected data-i18n="ph_job_format">Формат работы...</option>
+                                <option value="Офис" data-i18n="job_office">В офисе</option>
+                                <option value="Удаленка" data-i18n="job_remote">Удаленная работа</option>
+                                <option value="Гибрид" data-i18n="job_hybrid">Гибрид</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400"><i class="fa-solid fa-chevron-down text-sm"></i></div>
                         </div>
                         <div class="relative bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-amber-500 transition-colors">
                             <select id="job-schedule" class="appearance-none bg-transparent p-3 pr-10 w-full font-medium text-base outline-none cursor-pointer text-stone-900 dark:text-white">
-                                <option value="" disabled selected>График...</option>
-                                <option value="Полный день">Полный день</option>
-                                <option value="Сменный график">Сменный график</option>
-                                <option value="Частичная занятость">Частичная занятость</option>
-                                <option value="Разовое задание">Разовое задание</option>
+                                <option value="" disabled selected data-i18n="ph_job_schedule">График...</option>
+                                <option value="Полный день" data-i18n="sched_full">Полный день</option>
+                                <option value="Сменный график" data-i18n="sched_shift">Сменный график</option>
+                                <option value="Частичная занятость" data-i18n="sched_part">Частичная занятость</option>
+                                <option value="Разовое задание" data-i18n="sched_one">Разовое задание</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-stone-400"><i class="fa-solid fa-chevron-down text-sm"></i></div>
                         </div>
@@ -1452,20 +1451,20 @@
                 </div>
 
                 <div class="bg-stone-50 dark:bg-stone-800 p-1 rounded-xl border dark:border-stone-700 focus-within:border-brand-500 transition-colors">
-                    <input type="tel" id="item-phone" placeholder="Телефон для связи (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                    <input type="tel" id="item-phone" data-i18n="ph_phone" placeholder="Телефон для связи (необязательно)" class="bg-transparent p-3 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
                 </div>
 
                 <div class="relative flex flex-col bg-stone-50 dark:bg-stone-800 rounded-xl border dark:border-stone-700 p-2 focus-within:border-brand-500 transition-colors">
                     <div class="flex justify-between items-center mb-2 px-2 pt-1">
-                        <span class="text-sm font-bold text-stone-500">Описание</span>
+                        <span class="text-sm font-bold text-stone-500" data-i18n="lbl_desc">Описание</span>
                     </div>
-                    <textarea id="item-desc" placeholder="Подробное описание..." rows="5" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required></textarea>
+                    <textarea id="item-desc" data-i18n="ph_desc" placeholder="Подробное описание..." rows="5" class="bg-transparent p-2 w-full font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required></textarea>
                 </div>
 
                 <div id="add-map-container" class="flex-col gap-3 bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 hidden">
-                    <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-location-dot"></i> Точный адрес и локация</div>
+                    <div class="text-sm font-bold text-stone-500"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="lbl_address">Точный адрес и локация</span></div>
                     <div class="relative z-[400] w-full">
-                        <input type="text" id="item-address" autocomplete="off" oninput="window.handleAddressInput(event)" placeholder="Улица и номер дома (например: Knez Mihailova 1)..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
+                        <input type="text" id="item-address" autocomplete="off" oninput="window.handleAddressInput(event)" data-i18n="ph_address" placeholder="Улица и номер дома (например: Knez Mihailova 1)..." class="bg-white dark:bg-stone-900 p-3 rounded-lg border dark:border-stone-700 w-full font-medium text-base outline-none focus:border-brand-500 text-stone-900 dark:text-white transition-colors">
                         <div id="address-suggestions" class="absolute w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-2xl mt-2 hidden max-h-60 overflow-y-auto custom-scrollbar overflow-x-hidden divide-y divide-stone-100 dark:divide-stone-700/50"></div>
                     </div>
                     <div id="add-map" class="w-full h-48 bg-stone-200 dark:bg-stone-700 rounded-lg relative overflow-hidden"></div>
@@ -1473,7 +1472,7 @@
 
                 <div id="submit-progress-container" class="hidden flex-col gap-2 mt-2">
                     <div class="flex justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
-                        <span id="submit-progress-text">Загрузка фото...</span>
+                        <span id="submit-progress-text" data-i18n="submit_progress_text">Загрузка фото...</span>
                         <span id="submit-progress-percent">0%</span>
                     </div>
                     <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2.5 overflow-hidden">
@@ -1481,7 +1480,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="add-submit-btn" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
+                <button type="submit" id="add-submit-btn" data-i18n="btn_publish_final" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg hover:bg-brand-700 transition cursor-pointer">Опубликовать</button>
             </form>
         </div>
     </div>
