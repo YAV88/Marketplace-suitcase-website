@@ -16,8 +16,8 @@ export const I18nModule = {
             'filter_btn': 'Фильтры', 'filter_cat': 'Категория', 'filter_city': 'Город', 'filter_condition': 'Состояние',
             'filter_price': 'Цена', 'filter_currency': 'Валюта', 'filter_payment': 'Оплата', 'filter_price_from': 'От',
             'filter_price_to': 'До', 'pay_cash': 'Наличные', 'pay_card': 'Перевод на карту', 'pay_crypto': 'Криптоперевод',
-            'btn_reset': 'Сбросить', 'btn_show_results': 'Показать находки', 'cat_all': 'Все', 'cat_top': 'ТОП',
-            'cat_clothes': 'Одежда', 'cat_kids': 'Детям', 'cat_electro': 'Электроника', 'cat_interior': 'Интерьер',
+            'btn_reset': 'Сбросить', 'btn_show_results': 'Показать находки', 'cat_all': 'Все', 'cat_top': 'ТОП', 'btn_edit': 'Редакт.',
+            'cat_clothes': 'Одежда', 'cat_kids': 'Детям', 'cat_electro': 'Электроника', 'cat_interior': 'Интерьер', 'btn_edit_sub': 'Изменить',
             'cat_transport': 'Транспорт', 'cat_beauty': 'Красота', 'cat_services': 'Услуги', 'cat_job': 'Работа',
             'cat_business': 'Бизнес', 'cat_hobby': 'Хобби', 'cat_animals': 'Животные', 'cat_home': 'Жилье', 'cat_other': 'Другое',
             'vip_title': 'ТОП Находки', 'vip_promo': 'Получи VIP-статус и продавай вещи быстрее!', 'btn_connect': 'Подключить',
@@ -64,7 +64,11 @@ export const I18nModule = {
             'Хобби': 'Хобби', 'Спорт': 'Спорт', 'Туризм': 'Туризм', 'Туризм и палатки': 'Туризм и палатки', 'Книги': 'Книги', 'Музыка': 'Музыка', 'Музыкальные инструменты': 'Музыкальные инструменты', 'Игры': 'Игры', 'Настольные игры': 'Настольные игры', 'Коллекции': 'Коллекции', 'Коллекционирование': 'Коллекционирование',
             'Животные': 'Животные', 'Собаки': 'Собаки', 'Кошки': 'Кошки', 'Птицы': 'Птицы', 'Аквариум': 'Аквариум', 'Аквариумистика': 'Аквариумистика', 'Товары': 'Товары', 'Зоотовары': 'Зоотовары', 'Другие': 'Другие',
             'Жилье': 'Жилье', 'Аренда': 'Аренда', 'Посуточно': 'Посуточно', 'Аренда (посуточно)': 'Аренда (посуточно)', 'Покупка': 'Покупка', 'Продажа': 'Продажа', 'Коммерция': 'Коммерция', 'Коммерческая': 'Коммерческая', 'Дачи': 'Дачи', 'Дома и дачи': 'Дома и дачи',
-            'Другое': 'Другое', 'Билеты': 'Билеты', 'Продукты': 'Продукты', 'Продукты питания': 'Продукты питания', 'Разное': 'Разное', 'Бесплатно': 'Бесплатно', 'Отдам даром': 'Отдам даром', 'Бюро': 'Бюро', 'Бюро находок': 'Бюро находок'
+            'Другое': 'Другое', 'Билеты': 'Билеты', 'Продукты': 'Продукты', 'Продукты питания': 'Продукты питания', 'Разное': 'Разное', 'Бесплатно': 'Бесплатно', 'Отдам даром': 'Отдам даром', 'Бюро': 'Бюро', 'Бюро находок': 'Бюро находок',
+            'Убрать из ТОПа': 'Убрать из ТОПа', 'Снять резерв': 'Снять резерв', 'В резерв': 'В резерв',
+            'VIP ПРОДАВЕЦ': 'VIP ПРОДАВЕЦ', 'Продавец SVALKA': 'Продавец SVALKA',
+            'Активен еще': 'Активен еще', 'дн.': 'дн.', 'Способ получения': 'Способ получения', 
+            'Варианты оплаты': 'Варианты оплаты', 'СЕРБИЯ': 'СЕРБИЯ', 'Криптовалюта': 'Криптовалюта', 'Личная встреча': 'Личная встреча', 'Наличные': 'Наличные'
         },
         en: {
             'page_title': 'SVALKA — Classifieds in Serbia', 'og_desc': 'Great finds and quick sales in Serbia.', 'Например: велосипед, макбук...': 'For example: bicycle, macbook...', 'Базовый': 'Basic', 'ВИП': 'VIP',
@@ -104,10 +108,10 @@ export const I18nModule = {
             'confirm_title': 'Are you sure?', 'confirm_desc': 'This action cannot be undone.', 'btn_cancel': 'Cancel', 'btn_yes': 'Yes, I am sure',
             'del_meet': 'Personal meeting', 'del_post': 'PostExpress', 'report_title': 'Report', 'rep_fraud': 'Fraud / Deception',
             'rep_spam': 'Spam / Duplicates', 'rep_toxic': 'Insults', 'rep_illegal': 'Prohibited items', 'rep_other': 'Other',
-            'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report',
+            'report_ph': 'Describe the problem (optional)...', 'btn_send_report': 'Send Report', 'btn_edit_sub': 'Change',
             'review_title': 'Rate the seller', 'review_sub': 'Your review will help other buyers!', 'review_ph': 'Write a few words...',
             'btn_send_review': 'Send Review', 'pro_feat1_title': 'Free Bumps', 'PRO (Активен)': 'PRO (Active)',
-            'pro_feat1_desc': '1 free top bump every day', 'pro_feat2_title': 'VIP Badge',
+            'pro_feat1_desc': '1 free top bump every day', 'pro_feat2_title': 'VIP Badge', 'btn_edit': 'Edit',
             'pro_feat2_desc': 'Makes you stand out from other sellers', 'pro_price_label': 'Cost for 30 days:',
             'pro_network_label': 'Select payment network:', 'pro_network_hint': 'BEP-20 network fees are the lowest.',
             'pro_secure_label': 'Secure cryptocurrency payment', 'pro_pay_btn': 'PAY',
@@ -148,7 +152,11 @@ export const I18nModule = {
             'faq_rot_title': 'Fair rotation',
             'faq_rot_desc': 'The algorithm uses <strong>dynamic shuffling</strong>. With each page refresh, TOP items swap places. Every seller gets their fair share of attention!',
             'faq_act_title': 'Instant activation',
-            'faq_act_desc': 'Go to your profile and click the <strong>"Buy PRO"</strong> button. Choose a suitable token package and pay in 1 click. The system will credit the promotion to your account instantly.'
+            'faq_act_desc': 'Go to your profile and click the <strong>"Buy PRO"</strong> button. Choose a suitable token package and pay in 1 click. The system will credit the promotion to your account instantly.',
+            'Убрать из ТОПа': 'Remove from TOP', 'Снять резерв': 'Remove Reserve', 'В резерв': 'Reserve',
+            'VIP ПРОДАВЕЦ': 'VIP SELLER', 'Продавец SVALKA': 'SVALKA Seller',
+            'Активен еще': 'Active for', 'дн.': 'days', 'Способ получения': 'Delivery Method', 
+            'Варианты оплаты': 'Payment Options', 'СЕРБИЯ': 'SERBIA', 'Криптовалюта': 'Cryptocurrency', 'Личная встреча': 'Personal meeting', 'Наличные': 'Cash'
         },
         sr: {
             'page_title': 'SVALKA — Oglasi u Srbiji', 'og_desc': 'Odlične stvari i brza prodaja u Srbiji.', 'Вы продаете': 'Prodajete', 'Вы покупаете': 'Kupujete', 'Собеседник:': 'Sagovornik:', 'Товар удален': 'Oglas obrisan',
@@ -192,11 +200,11 @@ export const I18nModule = {
             'review_title': 'Ocenite prodavca', 'review_sub': 'Vaša recenzija će pomoći drugim kupcima!', 'review_ph': 'Napišite nekoliko reči...',
             'btn_send_review': 'Pošalji recenziju', 'pro_feat1_title': 'Besplatna podizanja', 'pro_feat1_desc': 'Svakog dana 1 podizanje na vrh','pro_feat2_title': 'VIP bedž',
             'pro_feat2_desc': 'Izdvaja vas od ostalih prodavaca','pro_price_label': 'Cena za 30 dana:', 'pro_network_label': 'Izaberite mrežu za plaćanje:', 'pro_network_hint': 'Naknade za BEP-20 mrežu su najniže.',
-            'pro_secure_label': 'Sigurno plaćanje kriptovalutom', 'pro_pay_btn': 'PLATI',
+            'pro_secure_label': 'Sigurno plaćanje kriptovalutom', 'pro_pay_btn': 'PLATI', 'btn_edit': 'Uredi',
             'Одежда и Обувь':'Odeća i Obuća', 'Дом и Интерьер':'Kuća i Enterijer', 'Красота и Здоровье':'Lepota i Zdravlje', 'Для Бизнеса':'Za Biznis', 'Хобби и Отдых':'Hobi i Odmor',
             'Недвижимость':'Nekretnine', 'Жилье':'Smeštaj', 'Услуги':'Usluge', 'Работа':'Posao', 'В ТОП':'U TOP', 'Редакт.':'Uredi',
             'Статус':'Status', 'Базовый':'Osnovni', 'Любое':'Bilo koje', 'Новое':'Novo', 'Б/У':'Polovno', 'Новые находки':'Novi nalazi',
-            'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.',
+            'Категория...':'Kategorija...', 'Город...':'Grad...', 'Описание отсутствует.':'Nema opisa.', 'btn_edit_sub': 'Izmeni',
             'Белград': 'Beograd', 'Нови-Сад': 'Novi Sad', 'Ниш': 'Niš', 'Крагуевац': 'Kragujevac', 'Суботица': 'Subotica', 'Зренянин': 'Zrenjanin', 'Панчево': 'Pančevo', 'Чачак': 'Čačak', 'Кралево': 'Kraljevo', 'Нови-Пазар': 'Novi Pazar', 'Смедерево': 'Smederevo', 'Лесковац': 'Leskovac', 'Вране': 'Vranje', 'Сомбор': 'Sombor', 'Другой': 'Drugi',
             'Все категории': 'Sve kategorije', 'Любое': 'Bilo koje', 'Любая': 'Bilo koja', 'Динары': 'Dinari', 'Евро': 'Evri', 'Все в': 'Sve u', 'Склад': 'Sačuvano', 'Мои вещи': 'Moje stvari',
             'Одежда': 'Odeća', 'Женская': 'Ženska', 'Мужская': 'Muška', 'Обувь': 'Obuća', 'Сумки': 'Torbe', 'Аксессуары': 'Aksesoari', 'Спецодежда': 'Radna odeća',
@@ -225,7 +233,11 @@ export const I18nModule = {
             'faq_rot_title': 'Pravedna rotacija',
             'faq_rot_desc': 'Algoritam koristi <strong>dinamičko mešanje</strong>. Pri svakom osvežavanju stranice, TOP predmeti menjaju mesta. Svaki prodavac dobija svoj pošten deo pažnje!',
             'faq_act_title': 'Trenutna aktivacija',
-            'faq_act_desc': 'Uđite u svoj profil i kliknite na dugme <strong>"Kupi PRO"</strong>. Izaberite odgovarajući paket tokena i platite u 1 klik. Sistem će momentalno pripisati promociju vašem nalogu.'
+            'faq_act_desc': 'Uđite u svoj profil i kliknite na dugme <strong>"Kupi PRO"</strong>. Izaberite odgovarajući paket tokena i platite u 1 klik. Sistem će momentalno pripisati promociju vašem nalogu.',
+            'Убрать из ТОПа': 'Ukloni iz TOP-a', 'Снять резерв': 'Ukini rezervaciju', 'В резерв': 'Rezerviši',
+            'VIP ПРОДАВЕЦ': 'VIP PRODAVAC', 'Продавец SVALKA': 'SVALKA Prodavac',
+            'Активен еще': 'Aktivan još', 'дн.': 'dana', 'Способ получения': 'Način preuzimanja', 
+            'Варианты оплаты': 'Opcije plaćanja', 'СЕРБИЯ': 'SRBIJA', 'Криптовалюта': 'Kriptovaluta', 'Личная встреча': 'Lični susret', 'Наличные': 'Gotovina'
         }
     },
 

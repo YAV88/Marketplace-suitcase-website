@@ -859,7 +859,7 @@ export const ItemsModule = {
                 // Рисуем 3 отдельные плашки по единому дизайн-коду
                 cityTextEl.innerHTML = `
                     <span class="flex items-center justify-center bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700 uppercase tracking-wide">
-                        <i class="fa-solid fa-location-dot text-stone-400 mr-1.5"></i> ${(item.city || "СЕРБИЯ")}
+                        <i class="fa-solid fa-location-dot text-stone-400 mr-1.5"></i> ${t(item.city || "СЕРБИЯ")}
                     </span>
                     
                     <span class="flex items-center justify-center bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700" title="Просмотры карточки">
@@ -892,12 +892,10 @@ export const ItemsModule = {
                     let badgesHtml = '';
                     
                     // 1. Проверка VIP
-                    const isVip = window.checkRealVipStatus ? window.checkRealVipStatus(profileRes.data) : false;
-                    if (isVip || item.isHighlighted) {
-                        badgesHtml += `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">VIP ПРОДАВЕЦ</span> `;
-                    } else {
-                        badgesHtml += `<span class="shrink-0">Продавец SVALKA</span> `;
-                    }
+                    const t = window.t || (txt => txt);
+                    const statusHtml = item.isHighlighted ?
+                        `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">${t('VIP ПРОДАВЕЦ')}</span>` :
+                        `<span class="shrink-0 font-medium">${t('Продавец SVALKA')}</span>`;
                     
                     // 2. Проверка Верификации
                     if (profileRes.data && profileRes.data.is_verified) {
@@ -981,7 +979,8 @@ export const ItemsModule = {
 
                 const reserveBtnText = document.getElementById('btn-reserve-text');
                 const isReserved = item.status === 'reserved' || item.is_reserved;
-                if (reserveBtnText) reserveBtnText.innerText = isReserved ? "Снять резерв" : "В резерв";
+                const t = window.t || (txt => txt);
+                if (reserveBtnText) reserveBtnText.innerText = isReserved ? t("Снять резерв") : t("В резерв");
 
             } else {
                 if (ownerControls) ownerControls.classList.add('hidden');

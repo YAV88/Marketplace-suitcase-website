@@ -1014,11 +1014,13 @@ window.openModal = async id => {
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
                         
-                        statusText.innerText = `PRO (Активен еще ${diffDays} дн.)`;
+                        const t = window.t || (txt => txt);
+                        statusText.innerText = `PRO (${t('Активен еще')} ${diffDays} ${t('дн.')})`;
                         statusText.className = 'text-sm font-black text-amber-500';
                         proBtn.classList.add('hidden');
                     } else {
-                        statusText.innerText = 'Базовый';
+                        const t = window.t || (txt => txt);
+                        statusText.innerText = t('Базовый'); // <--- ПЕРЕВОД ЗДЕСЬ
                         statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
                     }
@@ -3369,12 +3371,19 @@ window.toggleItemVip = async (itemId, btnElement) => {
         }
 
         // 3. Выполняем снятие или добавление
+        const t = window.t || (txt => txt); // Подключаем переводчик
+
+        // Если товар уже в ТОПе
         if (item.isHighlighted) {
-            // СНИМАЕМ ИЗ ТОПА
-            const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
-            if (error) throw error;
-            window.showToast("Слот освобожден! Товар убран из VIP-ленты.");
-            item.isHighlighted = false; 
+            btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из ТОПа')}`;
+            // Элегантная кнопка отмены: серая, при наведении слегка краснеет
+            btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
+        } else {
+        // Если товар обычный (ПРЕМИУМ ДИЗАЙН)
+            btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В ТОП')}`;
+            // Градиент, тень со свечением, анимация нажатия (scale)
+            btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-black text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 active:scale-95";
+        }
         } else {
             // ДОБАВЛЯЕМ В ТОП
             const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
@@ -3429,17 +3438,19 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
         
         if (item && btnVip && window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
             
-            // === ИСПРАВЛЕНИЕ: Очищаем старую блокировку при каждом открытии окна ===
             btnVip.disabled = false; 
+            const t = window.t || (txt => txt); // Подключаем переводчик
 
             // Если товар уже в ТОПе
             if (item.isHighlighted) {
-                btnVip.innerHTML = '<i class="fa-solid fa-arrow-down mr-1.5"></i> Убрать из ТОПа';
-                btnVip.className = "px-4 py-2 bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300 rounded-lg font-bold text-sm transition hover:bg-stone-300 dark:hover:bg-stone-600 flex-1 flex items-center justify-center shadow-inner";
+                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из ТОПа')}`;
+                // Элегантная кнопка отмены
+                btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
             } else {
-            // Если товар обычный
-                btnVip.innerHTML = '<i class="fa-solid fa-crown mr-1.5"></i> В ТОП';
-                btnVip.className = "px-4 py-2 bg-amber-500 text-white rounded-lg font-bold text-sm transition hover:bg-amber-600 flex-1 flex items-center justify-center shadow-sm";
+            // Если товар обычный (ПРЕМИУМ ДИЗАЙН)
+                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В ТОП')}`;
+                // Градиент, тень со свечением, анимация нажатия
+                btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-black text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 active:scale-95";
             }
             
             btnVip.onclick = (e) => {
