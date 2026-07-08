@@ -196,9 +196,6 @@ export const ItemsModule = {
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
-        let safeDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
-        if (safeDesc.length > 400) safeDesc = safeDesc.substring(0, 400) + '...';
-
         return `
         <div class="${cardClass} ${opacityClass} overflow-hidden transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
             
