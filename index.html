@@ -3,6 +3,15 @@
     
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        connect-src 'self' https://*.supabase.co wss://*.supabase.co; 
+        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
+        img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://via.placeholder.com https://*.cartocdn.com; 
+        font-src 'self' data: https://cdnjs.cloudflare.com; 
+        object-src 'none';
+    ">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title <link rel="icon" href="data:,"> data-i18n="page_title">SVALKA — Маркетплейс вещей в Сербии</title>
     <meta name="description" content="SVALKA — первый удобный маркетплейс для поиска и продажи вещей в Сербии.">
