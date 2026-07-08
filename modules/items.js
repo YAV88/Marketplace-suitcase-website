@@ -819,11 +819,14 @@ export const ItemsModule = {
             // Подготовка блока адреса
             const addrCont = document.getElementById('modal-address-container');
             if (addrCont) {
-                // 1. ПОДСТАВЛЯЕМ РЕАЛЬНЫЙ АДРЕС ИЗ БАЗЫ
-                const addrTextEl = document.getElementById('modal-address-text');
-                if (addrTextEl) {
-                    // Если адреса нет, покажем хотя бы город
-                    addrTextEl.textContent = item.address || item.city || 'Адрес не указан'; 
+                // 1. ЖЕЛЕЗОБЕТОННАЯ ПОДСТАНОВКА АДРЕСА (Без привязки к ID в HTML)
+                const titleDiv = addrCont.firstElementChild; // Берем самый первый элемент (заголовок над картой)
+                if (titleDiv) {
+                    const addrString = item.address || item.city || 'Адрес не указан';
+                    // Экранируем текст от хакерских скриптов (XSS)
+                    const safeAddr = String(addrString).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
+                    // Насильно переписываем заголовок нужным текстом
+                    titleDiv.innerHTML = `<i class="fa-solid fa-map-location-dot text-stone-400 mr-1"></i> Точный адрес: <span class="text-stone-900 dark:text-white font-black ml-1">${safeAddr}</span>`;
                 }
 
                 // Карта нужна только для Недвижимости и Вакансий
@@ -837,7 +840,7 @@ export const ItemsModule = {
                             }
                             if (typeof L === 'undefined') return; 
                             
-                            // 2. ЧИНИМ ИКОНКУ МАРКЕРА LEAFLET (Лечим баг CDN)
+                            // 2. ЧИНИМ ИКОНКУ МАРКЕРА LEAFLET
                             delete L.Icon.Default.prototype._getIconUrl;
                             L.Icon.Default.mergeOptions({
                                 iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
