@@ -816,15 +816,20 @@ export const ItemsModule = {
             // ==========================================
             // ЛОГИКА КАРТЫ ЛОКАЦИИ
             // ==========================================
-            // Подготовка блока адреса (без запуска карты)
+            // Подготовка блока адреса
             const addrCont = document.getElementById('modal-address-container');
             if (addrCont) {
+                // 1. ПОДСТАВЛЯЕМ РЕАЛЬНЫЙ АДРЕС ИЗ БАЗЫ
+                const addrTextEl = document.getElementById('modal-address-text');
+                if (addrTextEl) {
+                    // Если адреса нет, покажем хотя бы город
+                    addrTextEl.textContent = item.address || item.city || 'Адрес не указан'; 
+                }
+
                 // Карта нужна только для Недвижимости и Вакансий
                 const needsMap = (item.item_type === 'estate' || item.item_type === 'job' || isEstate || isJob);
-
                 if (needsMap && item.coords && Array.isArray(item.coords) && item.coords.length === 2 && item.coords[0] !== 0) {
                     addrCont.classList.remove('hidden');
-                    
                     setTimeout(async () => {
                         try {
                             if (typeof window.loadMapLibrary === 'function') {
@@ -832,6 +837,14 @@ export const ItemsModule = {
                             }
                             if (typeof L === 'undefined') return; 
                             
+                            // 2. ЧИНИМ ИКОНКУ МАРКЕРА LEAFLET (Лечим баг CDN)
+                            delete L.Icon.Default.prototype._getIconUrl;
+                            L.Icon.Default.mergeOptions({
+                                iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+                                iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                            });
+
                             const mapEl = document.getElementById('view-map');
                             if (!mapEl) return;
     
