@@ -1945,6 +1945,9 @@ window.selectAddType = (type) => {
     const title = document.getElementById('add-modal-title');
     const mapContainer = document.getElementById('add-map-container');
     
+    // Подключаем переводчик
+    const t = window.t || (txt => txt);
+
     step1.classList.add('hidden');
     form.classList.remove('hidden');
     form.classList.add('flex');
@@ -1957,14 +1960,14 @@ window.selectAddType = (type) => {
     document.getElementById('add-block-job').classList.remove('flex');
     
     if(type === 'product') {
-        title.innerText = 'Продать вещь';
+        title.innerText = t('modal_add_item'); // ПЕРЕВОД ЗДЕСЬ
         document.getElementById('add-block-product').classList.remove('hidden');
         document.getElementById('add-block-product').classList.add('flex');
         document.getElementById('item-category').required = true;
         mapContainer.classList.add('hidden');
         mapContainer.classList.remove('flex');
     } else if(type === 'estate') {
-        title.innerText = 'Сдать / Продать жилье';
+        title.innerText = t('modal_add_estate'); // ПЕРЕВОД ЗДЕСЬ
         document.getElementById('add-block-estate').classList.remove('hidden');
         document.getElementById('add-block-estate').classList.add('flex');
         document.getElementById('item-category').required = false;
@@ -1972,7 +1975,7 @@ window.selectAddType = (type) => {
         mapContainer.classList.add('flex');
         window.initAddMap();
     } else if(type === 'job') {
-        title.innerText = 'Опубликовать вакансию';
+        title.innerText = t('modal_add_job'); // ПЕРЕВОД ЗДЕСЬ
         document.getElementById('add-block-job').classList.remove('hidden');
         document.getElementById('add-block-job').classList.add('flex');
         document.getElementById('item-category').required = false;

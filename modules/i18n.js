@@ -10,6 +10,13 @@ export const I18nModule = {
             'page_title': 'SVALKA — Маркетплейс вещей в Сербии', 'og_desc': 'Отличные находки и быстрые продажи в Сербии.',
             'search_placeholder': 'Я ищу...', 'btn_login': 'Войти', 'btn_publish': 'Пристроить добро', 'btn_publish_mob': 'Продать',
             'crypto_warning_title': 'Важно при оплате с бирж',
+            'cat_gr_electro': 'Электроника', 'cat_phones': 'Смартфоны', 'cat_pc': 'Компьютеры / ПК', 'cat_laptops': 'Ноутбуки', 'cat_tablets': 'Планшеты', 'cat_tv': 'ТВ и Видео', 'cat_audio': 'Аудио', 'cat_consoles': 'Игры / Консоли', 'cat_appliances': 'Бытовая техника', 'cat_photo': 'Фототехника',
+            'cat_gr_home': 'Дом и Интерьер', 'cat_furniture': 'Мебель', 'cat_decor': 'Декор', 'cat_dishes': 'Посуда', 'cat_textile': 'Текстиль', 'cat_repair': 'Стройматериалы', 'cat_tools': 'Инструменты', 'cat_garden': 'Сад и Огород',
+            'cat_gr_transport': 'Транспорт', 'cat_cars': 'Автомобили', 'cat_moto': 'Мото', 'cat_velo': 'Велосипеды', 'cat_scooters': 'Самокаты', 'cat_parts': 'Запчасти', 'cat_tires': 'Шины и диски',
+            'cat_gr_hobby': 'Хобби и Отдых', 'cat_sport': 'Спорт', 'cat_tourism': 'Туризм и палатки', 'cat_books': 'Книги', 'cat_music': 'Муз. инструменты', 'cat_boardgames': 'Настольные игры', 'cat_collect': 'Коллекционирование',
+            'cat_gr_animals': 'Животные', 'cat_dogs': 'Собаки', 'cat_cats': 'Кошки', 'cat_birds': 'Птицы', 'cat_aqua': 'Аквариумистика', 'cat_pet_goods': 'Зоотовары', 'cat_pet_other': 'Другие',
+            'cat_gr_business': 'Для Бизнеса', 'cat_equip': 'Оборудование', 'cat_biz_ready': 'Готовый бизнес', 'cat_raw': 'Сырье и материалы',
+            'cat_gr_other': 'Другое', 'cat_tickets': 'Билеты', 'cat_food': 'Продукты питания', 'cat_misc': 'Разное', 'cat_free': 'Отдам даром', 'cat_lost': 'Бюро находок',
             'add_type_product': 'Продать вещь',
             'add_type_estate': 'Сдать / Продать жилье',
             'add_type_job': 'Опубликовать вакансию',
@@ -166,6 +173,13 @@ export const I18nModule = {
             'search_placeholder': 'I am looking for...', 'btn_login': 'Log in', 'btn_publish': 'Post an Ad', 'btn_publish_mob': 'Sell',
             'nav_info': 'Info', 'nav_about': 'About Project', 'nav_rules': 'Rules', 'nav_security': 'Security', 'Вы продаете': 'Selling', 'Вы покупаете': 'Buying', 'Собеседник:': 'Chat with:', 'Товар удален': 'Item deleted',
             'nav_faq': 'Help / FAQ', 'nav_privacy': 'Privacy', 'nav_terms': 'Terms', 'nav_contacts': 'Contacts',
+            'cat_gr_electro': 'Electronics', 'cat_phones': 'Smartphones', 'cat_pc': 'Computers / PC', 'cat_laptops': 'Laptops', 'cat_tablets': 'Tablets', 'cat_tv': 'TV & Video', 'cat_audio': 'Audio', 'cat_consoles': 'Gaming / Consoles', 'cat_appliances': 'Home Appliances', 'cat_photo': 'Photo & Video',
+            'cat_gr_home': 'Home & Interior', 'cat_furniture': 'Furniture', 'cat_decor': 'Decor', 'cat_dishes': 'Dishes', 'cat_textile': 'Textile', 'cat_repair': 'Building Materials', 'cat_tools': 'Tools', 'cat_garden': 'Garden',
+            'cat_gr_transport': 'Transport', 'cat_cars': 'Cars', 'cat_moto': 'Motorcycles', 'cat_velo': 'Bicycles', 'cat_scooters': 'Scooters', 'cat_parts': 'Auto Parts', 'cat_tires': 'Tires & Wheels',
+            'cat_gr_hobby': 'Hobby & Leisure', 'cat_sport': 'Sports', 'cat_tourism': 'Tourism & Tents', 'cat_books': 'Books', 'cat_music': 'Musical Instruments', 'cat_boardgames': 'Board Games', 'cat_collect': 'Collectibles',
+            'cat_gr_animals': 'Pets', 'cat_dogs': 'Dogs', 'cat_cats': 'Cats', 'cat_birds': 'Birds', 'cat_aqua': 'Aquarium', 'cat_pet_goods': 'Pet Supplies', 'cat_pet_other': 'Other Pets',
+            'cat_gr_business': 'Business', 'cat_equip': 'Equipment', 'cat_biz_ready': 'Ready Business', 'cat_raw': 'Raw Materials',
+            'cat_gr_other': 'Other', 'cat_tickets': 'Tickets', 'cat_food': 'Food & Groceries', 'cat_misc': 'Miscellaneous', 'cat_free': 'For Free', 'cat_lost': 'Lost & Found',
             'crypto_warning_title': 'Important: Paying from Exchanges',
             'add_type_product': 'Sell an item',
             'add_type_estate': 'Rent / Sell property',
@@ -345,6 +359,13 @@ export const I18nModule = {
             'search_placeholder': 'Tražim...', 'btn_login': 'Prijavi se', 'btn_publish': 'Objavi oglas', 'btn_publish_mob': 'Prodaj',
             'nav_info': 'Info', 'nav_about': 'O projektu', 'nav_rules': 'Pravila', 'nav_security': 'Bezbednost', 'Например: велосипед, макбук...': 'Na primer: bicikl, macbook...', 'Базовый': 'Osnovni', 'ВИП': 'VIP',
             'nav_faq': 'Pomoć / FAQ', 'nav_privacy': 'Politika', 'nav_terms': 'Uslovi', 'nav_contacts': 'Kontakti',
+            'cat_gr_electro': 'Elektronika', 'cat_phones': 'Pametni telefoni', 'cat_pc': 'Računari / PC', 'cat_laptops': 'Laptopovi', 'cat_tablets': 'Tableti', 'cat_tv': 'TV i Video', 'cat_audio': 'Audio', 'cat_consoles': 'Konzole i igrice', 'cat_appliances': 'Bela tehnika', 'cat_photo': 'Foto oprema',
+            'cat_gr_home': 'Kuća i Enterijer', 'cat_furniture': 'Nameštaj', 'cat_decor': 'Dekor', 'cat_dishes': 'Posuđe', 'cat_textile': 'Tekstil', 'cat_repair': 'Građevinski materijal', 'cat_tools': 'Alati', 'cat_garden': 'Bašta i dvorište',
+            'cat_gr_transport': 'Transport', 'cat_cars': 'Automobili', 'cat_moto': 'Motocikli', 'cat_velo': 'Bicikli', 'cat_scooters': 'Trotineti', 'cat_parts': 'Auto delovi', 'cat_tires': 'Gume i felne',
+            'cat_gr_hobby': 'Hobi i Slobodno vreme', 'cat_sport': 'Sport', 'cat_tourism': 'Kampovanje i oprema', 'cat_books': 'Knjige', 'cat_music': 'Muzički instrumenti', 'cat_boardgames': 'Društvene igre', 'cat_collect': 'Kolekcionarstvo',
+            'cat_gr_animals': 'Ljubimci', 'cat_dogs': 'Psi', 'cat_cats': 'Mačke', 'cat_birds': 'Ptice', 'cat_aqua': 'Akvaristika', 'cat_pet_goods': 'Oprema za kućne ljubimce', 'cat_pet_other': 'Ostalo',
+            'cat_gr_business': 'Za Biznis', 'cat_equip': 'Oprema', 'cat_biz_ready': 'Gotov biznis', 'cat_raw': 'Sirovine i materijali',
+            'cat_gr_other': 'Ostalo', 'cat_tickets': 'Ulaznice', 'cat_food': 'Hrana i piće', 'cat_misc': 'Razno', 'cat_free': 'Poklanjam', 'cat_lost': 'Izgubljeno i nađeno',
             'crypto_warning_title': 'Važno: Plaćanje sa menjačnica',
             'add_type_product': 'Prodaj predmet',
             'add_type_estate': 'Izdaj / Prodaj nekretninu',
@@ -545,9 +566,20 @@ export const I18nModule = {
                     el.placeholder = this.dictionary[lang][key];
                 } else if (el.tagName === 'OPTION') {
                     el.innerText = this.dictionary[lang][key];
+                } else if (el.tagName === 'OPTGROUP') {
+                    // ДОБАВЛЕНО: поддержка перевода названий групп в Select
+                    el.label = this.dictionary[lang][key]; 
                 } else {
                     el.innerHTML = this.dictionary[lang][key];
                 }
+            }
+        });
+
+        // ДОБАВЛЕНО: Подмена всплывающих подсказок (title) через атрибут [data-i18n-title]
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            if (this.dictionary[lang]?.[key]) {
+                el.title = this.dictionary[lang][key];
             }
         });
 
