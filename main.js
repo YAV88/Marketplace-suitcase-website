@@ -3189,7 +3189,10 @@ window.triggerItemViewsAndSimilar = async (id) => {
     if (container) { container.classList.add('hidden'); container.classList.remove('flex'); }
     if (carousel) carousel.innerHTML = '';
 
-    window.supabase.rpc('increment_item_view', { p_item_id: id }).catch(() => {});
+    window.supabase.rpc('increment_item_view', { p_item_id: id })
+    .then(({ data, error }) => {
+        if (error) console.error("Ошибка при обновлении просмотров:", error);
+    });
 
     const currentItem = window.loadedItems.find(i => i.id === id);
     if (!currentItem) return;
