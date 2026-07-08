@@ -123,6 +123,19 @@ export const ItemsModule = {
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const t = window.t || (text => text);
+        
+        // Функция для очистки текста от HTML-тегов
+        const escapeHTML = (str) => {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
+        };
+
+        // Обезвреживаем название и описание ДО вставки в HTML
+        const safeTitle = escapeHTML(i.title || 'Без названия');
+        let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
+        if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
+        const safeDesc = escapeHTML(rawDesc); // Экранируем описание
+
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
         const isJob = i.category && i.category.includes('Работа');
@@ -588,10 +601,11 @@ export const ItemsModule = {
                 }
             }
 
-            const titleEl = document.getElementById('modal-title'); 
+            const titleEl = document.getElementById('modal-title');
             if (titleEl) {
                 const fireIcon = item.isHighlighted ? '<i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2.5 drop-shadow-sm text-xl"></i>' : '';
-                titleEl.innerHTML = fireIcon + (item.title || 'Без названия');
+                titleEl.innerHTML = fireIcon; // Вставляем только иконку
+                titleEl.appendChild(document.createTextNode(item.title || 'Без названия')); // Текст вставляем как Node, скрипты не сработают!
             }
 
             // ==========================================
@@ -676,12 +690,13 @@ export const ItemsModule = {
                 // Функция-генератор красивой плитки
                 const addSpec = (label, val, icon, colorClass) => {
                     if (val) {
+                        const safeVal = String(val).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
                         specsHtml += `
                         <div class="flex flex-col justify-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-3 sm:p-3.5 border border-stone-200/50 dark:border-stone-700/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                             <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5 truncate">${t(label)}</span>
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid ${icon} ${colorClass} text-sm"></i>
-                                <span class="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">${t(val)}</span>
+                                <span class="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">${t(safeVal)}</span>
                             </div>
                         </div>`;
                     }
@@ -847,7 +862,10 @@ export const ItemsModule = {
             }
             
             const descEl = document.getElementById('modal-desc');
-            if (descEl) descEl.innerText = item.description || "Описание отсутствует.";
+            if (descEl) {
+                descEl.textContent = item.description || "Описание отсутствует.";
+                descEl.style.whiteSpace = 'pre-line';
+            }
 
             const cityTextEl = document.getElementById('modal-city-text');
             if (cityTextEl) {

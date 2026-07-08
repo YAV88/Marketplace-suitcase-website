@@ -51,7 +51,15 @@ export const ChatModule = {
                 const alignClass = isMine ? 'justify-end' : 'justify-start';
                 const bubbleClass = isMine ? 'bg-brand-500 text-white rounded-br-none' : 'bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 rounded-bl-none';
 
-                container.insertAdjacentHTML('beforeend', `<div class="flex ${alignClass} w-full mt-2"><div class="max-w-[85%] p-3 rounded-2xl shadow-sm text-base font-medium break-words ${bubbleClass}">${msg.text}</div></div>`);
+                // Защита от XSS
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex ${alignClass} w-full mt-2`;
+                const innerDiv = document.createElement('div');
+                innerDiv.className = `max-w-[85%] p-3 rounded-2xl shadow-sm text-base font-medium break-words ${bubbleClass}`;
+                innerDiv.style.whiteSpace = 'pre-line'; // Сохраняем переносы строк!
+                innerDiv.textContent = msg.text; // Вставляем как чистый текст
+                msgDiv.appendChild(innerDiv);
+                container.appendChild(msgDiv);
             });
 
             container.scrollTop = container.scrollHeight;
@@ -76,7 +84,16 @@ export const ChatModule = {
         const container = document.getElementById('chat-messages');
         if (container && container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
 
-        container.insertAdjacentHTML('beforeend', `<div class="flex justify-end w-full mt-2 opacity-70 transition-opacity" id="temp-msg-${Date.now()}"><div class="max-w-[85%] p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium break-words bg-brand-500 text-white">${text}</div></div>`);
+        // 🛡️ БРОНЕБОЙНАЯ ВСТАВКА ВРЕМЕННОГО СООБЩЕНИЯ
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'flex justify-end w-full mt-2 opacity-70 transition-opacity';
+        msgDiv.id = `temp-msg-${Date.now()}`;
+        const innerDiv = document.createElement('div');
+        innerDiv.className = 'max-w-[85%] p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium break-words bg-brand-500 text-white';
+        innerDiv.style.whiteSpace = 'pre-line';
+        innerDiv.textContent = text;
+        msgDiv.appendChild(innerDiv);
+        container.appendChild(msgDiv);
         container.scrollTop = container.scrollHeight;
 
         try {
@@ -103,7 +120,15 @@ export const ChatModule = {
                     const container = document.getElementById('chat-messages');
                     if (container) {
                         if (container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
-                        container.insertAdjacentHTML('beforeend', `<div class="flex justify-start w-full mt-2"><div class="max-w-[85%] p-3 rounded-2xl rounded-bl-none shadow-sm text-base font-medium break-words bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200">${newMsg.text}</div></div>`);
+                        // 🛡️ БРОНЕБОЙНАЯ ВСТАВКА ВХОДЯЩЕГО СООБЩЕНИЯ
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'flex justify-start w-full mt-2';
+                        const innerDiv = document.createElement('div');
+                        innerDiv.className = 'max-w-[85%] p-3 rounded-2xl rounded-bl-none shadow-sm text-base font-medium break-words bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200';
+                        innerDiv.style.whiteSpace = 'pre-line';
+                        innerDiv.textContent = newMsg.text;
+                        msgDiv.appendChild(innerDiv);
+                        container.appendChild(msgDiv);
                         container.scrollTop = container.scrollHeight;
                     }
                     supabase.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => {
