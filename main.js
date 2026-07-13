@@ -1781,66 +1781,50 @@ window.deleteItem = async (id) => {
     }
 };
 
-// --- PRO-статус ---
+// --- ПОДНЯТИЕ ТОВАРА (Бесплатно или за VIP-токен) ---
 window.bumpItem = async () => {
     if (!window.currentUser || !window.activeModalItemId) return;
 
-    // 1. Предлагаем купить PRO, если статуса нет
-    if (!window.currentUserData || !window.currentUserData.is_pro) {
-        window.showToast("Функция доступна только для PRO-пользователей", true);
-        setTimeout(() => window.openModal('crypto-modal'), 1000);
-        return;
+    // Находим текст кнопки для анимации загрузки
+    const btnText = document.getElementById('btn-owner-bump-text');
+    let originalText = "В ТОП";
+    if (btnText) {
+        originalText = btnText.innerText;
+        btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
     }
 
-    const btnText = document.getElementById('btn-owner-bump-text');
-    const originalText = btnText.innerText;
-    btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...';
-
     try {
-        // 2. Получаем актуальные данные товара из БД для проверки кулдауна
-        const { data: itemData, error: fetchError } = await supabase
-            .from('items')
-            .select('last_bumped_at')
-            .eq('id', window.activeModalItemId)
-            .single();
-
-        if (fetchError) throw fetchError;
-
-        // 3. Проверка кулдауна (24 часа)
-        if (itemData.last_bumped_at) {
-            const lastBump = new Date(itemData.last_bumped_at).getTime();
-            const now = new Date().getTime();
-            const hoursPassed = (now - lastBump) / (1000 * 60 * 60);
-
-            if (hoursPassed < 24) {
-                const hoursLeft = Math.ceil(24 - hoursPassed);
-                window.showToast(`Следующее поднятие доступно через ${hoursLeft} ч.`, true);
-                btnText.innerText = originalText;
-                return;
-            }
+        // Вызываем нашу умную SQL-функцию, которая сама решит: бесплатно или списать токен
+        const { data, error } = await window.supabase.rpc('bump_item', { p_item_id: window.activeModalItemId });
+        
+        if (error) throw error; 
+        
+        // Показываем сообщение об успехе (из базы данных)
+        window.showToast(data.message || "Объявление успешно поднято в ТОП!");
+        
+        // Закрываем окно товара и обновляем ленту
+        window.closeModal('item-modal');
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+        
+        // Обновляем баланс токенов в локальной дате юзера, чтобы интерфейс обновился без перезагрузки
+        if (data.type === 'token' && window.currentUserData) {
+             window.currentUserData.vip_tokens = Math.max(0, (window.currentUserData.vip_tokens || 0) - 1);
         }
 
-        // 4. Поднимаем товар (обновляем created_at для сортировки и last_bumped_at для кулдауна)
-        const nowIso = new Date().toISOString();
-        const { error: updateError } = await supabase
-            .from('items')
-            .update({
-                created_at: nowIso,
-                last_bumped_at: nowIso
-            })
-            .eq('id', window.activeModalItemId);
-
-        if (updateError) throw updateError;
-
-        window.showToast("Объявление успешно поднято в ТОП!");
-        window.closeModal('item-modal');
-        window.fetchItems(false); // Перезагружаем ленту
-
-    } catch (error) {
-        console.error("Ошибка поднятия:", error);
-        window.showToast("Произошла ошибка. Попробуйте позже.", true);
+    } catch (err) {
+        console.error("Ошибка поднятия:", err);
+        // Выводим текст ошибки прямо из базы данных (например: "Достигнут лимит", "Кулдаун" и т.д.)
+        window.showToast(err.message || "Произошла ошибка при поднятии", true);
+        
+        // Если ошибка связана с нехваткой токенов/лимитом — предлагаем докупить
+        if (err.message && err.message.includes('Купите VIP-токены')) {
+             setTimeout(() => window.openModal('token-purchase-modal'), 1500);
+        }
     } finally {
-        if (btnText.innerText.includes('spinner')) btnText.innerText = originalText;
+        // Возвращаем текст кнопке
+        if (btnText && btnText.innerHTML.includes('spinner')) {
+            btnText.innerText = originalText;
+        }
     }
 };
 
