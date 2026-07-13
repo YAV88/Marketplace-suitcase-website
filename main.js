@@ -3421,11 +3421,11 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
 
             // ВИЗУАЛЬНОЕ ОФОРМЛЕНИЕ ПРОИСХОДИТ ТОЛЬКО ЗДЕСЬ
             if (item.isHighlighted) {
-                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из ТОПа')}`;
+                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из VIP')}`;
                 btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
             } else {
-                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В ТОП')}`;
-                btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-black text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:-translate-y-0.5 active:scale-95";
+                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В VIP-блок (7 дней)')}`;
+                btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-md hover:shadow-lg hover:-translate-y-0.5";
             }
             
             btnVip.onclick = (e) => {
