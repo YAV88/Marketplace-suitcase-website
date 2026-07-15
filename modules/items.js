@@ -992,26 +992,32 @@ export const ItemsModule = {
                 const shareBadge = document.getElementById('share-bump-badge');
                 const shareTimer = document.getElementById('share-bump-timer');
                 
+                // 1. БЛОК БЕСПЛАТНОГО РЕПОСТА (24 часа кулдаун)
                 if (shareBadge && shareTimer) {
                     const lastShared = item.last_shared_at ? new Date(item.last_shared_at).getTime() : 0;
                     const now = new Date().getTime();
                     const hoursPassed = lastShared ? (now - lastShared) / (1000 * 60 * 60) : 25;
-                    
-                    const userTokens = (window.currentUserData && window.currentUserData.vip_tokens) || 0;
 
                     if (hoursPassed >= 24) {
                         shareBadge.classList.remove('hidden');
-                        shareTimer.innerHTML = "<i class='fa-solid fa-arrow-up mr-1'></i> Поднять бесплатно";
+                        shareTimer.innerHTML = "<i class='fa-solid fa-bullhorn mr-1'></i> Бесплатно";
                         shareTimer.className = 'text-brand-600 dark:text-brand-400 font-black text-xs sm:text-sm mt-1';
-                    } else if (userTokens > 0) {
-                        shareBadge.classList.remove('hidden');
-                        shareTimer.innerHTML = `<i class='fa-solid fa-arrow-up text-amber-500 mr-1.5'></i>Поднять (1 токен) <span class="opacity-70 font-medium ml-1">(Есть: ${userTokens})</span>`;
-                        shareTimer.className = 'text-amber-600 dark:text-amber-400 font-black text-xs sm:text-sm mt-1';
                     } else {
                         shareBadge.classList.add('hidden');
                         const hoursLeft = Math.ceil(24 - hoursPassed);
-                        shareTimer.innerHTML = `До бесплатного: ${hoursLeft} ч. <span class="opacity-60">(Нет токенов)</span>`;
+                        shareTimer.innerHTML = `Кулдаун: ${hoursLeft} ч.`;
                         shareTimer.className = 'text-stone-500 dark:text-stone-400 font-bold text-[11px] sm:text-xs mt-1';
+                    }
+                }
+
+                // 2. БЛОК ПЛАТНОГО ПОДНЯТИЯ (Динамический текст кнопки)
+                const bumpBtnText = document.getElementById('btn-owner-bump-text');
+                if (bumpBtnText) {
+                    const userTokens = (window.currentUserData && window.currentUserData.vip_tokens) || 0;
+                    if (userTokens > 0) {
+                        bumpBtnText.innerHTML = `<i class='fa-solid fa-arrow-up mr-1.5'></i> Поднять (1 токен)`;
+                    } else {
+                        bumpBtnText.innerHTML = `<i class='fa-solid fa-gem mr-1.5 text-amber-500'></i> Купить токены`;
                     }
                 }
 
