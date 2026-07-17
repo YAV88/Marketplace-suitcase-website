@@ -122,19 +122,28 @@ export const ItemsModule = {
     // 2. КАРТОЧКА ТОВАРА
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
+        // 🚨 ЖЕЛЕЗОБЕТОННЫЙ ПАТЧ СТИЛЕЙ (Обходит кэш Tailwind) 🚨
+        if (!document.getElementById('card-fix-style')) {
+            document.head.insertAdjacentHTML('beforeend', `
+            <style id="card-fix-style">
+                .item-card { background-color: #ffffff !important; border-radius: 16px !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; border: 1px solid #e7e5e4 !important; }
+                html.dark .item-card { background-color: #1c1917 !important; border-color: #292524 !important; box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important; }
+                .item-card.vip-card { border: 2px solid #fbbf24 !important; box-shadow: 0 4px 15px rgba(245,158,11,0.15) !important; }
+                html.dark .item-card.vip-card { border-color: #d97706 !important; }
+            </style>`);
+        }
+
         const t = window.t || (text => text);
         
-        // Функция для очистки текста от HTML-тегов
         const escapeHTML = (str) => {
             if (!str) return '';
             return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
         };
 
-        // Обезвреживаем название и описание ДО вставки в HTML
         const safeTitle = escapeHTML(i.title || 'Без названия');
         let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
-        const safeDesc = escapeHTML(rawDesc); // Экранируем описание
+        const safeDesc = escapeHTML(rawDesc); 
 
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
@@ -143,9 +152,9 @@ export const ItemsModule = {
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
         const cardClass = isVIP ?
-            'item-card vip-card bg-white dark:bg-stone-900 cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md hover:shadow-xl border-2 border-amber-400 dark:border-amber-600 transition-all duration-300' : 
-            'item-card bg-white dark:bg-stone-900 cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm hover:shadow-lg border border-stone-200 dark:border-stone-800 transition-all duration-300';
-            
+            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
+            'item-card cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
+
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
