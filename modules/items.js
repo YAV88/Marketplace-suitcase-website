@@ -142,10 +142,9 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        // Добавили скругления (rounded-2xl), тени (shadow) и аккуратные рамки (border)
         const cardClass = isVIP ?
-            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-xl border border-brand-300 dark:border-brand-700 transition-all duration-300' : 
-            'item-card bg-white dark:bg-stone-900 cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:shadow-xl border border-stone-200 dark:border-stone-800 transition-all duration-300';
+            'item-card vip-card bg-white dark:bg-stone-900 cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md hover:shadow-xl border-2 border-amber-400 dark:border-amber-600 transition-all duration-300' : 
+            'item-card bg-white dark:bg-stone-900 cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm hover:shadow-lg border border-stone-200 dark:border-stone-800 transition-all duration-300';
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
