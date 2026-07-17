@@ -122,28 +122,19 @@ export const ItemsModule = {
     // 2. КАРТОЧКА ТОВАРА
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
-        // 🚨 ЖЕЛЕЗОБЕТОННЫЙ ПАТЧ СТИЛЕЙ (Обходит кэш Tailwind) 🚨
-        if (!document.getElementById('card-fix-style')) {
-            document.head.insertAdjacentHTML('beforeend', `
-            <style id="card-fix-style">
-                .item-card { background-color: #ffffff !important; border-radius: 16px !important; box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important; border: 1px solid #e7e5e4 !important; }
-                html.dark .item-card { background-color: #1c1917 !important; border-color: #292524 !important; box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important; }
-                .item-card.vip-card { border: 2px solid #fbbf24 !important; box-shadow: 0 4px 15px rgba(245,158,11,0.15) !important; }
-                html.dark .item-card.vip-card { border-color: #d97706 !important; }
-            </style>`);
-        }
-
         const t = window.t || (text => text);
         
+        // Функция для очистки текста от HTML-тегов
         const escapeHTML = (str) => {
             if (!str) return '';
             return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
         };
 
+        // Обезвреживаем название и описание ДО вставки в HTML
         const safeTitle = escapeHTML(i.title || 'Без названия');
         let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
-        const safeDesc = escapeHTML(rawDesc); 
+        const safeDesc = escapeHTML(rawDesc); // Экранируем описание
 
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
@@ -151,10 +142,11 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
+        // 1. Прозрачный фон (bg-transparent), контурная рамка (border) и мягкая тень (shadow)
         const cardClass = isVIP ?
-            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
-            'item-card cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
-
+            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md dark:shadow-none border-2 border-amber-400 dark:border-amber-600 bg-transparent transition-all duration-300' : 
+            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm dark:shadow-none border border-stone-200 dark:border-stone-700 transition-all duration-300';
+            
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -172,15 +164,15 @@ export const ItemsModule = {
             opacityClass = 'opacity-70 grayscale-[0.5]'; 
         }
 
-        // ИКОНКА КОРОНЫ "ОГОНЬ" (HOT FIND) ПЕРЕД НАЗВАНИЕМ
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
         
-        const imgHeight = 'h-40 sm:h-48 shrink-0';
+        // 2. Добавляем rounded-t-2xl контейнеру картинки
+        const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-2xl';
         const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
         const titleClass = 'text-sm sm:text-base leading-tight';
         const priceClass = 'text-base sm:text-lg shrink-0';
 
-        // СТАТУСЫ ПЛАТЕЖА И ДОСТАВКИ (Для вывода в строку)
+        // ... СТАТУСЫ ПЛАТЕЖА И ДОСТАВКИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ...
         let deliveryBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
@@ -207,10 +199,12 @@ export const ItemsModule = {
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
         return `
-        <div class="${cardClass} ${opacityClass} overflow-hidden transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
+        <!-- 3. Убрали overflow-hidden с главного контейнера, чтобы не конфликтовать с профилем -->
+        <div class="${cardClass} ${opacityClass} transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
             
-            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative overflow-hidden shrink-0 w-full">
-                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative shrink-0 w-full">
+                <!-- 4. ФИКС УГЛОВ: Закругляем саму картинку (rounded-t-2xl), теперь она никогда не вылезет за рамки -->
+                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-t-2xl transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${favHtml}
                 ${statusBadgeOverlay}
                 ${condBadge}
