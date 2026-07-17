@@ -1,7 +1,7 @@
 import { supabaseUrl, supabaseKey, supabase } from './config.js';
 import { AuthModule } from './modules/auth.js';
 import { ChatModule } from './modules/chat.js';
-import { ItemsModule } from './modules/items.js';
+import { ItemsModule } from './modules/items.js?v=2';
 import { I18nModule } from './modules/i18n.js';        
 import { MapModule } from './modules/map.js';          
 import { PaymentsModule } from './modules/payments.js';
