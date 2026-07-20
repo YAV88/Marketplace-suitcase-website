@@ -3151,10 +3151,12 @@ if ('serviceWorker' in navigator) {
 // ПОХОЖИЕ ТОВАРЫ (СВАЙП-КАРУСЕЛЬ) И АНАЛИТИКА ПРОСМОТРОВ
 // ==========================================
 window.triggerItemViewsAndSimilar = async (id) => {
-    const modalContent = document.getElementById('item-details-modal-content');
-    if (modalContent && !document.getElementById('similar-items-section')) {
-        modalContent.insertAdjacentHTML('beforeend', `
-            <div id="similar-items-section" class="hidden flex-col mt-4 border-t border-stone-200 dark:border-stone-800 p-6 md:p-8 w-full shrink-0">
+    // Ищем левую колонку с описанием, чтобы вставить блок строго под ней
+    const targetContainer = document.querySelector('.item-details-full-desc');
+    
+    if (targetContainer && !document.getElementById('similar-items-section')) {
+        targetContainer.insertAdjacentHTML('beforeend', `
+            <div id="similar-items-section" class="hidden flex-col mt-4 border-t border-stone-200 dark:border-stone-800 pt-6 md:pt-8 w-full shrink-0">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800 shrink-0">
                         <i class="fa-solid fa-layer-group text-lg"></i>
