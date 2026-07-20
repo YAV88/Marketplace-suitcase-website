@@ -55,19 +55,6 @@
             -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
             transition: background-color 5000s ease-in-out 0s;
         }
-
-        /* Жесткая изоляция скролла внутри всех окон */
-        .modal-overlay, .modal-content, .custom-scrollbar {
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Отключаем браузерный фон при автозаполнении */
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
-        textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
         
         /* Фикс для мобильных карточек в профиле (чтобы кнопки управления не обрезались) */
         @media (max-width: 640px) {
@@ -83,7 +70,6 @@
                 flex-wrap: wrap;
             }
         }    
-
     </style>
 </head>
 
@@ -2014,24 +2000,6 @@
 
         </div>
     </div>
-
-    <script>
-        // Умная шапка: скрывается при скролле вниз, появляется при скролле вверх
-        let lastScrollTop = 0;
-        const header = document.getElementById('main-header');
-
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Если скроллим вниз и ушли ниже 100px — прячем (сдвигаем вверх)
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        });
-    </script>
 
     <script>
         // БЕСКОНЕЧНАЯ АВТО-ПРОКРУТКА ТОП-ЛЕНТЫ (С ЗАЩИТОЙ ОТ ПЕРЕЗАГРУЗОК ДАННЫХ ПРИ СМЕНЕ ВКЛАДКИ)
