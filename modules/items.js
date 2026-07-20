@@ -219,7 +219,7 @@ export const ItemsModule = {
             <div class="card-body-wrap ${pClass} w-full flex flex-col flex-1">
                 <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
                     
-                    <!-- Сгруппированный блок текста -->
+                    <!-- Сгруппированный блок текста (минимальный отступ) -->
                     <div class="flex flex-col gap-0.5">
                         <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight">
                             ${vipCrown}${i.title || 'Без названия'}
@@ -229,13 +229,15 @@ export const ItemsModule = {
                         </div>
                     </div>
                     
-                    <!-- Нижняя часть с городом и просмотрами -->
-                    <div class="flex items-center justify-between w-full mt-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+                    <!-- Город и счетчики над разделительной линией -->
+                    <div class="flex items-center justify-between w-full mt-2 pb-2 border-b border-stone-100 dark:border-stone-800">
                         <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
                             <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
                         </span>
+                        
                         <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400 shrink-0">
                             <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
+                            <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5"></i>${i.favoritesCount || 0}</span>
                         </div>
                     </div>
                 </div>
@@ -531,58 +533,76 @@ export const ItemsModule = {
 
             window.activeModalItemId = item.id;
 
-            // ВАУ-ЭФФЕКТ: Свайп-карусель изображений
+            // ВАУ-ЭФФЕКТ: Свайп-карусель изображений и миниатюры
             const carousel = document.getElementById('modal-carousel');
-            const dotsContainer = document.getElementById('modal-pagination-dots');
+            const counterEl = document.getElementById('modal-photo-counter');
+            const thumbsContainer = document.getElementById('modal-thumbnails-container');
             const btnPrev = document.getElementById('modal-prev-photo');
             const btnNext = document.getElementById('modal-next-photo');
 
-            if (carousel && dotsContainer) {
+            if (carousel) {
                 let images = Array.isArray(item.images) && item.images.length > 0
                     ? item.images
                     : [item.imageUrl || item.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'];
 
                 window.currentLightboxImages = images;
 
-                // Генерируем слайды
+                // Генерируем главные слайды
                 carousel.innerHTML = images.map((src) => `
                     <div class="w-full h-full shrink-0 flex items-center justify-center snap-center relative">
                         <img src="${src}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${src}')">
                     </div>
                 `).join('');
 
-                // Генерируем точки
                 if (images.length > 1) {
-                    dotsContainer.innerHTML = images.map((_, idx) => `
-                        <div class="carousel-dot w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-white scale-125 shadow-sm' : 'bg-white/50'}"></div>
-                    `).join('');
-                    dotsContainer.classList.remove('hidden');
+                    // Счётчик поверх фото (1 / 5)
+                    if (counterEl) {
+                        counterEl.innerText = `1 / ${images.length}`;
+                        counterEl.classList.remove('hidden');
+                    }
+                    
+                    // Галерея миниатюр
+                    if (thumbsContainer) {
+                        thumbsContainer.innerHTML = images.map((src, idx) => `
+                            <button onclick="document.getElementById('modal-carousel').scrollTo({left: ${idx} * document.getElementById('modal-carousel').clientWidth, behavior: 'smooth'})" 
+                                    class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-brand-500' : 'border-transparent opacity-60 hover:opacity-100'} transition-all cursor-pointer">
+                                <img src="${src}" class="w-full h-full object-cover">
+                            </button>
+                        `).join('');
+                        thumbsContainer.classList.remove('hidden');
+                    }
+
                     if (btnPrev) btnPrev.classList.replace('hidden', 'md:flex');
                     if (btnNext) btnNext.classList.replace('hidden', 'md:flex');
 
-                    // Синхронизация скролла с точками (ОПТИМИЗИРОВАНО)
+                    // Синхронизация карусели и миниатюр при скролле
                     let isScrolling;
                     carousel.onscroll = () => {
                         if (isScrolling) return;
                         window.requestAnimationFrame(() => {
                             const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
-                            const dots = dotsContainer.querySelectorAll('.carousel-dot');
-                            dots.forEach((dot, i) => {
-                                dot.className = i === index
-                                    ? "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white scale-125 shadow-sm"
-                                    : "carousel-dot w-2 h-2 rounded-full transition-all duration-300 bg-white/50";
-                            });
                             window.currentLightboxIndex = index;
+                            
+                            if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
+                            
+                            if (thumbsContainer) {
+                                Array.from(thumbsContainer.children).forEach((thumb, i) => {
+                                    thumb.className = i === index
+                                        ? "w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 border-brand-500 transition-all cursor-pointer"
+                                        : "w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 border-transparent opacity-60 hover:opacity-100 transition-all cursor-pointer";
+                                });
+                                // Автопрокрутка ленты миниатюр
+                                const activeThumb = thumbsContainer.children[index];
+                                if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            }
                             isScrolling = false;
                         });
                         isScrolling = true;
                     };
-
-                    // Прокрутка в начало при открытии нового товара
                     carousel.scrollLeft = 0;
                 } else {
-                    dotsContainer.innerHTML = '';
-                    dotsContainer.classList.add('hidden');
+                    if (counterEl) counterEl.classList.add('hidden');
+                    if (thumbsContainer) { thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden'); }
                     if (btnPrev) btnPrev.classList.replace('md:flex', 'hidden');
                     if (btnNext) btnNext.classList.replace('md:flex', 'hidden');
                 }
