@@ -745,66 +745,46 @@ export const ItemsModule = {
                 const t = window.t || (txt => txt);
                 let html = '';
 
-                // Блок ДОСТАВКИ
+                // Блок ДОСТАВКИ (Стиль компактных чипов)
                 const delList = item.delivery || ['Личная встреча'];
                 if (delList.length > 0) {
                     let delItems = '';
                     if (delList.includes('Личная встреча')) {
-                        delItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-handshake"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Личная встреча')}</span></div>`;
+                        delItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
                     }
                     if (delList.includes('PostExpress')) {
-                        delItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-box-open"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">PostExpress</span></div>`;
+                        delItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
                     }
                     
                     html += `
-                    <div class="flex-1">
-                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest"><i class="fa-solid fa-truck-fast mr-1.5"></i> ${t('Способ получения')}</span>
-                        <div class="flex flex-col gap-1">${delItems}</div>
+                    <div class="flex-1 w-full sm:w-1/2">
+                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 block"><i class="fa-solid fa-truck-fast mr-1.5"></i> ${t('Способ получения')}</span>
+                        <div class="flex flex-wrap gap-2">${delItems}</div>
                     </div>`;
                 }
 
-                // Блок ОПЛАТЫ
+                // Блок ОПЛАТЫ (Стиль компактных чипов)
                 const payList = item.payment || ['Наличные'];
                 if (payList.length > 0) {
                     let payItems = '';
                     if (payList.includes('Наличные')) {
-                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-money-bill-wave"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Наличные')}</span></div>`;
+                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> ${t('Наличные')}</span>`;
                     }
                     if (payList.includes('Перевод на карту')) {
-                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 flex items-center justify-center"><i class="fa-regular fa-credit-card"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Перевод на карту')}</span></div>`;
+                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-regular fa-credit-card text-sky-500"></i> ${t('На карту')}</span>`;
                     }
                     if (payList.includes('Криптоперевод')) {
-                        payItems += `<div class="flex items-center gap-3 mt-3"><div class="w-9 h-9 shrink-0 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center text-lg"><i class="fa-brands fa-bitcoin"></i></div><span class="text-[13px] sm:text-sm font-bold text-stone-800 dark:text-stone-200">${t('Криптовалюта')}</span></div>`;
+                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-brands fa-bitcoin text-amber-500"></i> ${t('Крипто')}</span>`;
                     }
                     
                     html += `
-                    <div class="flex-1 border-t sm:border-t-0 sm:border-l border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-6">
-                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest"><i class="fa-solid fa-wallet mr-1.5"></i> ${t('Варианты оплаты')}</span>
-                        <div class="flex flex-col gap-1">${payItems}</div>
+                    <div class="flex-1 w-full sm:w-1/2 border-t sm:border-t-0 sm:border-l border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-5">
+                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 block"><i class="fa-solid fa-wallet mr-1.5"></i> ${t('Варианты оплаты')}</span>
+                        <div class="flex flex-wrap gap-2">${payItems}</div>
                     </div>`;
                 }
 
                 transContainer.innerHTML = html;
-
-                // ==========================================
-                // КНОПКА ТЕЛЕФОНА ПРОДАВЦА
-                // ==========================================
-                const phoneContainer = document.getElementById('modal-phone-container');
-                if (phoneContainer) {
-                    if (item.phone) {
-                        phoneContainer.classList.remove('hidden');
-                        phoneContainer.classList.add('flex');
-                        const phoneEl = document.getElementById('modal-phone');
-                        const phoneText = document.getElementById('modal-phone-text');
-                        if (phoneEl && phoneText) {
-                            phoneEl.href = `tel:${item.phone}`;
-                            phoneText.innerText = item.phone; 
-                        }
-                    } else {
-                        phoneContainer.classList.add('hidden');
-                        phoneContainer.classList.remove('flex');
-                    }
-                }
             }
 
             // --- СТАТУСЫ ТОВАРА (ПРОДАНО / РЕЗЕРВ) ---
@@ -983,6 +963,11 @@ export const ItemsModule = {
                 const isLiked = window.userFavorites.has(item.id);
                 modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
                 if (modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
+            }
+
+            const modalShareBtn = document.getElementById('modal-share-btn');
+            if (modalShareBtn) {
+                modalShareBtn.title = t('Поделиться'); // Использует твой переводчик
             }
 
             const isOwner = window.currentUser && window.currentUser.id === item.userId;
