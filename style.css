@@ -761,7 +761,8 @@ input[type="number"] {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
-  border-radius: 1rem;
+  border-radius: 0.75rem !important;
+  /* Уменьшили радиус */
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -777,8 +778,8 @@ input[type="number"] {
 }
 
 .card-img-wrap {
-  border-radius: 1rem !important;
-  box-shadow: 0 6px 14px -2px rgba(13, 148, 136, 0.15) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 4px 10px -2px rgba(13, 148, 136, 0.12) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
   z-index: 1;
   overflow: hidden !important;
@@ -810,8 +811,8 @@ input[type="number"] {
   overflow: hidden !important;
   word-break: break-word !important;
   white-space: normal !important;
-  line-height: 1.4 !important;
-  margin-bottom: 6px !important;
+  line-height: 1.25 !important;
+  margin-bottom: 2px !important;
 }
 
 .item-card h4 i.fa-crown, 
@@ -1480,7 +1481,7 @@ body.modal-open {
   transform: scale(1) translateY(0);
 }
 
-.modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div, #filter-panel > div {
+.modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div {
   background-color: #FDFBF7 !important;
   border: 2px solid #D8CFC0 !important;
   border-radius: 8px !important;
@@ -1490,7 +1491,7 @@ body.modal-open {
   -webkit-backdrop-filter: none !important;
 }
 
-.dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div, .dark #filter-panel > div {
+.dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div {
   background-color: #322A24 !important;
   border: 2px solid #4A3F35 !important;
   box-shadow: 6px 6px 0px 0px rgba(20, 16, 13, 0.6) !important;
@@ -2751,6 +2752,11 @@ button, a, .cursor-pointer {
 .rounded-t-2xl{
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
+}
+
+.rounded-t-xl{
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 
 .rounded-bl-lg{
@@ -5702,6 +5708,10 @@ button, a, .cursor-pointer {
 
   .sm\:p-10{
     padding: 2.5rem;
+  }
+
+  .sm\:p-3{
+    padding: 0.75rem;
   }
 
   .sm\:p-3\.5{

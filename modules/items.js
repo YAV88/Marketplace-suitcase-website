@@ -168,7 +168,7 @@ export const ItemsModule = {
         
         // 2. Добавляем rounded-t-2xl контейнеру картинки
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-2xl';
-        const pClass = 'p-3 sm:p-4 flex-1 flex flex-col w-full'; 
+        const pClass = 'p-2 sm:p-3 flex-1 flex flex-col w-full'; 
         const titleClass = 'text-sm sm:text-base leading-tight';
         const priceClass = 'text-base sm:text-lg shrink-0';
 
@@ -199,12 +199,11 @@ export const ItemsModule = {
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
         return `
-        <!-- 3. Убрали overflow-hidden с главного контейнера, чтобы не конфликтовать с профилем -->
         <div class="${cardClass} ${opacityClass} transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
             
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative shrink-0 w-full">
-                <!-- 4. ФИКС УГЛОВ: Закругляем саму картинку (rounded-t-2xl), теперь она никогда не вылезет за рамки -->
-                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-t-2xl transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+                <!-- Обязательно смени rounded-t-2xl на rounded-t-xl у картинки! -->
+                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-t-xl transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${favHtml}
                 ${statusBadgeOverlay}
                 ${condBadge}
@@ -218,25 +217,24 @@ export const ItemsModule = {
             </div>
             
             <div class="card-body-wrap ${pClass} w-full flex flex-col flex-1">
-                <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
+                <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
                     
-                    <!-- Сгруппированный блок текста (минимальный отступ между названием и ценой) -->
-                    <div class="flex flex-col gap-1 mb-3">
-                        <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words">
+                    <!-- Сгруппированный блок текста -->
+                    <div class="flex flex-col gap-0.5">
+                        <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight">
                             ${vipCrown}${i.title || 'Без названия'}
                         </h4>
-                        <div class="text-brand-600 price-text ${priceClass} font-black">
+                        <div class="text-brand-600 price-text ${priceClass} font-black mt-0.5">
                             ${i.price || 0} ${i.currency || 'RSD'}
                         </div>
                     </div>
                     
                     <!-- Нижняя часть с городом и просмотрами -->
-                    <div class="flex items-center justify-between w-full mt-auto pt-2">
-                        <span class="text-stone-500 dark:text-stone-400 text-[11px] font-bold uppercase truncate flex-1 min-w-0">
+                    <div class="flex items-center justify-between w-full mt-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+                        <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
                             <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
                         </span>
-                        
-                        <div class="flex items-center gap-3 text-[10px] font-bold text-stone-400 shrink-0">
+                        <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400 shrink-0">
                             <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
                         </div>
                     </div>

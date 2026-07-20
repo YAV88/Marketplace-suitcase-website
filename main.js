@@ -2994,12 +2994,11 @@ window.initSmartHeader = () => {
 
     if (!header) return;
 
-    // 1. Возвращаем жесткую фиксацию. Только fixed гарантирует плавный выезд из-за экрана.
     header.style.position = 'fixed';
     header.style.top = '0';
     header.style.left = '0';
     header.style.width = '100%';
-    header.style.zIndex = '100'; // Усиленный z-index
+    header.style.zIndex = '40';
     header.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease';
 
     // 2. ИДЕАЛЬНОЕ РЕШЕНИЕ проблемы перекрытия:
