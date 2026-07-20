@@ -144,9 +144,9 @@ export const ItemsModule = {
         
         // 1. Прозрачный фон (bg-transparent), контурная рамка (border) и мягкая тень (shadow)
         const cardClass = isVIP ?
-            'item-card vip-card cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md dark:shadow-none border-2 border-amber-400 dark:border-amber-600 bg-transparent transition-all duration-300' : 
-            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm dark:shadow-none border border-stone-200 dark:border-stone-700 transition-all duration-300';
-            
+            'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md border-b-[3px] border-amber-400 dark:border-amber-600 transition-all duration-300' : 
+            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm border-b-[3px] border-stone-200 dark:border-stone-700 transition-all duration-300';
+
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -217,41 +217,29 @@ export const ItemsModule = {
                 </div>` : ''}
             </div>
             
-            <div class="card-body-wrap ${pClass} w-full">
+            <div class="card-body-wrap ${pClass} w-full flex flex-col flex-1">
                 <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0">
                     
-                    <h4 class="font-bold ${titleClass} mb-1 pr-1 text-stone-900 dark:text-white line-clamp-2 break-words shrink-0 h-11 sm:h-12 overflow-hidden">
-                        ${vipCrown}${i.title || 'Без названия'}
-                    </h4>
-                    
-                    <div class="text-brand-600 price-text ${priceClass} mt-0.5 mb-2 font-black shrink-0">
-                        ${i.price || 0} ${i.currency || 'RSD'}
+                    <!-- Сгруппированный блок текста (минимальный отступ между названием и ценой) -->
+                    <div class="flex flex-col gap-1 mb-3">
+                        <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words">
+                            ${vipCrown}${i.title || 'Без названия'}
+                        </h4>
+                        <div class="text-brand-600 price-text ${priceClass} font-black">
+                            ${i.price || 0} ${i.currency || 'RSD'}
+                        </div>
                     </div>
                     
-                    <div class="flex flex-col gap-1.5 mt-auto shrink-0 w-full">
+                    <!-- Нижняя часть с городом и просмотрами -->
+                    <div class="flex items-center justify-between w-full mt-auto pt-2">
+                        <span class="text-stone-500 dark:text-stone-400 text-[11px] font-bold uppercase truncate flex-1 min-w-0">
+                            <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
+                        </span>
                         
-                        <div class="view-list-desc-mobile hidden">
-                            ${safeDesc}
-                        </div>
-
-                        <div class="flex items-center justify-between w-full mt-1 px-1">
-                            <span class="text-stone-500 dark:text-stone-400 text-xs font-bold uppercase tracking-wide truncate flex-1 min-w-0 text-left">
-                                <i class="fa-solid fa-location-dot mr-1 text-stone-400 dark:text-stone-500"></i>${t(i.city)}
-                            </span>
-                            
-                            <div class="flex items-center gap-3 text-xs font-bold text-stone-400 shrink-0">
-                                <span title="Просмотры"><i class="fa-solid fa-eye"></i> ${i.views || 0}</span>
-                                <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box"></i> ${i.favoritesCount || 0}</span>
-                            </div>
+                        <div class="flex items-center gap-3 text-[10px] font-bold text-stone-400 shrink-0">
+                            <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
                         </div>
                     </div>
-                </div>
-
-                <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative">
-                    <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
-                        ${safeDesc}
-                    </p>
-                    <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white dark:from-stone-800 to-transparent pointer-events-none"></div>
                 </div>
             </div>
         </div>`;
