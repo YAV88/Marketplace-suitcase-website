@@ -206,28 +206,31 @@ export const ItemsModule = {
             <div class="card-body-wrap ${pClass}">
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
-                        <div class="flex flex-col gap-1">
-                            <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight">
+                        
+                        <!-- Максимально плотный блок (Название + Цена) -->
+                        <div class="flex flex-col">
+                            <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight mb-0.5">
                                 ${vipCrown}${i.title || 'Без названия'}
                             </h4>
-                            <div class="text-brand-600 price-text ${priceClass} font-black mt-0.5">
+                            <div class="text-brand-600 price-text ${priceClass} font-black leading-none">
                                 ${i.price || 0} ${i.currency || 'RSD'}
                             </div>
                         </div>
                         
-                        <!-- Оформленный низ (без линий, в виде плашки) -->
-                        <div class="flex items-center justify-between w-full mt-3 bg-stone-100/70 dark:bg-stone-800/70 rounded-xl p-2 px-3">
+                        <!-- Чистый низ: без фона, с минимальным отступом от цены -->
+                        <div class="flex items-center justify-between w-full mt-1.5">
                             <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
-                                <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
+                                <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </span>
-                            <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400 shrink-0">
-                                <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
-                                <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5"></i>${i.favoritesCount || 0}</span>
+                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0">
+                                <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5 opacity-70"></i>${i.views || 0}</span>
+                                <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5 opacity-70"></i>${i.favoritesCount || 0}</span>
                             </div>
                         </div>
+                        
                     </div>
                     
-                    <!-- ВОССТАНОВЛЕННАЯ 3 КОЛОНКА ДЛЯ СПИСКА (Описание товара) -->
+                    <!-- 3 КОЛОНКА ДЛЯ СПИСКА (Описание товара) -->
                     <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-5 border-l border-stone-200 dark:border-stone-800 ml-5">
                         <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                             ${safeDesc}
