@@ -54,6 +54,26 @@
 }
 
 @layer components {
+
+    /* ==========================================
+       УМНАЯ СЕТКА МОДАЛЬНОГО ОКНА
+       ========================================== */
+    .item-details-layout {
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 1024px) {
+        .item-details-layout {
+            display: grid;
+            grid-template-columns: 55% 1fr;
+            grid-template-rows: auto 1fr;
+            align-items: start;
+        }
+        .il-photo { grid-column: 1; grid-row: 1; }
+        .il-desc { grid-column: 1; grid-row: 2; padding-right: 2rem; }
+        .il-info { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; padding-left: 1rem; }
+    }
+
     /* ==========================================
        ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ
        ========================================== */
@@ -236,30 +256,28 @@
     }
 
     /* ==========================================
-       РЕЖИМ СПИСКА (LIST) & ПРОФИЛЬ
+       РЕЖИМ СПИСКА (LIST)
        ========================================== */
+    .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+    
     .view-list .item-card { 
         flex-direction: row !important; 
         align-items: stretch !important;
         background-color: transparent !important;
-        border-top: none !important; /* УБРАЛИ ВЕРХНЮЮ ПОЛОСУ */
-        border-bottom: 3px solid #e7e5e4 !important; /* ТОЛСТАЯ НИЖНЯЯ ПОЛОСА В СТИЛЕ САЙТА */
-        border-left: none !important;
-        border-right: none !important;
+        border: none !important; /* УБИРАЕМ ВСЕ ВНУТРЕННИЕ ПОЛОСЫ */
+        border-bottom: 1px solid #e7e5e4 !important; /* ОДНА АККУРАТНАЯ ЧЕРТА СНИЗУ МЕЖДУ КАРТОЧКАМИ */
         border-radius: 0 !important;
         box-shadow: none !important;
-        padding-bottom: 1rem !important;
-        margin-bottom: 1rem !important;
+        padding-bottom: 1.25rem !important;
+        margin-bottom: 1.25rem !important;
     }
     html.dark .view-list .item-card {
         border-bottom-color: #292524 !important;
     }
-    .view-list .item-card.vip-card {
-        border-bottom-color: #f59e0b !important;
-    }
-    html.dark .view-list .item-card.vip-card {
-        border-bottom-color: #d97706 !important;
-    }
+    
+    /* Убираем акцентную нижнюю черту у VIP в списке, так как у них есть своя рамка на картинке */
+    .view-list .item-card.vip-card { border-bottom-color: #e7e5e4 !important; }
+    html.dark .view-list .item-card.vip-card { border-bottom-color: #292524 !important; }
 
     .view-list .view-grid-city,
     .view-list .view-list-desc { display: none !important; }

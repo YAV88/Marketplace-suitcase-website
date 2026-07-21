@@ -144,39 +144,30 @@ export const ItemsModule = {
         
         // 1. Прозрачный фон (bg-transparent), контурная рамка (border) и мягкая тень (shadow)
         const cardClass = isVIP ?
-            'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-md border-b-[3px] border-amber-400 dark:border-amber-600 transition-all duration-300' : 
-            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full rounded-2xl shadow-sm border-b-[3px] border-stone-200 dark:border-stone-700 transition-all duration-300';
-
-        const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
+            'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
+            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
         
+        // Внутренние переменные
+        const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
-
+        
         let statusBadgeOverlay = ''; 
         let statusBadgeRow = '';
         let opacityClass = '';
-        
-        if (i.status === 'reserved') { 
-            statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; 
-        }
-        else if (i.status === 'sold') { 
-            statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`;
-            opacityClass = 'opacity-70 grayscale-[0.5]'; 
-        }
+        if (i.status === 'reserved') { statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; }
+        else if (i.status === 'sold') { statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
-        
-        // 2. Добавляем rounded-t-2xl контейнеру картинки
-        const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-2xl';
-        const pClass = 'p-2 sm:p-3 flex-1 flex flex-col w-full'; 
+        const imgHeight = 'h-40 sm:h-48 shrink-0';
+        const pClass = 'p-2 sm:p-3 flex-1 flex flex-col w-full px-2 sm:px-3'; 
         const titleClass = 'text-sm sm:text-base leading-tight';
         const priceClass = 'text-base sm:text-lg shrink-0';
 
-        // ... СТАТУСЫ ПЛАТЕЖА И ДОСТАВКИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ...
+        // Статусы
         let deliveryBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
-        
         let paymentBadges = '';
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
@@ -194,20 +185,16 @@ export const ItemsModule = {
             if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Новое')}</div>`;
             else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Б/У')}</div>`;
         }
-
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
         return `
-        <div class="${cardClass} ${opacityClass} transform-gpu will-change-transform" data-action="open-item" data-id="${i.id}">
-            
+        <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative shrink-0 w-full">
-                <!-- Обязательно смени rounded-t-2xl на rounded-t-xl у картинки! -->
-                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-t-xl transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-2xl sm:rounded-t-2xl sm:rounded-b-none transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${favHtml}
                 ${statusBadgeOverlay}
                 ${condBadge}
-                
                 ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
                 <div class="absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
                     ${statusBadgeRow}
@@ -216,29 +203,35 @@ export const ItemsModule = {
                 </div>` : ''}
             </div>
             
-            <div class="card-body-wrap ${pClass} w-full flex flex-col flex-1">
-                <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
-                    
-                    <!-- Сгруппированный блок текста (минимальный отступ) -->
-                    <div class="flex flex-col gap-0.5">
-                        <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight">
-                            ${vipCrown}${i.title || 'Без названия'}
-                        </h4>
-                        <div class="text-brand-600 price-text ${priceClass} font-black mt-0.5">
-                            ${i.price || 0} ${i.currency || 'RSD'}
+            <div class="card-body-wrap ${pClass}">
+                <div class="flex flex-row w-full h-full">
+                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
+                        <div class="flex flex-col gap-1">
+                            <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight">
+                                ${vipCrown}${i.title || 'Без названия'}
+                            </h4>
+                            <div class="text-brand-600 price-text ${priceClass} font-black mt-0.5">
+                                ${i.price || 0} ${i.currency || 'RSD'}
+                            </div>
+                        </div>
+                        
+                        <!-- Оформленный низ (без линий, в виде плашки) -->
+                        <div class="flex items-center justify-between w-full mt-3 bg-stone-100/70 dark:bg-stone-800/70 rounded-xl p-2 px-3">
+                            <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
+                                <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
+                            </span>
+                            <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400 shrink-0">
+                                <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
+                                <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5"></i>${i.favoritesCount || 0}</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Город и счетчики (БЕЗ ВНУТРЕННИХ ЛИНИЙ) -->
-                    <div class="flex items-center justify-between w-full mt-2">
-                        <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
-                            <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
-                        </span>
-                        
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-stone-400 shrink-0">
-                            <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5"></i>${i.views || 0}</span>
-                            <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5"></i>${i.favoritesCount || 0}</span>
-                        </div>
+                    <!-- ВОССТАНОВЛЕННАЯ 3 КОЛОНКА ДЛЯ СПИСКА (Описание товара) -->
+                    <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-5 border-l border-stone-200 dark:border-stone-800 ml-5">
+                        <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
+                            ${safeDesc}
+                        </p>
                     </div>
                 </div>
             </div>
