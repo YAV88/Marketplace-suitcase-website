@@ -124,17 +124,15 @@ export const ItemsModule = {
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const t = window.t || (text => text);
         
-        // Функция для очистки текста от HTML-тегов
         const escapeHTML = (str) => {
             if (!str) return '';
             return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
         };
 
-        // Обезвреживаем название и описание ДО вставки в HTML
         const safeTitle = escapeHTML(i.title || 'Без названия');
         let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
-        const safeDesc = escapeHTML(rawDesc); // Экранируем описание
+        const safeDesc = escapeHTML(rawDesc);
 
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
@@ -142,16 +140,15 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        // Прозрачный фон (bg-transparent)
         const cardClass = isVIP ?
             'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
             'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
         
-        // Внутренние переменные
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
         
+        // --- ГЕНЕРАЦИЯ ЗНАЧКОВ ---
         let statusBadgeOverlay = ''; 
         let statusBadgeRow = '';
         let opacityClass = '';
@@ -161,18 +158,21 @@ export const ItemsModule = {
         }
         else if (i.status === 'sold') { 
             statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; 
+            statusBadgeRow = `<span class="bg-stone-800 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('ПРОДАНО')}</span>`;
             opacityClass = 'opacity-70 grayscale-[0.5]'; 
         }
 
-        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
-        
-        // Фикс белых углов картинки (наследует радиус родителя)
-        const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
-        const pClass = 'p-2.5 sm:p-3 flex-1 flex flex-col w-full'; 
-        const titleClass = 'text-sm sm:text-base leading-tight';
-        const priceClass = 'text-base sm:text-lg shrink-0';
+        let condBadgeBase = '';
+        if (isService) condBadgeBase = `<span class="bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Услуги')}</span>`;
+        else if (isJob) condBadgeBase = `<span class="bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Работа')}</span>`;
+        else if (isEstate) condBadgeBase = `<span class="bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Недвижимость')}</span>`;
+        else if (isAnimalEntity) condBadgeBase = '';
+        else {
+            if (i.condition === 'Новое') condBadgeBase = `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Новое')}</span>`;
+            else condBadgeBase = `<span class="bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Б/У')}</span>`;
+        }
+        const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
-        // Статусы доставки и оплаты (ВОССТАНОВЛЕНО)
         let deliveryBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
@@ -185,45 +185,41 @@ export const ItemsModule = {
             if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-indigo-400 text-[12px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
         }
 
-        let condBadge = '';
-        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Услуги')}</div>`;
-        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Работа')}</div>`;
-        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Недвижимость')}</div>`;
-        else if (isAnimalEntity) condBadge = '';
-        else {
-            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Новое')}</div>`;
-            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Б/У')}</div>`;
-        }
-
-        // Перевод для кнопки избранного (ВОССТАНОВЛЕНО)
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
-        
-        // Исправление кнопки "В избранное": теперь она вызывает отдельную рабочую функцию
-        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="absolute top-2 right-2 z-[60] w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
+        const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
+        const favHtmlImg = isOwner ? '' : `<div class="absolute top-2 right-2 z-[60]">${favBtnOnly}</div>`;
+        const favHtmlBody = isOwner ? '' : favBtnOnly;
+
+        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
+        const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
+        const pClass = 'p-2.5 sm:p-3 flex-1 flex flex-col w-full'; 
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
             
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
-                <!-- Убрали собственные скругления картинки, теперь её обрезает родительский контейнер -->
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
-                ${favHtml}
-                ${statusBadgeOverlay}
-                ${condBadge}
-                ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
-                <div class="absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
-                    ${statusBadgeRow}
-                    ${deliveryBadges}
-                    ${paymentBadges}
-                </div>` : ''}
+                
+                <!-- Значки для сетки (на фото) -->
+                <div class="img-badges">
+                    ${favHtmlImg}
+                    ${statusBadgeOverlay}
+                    ${condBadgeImg}
+                    ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
+                    <div class="absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
+                        ${statusBadgeRow}
+                        ${deliveryBadges}
+                        ${paymentBadges}
+                    </div>` : ''}
+                </div>
             </div>
             
             <div class="card-body-wrap ${pClass}">
                 <div class="flex flex-row w-full h-full">
-                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
+                    <!-- Убрали justify-between, чтобы убрать лишний отступ (gap) снизу -->
+                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-start">
                         
-                        <!-- 3. Жесткая настройка межстрочного интервала (без лишних gap) -->
-                        <div class="flex flex-col">
+                        <div class="flex flex-col mb-2">
                             <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
                                 ${vipCrown}${i.title || 'Без названия'}
                             </h4>
@@ -232,8 +228,16 @@ export const ItemsModule = {
                             </div>
                         </div>
                         
-                        <!-- 4. Счетчик прижат ко дну (mt-auto) с защитными отступами -->
-                        <div class="flex items-center justify-between w-full mt-auto pt-1.5 pb-0.5">
+                        <!-- Значки для мобильного списка (ПОД ценой, скрыты по умолчанию) -->
+                        <div class="body-badges hidden flex-wrap items-center gap-1.5 mb-2">
+                            ${condBadgeBase}
+                            ${statusBadgeRow}
+                            ${deliveryBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
+                            ${paymentBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
+                            ${favHtmlBody.replace('w-8 h-8', 'w-6 h-6 bg-stone-100 dark:bg-stone-800 shadow-none border border-stone-200 dark:border-stone-700')}
+                        </div>
+                        
+                        <div class="flex items-center justify-between w-full pt-1.5 pb-0.5 border-t border-stone-100 dark:border-stone-800">
                             <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </span>

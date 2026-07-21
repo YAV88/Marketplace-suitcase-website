@@ -284,21 +284,64 @@
     .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
     .view-list .mt-auto.pt-3.border-t { border-top: none !important; padding-top: 0 !important; font-size: 0.9rem !important; color: #9ca3af; }
     
+    /* Прячем значки в теле карточки по умолчанию (ПК/Сетка) */
+    .body-badges { display: none !important; }
+
     @media (max-width: 768px) {
-        .view-list .item-card { height: auto !important; min-height: 125px !important; }
-        .view-list .card-img-wrap { width: 155px !important; min-width: 155px !important; height: auto !important; }
-        .view-list .card-body-wrap { padding: 0.5rem 0.5rem 0.5rem 0.75rem !important; gap: 4px !important; }
-        .view-list h4 { min-height: auto !important; margin-bottom: 2px !important; margin-top: 0 !important; font-size: 0.88rem !important; }
-        .view-list .price-text { margin-bottom: auto !important; font-size: 1.2rem !important; font-weight: 900; }
-        .view-list .mt-auto { margin-top: 0 !important; padding-bottom: 0 !important; }
+        /* Уменьшили расстояние между карточками (gap и margin) */
+        .view-list { gap: 0.5rem !important; }
+        
+        .view-list .item-card { 
+            height: auto !important; 
+            min-height: 125px !important; 
+            padding-bottom: 0.75rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+        
+        /* Делаем фото гигантским и главным элементом карточки */
+        .view-list .card-img-wrap { 
+            width: 45% !important; 
+            min-width: 140px !important; 
+            max-width: 190px !important;
+            height: auto !important; 
+        }
+        
+        .view-list .card-body-wrap { 
+            padding: 0.5rem 0.5rem 0.5rem 0.75rem !important; 
+            gap: 2px !important; 
+        }
+        
+        .view-list h4 { 
+            min-height: auto !important; 
+            margin-bottom: 2px !important; 
+            margin-top: 0 !important; 
+            font-size: 0.88rem !important; 
+        }
+        
+        .view-list .price-text { 
+            font-size: 1.2rem !important; 
+            font-weight: 900; 
+        }
+        
         .view-list .view-list-desc-mobile { display: none !important; }
 
-        #profile-items-grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
-        #profile-items-grid .item-card { flex-direction: row !important; height: 140px !important; min-height: 140px !important; align-items: stretch !important; border: none !important; margin-bottom: 0 !important; padding-bottom: 0 !important; border-radius: 1rem !important; }
-        #profile-items-grid .card-img-wrap { width: 145px !important; min-width: 145px !important; height: 100% !important; max-height: 100% !important; flex-shrink: 0 !important; }
-        #profile-items-grid .card-body-wrap { padding: 0.5rem 0.75rem !important; justify-content: space-between !important; }
-        #profile-items-grid h4 { font-size: 0.9rem !important; height: 2.6em !important; margin-bottom: 4px !important; }
-        #profile-items-grid .view-grid-city { margin-top: auto !important; }
+        /* МАГИЯ ПЕРЕНОСА: Прячем значки с фото, показываем под текстом */
+        .view-list .img-badges { display: none !important; }
+        .view-list .body-badges { display: flex !important; }
+        
+        /* Сброс стилей профиля (чтобы он был таким же компактным) */
+        #profile-items-grid { gap: 0.5rem !important; }
+        #profile-items-grid .item-card { 
+            height: auto !important; 
+            min-height: 130px !important; 
+            margin-bottom: 0 !important; 
+            padding-bottom: 0 !important; 
+            border-bottom: none !important; /* Убираем черту в профиле */
+        }
+        #profile-items-grid .card-img-wrap { 
+            width: 42% !important; 
+            min-width: 130px !important; 
+        }
     }
 
     @media (min-width: 1024px) {

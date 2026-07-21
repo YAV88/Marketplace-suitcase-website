@@ -1055,21 +1055,38 @@ html.dark .view-list .item-card.vip-card {
   color: #9ca3af;
 }
 
+/* Прячем значки в теле карточки по умолчанию (ПК/Сетка) */
+
+.body-badges {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
+  /* Уменьшили расстояние между карточками (gap и margin) */
+
+  .view-list {
+    gap: 0.5rem !important;
+  }
+
   .view-list .item-card {
     height: auto !important;
     min-height: 125px !important;
+    padding-bottom: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
   }
 
+  /* Делаем фото гигантским и главным элементом карточки */
+
   .view-list .card-img-wrap {
-    width: 155px !important;
-    min-width: 155px !important;
+    width: 45% !important;
+    min-width: 140px !important;
+    max-width: 190px !important;
     height: auto !important;
   }
 
   .view-list .card-body-wrap {
     padding: 0.5rem 0.5rem 0.5rem 0.75rem !important;
-    gap: 4px !important;
+    gap: 2px !important;
   }
 
   .view-list h4 {
@@ -1080,57 +1097,42 @@ html.dark .view-list .item-card.vip-card {
   }
 
   .view-list .price-text {
-    margin-bottom: auto !important;
     font-size: 1.2rem !important;
     font-weight: 900;
-  }
-
-  .view-list .mt-auto {
-    margin-top: 0 !important;
-    padding-bottom: 0 !important;
   }
 
   .view-list .view-list-desc-mobile {
     display: none !important;
   }
 
+  /* МАГИЯ ПЕРЕНОСА: Прячем значки с фото, показываем под текстом */
+
+  .view-list .img-badges {
+    display: none !important;
+  }
+
+  .view-list .body-badges {
+    display: flex !important;
+  }
+
+  /* Сброс стилей профиля (чтобы он был таким же компактным) */
+
   #profile-items-grid {
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem !important;
+    gap: 0.5rem !important;
   }
 
   #profile-items-grid .item-card {
-    flex-direction: row !important;
-    height: 140px !important;
-    min-height: 140px !important;
-    align-items: stretch !important;
-    border: none !important;
+    height: auto !important;
+    min-height: 130px !important;
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
-    border-radius: 1rem !important;
+    border-bottom: none !important;
+    /* Убираем черту в профиле */
   }
 
   #profile-items-grid .card-img-wrap {
-    width: 145px !important;
-    min-width: 145px !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    flex-shrink: 0 !important;
-  }
-
-  #profile-items-grid .card-body-wrap {
-    padding: 0.5rem 0.75rem !important;
-    justify-content: space-between !important;
-  }
-
-  #profile-items-grid h4 {
-    font-size: 0.9rem !important;
-    height: 2.6em !important;
-    margin-bottom: 4px !important;
-  }
-
-  #profile-items-grid .view-grid-city {
-    margin-top: auto !important;
+    width: 42% !important;
+    min-width: 130px !important;
   }
 }
 
@@ -2039,10 +2041,6 @@ button, a, .cursor-pointer {
   margin-top: 0.25rem;
 }
 
-.mt-1\.5{
-  margin-top: 0.375rem;
-}
-
 .mt-10{
   margin-top: 2.5rem;
 }
@@ -2080,13 +2078,6 @@ button, a, .cursor-pointer {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
-}
-
-.line-clamp-2{
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .block{
@@ -3332,6 +3323,10 @@ button, a, .cursor-pointer {
   padding: 0.5rem;
 }
 
+.p-2\.5{
+  padding: 0.625rem;
+}
+
 .p-3{
   padding: 0.75rem;
 }
@@ -3354,10 +3349,6 @@ button, a, .cursor-pointer {
 
 .p-8{
   padding: 2rem;
-}
-
-.p-2\.5{
-  padding: 0.625rem;
 }
 
 .px-1{
@@ -3470,6 +3461,10 @@ button, a, .cursor-pointer {
   padding-bottom: 2rem;
 }
 
+.pb-0\.5{
+  padding-bottom: 0.125rem;
+}
+
 .pb-1{
   padding-bottom: 0.25rem;
 }
@@ -3558,6 +3553,10 @@ button, a, .cursor-pointer {
   padding-top: 0.25rem;
 }
 
+.pt-1\.5{
+  padding-top: 0.375rem;
+}
+
 .pt-12{
   padding-top: 3rem;
 }
@@ -3584,14 +3583,6 @@ button, a, .cursor-pointer {
 
 .pt-8{
   padding-top: 2rem;
-}
-
-.pb-0\.5{
-  padding-bottom: 0.125rem;
-}
-
-.pt-1\.5{
-  padding-top: 0.375rem;
 }
 
 .text-left{
@@ -4009,12 +4000,6 @@ button, a, .cursor-pointer {
   mix-blend-mode: multiply;
 }
 
-.shadow{
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .shadow-2xl{
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
@@ -4072,6 +4057,12 @@ button, a, .cursor-pointer {
 .shadow-md{
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-none{
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -5703,16 +5694,6 @@ button, a, .cursor-pointer {
 
   .sm\:rounded-\[2rem\]{
     border-radius: 2rem;
-  }
-
-  .sm\:rounded-b-none{
-    border-bottom-right-radius: 0px;
-    border-bottom-left-radius: 0px;
-  }
-
-  .sm\:rounded-t-2xl{
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
   }
 
   .sm\:border{
