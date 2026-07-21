@@ -142,7 +142,7 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        // 1. Прозрачный фон (bg-transparent), контурная рамка (border) и мягкая тень (shadow)
+        // Прозрачный фон (bg-transparent)
         const cardClass = isVIP ?
             'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
             'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
@@ -155,12 +155,50 @@ export const ItemsModule = {
         let statusBadgeOverlay = ''; 
         let statusBadgeRow = '';
         let opacityClass = '';
-        if (i.status === 'reserved') { statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; }
-        else if (i.status === 'sold') { statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
+        
+        if (i.status === 'reserved') { 
+            statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; 
+        }
+        else if (i.status === 'sold') { 
+            statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; 
+            opacityClass = 'opacity-70 grayscale-[0.5]'; 
+        }
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
+        
+        // Фикс белых углов картинки (наследует радиус родителя)
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
         const pClass = 'p-2.5 sm:p-3 flex-1 flex flex-col w-full'; 
+        const titleClass = 'text-sm sm:text-base leading-tight';
+        const priceClass = 'text-base sm:text-lg shrink-0';
+
+        // Статусы доставки и оплаты (ВОССТАНОВЛЕНО)
+        let deliveryBadges = '';
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
+        
+        let paymentBadges = '';
+        if (i.payment) {
+            const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
+            const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
+            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-emerald-400 text-[12px] rounded-md shadow-sm" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
+            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-indigo-400 text-[12px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
+        }
+
+        let condBadge = '';
+        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Услуги')}</div>`;
+        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Работа')}</div>`;
+        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Недвижимость')}</div>`;
+        else if (isAnimalEntity) condBadge = '';
+        else {
+            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Новое')}</div>`;
+            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Б/У')}</div>`;
+        }
+
+        // Перевод для кнопки избранного (ВОССТАНОВЛЕНО)
+        const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
+        
+        // Исправление кнопки "В избранное": теперь она вызывает отдельную рабочую функцию
         const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="absolute top-2 right-2 z-[60] w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
         return `
