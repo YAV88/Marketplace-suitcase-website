@@ -966,17 +966,16 @@ input[type="number"] {
        РЕЖИМ СПИСКА (LIST) & ПРОФИЛЬ
        ========================================== */
 
-.view-list {
-  grid-template-columns: 1fr !important;
-  gap: 0.75rem !important;
-}
-
 .view-list .item-card {
   flex-direction: row !important;
   align-items: stretch !important;
   background-color: transparent !important;
-  border-top: 1px solid #e7e5e4 !important;
-  border-bottom: 1px solid #e7e5e4 !important;
+  border-top: none !important;
+  /* УБРАЛИ ВЕРХНЮЮ ПОЛОСУ */
+  border-bottom: 3px solid #e7e5e4 !important;
+  /* ТОЛСТАЯ НИЖНЯЯ ПОЛОСА В СТИЛЕ САЙТА */
+  border-left: none !important;
+  border-right: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   padding-bottom: 1rem !important;
@@ -984,18 +983,15 @@ input[type="number"] {
 }
 
 html.dark .view-list .item-card {
-  border-top-color: #292524 !important;
   border-bottom-color: #292524 !important;
 }
 
-.view-list .card-img-wrap {
-  flex-shrink: 0;
-  border-radius: 1rem !important;
+.view-list .item-card.vip-card {
+  border-bottom-color: #f59e0b !important;
 }
 
-.view-list .card-body-wrap {
-  justify-content: flex-start !important;
-  background: transparent !important;
+html.dark .view-list .item-card.vip-card {
+  border-bottom-color: #d97706 !important;
 }
 
 .view-list .view-grid-city,
@@ -1873,10 +1869,6 @@ button, a, .cursor-pointer {
   order: 3;
 }
 
-.col-span-2{
-  grid-column: span 2 / span 2;
-}
-
 .mx-2{
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -2111,6 +2103,10 @@ button, a, .cursor-pointer {
   height: 0.625rem;
 }
 
+.h-24{
+  height: 6rem;
+}
+
 .h-3{
   height: 0.75rem;
 }
@@ -2181,10 +2177,6 @@ button, a, .cursor-pointer {
 
 .h-px{
   height: 1px;
-}
-
-.h-24{
-  height: 6rem;
 }
 
 .max-h-0{
@@ -2297,10 +2289,6 @@ button, a, .cursor-pointer {
 
 .w-8{
   width: 2rem;
-}
-
-.w-9{
-  width: 2.25rem;
 }
 
 .w-\[130px\]{
@@ -2998,11 +2986,6 @@ button, a, .cursor-pointer {
   background-color: rgb(0 0 0 / 0.95);
 }
 
-.bg-blue-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
-}
-
 .bg-blue-50{
   --tw-bg-opacity: 1;
   background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
@@ -3061,11 +3044,6 @@ button, a, .cursor-pointer {
   background-color: rgb(217 70 239 / var(--tw-bg-opacity, 1));
 }
 
-.bg-indigo-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(224 231 255 / var(--tw-bg-opacity, 1));
-}
-
 .bg-indigo-500{
   --tw-bg-opacity: 1;
   background-color: rgb(99 102 241 / var(--tw-bg-opacity, 1));
@@ -3110,11 +3088,6 @@ button, a, .cursor-pointer {
 
 .bg-rose-500\/10{
   background-color: rgb(244 63 94 / 0.1);
-}
-
-.bg-sky-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(224 242 254 / var(--tw-bg-opacity, 1));
 }
 
 .bg-sky-500\/10{
@@ -3829,11 +3802,6 @@ button, a, .cursor-pointer {
   color: rgb(99 102 241 / var(--tw-text-opacity, 1));
 }
 
-.text-indigo-600{
-  --tw-text-opacity: 1;
-  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
-}
-
 .text-orange-500{
   --tw-text-opacity: 1;
   color: rgb(249 115 22 / var(--tw-text-opacity, 1));
@@ -3867,11 +3835,6 @@ button, a, .cursor-pointer {
 .text-sky-500{
   --tw-text-opacity: 1;
   color: rgb(14 165 233 / var(--tw-text-opacity, 1));
-}
-
-.text-sky-600{
-  --tw-text-opacity: 1;
-  color: rgb(2 132 199 / var(--tw-text-opacity, 1));
 }
 
 .text-stone-300{
@@ -5172,10 +5135,6 @@ button, a, .cursor-pointer {
   background-color: rgb(6 78 59 / 0.3);
 }
 
-.dark\:bg-indigo-900\/30:is(.dark *){
-  background-color: rgb(49 46 129 / 0.3);
-}
-
 .dark\:bg-orange-500\/10:is(.dark *){
   background-color: rgb(249 115 22 / 0.1);
 }
@@ -5190,10 +5149,6 @@ button, a, .cursor-pointer {
 
 .dark\:bg-red-900\/30:is(.dark *){
   background-color: rgb(127 29 29 / 0.3);
-}
-
-.dark\:bg-sky-900\/30:is(.dark *){
-  background-color: rgb(12 74 110 / 0.3);
 }
 
 .dark\:bg-stone-600:is(.dark *){
@@ -5563,6 +5518,10 @@ button, a, .cursor-pointer {
     display: block;
   }
 
+  .sm\:inline{
+    display: inline;
+  }
+
   .sm\:flex{
     display: flex;
   }
@@ -5599,6 +5558,10 @@ button, a, .cursor-pointer {
     height: 90vh;
   }
 
+  .sm\:w-1\/2{
+    width: 50%;
+  }
+
   .sm\:w-11{
     width: 2.75rem;
   }
@@ -5630,10 +5593,6 @@ button, a, .cursor-pointer {
   .sm\:w-max{
     width: -moz-max-content;
     width: max-content;
-  }
-
-  .sm\:w-1\/2{
-    width: 50%;
   }
 
   .sm\:max-w-\[200px\]{
@@ -5767,8 +5726,8 @@ button, a, .cursor-pointer {
     padding-left: 0.75rem;
   }
 
-  .sm\:pl-6{
-    padding-left: 1.5rem;
+  .sm\:pl-5{
+    padding-left: 1.25rem;
   }
 
   .sm\:pt-0{
@@ -5781,10 +5740,6 @@ button, a, .cursor-pointer {
 
   .sm\:pt-6{
     padding-top: 1.5rem;
-  }
-
-  .sm\:pl-5{
-    padding-left: 1.25rem;
   }
 
   .sm\:text-2xl{
@@ -5839,10 +5794,6 @@ button, a, .cursor-pointer {
 
   .md\:right-6{
     right: 1.5rem;
-  }
-
-  .md\:col-span-3{
-    grid-column: span 3 / span 3;
   }
 
   .md\:block{

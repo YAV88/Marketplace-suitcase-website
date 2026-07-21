@@ -229,8 +229,8 @@ export const ItemsModule = {
                         </div>
                     </div>
                     
-                    <!-- Город и счетчики над разделительной линией -->
-                    <div class="flex items-center justify-between w-full mt-2 pb-2 border-b border-stone-100 dark:border-stone-800">
+                    <!-- Город и счетчики (БЕЗ ВНУТРЕННИХ ЛИНИЙ) -->
+                    <div class="flex items-center justify-between w-full mt-2">
                         <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
                             <i class="fa-solid fa-location-dot mr-1"></i>${t(i.city)}
                         </span>

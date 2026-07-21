@@ -238,32 +238,27 @@
     /* ==========================================
        РЕЖИМ СПИСКА (LIST) & ПРОФИЛЬ
        ========================================== */
-    .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
-    
     .view-list .item-card { 
         flex-direction: row !important; 
         align-items: stretch !important;
         background-color: transparent !important;
-        border-top: 1px solid #e7e5e4 !important;
-        border-bottom: 1px solid #e7e5e4 !important;
+        border-top: none !important; /* УБРАЛИ ВЕРХНЮЮ ПОЛОСУ */
+        border-bottom: 3px solid #e7e5e4 !important; /* ТОЛСТАЯ НИЖНЯЯ ПОЛОСА В СТИЛЕ САЙТА */
+        border-left: none !important;
+        border-right: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
         padding-bottom: 1rem !important;
         margin-bottom: 1rem !important;
     }
     html.dark .view-list .item-card {
-        border-top-color: #292524 !important;
         border-bottom-color: #292524 !important;
     }
-
-    .view-list .card-img-wrap { 
-        flex-shrink: 0; 
-        border-radius: 1rem !important; 
+    .view-list .item-card.vip-card {
+        border-bottom-color: #f59e0b !important;
     }
-
-    .view-list .card-body-wrap {
-        justify-content: flex-start !important;
-        background: transparent !important;
+    html.dark .view-list .item-card.vip-card {
+        border-bottom-color: #d97706 !important;
     }
 
     .view-list .view-grid-city,
