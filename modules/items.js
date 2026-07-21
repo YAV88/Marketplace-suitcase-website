@@ -159,39 +159,16 @@ export const ItemsModule = {
         else if (i.status === 'sold') { statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; opacityClass = 'opacity-70 grayscale-[0.5]'; }
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
-        const imgHeight = 'h-40 sm:h-48 shrink-0';
-        const pClass = 'p-2 sm:p-3 flex-1 flex flex-col w-full px-2 sm:px-3'; 
-        const titleClass = 'text-sm sm:text-base leading-tight';
-        const priceClass = 'text-base sm:text-lg shrink-0';
-
-        // Статусы
-        let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[11px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
-        let paymentBadges = '';
-        if (i.payment) {
-            const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
-            const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-emerald-400 text-[12px] rounded-md shadow-sm" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
-            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-indigo-400 text-[12px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
-        }
-
-        let condBadge = '';
-        if (isService) condBadge = `<div class="absolute top-2 left-2 bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Услуги')}</div>`;
-        else if (isJob) condBadge = `<div class="absolute top-2 left-2 bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Работа')}</div>`;
-        else if (isEstate) condBadge = `<div class="absolute top-2 left-2 bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Недвижимость')}</div>`;
-        else if (isAnimalEntity) condBadge = '';
-        else {
-            if (i.condition === 'Новое') condBadge = `<div class="absolute top-2 left-2 bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Новое')}</div>`;
-            else condBadge = `<div class="absolute top-2 left-2 bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest z-20 uppercase">${t('Б/У')}</div>`;
-        }
-        const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
-        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" data-action="toggle-favorite" data-id="${i.id}" class="absolute top-2 right-2 z-20 w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
+        const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
+        const pClass = 'p-2.5 sm:p-3 flex-1 flex flex-col w-full'; 
+        const favHtml = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="absolute top-2 right-2 z-[60] w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
-            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative shrink-0 w-full">
-                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 rounded-2xl sm:rounded-t-2xl sm:rounded-b-none transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+            
+            <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
+                <!-- Убрали собственные скругления картинки, теперь её обрезает родительский контейнер -->
+                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 ${favHtml}
                 ${statusBadgeOverlay}
                 ${condBadge}
@@ -207,18 +184,18 @@ export const ItemsModule = {
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
                         
-                        <!-- Максимально плотный блок (Название + Цена) -->
+                        <!-- 3. Жесткая настройка межстрочного интервала (без лишних gap) -->
                         <div class="flex flex-col">
-                            <h4 class="font-bold ${titleClass} text-stone-900 dark:text-white line-clamp-2 break-words leading-tight mb-0.5">
+                            <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
                                 ${vipCrown}${i.title || 'Без названия'}
                             </h4>
-                            <div class="text-brand-600 price-text ${priceClass} font-black leading-none">
+                            <div class="text-brand-600 price-text font-black" style="font-size: 1.1rem; line-height: 1;">
                                 ${i.price || 0} ${i.currency || 'RSD'}
                             </div>
                         </div>
                         
-                        <!-- Чистый низ: без фона, с минимальным отступом от цены -->
-                        <div class="flex items-center justify-between w-full mt-1.5">
+                        <!-- 4. Счетчик прижат ко дну (mt-auto) с защитными отступами -->
+                        <div class="flex items-center justify-between w-full mt-auto pt-1.5 pb-0.5">
                             <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </span>
@@ -227,10 +204,8 @@ export const ItemsModule = {
                                 <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5 opacity-70"></i>${i.favoritesCount || 0}</span>
                             </div>
                         </div>
-                        
                     </div>
                     
-                    <!-- 3 КОЛОНКА ДЛЯ СПИСКА (Описание товара) -->
                     <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-5 border-l border-stone-200 dark:border-stone-800 ml-5">
                         <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                             ${safeDesc}

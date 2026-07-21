@@ -1742,25 +1742,72 @@ window.mapItemData = function (i) {
     } catch (err) { return null; }
 }
 
-window.navigateItem = (direction, e) => {
+// === НЕЗАВИСИМАЯ КНОПКА "В ИЗБРАННОЕ" ДЛЯ КАРТОЧЕК ===
+window.toggleFavoriteCard = async (id, btnEl) => {
+    if (!window.currentUser) {
+        window.openModal('auth-modal');
+        if (typeof window.showToast === 'function') window.showToast(window.t ? window.t('auth_hint') : "Войдите в аккаунт", true);
+        return;
+    }
+    
+    if (!window.userFavorites) window.userFavorites = new Set();
+    const isLiked = window.userFavorites.has(id);
+    const icon = btnEl.querySelector('i');
+    
+    if (isLiked) {
+        window.userFavorites.delete(id);
+        if (icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
+        btnEl.title = window.t ? window.t("Добавить на склад") : "Добавить на склад";
+        if (typeof window.showToast === 'function') window.showToast("Убрано со склада");
+        await window.supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: id });
+    } else {
+        window.userFavorites.add(id);
+        if (icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform';
+        btnEl.title = window.t ? window.t("Убрать со склада") : "Убрать со склада";
+        if (typeof window.showToast === 'function') window.showToast("Добавлено на склад", "success");
+        await window.supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: id }]);
+    }
+};
+
+// === УМНОЕ ПЕРЕЛИСТЫВАНИЕ ТОВАРОВ С ПОДГРУЗКОЙ ===
+window.navigateItem = async (direction, e) => {
     if (e) e.stopPropagation();
     if (!window.loadedItems || !window.activeModalItemId) return;
 
-    // Находим индекс текущего товара в массиве отображаемых
     const currentIndex = window.loadedItems.findIndex(i => i.id === window.activeModalItemId);
     if (currentIndex === -1) return;
 
     const newIndex = currentIndex + direction;
     
-    // Проверяем, есть ли товар в эту сторону
     if (newIndex >= 0 && newIndex < window.loadedItems.length) {
+        // Обычный переход к следующему загруженному товару
         const nextItem = window.loadedItems[newIndex];
-        // Имитируем клик (закрывает старый товар и сразу открывает новый без потери кэша)
         window.openItemDetails(nextItem.id);
+    } else if (direction > 0) {
+        // Мы дошли до конца списка — пытаемся подгрузить следующие 12 товаров!
+        const btnLoadMore = document.getElementById('load-more-btn');
+        
+        if (btnLoadMore && !btnLoadMore.classList.contains('hidden')) {
+            if (typeof window.showToast === 'function') window.showToast("Ищем следующие находки...", "info");
+            
+            // Запрашиваем новую порцию товаров
+            window.displayedCount += 12;
+            await window.fetchItems(true); 
+            
+            // Ждем 500мс, чтобы новые карточки успели отрендериться, и переключаем
+            setTimeout(() => {
+                const updatedIndex = window.loadedItems.findIndex(i => i.id === window.activeModalItemId);
+                if (updatedIndex !== -1 && updatedIndex + 1 < window.loadedItems.length) {
+                    window.openItemDetails(window.loadedItems[updatedIndex + 1].id);
+                } else {
+                    if (typeof window.showToast === 'function') window.showToast("Вы досмотрели до конца списка", "info");
+                }
+            }, 500);
+        } else {
+            if (typeof window.showToast === 'function') window.showToast("Это последняя находка в списке", "info");
+        }
     } else {
-        // Уведомляем пользователя, если он дошел до конца или начала
-        const msg = direction > 0 ? "Это последняя находка в списке" : "Это самая первая находка";
-        if (typeof window.showToast === 'function') window.showToast(msg);
+        if (typeof window.showToast === 'function') window.showToast("Это самая первая находка", "info");
     }
 };
 
