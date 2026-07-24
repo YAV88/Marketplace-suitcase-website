@@ -508,12 +508,17 @@ export const ItemsModule = {
                 }
                 if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
             }
-        } catch (e) {
+        } catch (e) { 
             if (window.loadedItems && window.loadedItems.length === 0 && loader) {
                 loader.style.display = 'block';
                 loader.innerHTML = `<div class="text-red-500 font-bold uppercase tracking-widest text-[10px] bg-red-50 p-4 rounded-2xl max-w-sm mx-auto border border-red-100"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><br>Ошибка БД<br><span class="text-[9px] text-stone-500 lowercase normal-case mt-2 block break-all">${e.message || 'Ошибка сети'}</span></div>`;
             }
-        } finally { if (loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; }
+        } finally { 
+            if (loader && loader.innerHTML.indexOf('Ошибка') === -1) loader.style.display = 'none'; 
+            if (typeof window.animateVisibleElements === 'function') {
+                setTimeout(() => window.animateVisibleElements(), 50);
+            }
+        }
     },
 
     openItemDetails: async (id) => {

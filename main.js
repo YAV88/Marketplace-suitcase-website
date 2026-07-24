@@ -112,6 +112,24 @@ window.openTokenPurchaseModal = () => {
     });
 };
 
+// ==========================================
+// АНИМАЦИЯ ПОЯВЛЕНИЯ ЭЛЕМЕНТОВ ПРИ СКРОЛЛЕ
+// ==========================================
+window.animateVisibleElements = () => {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target); // Анимация сработает только один раз
+            }
+        });
+    }, {
+        rootMargin: '0px 0px -50px 0px' // Начать анимацию чуть раньше, чем элемент полностью появится
+    });
+
+    document.querySelectorAll('.item-card:not(.is-visible)').forEach(card => observer.observe(card));
+};
+
 // Закрываем меню при клике в пустую область
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('lang-dropdown');
@@ -2583,6 +2601,25 @@ window.addEventListener('popstate', () => {
 window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
 
 window.setViewMode = (mode) => {
+    // 1. Сохраняем позицию
+    const grid = document.getElementById('main-items-grid');
+    let topVisibleCardId = null;
+    if (grid) {
+        const cards = grid.querySelectorAll('.item-card');
+        const headerHeight = document.getElementById('main-header')?.offsetHeight || 80;
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            if (rect.top >= headerHeight) {
+                topVisibleCardId = card.dataset.id;
+                break;
+            }
+        }
+        if (!topVisibleCardId && cards.length > 0) {
+            topVisibleCardId = cards[0].dataset.id;
+        }
+    }
+
+    // 2. Меняем вид
     window.currentViewMode = mode;
     localStorage.setItem('svalka_view_mode', mode);
 
@@ -2592,27 +2629,30 @@ window.setViewMode = (mode) => {
 
     const btnGrid = document.getElementById('btn-view-grid');
     const btnList = document.getElementById('btn-view-list');
-    const grid = document.getElementById('main-items-grid');
 
     if (btnGrid && btnList) {
-        // Задаем базовые классы, чтобы кнопки всегда сохраняли центрирование и размер
         const baseClass = "h-full px-3 rounded-md transition cursor-pointer flex items-center justify-center ";
         const activeClass = baseClass + "bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400";
         const inactiveClass = baseClass + "text-stone-400 hover:text-brand-600";
-
-        if (mode === 'grid') {
-            btnGrid.className = activeClass;
-            btnList.className = inactiveClass;
-        } else {
-            btnList.className = activeClass;
-            btnGrid.className = inactiveClass;
-        }
+        btnGrid.className = mode === 'grid' ? activeClass : inactiveClass;
+        btnList.className = mode === 'list' ? activeClass : inactiveClass;
     }
 
-    // Восстановили переключение классов самой сетки!
     if (grid) {
         grid.classList.remove('view-grid', 'view-list');
         grid.classList.add(`view-${mode}`);
+    }
+
+    // 3. Восстанавливаем позицию
+    if (topVisibleCardId) {
+        requestAnimationFrame(() => {
+            const targetCard = document.querySelector(`.item-card[data-id='${topVisibleCardId}']`);
+            if (targetCard) {
+                const headerHeight = document.getElementById('main-header')?.offsetHeight || 80;
+                const targetPosition = targetCard.getBoundingClientRect().top + window.scrollY - headerHeight - 16; // 16px = 1rem отступ
+                window.scrollTo({ top: targetPosition, behavior: 'auto' });
+            }
+        });
     }
 };
 
