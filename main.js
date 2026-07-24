@@ -644,14 +644,27 @@ window.sendChatMessage = async () => {
     input.value = '';
 
     const container = document.getElementById('chat-messages');
-    if (container.innerHTML.includes('Напишите первое')) container.innerHTML = '';
-    container.insertAdjacentHTML('beforeend', `<div class="flex items-end justify-end gap-2 w-full mt-2 opacity-50 transition-opacity" id="temp-msg"><div class="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words">${text}</div></div>`);
+    if (container.querySelector('.text-center')) {
+        container.innerHTML = '';
+    }
+
+    // БЕЗОПАСНАЯ ВСТАВКА: Создаем элементы через DOM API для защиты от XSS
+    const tempMsgId = `temp-msg-${Date.now()}`;
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'flex items-end justify-end gap-2 w-full mt-2 opacity-50 transition-opacity';
+    msgDiv.id = tempMsgId;
+    const innerDiv = document.createElement('div');
+    innerDiv.className = 'bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words';
+    innerDiv.textContent = text; // Используем textContent для безопасной вставки текста
+    msgDiv.appendChild(innerDiv);
+    container.appendChild(msgDiv);
     container.scrollTop = container.scrollHeight;
 
     try {
-        await supabase.from('messages').insert([{ chat_id: window.currentChatId, sender_id: window.currentUser.id, text: text }]);
-        const tempMsg = document.getElementById('temp-msg');
-        if (tempMsg) { tempMsg.classList.remove('opacity-50'); tempMsg.removeAttribute('id'); }
+        const { error } = await supabase.from('messages').insert([{ chat_id: window.currentChatId, sender_id: window.currentUser.id, text: text }]);
+        if (error) throw error;
+        const sentMsg = document.getElementById(tempMsgId);
+        if (sentMsg) { sentMsg.classList.remove('opacity-50'); sentMsg.removeAttribute('id'); }
     } catch (e) { window.showToast("Ошибка отправки", true); }
 };
 
