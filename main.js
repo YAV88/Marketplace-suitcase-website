@@ -1540,6 +1540,26 @@ window.resetFilters = () => {
     window.applyCondition('Все');
 };
 
+window.filterByCity = (city) => {
+    if (!city) return;
+
+    // 1. Устанавливаем фильтр (сбрасывая остальные города)
+    window.filterCities = [city];
+
+    // 2. Обновляем UI сайдбара, чтобы показать выбор
+    if (typeof window.renderSidebarCities === 'function') {
+        window.renderSidebarCities();
+    }
+
+    // 3. Запускаем поиск с новым фильтром
+    if (typeof window.fetchItems === 'function') {
+        window.fetchItems(false);
+    }
+
+    // 4. Плавно скроллим наверх, чтобы пользователь увидел результат
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 window.subcategoriesMap = {
     'Одежда': [{ val: 'Женская' }, { val: 'Мужская' }, { val: 'Обувь' }, { val: 'Сумки' }, { val: 'Аксессуары' }, { val: 'Спецодежда' }],
     'Детям': [{ val: 'Игрушки' }, { val: 'Коляски' }, { val: 'Одежда' }, { val: 'Обувь' }, { val: 'Автокресла' }, { val: 'Мебель', label: 'Детская мебель' }],
@@ -2915,6 +2935,13 @@ document.body.addEventListener('click', (e) => {
         case 'toggle-favorite':
             e.stopPropagation();
             window.toggleFavorite(btn, e, id);
+            break;
+        case 'filter-city':
+            e.stopPropagation();
+            const city = btn.dataset.city;
+            if (city && typeof window.filterByCity === 'function') {
+                window.filterByCity(city);
+            }
             break;
         // ---> ВАШ НОВЫЙ БЛОК ДЛЯ КАРТЫ <---
         case 'select-address':

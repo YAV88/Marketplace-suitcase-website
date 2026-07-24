@@ -238,9 +238,9 @@ export const ItemsModule = {
                         </div>
                         
                         <div class="flex items-center justify-between w-full pt-1.5 pb-0.5 border-t border-stone-100 dark:border-stone-800">
-                            <span class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0">
+                            <button type="button" data-action="filter-city" data-city="${escapeHTML(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
-                            </span>
+                            </button>
                             <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0">
                                 <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5 opacity-70"></i>${i.views || 0}</span>
                                 <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5 opacity-70"></i>${i.favoritesCount || 0}</span>
