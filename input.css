@@ -261,23 +261,16 @@
     .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
     
     .view-list .item-card { 
-        flex-direction: row !important; 
+        flex-direction: row !important;
         align-items: stretch !important;
         background-color: transparent !important;
-        border: none !important; /* УБИРАЕМ ВСЕ ВНУТРЕННИЕ ПОЛОСЫ */
-        border-bottom: 1px solid #e7e5e4 !important; /* ОДНА АККУРАТНАЯ ЧЕРТА СНИЗУ МЕЖДУ КАРТОЧКАМИ */
+        border: none !important;
+        border-bottom: none !important; /* Убрали разделительную черту */
         border-radius: 0 !important;
         box-shadow: none !important;
-        padding-bottom: 1.25rem !important;
-        margin-bottom: 1.25rem !important;
+        padding-bottom: 0 !important; /* Убираем нижний паддинг */
+        margin-bottom: 2rem !important; /* Увеличиваем отступ между карточками */
     }
-    html.dark .view-list .item-card {
-        border-bottom-color: #292524 !important;
-    }
-    
-    /* Убираем акцентную нижнюю черту у VIP в списке, так как у них есть своя рамка на картинке */
-    .view-list .item-card.vip-card { border-bottom-color: #e7e5e4 !important; }
-    html.dark .view-list .item-card.vip-card { border-bottom-color: #292524 !important; }
 
     .view-list .view-grid-city,
     .view-list .view-list-desc { display: none !important; }
