@@ -451,8 +451,26 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         document.getElementById('seller-stats').innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items.length}`;
         if (items.length > 0) {
             if (grid) {
-                grid.innerHTML = items.map(i => window.createCardHtml(i)).join('');
-                grid.style.display = 'grid';
+                // ИСПРАВЛЕНИЕ 1: Правильно мапим данные перед генерацией HTML
+                grid.innerHTML = items
+                    .map(item => window.mapItemData(item))
+                    .filter(Boolean)
+                    .map(mappedItem => {
+                        if (typeof window.createCardHtml === 'function') {
+                            return window.createCardHtml(mappedItem, false, true);
+                        }
+                        return ''; 
+                    }).join('');
+                
+                // ИСПРАВЛЕНИЕ 2: Применяем классы сетки/списка и убираем жесткий style
+                grid.style.display = ''; 
+                grid.classList.remove('view-grid', 'view-list', 'hidden');
+                grid.classList.add(`view-${window.currentViewMode || 'grid'}`);
+                
+                // ИСПРАВЛЕНИЕ 3: Запускаем анимацию проявления
+                if (typeof window.animateVisibleElements === 'function') {
+                    setTimeout(() => window.animateVisibleElements(), 50);
+                }
             }
         } else {
             if (empty) empty.style.display = 'flex';
@@ -464,7 +482,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
 
         if (reviewerIds.length > 0) {
             // Ищем данные пользователей через их объявления (таблица items)
-            const { data: usersData } = await supabase
+            const { data: usersData } = await window.supabase
                 .from('items')
                 .select('user_id, author_name, author_avatar')
                 .in('user_id', reviewerIds);
@@ -562,7 +580,7 @@ window.switchSellerTab = (tabName) => {
         if (search) { search.style.display = 'block'; search.classList.remove('hidden'); }
 
         if (grid && grid.innerHTML.trim() !== '') {
-            grid.style.display = 'grid'; grid.classList.remove('hidden');
+            grid.style.display = ''; grid.classList.remove('hidden'); // ИСПРАВЛЕНИЕ: Убрали жесткий 'grid', чтобы работал список!
             if (empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
         } else {
             if (grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
