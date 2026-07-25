@@ -588,22 +588,22 @@ export const ItemsModule = {
             window.currentLightboxImages = imagesArray;
 
                 // Генерируем главные слайды
-                carousel.innerHTML = images.map((src) => `
+                carousel.innerHTML = imagesArray.map((src) => `
                     <div class="w-full h-full shrink-0 flex items-center justify-center snap-center relative">
                         <img src="${src}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${src}')">
                     </div>
                 `).join('');
 
-                if (images.length > 1) {
+                if (imagesArray.length > 1) {
                     // Счётчик поверх фото (1 / 5)
                     if (counterEl) {
-                        counterEl.innerText = `1 / ${images.length}`;
+                        counterEl.innerText = `1 / ${imagesArray.length}`;
                         counterEl.classList.remove('hidden');
                     }
                     
                     // Галерея миниатюр
                     if (thumbsContainer) {
-                        thumbsContainer.innerHTML = images.map((src, idx) => `
+                        thumbsContainer.innerHTML = imagesArray.map((src, idx) => `
                             <button onclick="document.getElementById('modal-carousel').scrollTo({left: ${idx} * document.getElementById('modal-carousel').clientWidth, behavior: 'smooth'})" 
                                     class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-brand-500' : 'border-transparent opacity-60 hover:opacity-100'} transition-all cursor-pointer">
                                 <img src="${src}" class="w-full h-full object-cover">
@@ -623,7 +623,7 @@ export const ItemsModule = {
                             const index = Math.round(carousel.scrollLeft / carousel.clientWidth);
                             window.currentLightboxIndex = index;
                             
-                            if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
+                            if (counterEl) counterEl.innerText = `${index + 1} / ${imagesArray.length}`;
                             
                             if (thumbsContainer) {
                                 Array.from(thumbsContainer.children).forEach((thumb, i) => {
