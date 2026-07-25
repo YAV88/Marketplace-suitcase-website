@@ -91,15 +91,20 @@ export const ItemsModule = {
         if (subCatsContainer) {
             if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
                 const mainCat = cat.split(' - ')[0];
-                let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]'}">${window.t ? window.t('Все в') : 'Все в'} «${window.t ? window.t(mainCat) : mainCat}»</button>`;
+                
+                // ПРЕМИАЛЬНЫЕ КЛАССЫ ДЛЯ КНОПКИ "ВСЕ" В ПОДКАТЕГОРИИ
+                let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start'}">${window.t ? window.t('Все в') : 'Все в'} «${window.t ? window.t(mainCat) : mainCat}»</button>`;
                 
                 window.subcategoriesMap[mainCat].forEach(sub => {
                     const prefix = sub.prefix || mainCat;
                     const fullCat = `${prefix} - ${sub.val}`;
                     const isActive = cat === fullCat;
+                    
+                    // ПРЕМИАЛЬНЫЕ КЛАССЫ ДЛЯ ОБЫЧНЫХ ПОДКАТЕГОРИЙ
                     const activeClass = isActive
-                        ? "active px-4 py-2 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-400 dark:border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
-                        : "px-4 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:border-brand-300 hover:text-brand-600 dark:hover:border-brand-700 dark:hover:text-brand-400 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0 snap-start hover:scale-[1.02]";
+                        ? "active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
+                        : "px-4 py-2 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                    
                     subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${activeClass}">${window.t ? window.t(sub.label || sub.val) : (sub.label || sub.val)}</button>`;
                 });
                 subCatsContainer.innerHTML = subHtml;

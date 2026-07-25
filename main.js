@@ -1698,7 +1698,7 @@ window.toggleUrgentFilter = () => {
         if (btn) btn.className = "cat-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start";
         window.currentCategory = 'Все';
         document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
+            b.className = "cat-btn px-5 py-2.5 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
         });
         if (subContainer) subContainer.classList.add('hidden');
     } else {
@@ -2680,11 +2680,11 @@ window.applyCondition = (val) => {
 
         // Сбрасываем визуально активные кнопки в шапке
         document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.className = "cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-brand-500 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-semibold text-sm transition cursor-pointer whitespace-nowrap shrink-0 snap-start";
+            b.className = "cat-btn px-5 py-2.5 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
         });
 
         const allBtn = document.querySelector('#main-cats-container .cat-btn[data-cat="Все"]');
-        if (allBtn) allBtn.className = "cat-btn active px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+        if (allBtn) allBtn.className = "cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]";
 
         const subContainer = document.getElementById('sub-cats-container');
         if (subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }
