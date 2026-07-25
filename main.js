@@ -1805,6 +1805,30 @@ window.toggleFavoriteCard = async (id, btnEl) => {
     const isLiked = window.userFavorites.has(id);
     const icon = btnEl.querySelector('i');
     
+    // Находим счетчик именно этой карточки по ID
+    const countContainer = document.getElementById(`fav-count-${id}`);
+
+    if (countContainer) {
+        const valEl = countContainer.querySelector('.count-val');
+        let currentCount = parseInt(valEl.innerText) || 0;
+
+        // ИСПРАВЛЕНИЕ: опираемся на isLiked
+        if (!isLiked) { // Если товар ЕЩЕ НЕ на складе -> добавляем
+            currentCount++;
+            countContainer.classList.add('text-brand-500');
+        } else { // Если товар УЖЕ на складе -> убираем
+            currentCount = Math.max(0, currentCount - 1);
+            if (currentCount === 0) {
+                countContainer.classList.remove('text-brand-500');
+            }
+        }
+        
+        // Анимируем изменение цифры
+        valEl.innerText = currentCount;
+        valEl.classList.add('scale-125', 'text-brand-600');
+        setTimeout(() => valEl.classList.remove('scale-125', 'text-brand-600'), 200);
+    }
+    
     if (isLiked) {
         window.userFavorites.delete(id);
         if (icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
@@ -2346,40 +2370,122 @@ window.previewPhotos = async (e) => {
     e.target.value = '';
 };
 
-window.switchProfileTab = tab => {
+// 1. Функция переключения вкладок (визуал)
+window.switchProfileTab = async (tab) => {
     window.currentProfileTab = tab;
-    const t1 = document.getElementById('tab-my-items'); const t2 = document.getElementById('tab-my-saved');
-    if (t1) { if (tab === 'items') { t1.classList.add('active', 'border-brand-600', 'text-brand-600'); t1.classList.remove('border-transparent', 'text-stone-400'); } else { t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); t1.classList.add('border-transparent', 'text-stone-400'); } }
-    if (t2) { if (tab === 'saved') { t2.classList.add('active', 'border-brand-600', 'text-brand-600'); t2.classList.remove('border-transparent', 'text-stone-400'); } else { t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); t2.classList.add('border-transparent', 'text-stone-400'); } }
-    window.renderProfileTabs();
+    
+    const t1 = document.getElementById('tab-my-items'); 
+    const t2 = document.getElementById('tab-my-saved');
+    
+    if (t1) { 
+        if (tab === 'items') { 
+            t1.classList.add('active', 'border-brand-600', 'text-brand-600'); 
+            t1.classList.remove('border-transparent', 'text-stone-400'); 
+        } else { 
+            t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); 
+            t1.classList.add('border-transparent', 'text-stone-400'); 
+        } 
+    }
+    
+    if (t2) { 
+        if (tab === 'saved') { 
+            t2.classList.add('active', 'border-brand-600', 'text-brand-600'); 
+            t2.classList.remove('border-transparent', 'text-stone-400'); 
+        } else { 
+            t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); 
+            t2.classList.add('border-transparent', 'text-stone-400'); 
+        } 
+    }
+    
+    // Запускаем загрузку данных для выбранной вкладки
+    await window.renderProfileTabs();
 };
 
+// 2. Умная загрузка данных с БД
 window.renderProfileTabs = async () => {
-    const grid = document.getElementById('profile-items-grid'); const empty = document.getElementById('profile-empty');
-    if (!grid || !empty || !window.currentUser) return;
-    grid.style.display = 'none'; empty.style.display = 'none';
+    const grid = document.getElementById('profile-items-grid');
+    const emptyState = document.getElementById('profile-empty');
+    const searchInput = document.getElementById('profile-search-input');
+
+    if (!grid) return;
+
+    // Включаем лоадер, чтобы пользователь понимал, что идет загрузка
+    grid.innerHTML = '<div class="col-span-full flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-3xl"></i></div>';
+    if (emptyState) emptyState.style.display = 'none';
 
     try {
-        const favCount = window.userFavorites ? window.userFavorites.size : 0;
-        const tabSaved = document.getElementById('tab-my-saved'); if (tabSaved) tabSaved.innerText = `${window.t('Склад')} (${favCount})`;
+        let dataToRender = [];
 
-        let items = [];
-        if (window.currentProfileTab === 'items') {
-            const { data } = await supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
-            items = (data || []).map(window.mapItemData).filter(Boolean);
-            const tabItems = document.getElementById('tab-my-items'); if (tabItems) tabItems.innerText = `${window.t('Мои вещи')} (${items.length})`;
+        if (window.currentProfileTab === 'saved') {
+            // ==========================================
+            // ЛОГИКА ДЛЯ ВКЛАДКИ "СКЛАД"
+            // ==========================================
+            const savedIds = window.currentUserData?.saved_items || [];
+            
+            if (savedIds.length > 0) {
+                // Делаем запрос к Supabase: вытягиваем только те товары, ID которых есть в массиве savedIds
+                const { data, error } = await supabase
+                    .from('items')
+                    .select('*')
+                    .in('id', savedIds);
+                
+                if (error) throw error;
+                dataToRender = data || [];
+            }
         } else {
-            const favIds = Array.from(window.userFavorites);
-            if (favIds.length > 0) {
-                const { data } = await supabase.from('items').select('*').in('id', favIds).order('created_at', { ascending: false });
-                items = (data || []).map(window.mapItemData).filter(Boolean);
+            // ==========================================
+            // ЛОГИКА ДЛЯ ВКЛАДКИ "МОИ ВЕЩИ"
+            // ==========================================
+            if (window.currentUser) {
+                const { data, error } = await supabase
+                    .from('items')
+                    .select('*')
+                    .eq('user_id', window.currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                dataToRender = data || [];
             }
         }
 
-        items.forEach(v => { const exists = window.loadedItems.findIndex(i => i.id === v.id); if (exists === -1) window.loadedItems.push(v); else window.loadedItems[exists] = v; });
-        if (items.length > 0) { grid.style.display = 'grid'; grid.innerHTML = items.map(i => window.createCardHtml(i, i.isHighlighted, true)).join(''); }
-        else { empty.style.display = 'flex'; }
-    } catch (e) { }
+        // Очищаем лоадер перед отрисовкой
+        grid.innerHTML = '';
+
+        if (dataToRender.length === 0) {
+            // Если массив пустой — показываем красивый Empty State
+            if (emptyState) {
+                emptyState.style.display = 'flex';
+                const emptyText = emptyState.querySelector('span');
+                if (emptyText) {
+                    emptyText.innerText = window.currentProfileTab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений');
+                }
+            }
+        } else {
+            // Если данные есть — мапим их и превращаем в HTML через твой модуль
+            const html = dataToRender
+                .map(item => window.mapItemData(item))
+                .filter(Boolean)
+                .map(mappedItem => {
+                    // Используем метод из ItemsModule. Флаг isProfileView = true
+                    if (window.ItemsModule && typeof window.ItemsModule.createCardHtml === 'function') {
+                        return window.ItemsModule.createCardHtml(mappedItem, false, true);
+                    }
+                    return ''; // Fallback, если модуль не загрузился
+                })
+                .join('');
+            
+            grid.innerHTML = html;
+        }
+
+        // Если пользователь до этого что-то ввел в поиск по профилю, применяем фильтр сразу к новым карточкам
+        if (searchInput && searchInput.value && typeof window.filterProfileItems === 'function') {
+            window.filterProfileItems(searchInput, 'profile-items-grid');
+        }
+
+    } catch (err) {
+        console.error('Ошибка загрузки вкладок профиля:', err);
+        grid.innerHTML = '<div class="col-span-full text-center text-red-500 py-10 font-bold"><i class="fa-solid fa-triangle-exclamation mb-2 text-2xl"></i><br>Ошибка загрузки. Попробуйте позже.</div>';
+    }
 };
 
 window.filterProfileItems = (input, gridId) => {

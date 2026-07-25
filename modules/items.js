@@ -236,14 +236,18 @@ export const ItemsModule = {
                             ${paymentBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
                         </div>
                         
-                        <!-- УБРАЛИ border-t и цвета линий, добавили mt-auto для выравнивания по низу -->
+                        <!-- Добавили pr-2 (отступ справа) к контейнеру счетчиков -->
                         <div class="flex items-center justify-between w-full pt-2 pb-0.5 mt-auto">
                             <button type="button" data-action="filter-city" data-city="${escapeHTML(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </button>
-                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0">
+                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 pr-2">
                                 <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5 opacity-70"></i>${i.views || 0}</span>
-                                <span title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''}"><i class="fa-solid fa-box mr-0.5 opacity-70"></i>${i.favoritesCount || 0}</span>
+                                
+                                <!-- Добавили уникальный ID для счетчика склада -->
+                                <span id="fav-count-${i.id}" title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''} transition-colors duration-300">
+                                    <i class="fa-solid fa-box mr-0.5 opacity-70"></i><span class="count-val">${i.favoritesCount || 0}</span>
+                                </span>
                             </div>
                         </div>
                     </div>
