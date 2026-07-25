@@ -2407,38 +2407,28 @@ window.previewPhotos = async (e) => {
     e.target.value = '';
 };
 
-// 1. Функция переключения вкладок (визуал)
+// 1. Функция переключения вкладок
 window.switchProfileTab = async (tab) => {
     window.currentProfileTab = tab;
     
-    const t1 = document.getElementById('tab-my-items'); 
-    const t2 = document.getElementById('tab-my-saved');
+    // Автоматическое переключение классов для 3 вкладок
+    ['items', 'saved', 'reviews'].forEach(t => {
+        const el = document.getElementById(`tab-my-${t}`);
+        if (el) {
+            if (tab === t) {
+                el.classList.add('active', 'border-brand-600', 'text-brand-600');
+                el.classList.remove('border-transparent', 'text-stone-400');
+            } else {
+                el.classList.remove('active', 'border-brand-600', 'text-brand-600');
+                el.classList.add('border-transparent', 'text-stone-400');
+            }
+        }
+    });
     
-    if (t1) { 
-        if (tab === 'items') { 
-            t1.classList.add('active', 'border-brand-600', 'text-brand-600'); 
-            t1.classList.remove('border-transparent', 'text-stone-400'); 
-        } else { 
-            t1.classList.remove('active', 'border-brand-600', 'text-brand-600'); 
-            t1.classList.add('border-transparent', 'text-stone-400'); 
-        } 
-    }
-    
-    if (t2) { 
-        if (tab === 'saved') { 
-            t2.classList.add('active', 'border-brand-600', 'text-brand-600'); 
-            t2.classList.remove('border-transparent', 'text-stone-400'); 
-        } else { 
-            t2.classList.remove('active', 'border-brand-600', 'text-brand-600'); 
-            t2.classList.add('border-transparent', 'text-stone-400'); 
-        } 
-    }
-    
-    // Запускаем загрузку данных для выбранной вкладки
     await window.renderProfileTabs();
 };
 
-// 2. Умная загрузка данных с БД
+// 2. Умная загрузка данных (с поддержкой отзывов)
 window.renderProfileTabs = async () => {
     const grid = document.getElementById('profile-items-grid');
     const emptyState = document.getElementById('profile-empty');
@@ -2446,75 +2436,132 @@ window.renderProfileTabs = async () => {
 
     if (!grid) return;
 
-    // Спиннер загрузки
     grid.innerHTML = '<div class="col-span-full flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-3xl"></i></div>';
     if (emptyState) emptyState.style.display = 'none';
 
     try {
+        // ==========================================
+        // ЛОГИКА ДЛЯ НОВОЙ ВКЛАДКИ "ОТЗЫВЫ"
+        // ==========================================
+        if (window.currentProfileTab === 'reviews') {
+            // Принудительно меняем класс сетки на вертикальный список для отзывов
+            grid.className = 'flex flex-col gap-3 w-full'; 
+
+            const { data: reviews, error } = await window.supabase
+                .from('reviews')
+                .select('*')
+                .eq('seller_id', window.currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            grid.innerHTML = '';
+
+            if (!reviews || reviews.length === 0) {
+                if (emptyState) {
+                    emptyState.style.display = 'flex';
+                    const span = emptyState.querySelector('span');
+                    if (span) span.innerText = 'У вас пока нет отзывов';
+                }
+            } else {
+                // Подтягиваем аватарки авторов
+                const reviewerIds = [...new Set(reviews.map(r => r.reviewer_id).filter(Boolean))];
+                const usersMap = {};
+                if (reviewerIds.length > 0) {
+                    const { data: usersData } = await window.supabase
+                        .from('items')
+                        .select('user_id, author_name, author_avatar')
+                        .in('user_id', reviewerIds);
+                    if (usersData) {
+                        usersData.forEach(u => { usersMap[u.user_id] = { name: u.author_name, avatar: u.author_avatar }; });
+                    }
+                }
+
+                // Считаем средний рейтинг
+                const avg = (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1);
+                
+                // Премиальная шапка рейтинга
+                let html = `
+                <div class="w-full flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800 mb-2 shadow-sm">
+                    <span class="font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest text-xs">Ваш рейтинг:</span>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-star text-amber-500 text-lg"></i> <span class="font-black text-xl text-stone-900 dark:text-white">${avg}</span></div>
+                </div>`;
+
+                // Рендер карточек отзывов
+                html += reviews.map(r => {
+                    const revInfo = usersMap[r.reviewer_id] || {};
+                    const revName = revInfo.name || 'Покупатель';
+                    const revAvatar = revInfo.avatar
+                        ? `<img src="${revInfo.avatar}" class="w-10 h-10 rounded-full object-cover shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">`
+                        : `<div class="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-sm text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
+
+                    return `
+                    <div class="bg-white dark:bg-stone-800 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-700 w-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition duration-300">
+                        <div class="flex justify-between items-start mb-3 gap-2">
+                            <div class="flex items-center gap-3 min-w-0">
+                                ${revAvatar}
+                                <div>
+                                    <div class="font-black text-sm text-stone-900 dark:text-white truncate">${revName}</div>
+                                    <div class="text-[10px] text-stone-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-0.5 text-amber-500 text-[10px] sm:text-xs shrink-0 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-md border border-amber-100 dark:border-amber-800/50">
+                                ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
+                            </div>
+                        </div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">${r.comment || '<i class="opacity-50">Покупатель не оставил комментарий</i>'}</div>
+                    </div>`;
+                }).join('');
+                
+                grid.innerHTML = html;
+            }
+            return; // Выходим, так как отзывы отрисованы
+        }
+
+        // ==========================================
+        // ЛОГИКА ДЛЯ "МОИХ ВЕЩЕЙ" И "СКЛАДА"
+        // ==========================================
+        
+        // Возвращаем правильный класс сетки/списка (если возвращаемся с отзывов)
+        grid.className = `view-${window.currentViewMode || 'grid'}`;
+
         let dataToRender = [];
 
         if (window.currentProfileTab === 'saved') {
-            // Загрузка Склада
-            const { data: favs, error: favErr } = await window.supabase
-                .from('favorites')
-                .select('item_id')
-                .eq('user_id', window.currentUser.id);
-            
+            const { data: favs, error: favErr } = await window.supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
             if (favErr) throw favErr;
-
             if (favs && favs.length > 0) {
                 const savedIds = favs.map(f => f.item_id);
-                const { data, error } = await window.supabase
-                    .from('items')
-                    .select('*')
-                    .in('id', savedIds);
-                
+                const { data, error } = await window.supabase.from('items').select('*').in('id', savedIds);
                 if (error) throw error;
                 dataToRender = data || [];
             }
         } else {
-            // ВОССТАНОВЛЕНО: Загрузка "Моих вещей"
             if (window.currentUser) {
-                const { data, error } = await window.supabase
-                    .from('items')
-                    .select('*')
-                    .eq('user_id', window.currentUser.id)
-                    .order('created_at', { ascending: false });
-                
+                const { data, error } = await window.supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
                 if (error) throw error;
                 dataToRender = data || [];
             }
         }
 
-        // Очищаем спиннер
         grid.innerHTML = '';
 
         if (dataToRender.length === 0) {
             if (emptyState) {
                 emptyState.style.display = 'flex';
                 const emptyText = emptyState.querySelector('span');
-                if (emptyText) {
-                    emptyText.innerText = window.currentProfileTab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений');
-                }
+                if (emptyText) emptyText.innerText = window.currentProfileTab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений');
             }
         } else {
-            // Рендер карточек
             const html = dataToRender
                 .map(item => window.mapItemData(item))
                 .filter(Boolean)
                 .map(mappedItem => {
-                    if (typeof window.createCardHtml === 'function') {
-                        return window.createCardHtml(mappedItem, false, true);
-                    }
+                    if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, false, true);
                     return ''; 
                 }).join('');
-
-            grid.classList.remove('view-grid', 'view-list');
-            grid.classList.add(`view-${window.currentViewMode || 'grid'}`);
             
             grid.innerHTML = html;
             
-            // ЗАПУСК АНИМАЦИИ (теперь карточки будут плавно появляться, а не висеть прозрачными)
             if (typeof window.animateVisibleElements === 'function') {
                 setTimeout(() => window.animateVisibleElements(), 50);
             }

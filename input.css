@@ -299,3 +299,15 @@
     .view-list .img-extra-badges { display: none !important; }
     .view-list .body-badges { display: flex !important; }
 }
+
+/* ==========================================
+   УМНОЕ ОТОБРАЖЕНИЕ ПЛАШЕК ОПЛАТЫ/ДОСТАВКИ
+   ========================================== */
+
+/* 1. Прячем плашки везде по умолчанию (в Сетке, в VIP-ленте и на всех мобилках) */
+.body-badges { display: none !important; }
+
+/* 2. Показываем плашки ТОЛЬКО когда активен режим списка И ТОЛЬКО на ПК (экраны шире 1024px) */
+@media (min-width: 1024px) {
+    .view-list .body-badges { display: flex !important; }
+}
