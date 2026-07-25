@@ -979,12 +979,20 @@ export const ItemsModule = {
                 window.updateSEO(item.title, item.description, coverImg);
             }
 
+            // ИСПРАВЛЕНИЕ: Прячем кнопку склада, если мы владельцы
             const modalFavBtn = document.getElementById('modal-fav-btn');
             const modalFavIcon = document.querySelector('#modal-fav-btn i');
-            if (modalFavIcon && window.userFavorites) {
-                const isLiked = window.userFavorites.has(item.id);
-                modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
-                if (modalFavBtn) modalFavBtn.title = isLiked ? "Убрать со склада" : "Добавить на склад";
+            if (modalFavBtn) {
+                if (window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
+                    modalFavBtn.style.display = 'none'; // Прячем кнопку для владельца
+                } else {
+                    modalFavBtn.style.display = ''; // Показываем для остальных
+                    if (modalFavIcon && window.userFavorites) {
+                        const isLiked = window.userFavorites.has(item.id);
+                        modalFavIcon.className = isLiked ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                        modalFavBtn.title = isLiked ? (window.t ? window.t("Убрать со склада") : "Убрать со склада") : (window.t ? window.t("Добавить на склад") : "Добавить на склад");
+                    }
+                }
             }
 
             const modalShareBtn = document.getElementById('modal-share-btn');
