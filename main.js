@@ -2435,16 +2435,22 @@ window.renderProfileTabs = async () => {
                 dataToRender = data || [];
             }
         } else {
-            // Логика "Мои вещи"
-            if (window.currentUser) {
-                const { data, error } = await window.supabase
-                    .from('items')
-                    .select('*')
-                    .eq('user_id', window.currentUser.id)
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                dataToRender = data || [];
+            // Если данные есть — мапим их и превращаем в HTML
+            const html = dataToRender
+                .map(item => window.mapItemData(item))
+                .filter(Boolean)
+                .map(mappedItem => {
+                    if (typeof window.createCardHtml === 'function') {
+                        return window.createCardHtml(mappedItem, false, true);
+                    }
+                    return ''; 
+                }).join('');
+            
+            grid.innerHTML = html;
+            
+            // ---> ИСПРАВЛЕНИЕ: ЗАПУСКАЕМ АНИМАЦИЮ ПРОЯВЛЕНИЯ КАРТОЧЕК <---
+            if (typeof window.animateVisibleElements === 'function') {
+                setTimeout(() => window.animateVisibleElements(), 50);
             }
         }
 
