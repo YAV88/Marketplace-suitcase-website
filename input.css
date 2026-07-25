@@ -549,3 +549,26 @@
   border-color: #3f3f46; /* stone-700 */
   background-color: #292524; /* stone-800 */
 }
+
+/* 1. ГЛОБАЛЬНАЯ ЧИСТКА АРТЕФАКТОВ СЕТКИ */
+#main-items-grid,
+#profile-items-grid,
+#seller-items-grid,
+.view-grid,
+.view-list {
+    background-color: transparent !important;
+}
+
+/* 2. Отключаем системные рамки Tailwind (divide), которые JS может вешать динамически */
+.divide-y > :not([hidden]) ~ :not([hidden]),
+.divide-x > :not([hidden]) ~ :not([hidden]) {
+    border-width: 0px !important;
+}
+
+/* 3. Идеальный мобильный список */
+.view-list {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1rem !important; /* Мягкие отступы вместо слипшихся линий */
+    padding-bottom: 1rem;
+}

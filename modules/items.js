@@ -141,9 +141,9 @@ export const ItemsModule = {
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
         const cardClass = isVIP ?
-            'item-card vip-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1' : 
-            'item-card bg-transparent cursor-pointer flex flex-col relative h-full w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
-        
+            'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
+            'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
+                
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0) ? i.images[0] : (i.imageUrl || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&w=500&q=80');
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
