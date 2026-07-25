@@ -149,10 +149,9 @@ export const ItemsModule = {
             'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
             'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
                 
-        // Умная заглушка (Base64 SVG), которая сама адаптируется под Светлую/Темную тему сайта
-        const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cstyle%3E.bg%7Bfill%3A%23FDFBF7%3B%7D.icon%7Bfill%3A%23e7e5e4%3B%7D.txt%7Bfill%3A%23a8a29e%3B%7D%40media(prefers-color-scheme%3Adark)%7B.bg%7Bfill%3A%231c1917%3B%7D.icon%7Bfill%3A%23292524%3B%7D.txt%7Bfill%3A%2357534e%3B%7D%7D%3C%2Fstyle%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20class%3D%22bg%22%2F%3E%3Cg%20class%3D%22icon%22%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20class%3D%22txt%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
+        // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
+        const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
         
-        // Подставляем заглушку, если у товара нет массива images или imageUrl
         const imageUrl = (Array.isArray(i.images) && i.images.length > 0 && i.images[0]) ? i.images[0] : (i.imageUrl || defaultImage);
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -572,12 +571,21 @@ export const ItemsModule = {
             const btnPrev = document.getElementById('modal-prev-photo');
             const btnNext = document.getElementById('modal-next-photo');
 
-            if (carousel) {
-                let images = Array.isArray(item.images) && item.images.length > 0
-                    ? item.images
-                    : [item.imageUrl || item.image_url || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'];
+           if (carousel) {
+            // 2. Эта же прозрачная заглушка для окна товара
+            const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
+            
+            let imagesArray = [];
+            if (Array.isArray(item.images) && item.images.length > 0 && item.images[0]) {
+                imagesArray = item.images;
+            } else if (item.imageUrl) {
+                imagesArray = [item.imageUrl];
+            } else {
+                imagesArray = [defaultImage];
+            }
 
-                window.currentLightboxImages = images;
+            // ИСПРАВЛЕНИЕ: передаем именно imagesArray
+            window.currentLightboxImages = imagesArray;
 
                 // Генерируем главные слайды
                 carousel.innerHTML = images.map((src) => `
