@@ -145,11 +145,40 @@
     .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
 
     @media (max-width: 768px) {
-        .view-list .item-card { min-height: 125px !important; }
-        .view-list .card-img-wrap { width: 42% !important; min-width: 130px !important; max-width: 160px !important; height: auto !important; box-shadow: none !important; }
-        .view-list .card-body-wrap { padding: 0.25rem 0.25rem 0.25rem 0.75rem !important; gap: 2px !important; }
-        .view-list h4 { min-height: auto !important; margin-bottom: 2px !important; margin-top: 0 !important; font-size: 0.88rem !important; }
-        .view-list .price-text { font-size: 1.2rem !important; font-weight: 900; }
+        /* 1. Убираем отступы внутри карты, чтобы фото слилось с краями */
+        .view-list .item-card { 
+            padding: 0 !important; 
+            min-height: 125px !important; 
+        }
+        
+        /* 2. Фото прилегает к левому краю. Скругляем ТОЛЬКО левые углы (1rem = скругление карты) */
+        .view-list .card-img-wrap { 
+            width: 42% !important; 
+            min-width: 125px !important; 
+            max-width: 150px !important; 
+            height: auto !important; 
+            box-shadow: none !important; 
+            border-radius: 1rem 0 0 1rem !important; /* Идеальное прилегание слева */
+            overflow: hidden !important;
+        }
+        
+        /* 3. Отступы переносим на сам блок с текстом */
+        .view-list .card-body-wrap { 
+            padding: 0.75rem !important; 
+            gap: 4px !important; 
+        }
+        
+        .view-list h4 { 
+            min-height: auto !important; 
+            margin-bottom: 2px !important; 
+            margin-top: 0 !important; 
+            font-size: 0.9rem !important; 
+        }
+        
+        .view-list .price-text { 
+            font-size: 1.15rem !important; 
+            font-weight: 900; 
+        }
     }
 
     @media (min-width: 1024px) {

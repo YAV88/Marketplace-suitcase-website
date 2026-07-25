@@ -1153,6 +1153,11 @@ window.closeModal = id => {
         const formEl = document.getElementById('add-form'); if (formEl) formEl.reset();
         window.tempPhotos = []; window.editExistingImages = [];
         const photoList = document.getElementById('photo-preview-list'); if (photoList) photoList.innerHTML = '';
+        
+        // ---> ВОЗВРАЩАЕМ ФОРМУ НА ПЕРВЫЙ ШАГ ПРИ ЗАКРЫТИИ <---
+        if (typeof window.backToAddStep1 === 'function') {
+            window.backToAddStep1();
+        }
     }
 
     // === ИСПРАВЛЕНИЕ: БЕЗОПАСНАЯ ОЧИСТКА ЧАТА ===
@@ -2556,26 +2561,26 @@ window.renderProfileTabs = async () => {
                 // Считаем средний рейтинг
                 const avg = (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1);
                 
-                // ПРЕМИАЛЬНЫЙ ДИЗАЙН: Плашка рейтинга с градиентом
+                // ПРЕМИАЛЬНЫЙ ДИЗАЙН: Компактная плашка рейтинга на мобилках
                 let html = `
-                <div class="w-full flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-5 sm:p-6 rounded-2xl border border-amber-200/60 dark:border-amber-800/50 mb-4 shadow-sm gap-3">
-                    <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-xs sm:text-sm">Ваш рейтинг продавца</span>
-                    <div class="flex items-center gap-2.5 bg-white dark:bg-stone-900 px-4 py-2 rounded-xl shadow-sm border border-amber-100 dark:border-stone-800">
-                        <i class="fa-solid fa-star text-amber-500 text-xl"></i>
-                        <span class="font-black text-2xl text-stone-900 dark:text-white leading-none">${avg}</span>
+                <div class="w-full flex flex-row items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 sm:p-6 rounded-xl sm:rounded-2xl border border-amber-200/60 dark:border-amber-800/50 mb-3 shadow-sm gap-2">
+                    <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-[10px] sm:text-sm">Ваш рейтинг</span>
+                    <div class="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-sm border border-amber-100 dark:border-stone-800">
+                        <i class="fa-solid fa-star text-amber-500 text-sm sm:text-xl"></i>
+                        <span class="font-black text-lg sm:text-2xl text-stone-900 dark:text-white leading-none">${avg}</span>
                     </div>
                 </div>`;
 
-                // Рендер карточек отзывов (чистый, не растянутый дизайн)
+                // Рендер карточек отзывов (чуть меньше отступов для мобилок)
                 html += reviews.map(r => {
                     const revInfo = usersMap[r.reviewer_id] || {};
                     const revName = revInfo.name || 'Покупатель';
                     const revAvatar = revInfo.avatar
-                        ? `<img src="${revInfo.avatar}" class="w-12 h-12 rounded-full object-cover shrink-0 border-2 border-stone-200 dark:border-stone-700 shadow-sm">`
-                        : `<div class="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-lg text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
+                        ? `<img src="${revInfo.avatar}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0 border-2 border-stone-200 dark:border-stone-700 shadow-sm">`
+                        : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-base sm:text-lg text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
 
                     return `
-                    <div class="bg-white dark:bg-stone-800 p-5 sm:p-6 rounded-2xl border border-stone-200 dark:border-stone-700 w-full shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition duration-300">
+                    <div class="bg-white dark:bg-stone-800 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-stone-200 dark:border-stone-700 w-full shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition duration-300">
                         <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-3 sm:mb-4">
                             <div class="flex items-center gap-3 min-w-0">
                                 ${revAvatar}

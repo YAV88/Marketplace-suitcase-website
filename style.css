@@ -1026,32 +1026,42 @@ input[type="number"] {
 }
 
 @media (max-width: 768px) {
+  /* 1. Убираем отступы внутри карты, чтобы фото слилось с краями */
+
   .view-list .item-card {
+    padding: 0 !important;
     min-height: 125px !important;
   }
 
+  /* 2. Фото прилегает к левому краю. Скругляем ТОЛЬКО левые углы (1rem = скругление карты) */
+
   .view-list .card-img-wrap {
     width: 42% !important;
-    min-width: 130px !important;
-    max-width: 160px !important;
+    min-width: 125px !important;
+    max-width: 150px !important;
     height: auto !important;
     box-shadow: none !important;
+    border-radius: 1rem 0 0 1rem !important;
+    /* Идеальное прилегание слева */
+    overflow: hidden !important;
   }
 
+  /* 3. Отступы переносим на сам блок с текстом */
+
   .view-list .card-body-wrap {
-    padding: 0.25rem 0.25rem 0.25rem 0.75rem !important;
-    gap: 2px !important;
+    padding: 0.75rem !important;
+    gap: 4px !important;
   }
 
   .view-list h4 {
     min-height: auto !important;
     margin-bottom: 2px !important;
     margin-top: 0 !important;
-    font-size: 0.88rem !important;
+    font-size: 0.9rem !important;
   }
 
   .view-list .price-text {
-    font-size: 1.2rem !important;
+    font-size: 1.15rem !important;
     font-weight: 900;
   }
 }
@@ -2796,11 +2806,6 @@ button, a, .cursor-pointer {
   border-color: rgb(153 246 228 / var(--tw-border-opacity, 1));
 }
 
-.border-brand-400{
-  --tw-border-opacity: 1;
-  border-color: rgb(45 212 191 / var(--tw-border-opacity, 1));
-}
-
 .border-brand-500{
   --tw-border-opacity: 1;
   border-color: rgb(20 184 166 / var(--tw-border-opacity, 1));
@@ -2908,6 +2913,11 @@ button, a, .cursor-pointer {
 .bg-\[\#F4EFE6\]{
   --tw-bg-opacity: 1;
   background-color: rgb(244 239 230 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#FDFBF7\]{
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 251 247 / var(--tw-bg-opacity, 1));
 }
 
 .bg-\[\#FDFBF7\]\/85{
@@ -3152,11 +3162,6 @@ button, a, .cursor-pointer {
 
 .bg-white\/95{
   background-color: rgb(255 255 255 / 0.95);
-}
-
-.bg-\[\#FDFBF7\]{
-  --tw-bg-opacity: 1;
-  background-color: rgb(253 251 247 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-b{
@@ -3700,6 +3705,11 @@ button, a, .cursor-pointer {
   letter-spacing: 0.1em;
 }
 
+.text-\[\#3E362E\]{
+  --tw-text-opacity: 1;
+  color: rgb(62 54 46 / var(--tw-text-opacity, 1));
+}
+
 .text-amber-400{
   --tw-text-opacity: 1;
   color: rgb(251 191 36 / var(--tw-text-opacity, 1));
@@ -3882,11 +3892,6 @@ button, a, .cursor-pointer {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
-.text-\[\#3E362E\]{
-  --tw-text-opacity: 1;
-  color: rgb(62 54 46 / var(--tw-text-opacity, 1));
-}
-
 .antialiased{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -3967,12 +3972,6 @@ button, a, .cursor-pointer {
 .shadow-\[0_-4px_20px_rgba\(62\2c 54\2c 46\2c 0\.05\)\]{
   --tw-shadow: 0 -4px 20px rgba(62,54,46,0.05);
   --tw-shadow-colored: 0 -4px 20px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-\[0_0_15px_rgba\(20\2c 184\2c 166\2c 0\.25\)\]{
-  --tw-shadow: 0 0 15px rgba(20,184,166,0.25);
-  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -4701,6 +4700,11 @@ button, a, .cursor-pointer {
   border-color: rgb(94 234 212 / var(--tw-border-opacity, 1));
 }
 
+.hover\:border-brand-400:hover{
+  --tw-border-opacity: 1;
+  border-color: rgb(45 212 191 / var(--tw-border-opacity, 1));
+}
+
 .hover\:border-brand-500:hover{
   --tw-border-opacity: 1;
   border-color: rgb(20 184 166 / var(--tw-border-opacity, 1));
@@ -4723,11 +4727,6 @@ button, a, .cursor-pointer {
 .hover\:border-stone-300:hover{
   --tw-border-opacity: 1;
   border-color: rgb(214 211 209 / var(--tw-border-opacity, 1));
-}
-
-.hover\:border-brand-400:hover{
-  --tw-border-opacity: 1;
-  border-color: rgb(45 212 191 / var(--tw-border-opacity, 1));
 }
 
 .hover\:bg-amber-100:hover{
@@ -5099,11 +5098,6 @@ button, a, .cursor-pointer {
   border-color: rgb(30 64 175 / 0.5);
 }
 
-.dark\:border-brand-600:is(.dark *){
-  --tw-border-opacity: 1;
-  border-color: rgb(13 148 136 / var(--tw-border-opacity, 1));
-}
-
 .dark\:border-brand-800:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(17 94 89 / var(--tw-border-opacity, 1));
@@ -5221,10 +5215,6 @@ button, a, .cursor-pointer {
 
 .dark\:bg-brand-900\/30:is(.dark *){
   background-color: rgb(19 78 74 / 0.3);
-}
-
-.dark\:bg-brand-900\/40:is(.dark *){
-  background-color: rgb(19 78 74 / 0.4);
 }
 
 .dark\:bg-emerald-900\/20:is(.dark *){
@@ -5483,11 +5473,6 @@ button, a, .cursor-pointer {
   border-color: rgb(20 184 166 / var(--tw-border-opacity, 1));
 }
 
-.dark\:hover\:border-brand-700:hover:is(.dark *){
-  --tw-border-opacity: 1;
-  border-color: rgb(15 118 110 / var(--tw-border-opacity, 1));
-}
-
 .dark\:hover\:border-red-800\/50:hover:is(.dark *){
   border-color: rgb(153 27 27 / 0.5);
 }
@@ -5673,6 +5658,10 @@ button, a, .cursor-pointer {
     height: 2.75rem;
   }
 
+  .sm\:h-12{
+    height: 3rem;
+  }
+
   .sm\:h-14{
     height: 3.5rem;
   }
@@ -5703,6 +5692,10 @@ button, a, .cursor-pointer {
 
   .sm\:w-11{
     width: 2.75rem;
+  }
+
+  .sm\:w-12{
+    width: 3rem;
   }
 
   .sm\:w-14{
@@ -5766,6 +5759,10 @@ button, a, .cursor-pointer {
     gap: 0.5rem;
   }
 
+  .sm\:gap-2\.5{
+    gap: 0.625rem;
+  }
+
   .sm\:gap-3{
     gap: 0.75rem;
   }
@@ -5778,8 +5775,16 @@ button, a, .cursor-pointer {
     gap: 1.5rem;
   }
 
+  .sm\:rounded-2xl{
+    border-radius: 1rem;
+  }
+
   .sm\:rounded-\[2rem\]{
     border-radius: 2rem;
+  }
+
+  .sm\:rounded-xl{
+    border-radius: 0.75rem;
   }
 
   .sm\:border{
