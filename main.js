@@ -2514,6 +2514,7 @@ window.switchProfileTab = async (tab) => {
 // 2. Умная загрузка данных (с поддержкой отзывов и защитой сетки)
 window.renderProfileTabs = async () => {
     const grid = document.getElementById('profile-items-grid');
+    const t = window.t || (txt => txt);
     const emptyState = document.getElementById('profile-empty');
     const searchInput = document.getElementById('profile-search-input');
 
@@ -2565,7 +2566,7 @@ window.renderProfileTabs = async () => {
                 // ПРЕМИАЛЬНЫЙ ДИЗАЙН: Компактная плашка рейтинга на мобилках
                 let html = `
                 <div class="w-full flex flex-row items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 sm:p-6 rounded-xl sm:rounded-2xl border border-amber-200/60 dark:border-amber-800/50 mb-3 shadow-sm gap-2">
-                    <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-[10px] sm:text-sm">Ваш рейтинг</span>
+                    <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-[10px] sm:text-sm">${t('your_rating')}</span>
                     <div class="flex items-center gap-1.5 sm:gap-2.5 bg-white dark:bg-stone-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-sm border border-amber-100 dark:border-stone-800">
                         <i class="fa-solid fa-star text-amber-500 text-sm sm:text-xl"></i>
                         <span class="font-black text-lg sm:text-2xl text-stone-900 dark:text-white leading-none">${avg}</span>
