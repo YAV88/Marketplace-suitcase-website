@@ -1490,8 +1490,8 @@
                     class="fa-solid fa-xmark"></i></button>
             <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
                 <div class="flex justify-between items-start gap-2">
-                    <!-- Увеличили отступ (pr-20) чтобы гарантированно не задевать крестик -->
-                    <div class="flex flex-row items-start gap-3 sm:gap-4 min-w-0 w-full pr-20 sm:pr-8">
+                    <!-- ИСПРАВЛЕНИЕ 1: Уменьшили отступ pr-20 до pr-10, чтобы придвинуть кнопки к крестику -->
+                    <div class="flex flex-row items-start gap-3 sm:gap-4 min-w-0 w-full pr-10 sm:pr-8">
                         <div id="profile-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-[#F4EFE6] dark:bg-[#2A241F] rounded-full border-[3px] border-[#D8CFC0] dark:border-[#4A3F35] shadow-sm flex items-center justify-center overflow-hidden shrink-0">
                             <img src="https://api.dicebear.com/7.x/open-peeps/svg?seed=Felix&backgroundColor=transparent" alt="Аватар" class="w-full h-full object-cover transform scale-110 mt-2">
                         </div>
@@ -1520,18 +1520,19 @@
                                 <div class="flex items-center justify-between w-full sm:w-auto gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 pl-2 sm:pl-3 rounded-lg shadow-sm">
                                     <div class="flex items-center gap-1.5 min-w-0">
                                         <i class="fa-solid fa-id-badge text-stone-400 text-[10px] sm:text-xs shrink-0"></i>
-                                        <!-- Адаптивный текст (text-[10px] для мобилок) -->
-                                        <span id="profile-account-status" class="text-[10px] sm:text-xs font-black text-stone-700 dark:text-stone-300 truncate">Базовый</span>
+                                        <!-- ИСПРАВЛЕНИЕ 2: Убрали truncate и добавили whitespace-nowrap, чтобы текст влез -->
+                                        <span id="profile-account-status" class="text-[10px] sm:text-xs font-black text-stone-700 dark:text-stone-300 whitespace-nowrap">Базовый</span>
                                     </div>
                                     <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2.5 py-1 rounded shadow-sm shrink-0 transition cursor-pointer">PRO</button>
                                 </div>
                                 
-                                <!-- Плашка Токенов (с единым дизайном кнопки) -->
+                                <!-- Плашка Токенов -->
                                 <div class="flex items-center justify-between w-full sm:w-auto gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 pl-2 sm:pl-3 rounded-lg shadow-sm">
                                     <div class="flex items-center gap-1.5 min-w-0">
                                         <i class="fa-solid fa-bolt text-brand-500 text-[10px] sm:text-xs shrink-0"></i>
                                         <span id="profile-vip-tokens" class="text-[10px] sm:text-xs font-black text-stone-900 dark:text-white truncate">0 шт.</span>
                                     </div>
+                                    <!-- ИСПРАВЛЕНИЕ 3: Дизайн кнопки "Докупить" идентичен кнопке PRO -->
                                     <button onclick="window.openTokenPurchaseModal()" class="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2.5 py-1 rounded shadow-sm shrink-0 transition cursor-pointer" data-i18n="btn_buy_more">Докупить</button>
                                 </div>
                             </div>

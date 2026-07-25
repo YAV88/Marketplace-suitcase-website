@@ -2459,12 +2459,13 @@ window.renderProfileTabs = async () => {
                 }
             }
         } else {
+            // Вызов функции генерации карточки
             const html = dataToRender
                 .map(item => window.mapItemData(item))
                 .filter(Boolean)
                 .map(mappedItem => {
-                    if (window.ItemsModule && typeof window.ItemsModule.createCardHtml === 'function') {
-                        return window.ItemsModule.createCardHtml(mappedItem, false, true);
+                    if (typeof window.createCardHtml === 'function') {
+                        return window.createCardHtml(mappedItem, false, true);
                     }
                     return ''; 
                 }).join('');
