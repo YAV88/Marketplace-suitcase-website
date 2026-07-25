@@ -2767,6 +2767,10 @@ button, a, .cursor-pointer {
   border-color: rgb(253 230 138 / var(--tw-border-opacity, 1));
 }
 
+.border-amber-200\/60{
+  border-color: rgb(253 230 138 / 0.6);
+}
+
 .border-amber-300{
   --tw-border-opacity: 1;
   border-color: rgb(252 211 77 / var(--tw-border-opacity, 1));
@@ -2884,10 +2888,6 @@ button, a, .cursor-pointer {
 
 .border-white\/20{
   border-color: rgb(255 255 255 / 0.2);
-}
-
-.border-amber-200\/60{
-  border-color: rgb(253 230 138 / 0.6);
 }
 
 .bg-\[\#0088cc\]{
@@ -3178,6 +3178,12 @@ button, a, .cursor-pointer {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
+.from-amber-50{
+  --tw-gradient-from: #fffbeb var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 251 235 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 .from-amber-500{
   --tw-gradient-from: #f59e0b var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(245 158 11 / 0) var(--tw-gradient-to-position);
@@ -3193,12 +3199,6 @@ button, a, .cursor-pointer {
 .from-transparent{
   --tw-gradient-from: transparent var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.from-amber-50{
-  --tw-gradient-from: #fffbeb var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(255 251 235 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -3219,16 +3219,16 @@ button, a, .cursor-pointer {
   --tw-gradient-to: #10b981 var(--tw-gradient-to-position);
 }
 
+.to-orange-50{
+  --tw-gradient-to: #fff7ed var(--tw-gradient-to-position);
+}
+
 .to-orange-500{
   --tw-gradient-to: #f97316 var(--tw-gradient-to-position);
 }
 
 .to-transparent{
   --tw-gradient-to: transparent var(--tw-gradient-to-position);
-}
-
-.to-orange-50{
-  --tw-gradient-to: #fff7ed var(--tw-gradient-to-position);
 }
 
 .bg-clip-text{
@@ -3978,6 +3978,12 @@ button, a, .cursor-pointer {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-\[0_2px_12px_rgba\(0\2c 0\2c 0\2c 0\.03\)\]{
+  --tw-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  --tw-shadow-colored: 0 2px 12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .shadow-\[0_4px_30px_rgba\(20\2c 184\2c 166\2c 0\.08\)\]{
   --tw-shadow: 0 4px 30px rgba(20,184,166,0.08);
   --tw-shadow-colored: 0 4px 30px var(--tw-shadow-color);
@@ -4017,12 +4023,6 @@ button, a, .cursor-pointer {
 .shadow-xl{
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-\[0_2px_12px_rgba\(0\2c 0\2c 0\2c 0\.03\)\]{
-  --tw-shadow: 0 2px 12px rgba(0,0,0,0.03);
-  --tw-shadow-colored: 0 2px 12px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -4221,6 +4221,42 @@ button, a, .cursor-pointer {
 @media (min-width: 1024px) {
   .view-list .body-badges {
     display: flex !important;
+  }
+}
+
+/* ==========================================
+   УМНАЯ КНОПКА "В СКЛАД" (Адаптивная позиция)
+   ========================================== */
+
+/* 1. По умолчанию (Сетка и VIP-лента): кнопка висит точно над фотографией */
+
+.card-fav-btn {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+/* 2. Режим списка (Мобилки): защищаем текст названия от наложения кнопки */
+
+.view-list .title-price-wrap {
+  padding-right: 2.5rem !important;
+}
+
+@media (min-width: 1024px) {
+  /* 3. Режим списка (ПК): кнопка переезжает в правый верхний угол (над описанием) */
+
+  .view-list .card-fav-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  /* Снимаем отступ с названия и перекидываем его на описание (правая колонка) */
+
+  .view-list .title-price-wrap {
+    padding-right: 0 !important;
+  }
+
+  .view-list .view-list-col-3 {
+    padding-right: 2.5rem !important;
   }
 }
 
@@ -5291,12 +5327,12 @@ button, a, .cursor-pointer {
   --tw-gradient-stops: var(--tw-gradient-from), rgb(68 64 60 / 0.2) var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 
-.dark\:to-transparent:is(.dark *){
-  --tw-gradient-to: transparent var(--tw-gradient-to-position);
-}
-
 .dark\:to-orange-900\/20:is(.dark *){
   --tw-gradient-to: rgb(124 45 18 / 0.2) var(--tw-gradient-to-position);
+}
+
+.dark\:to-transparent:is(.dark *){
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
 }
 
 .dark\:fill-stone-600:is(.dark *){
@@ -5586,6 +5622,10 @@ button, a, .cursor-pointer {
     margin-bottom: 0px;
   }
 
+  .sm\:mb-4{
+    margin-bottom: 1rem;
+  }
+
   .sm\:mb-6{
     margin-bottom: 1.5rem;
   }
@@ -5600,10 +5640,6 @@ button, a, .cursor-pointer {
 
   .sm\:mt-0{
     margin-top: 0px;
-  }
-
-  .sm\:mb-4{
-    margin-bottom: 1rem;
   }
 
   .sm\:block{

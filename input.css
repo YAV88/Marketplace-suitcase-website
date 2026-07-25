@@ -311,3 +311,34 @@
 @media (min-width: 1024px) {
     .view-list .body-badges { display: flex !important; }
 }
+
+/* ==========================================
+   УМНАЯ КНОПКА "В СКЛАД" (Адаптивная позиция)
+   ========================================== */
+
+/* 1. По умолчанию (Сетка и VIP-лента): кнопка висит точно над фотографией */
+.card-fav-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+/* 2. Режим списка (Мобилки): защищаем текст названия от наложения кнопки */
+.view-list .title-price-wrap {
+    padding-right: 2.5rem !important; 
+}
+
+@media (min-width: 1024px) {
+    /* 3. Режим списка (ПК): кнопка переезжает в правый верхний угол (над описанием) */
+    .view-list .card-fav-btn {
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+    
+    /* Снимаем отступ с названия и перекидываем его на описание (правая колонка) */
+    .view-list .title-price-wrap {
+        padding-right: 0 !important; 
+    }
+    .view-list .view-list-col-3 {
+        padding-right: 2.5rem !important;
+    }
+}

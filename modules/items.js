@@ -161,7 +161,6 @@ export const ItemsModule = {
             opacityClass = 'opacity-70 grayscale-[0.5]'; 
         }
 
-        // БЕЙДЖИ СОСТОЯНИЯ (ЕДИНСТВЕННЫЕ, КТО ОСТАЕТСЯ НА ФОТО)
         let condBadgeBase = '';
         if (isService) condBadgeBase = `<span class="bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Услуги')}</span>`;
         else if (isJob) condBadgeBase = `<span class="bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Работа')}</span>`;
@@ -173,7 +172,6 @@ export const ItemsModule = {
         }
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
-        // ПОЛНОФОРМАТНЫЕ БЕЙДЖИ ДОСТАВКИ И ОПЛАТЫ (КАК В МОДАЛКЕ)
         let extraInfoBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-truck-fast text-indigo-500"></i> PostExpress</span>`;
         if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
@@ -187,7 +185,9 @@ export const ItemsModule = {
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
-        const favHtmlImg = isOwner ? '' : `<div class="absolute top-2 right-2 z-[60]">${favBtnOnly}</div>`;
+        
+        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
+        const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
@@ -196,12 +196,14 @@ export const ItemsModule = {
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
             
+            <!-- КНОПКА СКЛАДА ВЫНЕСЕНА НА ВЕРХНИЙ УРОВЕНЬ -->
+            ${favHtmlCard}
+            
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 
-                <!-- Идеально чистая фотография (только кнопка избранного и состояние) -->
+                <!-- НА ФОТО ОСТАЛОСЬ ТОЛЬКО СОСТОЯНИЕ -->
                 <div class="img-badges">
-                    ${favHtmlImg}
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
                 </div>
@@ -211,7 +213,8 @@ export const ItemsModule = {
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-start">
                         
-                        <div class="flex flex-col mb-1.5">
+                        <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
+                        <div class="flex flex-col mb-1.5 title-price-wrap">
                             <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
                                 ${vipCrown}${i.title || 'Без названия'}
                             </h4>
@@ -220,7 +223,6 @@ export const ItemsModule = {
                             </div>
                         </div>
                         
-                        <!-- ПРЕМИАЛЬНЫЕ ПЛАШКИ ПОЯВЛЯЮТСЯ ТОЛЬКО В РЕЖИМЕ СПИСКА -->
                         <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
                             ${statusBadgeRow}
                             ${extraInfoBadges}

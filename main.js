@@ -1214,41 +1214,98 @@ window.checkAuthAndOpenAddModal = async () => {
 window.toggleFavoriteModal = async (event) => {
     if (event) event.stopPropagation();
 
+    // 1. Проверка авторизации
     if (!window.currentUser) {
         window.openModal('auth-modal');
         window.showToast((typeof window.t === 'function') ? window.t('auth_hint') : "Войдите в аккаунт", true);
         return;
     }
 
-    // Если карточка открыта, ID всегда лежит тут
+    // 2. Получаем ID текущего открытого товара
     const itemId = window.currentOpenedItemId || window.activeModalItemId;
 
-    if (itemId) {
-        // Вызываем исправленную базовую функцию без кнопки из карточки
-        await window.toggleFavorite(null, null, itemId);
-
-        // Визуально переключаем саму кнопку в модалке
-        const isSaved = window.userFavorites.has(itemId);
-        const favBtn = document.getElementById('modal-fav-btn');
-        const favIcon = document.querySelector('#modal-fav-btn i');
-
-        if (favBtn && favIcon) {
-            if (isSaved) {
-                favBtn.classList.remove('text-stone-400');
-                favBtn.classList.add('text-brand-600');
-                favIcon.className = 'fa-solid fa-box text-lg scale-110 transition-transform';
-            } else {
-                favBtn.classList.add('text-stone-400');
-                favBtn.classList.remove('text-brand-600');
-                favIcon.className = 'fa-solid fa-box-open text-lg transition-transform';
-            }
-
-            favBtn.classList.add('scale-110');
-            setTimeout(() => favBtn.classList.remove('scale-110'), 200);
-        }
-    } else {
+    if (!itemId) {
         window.showToast("Ошибка: ID товара не найден", true);
-        console.error("currentOpenedItemId is null!");
+        return;
+    }
+
+    if (!window.userFavorites) window.userFavorites = new Set();
+    
+    // Проверяем, есть ли товар УЖЕ на складе
+    const isLiked = window.userFavorites.has(itemId);
+
+    // ==========================================
+    // 3. ОПТИМИСТИЧНЫЙ UI ДЛЯ МОДАЛЬНОГО ОКНА
+    // ==========================================
+    const favBtn = document.getElementById('modal-fav-btn');
+    const favIcon = document.querySelector('#modal-fav-btn i');
+
+    if (favBtn && favIcon) {
+        if (!isLiked) { // Товар ДОБАВЛЯЕТСЯ
+            favBtn.classList.remove('text-stone-400');
+            favBtn.classList.add('text-brand-600');
+            favIcon.className = 'fa-solid fa-box text-lg scale-110 transition-transform';
+        } else { // Товар УБИРАЕТСЯ
+            favBtn.classList.add('text-stone-400');
+            favBtn.classList.remove('text-brand-600');
+            favIcon.className = 'fa-solid fa-box-open text-lg transition-transform';
+        }
+
+        // Микро-анимация прыжка кнопки
+        favBtn.classList.add('scale-110');
+        setTimeout(() => favBtn.classList.remove('scale-110'), 200);
+    }
+
+    // ==========================================
+    // 4. СИНХРОНИЗАЦИЯ С КАРТОЧКОЙ В ЛЕНТЕ НА ЗАДНЕМ ПЛАНЕ
+    // ==========================================
+    // А) Обновляем счетчик
+    const countContainer = document.getElementById(`fav-count-${itemId}`);
+    if (countContainer) {
+        const valEl = countContainer.querySelector('.count-val');
+        let currentCount = parseInt(valEl.innerText) || 0;
+
+        if (!isLiked) {
+            currentCount++;
+            countContainer.classList.add('text-brand-500');
+        } else {
+            currentCount = Math.max(0, currentCount - 1);
+            if (currentCount === 0) countContainer.classList.remove('text-brand-500');
+        }
+        
+        valEl.innerText = currentCount;
+        valEl.classList.add('scale-125', 'text-brand-600');
+        setTimeout(() => valEl.classList.remove('scale-125', 'text-brand-600'), 200);
+    }
+
+    // Б) Обновляем саму иконку на карточке в ленте
+    const cardBtnWrapper = document.querySelector(`.item-card[data-id="${itemId}"]`);
+    if (cardBtnWrapper) {
+        // Ищем иконку внутри карточки по всем возможным местам
+        const cardBtnIcon = cardBtnWrapper.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
+        if (cardBtnIcon) {
+            cardBtnIcon.className = !isLiked 
+                ? 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform' 
+                : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
+        }
+    }
+
+    // ==========================================
+    // 5. ОТПРАВКА ЗАПРОСА В БАЗУ ДАННЫХ
+    // ==========================================
+    try {
+        if (isLiked) {
+            window.userFavorites.delete(itemId);
+            window.showToast("Убрано со склада");
+            await window.supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
+        } else {
+            window.userFavorites.add(itemId);
+            window.showToast("Добавлено на склад", "success");
+            await window.supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
+        }
+    } catch (e) {
+        console.error("Ошибка сохранения на склад:", e);
+        window.showToast("Ошибка соединения с базой", true);
     }
 };
 
