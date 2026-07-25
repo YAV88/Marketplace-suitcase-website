@@ -2409,6 +2409,7 @@ window.renderProfileTabs = async () => {
 
     if (!grid) return;
 
+    // Спиннер загрузки
     grid.innerHTML = '<div class="col-span-full flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-3xl"></i></div>';
     if (emptyState) emptyState.style.display = 'none';
 
@@ -2416,7 +2417,7 @@ window.renderProfileTabs = async () => {
         let dataToRender = [];
 
         if (window.currentProfileTab === 'saved') {
-            // ИСПРАВЛЕНИЕ: Ищем лайки в таблице favorites!
+            // Загрузка Склада
             const { data: favs, error: favErr } = await window.supabase
                 .from('favorites')
                 .select('item_id')
@@ -2435,25 +2436,20 @@ window.renderProfileTabs = async () => {
                 dataToRender = data || [];
             }
         } else {
-            // Если данные есть — мапим их и превращаем в HTML
-            const html = dataToRender
-                .map(item => window.mapItemData(item))
-                .filter(Boolean)
-                .map(mappedItem => {
-                    if (typeof window.createCardHtml === 'function') {
-                        return window.createCardHtml(mappedItem, false, true);
-                    }
-                    return ''; 
-                }).join('');
-            
-            grid.innerHTML = html;
-            
-            // ---> ИСПРАВЛЕНИЕ: ЗАПУСКАЕМ АНИМАЦИЮ ПРОЯВЛЕНИЯ КАРТОЧЕК <---
-            if (typeof window.animateVisibleElements === 'function') {
-                setTimeout(() => window.animateVisibleElements(), 50);
+            // ВОССТАНОВЛЕНО: Загрузка "Моих вещей"
+            if (window.currentUser) {
+                const { data, error } = await window.supabase
+                    .from('items')
+                    .select('*')
+                    .eq('user_id', window.currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                dataToRender = data || [];
             }
         }
 
+        // Очищаем спиннер
         grid.innerHTML = '';
 
         if (dataToRender.length === 0) {
@@ -2465,7 +2461,7 @@ window.renderProfileTabs = async () => {
                 }
             }
         } else {
-            // Вызов функции генерации карточки
+            // Рендер карточек
             const html = dataToRender
                 .map(item => window.mapItemData(item))
                 .filter(Boolean)
@@ -2477,6 +2473,11 @@ window.renderProfileTabs = async () => {
                 }).join('');
             
             grid.innerHTML = html;
+            
+            // ЗАПУСК АНИМАЦИИ (теперь карточки будут плавно появляться, а не висеть прозрачными)
+            if (typeof window.animateVisibleElements === 'function') {
+                setTimeout(() => window.animateVisibleElements(), 50);
+            }
         }
 
         if (searchInput && searchInput.value && typeof window.filterProfileItems === 'function') {

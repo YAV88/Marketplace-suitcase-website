@@ -1488,56 +1488,58 @@
             <button onclick="window.closeModal('profile-modal')"
                 class="absolute top-4 sm:top-5 right-4 sm:right-5 z-20 text-stone-400 hover:text-brand-600 text-3xl cursor-pointer"><i
                     class="fa-solid fa-xmark"></i></button>
-            <div class="p-4 sm:p-5 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3 sm:gap-4">
+            <div class="p-4 sm:p-5 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 flex flex-col gap-3">
                 <div class="flex justify-between items-start gap-2">
-                    <!-- ИСПРАВЛЕНИЕ 1: Уменьшили отступ pr-20 до pr-10, чтобы придвинуть кнопки к крестику -->
-                    <div class="flex flex-row items-start gap-3 sm:gap-4 min-w-0 w-full pr-10 sm:pr-8">
-                        <div id="profile-avatar-container" class="w-14 h-14 sm:w-16 sm:h-16 bg-[#F4EFE6] dark:bg-[#2A241F] rounded-full border-[3px] border-[#D8CFC0] dark:border-[#4A3F35] shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+                    <!-- Отступ pr-8 защищает от наложения на крестик закрытия -->
+                    <div class="flex flex-row items-center sm:items-start gap-3 min-w-0 w-full pr-8">
+                        <div id="profile-avatar-container" class="w-12 h-12 sm:w-16 sm:h-16 bg-[#F4EFE6] dark:bg-[#2A241F] rounded-full border-[3px] border-[#D8CFC0] dark:border-[#4A3F35] shadow-sm flex items-center justify-center overflow-hidden shrink-0">
                             <img src="https://api.dicebear.com/7.x/open-peeps/svg?seed=Felix&backgroundColor=transparent" alt="Аватар" class="w-full h-full object-cover transform scale-110 mt-2">
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <div class="flex items-center justify-between w-full">
-                                <div class="flex items-center gap-2 mb-0.5 pr-2 min-w-0">
-                                    <h2 id="profile-name" class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <h2 id="profile-name" class="text-base sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">
                                         Гость
                                     </h2>
                                     <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
                                 </div>
                                 
-                                <div class="flex items-center gap-1.5 sm:gap-2 ml-1 shrink-0">
-                                    <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 dark:text-stone-400 hover:text-brand-600 hover:bg-brand-50 transition-all cursor-pointer shrink-0" title="Редактировать профиль">
-                                        <i class="fa-solid fa-pen text-xs"></i>
+                                <!-- Компактные кнопки редактирования и выхода -->
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-7 h-7 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-brand-600 shadow-sm transition-all shrink-0">
+                                        <i class="fa-solid fa-pen text-[10px]"></i>
                                     </button>
-                                    <button id="profile-logout-btn" onclick="window.logout()" class="hidden items-center gap-1.5 px-2 sm:px-3 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-xs font-bold text-stone-500 dark:text-stone-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer shrink-0" title="Выйти из аккаунта">
-                                        <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline" data-i18n="nav_logout">Выйти</span>
+                                    <button id="profile-logout-btn" onclick="window.logout()" class="hidden items-center justify-center w-7 h-7 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-red-500 shadow-sm transition-all shrink-0">
+                                        <i class="fa-solid fa-right-from-bracket text-[10px]"></i>
                                     </button>
                                 </div>
                             </div>
-                            <p id="profile-email" class="text-xs sm:text-sm text-stone-500 truncate">Не авторизован</p>
-                            
-                            <div id="profile-economy-section" class="hidden flex-wrap items-center gap-2 mt-3 w-full">
-                                <!-- Плашка PRO -->
-                                <div class="flex items-center justify-between w-full sm:w-auto gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 pl-2 sm:pl-3 rounded-lg shadow-sm">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <i class="fa-solid fa-id-badge text-stone-400 text-[10px] sm:text-xs shrink-0"></i>
-                                        <!-- ИСПРАВЛЕНИЕ 2: Убрали truncate и добавили whitespace-nowrap, чтобы текст влез -->
-                                        <span id="profile-account-status" class="text-[10px] sm:text-xs font-black text-stone-700 dark:text-stone-300 whitespace-nowrap">Базовый</span>
-                                    </div>
-                                    <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2.5 py-1 rounded shadow-sm shrink-0 transition cursor-pointer">PRO</button>
-                                </div>
-                                
-                                <!-- Плашка Токенов -->
-                                <div class="flex items-center justify-between w-full sm:w-auto gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 pl-2 sm:pl-3 rounded-lg shadow-sm">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <i class="fa-solid fa-bolt text-brand-500 text-[10px] sm:text-xs shrink-0"></i>
-                                        <span id="profile-vip-tokens" class="text-[10px] sm:text-xs font-black text-stone-900 dark:text-white truncate">0 шт.</span>
-                                    </div>
-                                    <!-- ИСПРАВЛЕНИЕ 3: Дизайн кнопки "Докупить" идентичен кнопке PRO -->
-                                    <button onclick="window.openTokenPurchaseModal()" class="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2.5 py-1 rounded shadow-sm shrink-0 transition cursor-pointer" data-i18n="btn_buy_more">Докупить</button>
-                                </div>
-                            </div>
+                            <p id="profile-email" class="text-[10px] sm:text-sm text-stone-500 truncate">Не авторизован</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- ПЛАШКИ PRO И ТОКЕНОВ (Одинаковый стиль, выравнивание по ширине) -->
+                <div id="profile-economy-section" class="hidden flex-row flex-wrap items-center gap-2 w-full mt-1">
+                    
+                    <!-- Плашка PRO -->
+                    <div class="flex-1 flex items-center justify-between bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 px-2 rounded-lg shadow-sm min-w-[130px]">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <i class="fa-solid fa-id-badge text-stone-400 text-[10px] shrink-0"></i>
+                            <span id="profile-account-status" class="text-[10px] font-black text-stone-700 dark:text-stone-300 truncate">Базовый</span>
+                        </div>
+                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2 py-1 rounded shadow-sm shrink-0">Купить PRO</button>
+                    </div>
+                    
+                    <!-- Плашка Токенов -->
+                    <div class="flex-1 flex items-center justify-between bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 px-2 rounded-lg shadow-sm min-w-[130px]">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <i class="fa-solid fa-bolt text-brand-500 text-[10px] shrink-0"></i>
+                            <span id="profile-vip-tokens" class="text-[10px] font-black text-stone-900 dark:text-white truncate">0 шт.</span>
+                        </div>
+                        <button onclick="window.closeModal('profile-modal'); window.openTokenPurchaseModal();" class="text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2 py-1 rounded shadow-sm shrink-0" data-i18n="btn_buy_more">Докупить</button>
+                    </div>
+
                 </div>
             </div>
 
