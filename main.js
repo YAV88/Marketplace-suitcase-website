@@ -2428,7 +2428,7 @@ window.switchProfileTab = async (tab) => {
     await window.renderProfileTabs();
 };
 
-// 2. Умная загрузка данных (с поддержкой отзывов)
+// 2. Умная загрузка данных (с поддержкой отзывов и защитой сетки)
 window.renderProfileTabs = async () => {
     const grid = document.getElementById('profile-items-grid');
     const emptyState = document.getElementById('profile-empty');
@@ -2444,8 +2444,8 @@ window.renderProfileTabs = async () => {
         // ЛОГИКА ДЛЯ НОВОЙ ВКЛАДКИ "ОТЗЫВЫ"
         // ==========================================
         if (window.currentProfileTab === 'reviews') {
-            // Принудительно меняем класс сетки на вертикальный список для отзывов
-            grid.className = 'flex flex-col gap-3 w-full'; 
+            // ИСПРАВЛЕНИЕ: Центрируем отзывы и не даем им растягиваться на весь экран (max-w-2xl mx-auto)
+            grid.className = 'flex flex-col gap-4 w-full max-w-2xl mx-auto mt-2'; 
 
             const { data: reviews, error } = await window.supabase
                 .from('reviews')
@@ -2479,32 +2479,35 @@ window.renderProfileTabs = async () => {
                 // Считаем средний рейтинг
                 const avg = (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1);
                 
-                // Премиальная шапка рейтинга
+                // ПРЕМИАЛЬНЫЙ ДИЗАЙН: Плашка рейтинга с градиентом
                 let html = `
-                <div class="w-full flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800 mb-2 shadow-sm">
-                    <span class="font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest text-xs">Ваш рейтинг:</span>
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-star text-amber-500 text-lg"></i> <span class="font-black text-xl text-stone-900 dark:text-white">${avg}</span></div>
+                <div class="w-full flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-5 sm:p-6 rounded-2xl border border-amber-200/60 dark:border-amber-800/50 mb-4 shadow-sm gap-3">
+                    <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-xs sm:text-sm">Ваш рейтинг продавца</span>
+                    <div class="flex items-center gap-2.5 bg-white dark:bg-stone-900 px-4 py-2 rounded-xl shadow-sm border border-amber-100 dark:border-stone-800">
+                        <i class="fa-solid fa-star text-amber-500 text-xl"></i>
+                        <span class="font-black text-2xl text-stone-900 dark:text-white leading-none">${avg}</span>
+                    </div>
                 </div>`;
 
-                // Рендер карточек отзывов
+                // Рендер карточек отзывов (чистый, не растянутый дизайн)
                 html += reviews.map(r => {
                     const revInfo = usersMap[r.reviewer_id] || {};
                     const revName = revInfo.name || 'Покупатель';
                     const revAvatar = revInfo.avatar
-                        ? `<img src="${revInfo.avatar}" class="w-10 h-10 rounded-full object-cover shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">`
-                        : `<div class="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-sm text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
+                        ? `<img src="${revInfo.avatar}" class="w-12 h-12 rounded-full object-cover shrink-0 border-2 border-stone-200 dark:border-stone-700 shadow-sm">`
+                        : `<div class="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-lg text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
 
                     return `
-                    <div class="bg-white dark:bg-stone-800 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-700 w-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition duration-300">
-                        <div class="flex justify-between items-start mb-3 gap-2">
+                    <div class="bg-white dark:bg-stone-800 p-5 sm:p-6 rounded-2xl border border-stone-200 dark:border-stone-700 w-full shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition duration-300">
+                        <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-3 sm:mb-4">
                             <div class="flex items-center gap-3 min-w-0">
                                 ${revAvatar}
                                 <div>
-                                    <div class="font-black text-sm text-stone-900 dark:text-white truncate">${revName}</div>
-                                    <div class="text-[10px] text-stone-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}</div>
+                                    <div class="font-black text-sm sm:text-base text-stone-900 dark:text-white truncate">${revName}</div>
+                                    <div class="text-[10px] sm:text-xs text-stone-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}</div>
                                 </div>
                             </div>
-                            <div class="flex gap-0.5 text-amber-500 text-[10px] sm:text-xs shrink-0 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-md border border-amber-100 dark:border-amber-800/50">
+                            <div class="flex gap-0.5 text-amber-500 text-[10px] sm:text-xs shrink-0 bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1.5 rounded-lg border border-amber-100 dark:border-amber-800/50">
                                 ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
                             </div>
                         </div>
@@ -2521,8 +2524,8 @@ window.renderProfileTabs = async () => {
         // ЛОГИКА ДЛЯ "МОИХ ВЕЩЕЙ" И "СКЛАДА"
         // ==========================================
         
-        // Возвращаем правильный класс сетки/списка (если возвращаемся с отзывов)
-        grid.className = `view-${window.currentViewMode || 'grid'}`;
+        // ИСПРАВЛЕНИЕ: Жестко возвращаем классы 'grid' и 'w-full', чтобы сетка на ПК работала корректно
+        grid.className = `grid w-full items-stretch view-${window.currentViewMode || 'grid'}`;
 
         let dataToRender = [];
 
