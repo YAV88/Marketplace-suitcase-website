@@ -1597,18 +1597,22 @@
 
         <div id="item-details-modal-content" class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[100dvh] sm:h-[90vh] sm:rounded-[2rem] shadow-2xl relative border-0 sm:border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             
-            <button onclick="window.closeModal('item-modal')" class="fixed sm:absolute top-4 right-4 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <!-- Умный контейнер для кнопок: сам прижимается в правый верхний угол -->
-            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 flex items-center gap-2 sm:gap-3 z-50">
+            <!-- Кнопка закрытия (Крестик) -->
+            <button onclick="window.closeModal('item-modal')" class="fixed sm:absolute top-4 right-4 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Умный контейнер для кнопок: привязан левее крестика (right-16) и на том же уровне слоя z-[60] -->
+            <div class="fixed sm:absolute top-4 right-16 sm:right-[4.5rem] flex items-center gap-2 sm:gap-3 z-[60]">
                 
-                <!-- Кнопка Поделиться (мы убрали у нее absolute и right) -->
-                <button id="modal-share-btn" onclick="window.shareItem()" class="w-8 h-8 sm:w-10 sm:h-10 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer text-stone-600 dark:text-stone-300">
-                    <i class="fa-solid fa-share-nodes text-xs sm:text-sm"></i>
+                <!-- Кнопка Поделиться (сделали дизайн в точности как у крестика) -->
+                <button id="modal-share-btn" onclick="window.shareItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md hover:bg-brand-600 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-share-nodes text-sm"></i>
                 </button>
                 
-                <!-- Кнопка На склад (мы убрали у нее absolute и right) -->
-                <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer text-stone-400">
-                    <i class="fa-solid fa-box-open transition-transform text-xs sm:text-sm" id="modal-fav-icon"></i>
+                <!-- Кнопка На склад -->
+                <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-400 rounded-full flex items-center justify-center transition shadow-md hover:text-brand-600 cursor-pointer">
+                    <i class="fa-solid fa-box-open transition-transform text-sm" id="modal-fav-icon"></i>
                 </button>
                 
             </div>
