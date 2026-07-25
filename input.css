@@ -6,69 +6,32 @@
 @tailwind utilities;
 
 @layer base {
-    /* ==========================================
-       БАЗОВАЯ ТИПОГРАФИКА И ФОН
-       ========================================== */
-    html { 
-        scrollbar-gutter: stable; 
-        overflow-x: hidden; 
-        max-width: 100vw; 
-    }
-
+    html { scrollbar-gutter: stable; overflow-x: hidden; max-width: 100vw; }
     body {
         @apply bg-[#F4EFE6] text-[#3E362E] transition-colors duration-300;
-        display: flex; 
-        flex-direction: column; 
-        min-height: 100vh;
-        overflow-x: hidden; 
-        max-width: 100%; 
-        position: relative;
+        display: flex; flex-direction: column; min-height: 100vh;
+        overflow-x: hidden; max-width: 100%; position: relative;
     }
-
-    html.dark body, .dark body { 
-        @apply bg-[#2A241F] text-[#E8E2D9]; 
-    }
-
+    html.dark body, .dark body { @apply bg-[#2A241F] text-[#E8E2D9]; }
     main { flex: 1; }
 
-    body, button, input, select, textarea, span, p, div {
-        font-family: 'Inter', sans-serif !important;
-    }
+    body, button, input, select, textarea, span, p, div { font-family: 'Inter', sans-serif !important; }
 
-    h1, h2, h3, h4, h5, h6,
-    .font-display, .price-text, #modal-price, #add-submit-btn,
-    #auth-submit-btn, #btn-contact-seller, #btn-crypto-paid,
-    #btn-header-add, #btn-mobile-add {
-        font-family: 'Tektur', sans-serif !important;
-        font-weight: 800 !important;
-        letter-spacing: 0.5px !important;
-        text-transform: uppercase !important; 
+    h1, h2, h3, h4, h5, h6, .font-display, .price-text, #modal-price, #add-submit-btn,
+    #auth-submit-btn, #btn-contact-seller, #btn-crypto-paid, #btn-header-add, #btn-mobile-add {
+        font-family: 'Tektur', sans-serif !important; font-weight: 800 !important;
+        letter-spacing: 0.5px !important; text-transform: uppercase !important; 
     }
-
-    img {
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        transform: translateZ(0); 
-        -webkit-transform: translateZ(0);
-    }
+    img { backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0); -webkit-transform: translateZ(0); }
 }
 
 @layer components {
-
     /* ==========================================
        УМНАЯ СЕТКА МОДАЛЬНОГО ОКНА
        ========================================== */
-    .item-details-layout {
-        display: flex;
-        flex-direction: column;
-    }
+    .item-details-layout { display: flex; flex-direction: column; }
     @media (min-width: 1024px) {
-        .item-details-layout {
-            display: grid;
-            grid-template-columns: 55% 1fr;
-            grid-template-rows: auto 1fr;
-            align-items: start;
-        }
+        .item-details-layout { display: grid; grid-template-columns: 55% 1fr; grid-template-rows: auto 1fr; align-items: start; }
         .il-photo { grid-column: 1; grid-row: 1; }
         .il-desc { grid-column: 1; grid-row: 2; padding-right: 2rem; }
         .il-info { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; padding-left: 1rem; }
@@ -77,314 +40,144 @@
     /* ==========================================
        ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ
        ========================================== */
-    input[type="text"], input[type="number"], input[type="email"],
-    input[type="password"], input[type="tel"], textarea {
-        cursor: text !important; 
-        caret-color: #0d9488; 
-        font-size: 16px !important;
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
+        cursor: text !important; caret-color: #0d9488; font-size: 16px !important;
     }
-
     input:focus, textarea:focus, select:focus {
-        border-color: #0d9488 !important; 
-        outline: none !important;
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+        border-color: #0d9488 !important; outline: none !important; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
     }
-
     select {
-        appearance: none !important;
-        -webkit-appearance: none !important; 
-        -moz-appearance: none !important; 
-        background-color: transparent !important; 
-        background-image: none !important;
-        cursor: pointer !important; 
-        -webkit-tap-highlight-color: transparent !important;
+        appearance: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; 
+        background-color: transparent !important; background-image: none !important;
+        cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;
     }
-    
     select::-ms-expand { display: none !important; }
     .dark select { background-image: none !important; }
-
     select optgroup { font-weight: 800 !important; color: #0d9488 !important; background: #f0fdfa !important; padding: 5px !important; font-size: 16px !important; }
     select option { font-weight: 500 !important; color: #1c1917 !important; background: #fff !important; padding: 5px !important; font-size: 16px !important; }
-
     .dark select optgroup { background: #134e4a !important; color: #ccfbf1 !important; }
     .dark select option { background: #2A241F !important; color: #E8E2D9 !important; }
+    .bg-stone-800 select, .bg-stone-900 select, .bg-black select { color: #ffffff !important; }
+    .bg-stone-800 select option, .bg-stone-900 select option, .bg-black select option { color: #1c1917 !important; }
 
-    .bg-stone-800 select, .bg-stone-900 select, .bg-stone-950 select, .bg-black select { color: #ffffff !important; }
-    .bg-stone-800 select option, .bg-stone-900 select option, .bg-stone-950 select option, .bg-black select option { color: #1c1917 !important; }
-
-    input[type="number"]::-webkit-inner-spin-button, 
-    input[type="number"]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
-    }
-    input[type="number"] { 
-        appearance: textfield; 
-        -moz-appearance: textfield; 
-    }
+    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
 
     /* ==========================================
-       ГЛОБАЛЬНАЯ КАРТОЧКА ТОВАРА (POSTER STYLE)
+       ГЛОБАЛЬНАЯ ЧИСТКА АРТЕФАКТОВ СЕТКИ
+       ========================================== */
+    .divide-y > :not([hidden]) ~ :not([hidden]), .divide-x > :not([hidden]) ~ :not([hidden]) { border-width: 0px !important; }
+    #main-items-grid, #profile-items-grid, #seller-items-grid, .view-grid, .view-list { background-color: transparent !important; }
+
+    /* ==========================================
+       БАЗОВАЯ КАРТОЧКА ТОВАРА
        ========================================== */
     .item-card {
-        display: flex !important;
-        flex-direction: column !important;
-        height: 100% !important;
-        border-radius: 0.75rem !important; /* Уменьшили радиус */
-        border: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        overflow: hidden;
-        /* Анимация появления */
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        display: flex !important; flex-direction: column !important; height: 100% !important;
+        border-radius: 0.75rem !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; overflow: hidden;
+        opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease-out, transform 0.4s ease-out;
     }
-
-    .card-body-wrap {
-        display: flex !important;
-        flex-direction: column !important;
-        flex-grow: 1 !important;
-        justify-content: space-between !important;
-    }
-
-    .item-card.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+    .card-body-wrap { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; justify-content: space-between !important; }
+    .item-card.is-visible { opacity: 1; transform: translateY(0); }
     .card-img-wrap {
-        border-radius: 0.75rem !important;
-        box-shadow: 0 4px 10px -2px rgba(13, 148, 136, 0.12) !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-        z-index: 1;
-        overflow: hidden !important;
-        position: relative;
+        border-radius: 0.75rem !important; box-shadow: 0 4px 10px -2px rgba(13, 148, 136, 0.12) !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative;
     }
+    .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; }
+    .item-card:hover .card-img-wrap { transform: translateY(-4px) !important; box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.35) !important; }
 
-    .card-img-wrap img { 
-        width: 100% !important; 
-        height: 100% !important; 
-        object-fit: cover !important; 
-        position: absolute !important; 
-        top: 0; left: 0; 
-    }
-
-    .item-card:hover .card-img-wrap {
-        transform: translateY(-4px) !important;
-        box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.35) !important;
-    }
-
-    /* Текст названия (обрезание и иконки) */
     .item-card h4 {
-        display: -webkit-box !important;
-        line-clamp: 2 !important;
-        -webkit-line-clamp: 2 !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
-        word-break: break-word !important; 
-        white-space: normal !important;
-        line-height: 1.25 !important;
-        margin-bottom: 2px !important;
+        display: -webkit-box !important; line-clamp: 2 !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
+        overflow: hidden !important; word-break: break-word !important; white-space: normal !important; line-height: 1.25 !important; margin-bottom: 2px !important;
     }
-
-    .item-card h4 i.fa-crown, 
-    .item-card h4 i.fa-gem,
-    .item-card h4 i.fa-fire-flame-curved {
-        display: inline !important; 
-        margin-right: 4px !important;
-    }
-
-    .item-card h4 i.fa-fire-flame-curved {
-        color: #f97316 !important; 
-        font-size: 1.1em !important;
-        filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4)) !important;
-    }
+    .item-card h4 i.fa-crown, .item-card h4 i.fa-gem, .item-card h4 i.fa-fire-flame-curved { display: inline !important; margin-right: 4px !important; }
+    .item-card h4 i.fa-fire-flame-curved { color: #f97316 !important; font-size: 1.1em !important; filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4)) !important; }
 
     /* ==========================================
        VIP КАРТОЧКИ И ЭФФЕКТЫ
        ========================================== */
-    .vip-card .card-img-wrap,
-    #vip-items-grid .card-img-wrap {
-        border: 2px solid #f59e0b !important;
-        box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.4) !important;
-    }
-
-    .vip-card:hover .card-img-wrap,
-    #vip-items-grid .item-card:hover .card-img-wrap {
-        border-color: #d97706 !important;
-        box-shadow: 0 0 25px 4px rgba(245, 158, 11, 0.6) !important;
-    }
-
+    .vip-card .card-img-wrap, #vip-items-grid .card-img-wrap { border: 2px solid #f59e0b !important; box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.4) !important; }
+    .vip-card:hover .card-img-wrap, #vip-items-grid .item-card:hover .card-img-wrap { border-color: #d97706 !important; box-shadow: 0 0 25px 4px rgba(245, 158, 11, 0.6) !important; }
     .vip-card::after { 
-        content: ''; 
-        position: absolute; top: 0; left: -150%; 
-        width: 50%; height: 100%; 
+        content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; 
         background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%); 
-        transform: skewX(-25deg); 
-        animation: shimmer 4s infinite; 
-        z-index: 10; pointer-events: none; 
+        transform: skewX(-25deg); animation: shimmer 4s infinite; z-index: 10; pointer-events: none; 
     }
 
     /* ==========================================
        РЕЖИМ СЕТКИ (GRID)
        ========================================== */
-    .view-grid { 
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
-        gap: 0.5rem !important; 
-        align-items: stretch !important;
-    }
+    .view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.5rem !important; align-items: stretch !important; }
     @media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.75rem !important; } }
     @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1rem !important; } }
     @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
     @media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
-    @media (min-width: 1536px) { .view-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; } }
-    @media (min-width: 1800px) { .view-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; } }
+    
+    .view-grid .card-img-wrap { height: 120px !important; min-height: 120px !important; max-height: 120px !important; flex-shrink: 0 !important; }
+    @media (min-width: 640px) { .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; } }
+    @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; } }
 
-    .view-grid .card-img-wrap { 
-        height: 120px !important; min-height: 120px !important; max-height: 120px !important; flex-shrink: 0 !important; 
-    }
-    @media (min-width: 640px) { .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; max-height: 150px !important; } }
-    @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; max-height: 190px !important; } }
-
-    .view-grid .card-body-wrap {
-        padding: 0.75rem 0 0 0 !important;
-        background: transparent !important;
-    }
-
-    .view-grid .view-list-city, 
-    .view-grid .view-list-desc { display: none !important; }
+    .view-grid .card-body-wrap { padding: 0.75rem 0 0 0 !important; background: transparent !important; }
+    .view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
     .view-grid-city { margin-top: auto !important; }
 
     @media (max-width: 639px) {
-        .view-grid .item-card .mt-2.flex.flex-wrap, 
-        .view-grid .item-card .text-[10px].text-stone-500 { display: none !important; }
+        .view-grid .item-card .mt-2.flex.flex-wrap, .view-grid .item-card .text-[10px].text-stone-500 { display: none !important; }
         .view-grid .card-body-wrap { min-height: 90px !important; padding: 0.5rem 0 0 0 !important; }
-        .view-grid h4 { font-size: 0.85rem !important; line-height: 1.25 !important; min-height: 2.5em !important; margin-bottom: 2px !important; }
+        .view-grid h4 { font-size: 0.85rem !important; min-height: 2.5em !important; }
         .view-grid .price-text { font-size: 1rem !important; }
     }
 
     /* ==========================================
-       РЕЖИМ СПИСКА (LIST)
+       РЕЖИМ СПИСКА (МОНОЛИТНЫЕ КАРТОЧКИ)
        ========================================== */
-    .view-list { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+    .view-list { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; padding-bottom: 1rem; }
     
-    .view-list .item-card { 
-        flex-direction: row !important;
-        align-items: stretch !important;
-        background-color: transparent !important;
-        border: none !important;
-        border-bottom: none !important; /* Убрали разделительную черту */
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        padding-bottom: 0 !important; /* Убираем нижний паддинг */
-        margin-bottom: 2rem !important; /* Увеличиваем отступ между карточками */
+    .view-list .item-card, #profile-items-grid .item-card, #seller-items-grid .item-card { 
+        flex-direction: row !important; align-items: stretch !important;
+        background-color: #ffffff !important; border: 1px solid #e5e7eb !important; border-radius: 1rem !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03) !important;
+        padding: 0.5rem !important; margin-bottom: 0 !important; height: auto !important;
+    }
+    .dark .view-list .item-card, .dark #profile-items-grid .item-card, .dark #seller-items-grid .item-card {
+        background-color: #292524 !important; border-color: #3f3f46 !important;
     }
 
-    .view-list .view-grid-city,
-    .view-list .view-list-desc { display: none !important; }
+    .view-list .view-grid-city, .view-list .view-list-desc { display: none !important; }
     .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
-    .view-list .mt-auto.pt-3.border-t { border-top: none !important; padding-top: 0 !important; font-size: 0.9rem !important; color: #9ca3af; }
-    
-    /* Прячем значки в теле карточки по умолчанию (ПК/Сетка) */
     .body-badges { display: none !important; }
 
     @media (max-width: 768px) {
-        /* Уменьшили расстояние между карточками (gap и margin) */
-        .view-list { gap: 0.5rem !important; }
-        
-        .view-list .item-card { 
-            height: auto !important; 
-            min-height: 125px !important; 
-            padding-bottom: 0.75rem !important;
-            margin-bottom: 0.75rem !important;
-        }
-        
-        /* Делаем фото гигантским и главным элементом карточки */
-        .view-list .card-img-wrap { 
-            width: 45% !important; 
-            min-width: 140px !important; 
-            max-width: 190px !important;
-            height: auto !important; 
-        }
-        
-        .view-list .card-body-wrap { 
-            padding: 0.5rem 0.5rem 0.5rem 0.75rem !important; 
-            gap: 2px !important; 
-        }
-        
-        .view-list h4 { 
-            min-height: auto !important; 
-            margin-bottom: 2px !important; 
-            margin-top: 0 !important; 
-            font-size: 0.88rem !important; 
-        }
-        
-        .view-list .price-text { 
-            font-size: 1.2rem !important; 
-            font-weight: 900; 
-        }
-        
-        .view-list .view-list-desc-mobile { display: none !important; }
-
-        /* МАГИЯ ПЕРЕНОСА: Прячем значки с фото, показываем под текстом */
-        .view-list .img-badges { display: none !important; }
-        .view-list .body-badges { display: flex !important; }
-        
-        /* Сброс стилей профиля (чтобы он был таким же компактным) */
-        #profile-items-grid { gap: 0.5rem !important; }
-        #profile-items-grid .item-card { 
-            height: auto !important; 
-            min-height: 130px !important; 
-            margin-bottom: 0 !important; 
-            padding-bottom: 0 !important; 
-            border-bottom: none !important; /* Убираем черту в профиле */
-        }
-        #profile-items-grid .card-img-wrap { 
-            width: 42% !important; 
-            min-width: 130px !important; 
-        }
+        .view-list .item-card, #profile-items-grid .item-card, #seller-items-grid .item-card { min-height: 125px !important; }
+        .view-list .card-img-wrap, #profile-items-grid .card-img-wrap, #seller-items-grid .card-img-wrap { width: 42% !important; min-width: 130px !important; max-width: 160px !important; height: auto !important; box-shadow: none !important; }
+        .view-list .card-body-wrap, #profile-items-grid .card-body-wrap, #seller-items-grid .card-body-wrap { padding: 0.25rem 0.25rem 0.25rem 0.75rem !important; gap: 2px !important; }
+        .view-list h4, #profile-items-grid h4, #seller-items-grid h4 { min-height: auto !important; margin-bottom: 2px !important; margin-top: 0 !important; font-size: 0.88rem !important; }
+        .view-list .price-text, #profile-items-grid .price-text, #seller-items-grid .price-text { font-size: 1.2rem !important; font-weight: 900; }
+        .view-list .img-badges, #profile-items-grid .img-badges, #seller-items-grid .img-badges { display: none !important; }
+        .view-list .body-badges, #profile-items-grid .body-badges, #seller-items-grid .body-badges { display: flex !important; }
     }
 
     @media (min-width: 1024px) {
-        .view-list .item-card { min-height: 190px !important; }
-        .view-list .card-img-wrap { width: 250px !important; min-height: 190px !important; display: block !important; }
+        .view-list .item-card { min-height: 190px !important; padding: 0.75rem !important; }
+        .view-list .card-img-wrap { width: 250px !important; min-height: 170px !important; display: block !important; box-shadow: none !important;}
         .view-list .card-body-wrap { padding: 0 0 0 1.25rem !important; flex-direction: row !important; align-items: stretch !important; gap: 1.5rem; }
         .view-list .view-list-col-2 { flex: 0 0 35% !important; border-right: 1px solid #e7e5e4; padding-right: 1.5rem; }
         .dark .view-list .view-list-col-2 { border-color: #44403c; }
         .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
         .view-list h4 { font-size: 1.05rem !important; }
         .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
-        .view-list .view-list-city { font-size: 0.9rem !important; margin-bottom: 0.75rem; }
-        .view-list .view-list-desc { 
-            display: -webkit-box !important; 
-            line-clamp: 5;
-            -webkit-line-clamp: 5; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-            color: #6b7280; 
-            font-size: 0.9rem; 
-            line-height: 1.5; 
-        }
+        .view-list .view-list-desc { display: -webkit-box !important; line-clamp: 5; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; color: #6b7280; font-size: 0.9rem; line-height: 1.5; }
     }
 
     /* ==========================================
        ТОП-ЛЕНТА (VIP ПОСТЕРЫ)
        ========================================== */
-    #vip-items-grid .item-card {
-        width: 180px !important; min-width: 180px !important;
-        border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important;
-    }
+    #vip-items-grid .item-card { width: 180px !important; min-width: 180px !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
     #vip-items-grid .card-img-wrap { height: 220px !important; min-height: 220px !important; border-radius: 1rem !important; box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important; }
     #vip-items-grid .card-body-wrap { padding: 0.5rem 0 0 0 !important; }
     #vip-items-grid h4 { min-height: 2.6em !important; font-size: 0.95rem !important; margin-bottom: 2px !important; }
     #vip-items-grid .view-grid-city, #vip-items-grid .mt-2.flex.flex-wrap, #vip-items-grid .text-[10px], #vip-items-grid .vip-card::after { display: none !important; }
-    
-    #vip-items-grid.flex {
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-x: contain;
-        align-items: stretch !important;
-    }
+    #vip-items-grid.flex { -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; align-items: stretch !important; }
 
     @media (max-width: 1279px) {
         #vip-items-grid .item-card { width: 160px !important; min-width: 160px !important; height: auto !important; flex-shrink: 0 !important; }
@@ -392,7 +185,6 @@
         .hide-scrollbar-on-mobile::-webkit-scrollbar { display: none; }
         .hide-scrollbar-on-mobile { scrollbar-width: none; }
     }
-
     @media (min-width: 1024px) {
         #vip-items-grid .item-card { width: 220px !important; min-width: 220px !important; }
         #vip-items-grid .card-img-wrap { height: 280px !important; min-height: 280px !important; border-radius: 1.25rem !important; }
@@ -404,21 +196,11 @@
     /* ==========================================
        САЙТ НА ВСЮ ШИРИНУ И ВЫЕЗД VIP
        ========================================== */
-    .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl {
-        max-width: 100% !important; width: 100% !important;
-        padding-left: 1rem !important; padding-right: 1rem !important;
-        transition: padding 0.3s ease;
-    }
+    .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; transition: padding 0.3s ease; }
     @media (min-width: 640px) { .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
     @media (min-width: 1024px) { .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { padding-left: 3rem !important; padding-right: 3rem !important; } }
 
-    #vip-section {
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        margin-right: calc(-50vw + 50%) !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-    }
+    #vip-section { width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; border-radius: 0 !important; background: transparent !important; }
     #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 1rem !important; padding-right: 1rem !important; }
     @media (min-width: 640px) { #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
     @media (min-width: 1024px) { #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 3rem !important; padding-right: 3rem !important; } }
@@ -458,12 +240,7 @@
        МОДАЛКИ И ИНТЕРФЕЙС
        ========================================== */
     body.modal-open { overflow: hidden !important; touch-action: none !important; }
-    .modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar, #chat-messages { 
-        touch-action: auto !important;
-        overscroll-behavior: contain !important;
-        -webkit-overflow-scrolling: touch !important; 
-    }
-
+    .modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar, #chat-messages { touch-action: auto !important; overscroll-behavior: contain !important; -webkit-overflow-scrolling: touch !important; }
     .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -472,7 +249,6 @@
     .modal-content, #custom-sort-menu, #lang-dropdown > div, #info-dropdown-menu > div {
         background-color: #FDFBF7 !important; border: 2px solid #D8CFC0 !important; border-radius: 8px !important;
         box-shadow: 6px 6px 0px 0px rgba(62, 54, 46, 0.15) !important; color: #3E362E !important;
-        backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
     }
     .dark .modal-content, .dark #custom-sort-menu, .dark #lang-dropdown > div, .dark #info-dropdown-menu > div {
         background-color: #322A24 !important; border: 2px solid #4A3F35 !important;
@@ -492,17 +268,10 @@
     #chat-input-field { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
     #chat-input-container { border: none !important; box-shadow: none !important; }
 
-    .dark input:-webkit-autofill,
-    .dark input:-webkit-autofill:hover, 
-    .dark input:-webkit-autofill:focus, 
-    .dark input:-webkit-autofill:active {
-        -webkit-text-fill-color: #ffffff !important;
-        transition: background-color 5000s ease-in-out 0s;
+    .dark input:-webkit-autofill, .dark input:-webkit-autofill:hover, .dark input:-webkit-autofill:focus, .dark input:-webkit-autofill:active {
+        -webkit-text-fill-color: #ffffff !important; transition: background-color 5000s ease-in-out 0s;
     }
-
-    .dark #chat-messages *,
-    .dark #chat-input-field,
-    .dark #chat-input-field::placeholder { color: #ffffff !important; }
+    .dark #chat-messages *, .dark #chat-input-field, .dark #chat-input-field::placeholder { color: #ffffff !important; }
 
     /* ==========================================
        ИКОНКИ И УТИЛИТЫ
@@ -517,58 +286,7 @@
 }
 
 @layer utilities {
-    /* ==========================================
-       АНИМАЦИИ
-       ========================================== */
     @keyframes shimmer { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
     @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f43f5e; } 100% { transform: scale(1); } }
     .animate-pop { animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
-}
-
-/* Обновление дизайна для режима списка */
-#main-items-grid.view-list {
-  display: flex !important;
-  flex-direction: column;
-  gap: 1rem; /* Добавляем аккуратные отступы между карточками вместо полос */
-}
-
-/* Убираем линии и добавляем современную тень самим карточкам */
-#main-items-grid.view-list > div {
-  border-top: none !important;
-  border-bottom: none !important;
-  border: 1px solid #e5e7eb; /* Очень легкая рамка (stone-200) */
-  border-radius: 1rem; /* Скругленные углы */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03); /* Мягкая тень */
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  background-color: #ffffff;
-}
-
-/* Адаптация для темной темы */
-.dark #main-items-grid.view-list > div {
-  border-color: #3f3f46; /* stone-700 */
-  background-color: #292524; /* stone-800 */
-}
-
-/* 1. ГЛОБАЛЬНАЯ ЧИСТКА АРТЕФАКТОВ СЕТКИ */
-#main-items-grid,
-#profile-items-grid,
-#seller-items-grid,
-.view-grid,
-.view-list {
-    background-color: transparent !important;
-}
-
-/* 2. Отключаем системные рамки Tailwind (divide), которые JS может вешать динамически */
-.divide-y > :not([hidden]) ~ :not([hidden]),
-.divide-x > :not([hidden]) ~ :not([hidden]) {
-    border-width: 0px !important;
-}
-
-/* 3. Идеальный мобильный список */
-.view-list {
-    display: flex !important;
-    flex-direction: column;
-    gap: 1rem !important; /* Мягкие отступы вместо слипшихся линий */
-    padding-bottom: 1rem;
 }
