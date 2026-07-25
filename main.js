@@ -1083,7 +1083,7 @@ window.openModal = async id => {
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
                         
                         const t = window.t || (txt => txt);
-                        statusText.innerText = `PRO (еще ${diffDays} дн.)`;
+                        statusText.innerText = t('pro_active_days').replace('{days}', diffDays);
                         statusText.className = 'text-sm font-black text-amber-500';
                         proBtn.classList.add('hidden');
                     } else {
@@ -1092,7 +1092,7 @@ window.openModal = async id => {
                         statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
                     }
-                }
+                } 
             } catch(e) {
                 console.error("Ошибка загрузки профиля:", e);
                 if (statusText) statusText.innerText = 'Ошибка';
@@ -1100,6 +1100,7 @@ window.openModal = async id => {
         }
 
         // === ГАРАНТИРОВАННЫЙ ВЫЗОВ ПОХОЖИХ ТОВАРОВ И ПРОСМОТРОВ ===
+        // ... (existing code)
         if (id === 'item-modal') {
             setTimeout(() => {
                 if (window.activeModalItemId && typeof window.triggerItemViewsAndSimilar === 'function') {
@@ -1589,7 +1590,7 @@ window.saveProfile = async (event) => {
 
     try {
         const { data, error } = await supabase.auth.updateUser({
-            data: { full_name: name, avatar_url: avatar, phone: phone }
+            data: { full_name: name, avatar_url: avatar, phone: phone } 
         });
         if (error) throw error;
 
@@ -3834,11 +3835,11 @@ if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVi
             const t = window.t || (txt => txt);
 
             // ВИЗУАЛЬНОЕ ОФОРМЛЕНИЕ ПРОИСХОДИТ ТОЛЬКО ЗДЕСЬ
-            if (item.isHighlighted) {
-                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('Убрать из VIP')}`;
+            if (item.isHighlighted) { 
+                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('remove_from_vip')}`;
                 btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
-            } else {
-                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('В VIP-блок (7 дней)')}`;
+            } else { 
+                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('to_vip_block_7_days')}`;
                 btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-md hover:shadow-lg hover:-translate-y-0.5";
             }
             

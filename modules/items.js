@@ -1001,7 +1001,7 @@ export const ItemsModule = {
             const modalFavBtn = document.getElementById('modal-fav-btn');
             const modalFavIcon = document.querySelector('#modal-fav-btn i');
             if (modalFavBtn) {
-                if (window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
+                if (window.currentUser && window.currentUser.id === (item.userId || item.user_id)) { 
                     modalFavBtn.style.display = 'none'; // Прячем кнопку для владельца
                 } else {
                     modalFavBtn.style.display = ''; // Показываем для остальных

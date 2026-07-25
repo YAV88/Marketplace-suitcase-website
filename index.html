@@ -230,21 +230,20 @@
                 <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')"
                     class="flex items-center justify-center px-4 sm:px-6 h-10 sm:h-11 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition-all duration-200 cursor-pointer shadow-sm shrink-0">Войти</button>
 
-                <div id="nav-user-controls" class="hidden items-center gap-2 sm:gap-3 shrink-0">
+                <div id="nav-user-controls" class="hidden items-center gap-2 sm:gap-3 shrink-0"> 
                     <!-- Кнопка чата -->
-                    <button onclick="window.openChatListModal()" title="Сообщения"
+                    <button onclick="window.openChatListModal()" data-i18n-title="nav_messages" title="Сообщения"
                         class="hidden sm:flex relative items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 transition shadow-sm cursor-pointer">
                         <i class="fa-regular fa-envelope text-base sm:text-lg"></i>
                         <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse"></span>
                     </button>
                     
                     <!-- Кнопка профиля (скрыта на мобильных, видна на ПК) -->
-                    <button onclick="window.openModal('profile-modal')" title="Профиль"
+                    <button onclick="window.openModal('profile-modal')" data-i18n-title="nav_profile" title="Профиль"
                         class="hidden lg:flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:text-brand-600 transition shadow-sm cursor-pointer">
                         <i class="fa-regular fa-user text-lg"></i>
                     </button>
                 </div>
-
                 <!-- Кнопка добавления (Оригинальный стиль сайта) -->
                 <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()"
                     class="hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:border-brand-800/50 font-black transition-all duration-200 hover:scale-105 cursor-pointer shrink-0">
@@ -298,15 +297,15 @@
                 <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
                     <button onclick="window.openModal('profile-modal');"
                         class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i
-                            class="fa-regular fa-user text-brand-600 w-6"></i> <span
+                            class="fa-regular fa-user text-brand-600 w-6"></i> <span data-i18n="nav_profile"
                             data-i18n="nav_profile">Профиль</span></button>
                     <button onclick="window.openChatListModal();"
                         class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i
-                            class="fa-regular fa-envelope text-brand-600 w-6"></i> <span
+                            class="fa-regular fa-envelope text-brand-600 w-6"></i> <span data-i18n="nav_messages"
                             data-i18n="nav_messages">Сообщения</span></button>
                     <button onclick="window.logout();"
                         class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i
-                            class="fa-solid fa-right-from-bracket w-6"></i> <span
+                            class="fa-solid fa-right-from-bracket w-6"></i> <span data-i18n="nav_logout"
                             data-i18n="nav_logout">Выйти</span></button>
                 </div>
             </div>
@@ -1515,16 +1514,16 @@
                             </h2>
                             <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
                             
-                            <div class="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-2">
-                                <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-brand-600 shadow-sm transition-all shrink-0" title="Редактировать профиль">
+                            <div class="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-2"> 
+                                <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-brand-600 shadow-sm transition-all shrink-0" data-i18n-title="btn_edit_profile" title="Редактировать профиль">
                                     <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
-                                <button id="profile-logout-btn" onclick="window.logout()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-red-500 shadow-sm transition-all shrink-0" title="Выйти из аккаунта">
+                                <button id="profile-logout-btn" onclick="window.logout()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-red-500 shadow-sm transition-all shrink-0" data-i18n-title="nav_logout" title="Выйти из аккаунта">
                                     <i class="fa-solid fa-right-from-bracket text-xs"></i>
                                 </button>
                             </div>
                         </div>
-                        <p id="profile-email" class="text-[10px] sm:text-sm text-stone-500 truncate">Не авторизован</p>
+                        <p id="profile-email" class="text-[10px] sm:text-sm text-stone-500 truncate">Не авторизован</p> 
                     </div>
                 </div>
 
@@ -1538,7 +1537,7 @@
                             <i class="fa-solid fa-id-badge text-stone-400 text-xs shrink-0"></i>
                             <span id="profile-account-status" class="text-[10px] sm:text-xs font-black text-stone-700 dark:text-stone-300">Базовый</span>
                         </div>
-                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2 py-1 rounded shadow-sm shrink-0">Купить PRO</button>
+                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-2 py-1 rounded shadow-sm shrink-0" data-i18n="profile_buy_pro">Купить PRO</button>
                     </div>
                     
                     <!-- Плашка Токенов -->
@@ -1556,11 +1555,11 @@
             <div
                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
                 <!-- Вкладки профиля -->
-                <div class="flex items-center overflow-x-auto hide-scrollbar-on-mobile border-b border-stone-200 dark:border-stone-800 px-4 sm:px-5">
-                    <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="active text-brand-600 border-b-2 border-brand-600 font-bold text-xs sm:text-sm py-3 mr-4 sm:mr-6 transition-colors whitespace-nowrap">Мои вещи</button>
-                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="text-stone-400 border-b-2 border-transparent font-bold text-xs sm:text-sm py-3 mr-4 sm:mr-6 hover:text-brand-600 transition-colors whitespace-nowrap">Склад</button>
+                <div class="flex items-center overflow-x-auto hide-scrollbar-on-mobile border-b border-stone-200 dark:border-stone-800 px-4 sm:px-5"> 
+                    <button id="tab-my-items" onclick="window.switchProfileTab('items')" class="active text-brand-600 border-b-2 border-brand-600 font-bold text-xs sm:text-sm py-3 mr-4 sm:mr-6 transition-colors whitespace-nowrap" data-i18n="tab_my_items">Мои вещи</button>
+                    <button id="tab-my-saved" onclick="window.switchProfileTab('saved')" class="text-stone-400 border-b-2 border-transparent font-bold text-xs sm:text-sm py-3 mr-4 sm:mr-6 hover:text-brand-600 transition-colors whitespace-nowrap" data-i18n="tab_my_saved">Склад</button>
                     <!-- НОВАЯ ВКЛАДКА ОТЗЫВОВ -->
-                    <button id="tab-my-reviews" onclick="window.switchProfileTab('reviews')" class="text-stone-400 border-b-2 border-transparent font-bold text-xs sm:text-sm py-3 hover:text-brand-600 transition-colors whitespace-nowrap">Мои отзывы</button>
+                    <button id="tab-my-reviews" onclick="window.switchProfileTab('reviews')" class="text-stone-400 border-b-2 border-transparent font-bold text-xs sm:text-sm py-3 hover:text-brand-600 transition-colors whitespace-nowrap" data-i18n="tab_my_reviews">Мои отзывы</button>
                 </div>
                 
                 <div class="relative w-full sm:w-64 mb-1 sm:mb-0 shrink-0">
@@ -1606,7 +1605,7 @@
             <div class="fixed sm:absolute top-4 right-16 sm:right-[4.5rem] flex items-center gap-2 sm:gap-3 z-[60]">
                 
                 <!-- Кнопка Поделиться (сделали дизайн в точности как у крестика) -->
-                <button id="modal-share-btn" onclick="window.shareItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md hover:bg-brand-600 hover:text-white cursor-pointer">
+                <button id="modal-share-btn" onclick="window.shareItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md hover:bg-brand-600 hover:text-white cursor-pointer" data-i18n-title="share_item">
                     <i class="fa-solid fa-share-nodes text-sm"></i>
                 </button>
                 
@@ -1614,7 +1613,7 @@
                 <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-400 rounded-full flex items-center justify-center transition shadow-md hover:text-brand-600 cursor-pointer">
                     <i class="fa-solid fa-box-open transition-transform text-sm" id="modal-fav-icon"></i>
                 </button>
-                
+                 
             </div>
 
             <!-- ЕДИНЫЙ КОНТЕЙНЕР (Сам адаптируется: на телефоне столбик, на ПК - сетка) -->
