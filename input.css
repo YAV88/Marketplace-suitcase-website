@@ -285,3 +285,17 @@
     @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); color: #f43f5e; } 100% { transform: scale(1); } }
     .animate-pop { animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
 }
+
+/* ==========================================
+   УМНОЕ ПЕРЕКЛЮЧЕНИЕ ЗНАЧКОВ ДОСТАВКИ/ОПЛАТЫ
+   ========================================== */
+
+/* 1. Базовое состояние для Мобилок, Сетки и VIP-ленты: значки на фото, в описании скрыты */
+.body-badges { display: none !important; }
+.img-extra-badges { display: flex !important; }
+
+/* 2. Исключение ТОЛЬКО для ПК-версии в Режиме Списка */
+@media (min-width: 1024px) {
+    .view-list .img-extra-badges { display: none !important; }
+    .view-list .body-badges { display: flex !important; }
+}

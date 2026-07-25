@@ -153,15 +153,15 @@ export const ItemsModule = {
         let opacityClass = '';
         
         if (i.status === 'reserved') { 
-            statusBadgeRow = `<span class="bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-900/30 dark:border-orange-800 text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; 
+            statusBadgeRow = `<span class="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('В РЕЗЕРВЕ')}</span>`; 
         }
         else if (i.status === 'sold') { 
             statusBadgeOverlay = `<div class="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/60 z-30 backdrop-blur-[1px]"><span class="bg-stone-800 text-white text-[11px] font-black px-4 py-1.5 rounded shadow-lg tracking-widest rotate-[-15deg] w-max">${t('ПРОДАНО')}</span></div>`; 
-            statusBadgeRow = `<span class="bg-stone-100 text-stone-600 border border-stone-200 dark:bg-stone-800 dark:text-stone-300 text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('ПРОДАНО')}</span>`;
+            statusBadgeRow = `<span class="bg-stone-800/90 backdrop-blur-sm text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase flex items-center">${t('ПРОДАНО')}</span>`;
             opacityClass = 'opacity-70 grayscale-[0.5]'; 
         }
 
-        // БЕЙДЖИ СОСТОЯНИЯ (ОСТАЮТСЯ НА ФОТО)
+        // БЕЙДЖИ СОСТОЯНИЯ (ОСТАЮТСЯ НА ФОТО ВСЕГДА)
         let condBadgeBase = '';
         if (isService) condBadgeBase = `<span class="bg-blue-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Услуги')}</span>`;
         else if (isJob) condBadgeBase = `<span class="bg-fuchsia-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Работа')}</span>`;
@@ -173,17 +173,17 @@ export const ItemsModule = {
         }
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
-        // БЕЙДЖИ ДОСТАВКИ И ОПЛАТЫ (ОБНОВЛЕННЫЙ ДИЗАЙН ДЛЯ ТЕЛА КАРТОЧКИ)
+        // ПРЕМИАЛЬНЫЕ БЕЙДЖИ ДОСТАВКИ И ОПЛАТЫ
         let deliveryBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-5 h-5 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 text-[10px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-5 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 text-[10px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-5 h-5 bg-stone-900/80 backdrop-blur-md border border-white/10 text-white text-[10px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center justify-center px-1.5 h-5 bg-stone-900/80 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold rounded-md shadow-sm" title="Личная встреча"><i class="fa-solid fa-handshake"></i></span>`;
         
         let paymentBadges = '';
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
             const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-5 h-5 bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400 text-[10px] rounded-md shadow-sm" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
-            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-5 h-5 bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800 dark:text-indigo-400 text-[10px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
+            if (hasCrypto) paymentBadges += `<span class="flex items-center justify-center w-5 h-5 bg-stone-900/80 backdrop-blur-md border border-emerald-500/30 text-emerald-400 text-[10px] rounded-md shadow-sm" title="Оплата криптовалютой"><i class="fa-brands fa-bitcoin"></i></span>`;
+            if (hasCard) paymentBadges += `<span class="flex items-center justify-center w-5 h-5 bg-stone-900/80 backdrop-blur-md border border-indigo-500/30 text-indigo-400 text-[10px] rounded-md shadow-sm" title="Перевод на карту"><i class="fa-regular fa-credit-card"></i></span>`;
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
@@ -200,11 +200,17 @@ export const ItemsModule = {
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 
-                <!-- НА ФОТО ОСТАЛОСЬ ТОЛЬКО СОСТОЯНИЕ И СКЛАД -->
                 <div class="img-badges">
                     ${favHtmlImg}
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
+                    ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
+                    <!-- ЭТИ ЗНАЧКИ ПРЯЧУТСЯ НА ПК В РЕЖИМЕ СПИСКА -->
+                    <div class="img-extra-badges absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
+                        ${statusBadgeRow}
+                        ${deliveryBadges}
+                        ${paymentBadges}
+                    </div>` : ''}
                 </div>
             </div>
             
@@ -221,8 +227,8 @@ export const ItemsModule = {
                             </div>
                         </div>
                         
-                        <!-- ЗНАЧКИ ОПЛАТЫ И ДОСТАВКИ В ТЕЛЕ КАРТОЧКИ (ВСЕГДА И ВЕЗДЕ) -->
-                        <div class="body-badges flex flex-wrap items-center gap-1.5 mb-2 empty:hidden">
+                        <!-- ЗНАЧКИ ПОКАЗЫВАЮТСЯ В ТЕЛЕ ТОЛЬКО НА ПК В РЕЖИМЕ СПИСКА -->
+                        <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
                             ${statusBadgeRow}
                             ${deliveryBadges}
                             ${paymentBadges}

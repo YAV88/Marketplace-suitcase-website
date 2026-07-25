@@ -579,28 +579,41 @@ window.switchSellerTab = (tabName) => {
     const tabReviews = document.getElementById('tab-seller-reviews');
 
     if (tabName === 'items') {
-        if (tabItems) tabItems.classList.add('text-brand-600', 'border-brand-600');
-        if (tabReviews) tabReviews.classList.remove('text-brand-600', 'border-brand-600');
+        // Жестко перекрашиваем активную вкладку
+        if (tabItems) {
+            tabItems.classList.add('text-brand-600', 'border-brand-600');
+            tabItems.classList.remove('text-stone-500', 'border-transparent', 'dark:text-stone-400');
+        }
+        if (tabReviews) {
+            tabReviews.classList.remove('text-brand-600', 'border-brand-600');
+            tabReviews.classList.add('text-stone-500', 'border-transparent', 'dark:text-stone-400');
+        }
 
         if (listRev) { listRev.style.display = 'none'; listRev.classList.add('hidden'); }
         if (search) { search.style.display = 'block'; search.classList.remove('hidden'); }
 
         if (grid && grid.innerHTML.trim() !== '') {
-            grid.style.display = ''; grid.classList.remove('hidden'); // ИСПРАВЛЕНИЕ: Убрали жесткий 'grid', чтобы работал список!
+            grid.style.display = ''; grid.classList.remove('hidden');
             if (empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
         } else {
             if (grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
             if (empty) { empty.style.display = 'flex'; empty.classList.remove('hidden'); }
         }
     } else {
-        if (tabReviews) tabReviews.classList.add('text-brand-600', 'border-brand-600');
-        if (tabItems) tabItems.classList.remove('text-brand-600', 'border-brand-600');
+        // Жестко перекрашиваем активную вкладку
+        if (tabReviews) {
+            tabReviews.classList.add('text-brand-600', 'border-brand-600');
+            tabReviews.classList.remove('text-stone-500', 'border-transparent', 'dark:text-stone-400');
+        }
+        if (tabItems) {
+            tabItems.classList.remove('text-brand-600', 'border-brand-600');
+            tabItems.classList.add('text-stone-500', 'border-transparent', 'dark:text-stone-400');
+        }
 
         if (grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
         if (empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
         if (search) { search.style.display = 'none'; search.classList.add('hidden'); }
 
-        // ЖЕСТКОЕ ВКЛЮЧЕНИЕ ОТЗЫВОВ
         if (listRev) { listRev.classList.remove('hidden'); listRev.style.display = 'flex'; }
     }
 };
