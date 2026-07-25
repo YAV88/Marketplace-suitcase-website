@@ -171,7 +171,7 @@ export const ItemsModule = {
             if (i.condition === 'Новое') condBadgeBase = `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Новое')}</span>`;
             else condBadgeBase = `<span class="bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Б/У')}</span>`;
         }
-        const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
+        const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20 hidden sm:block">${condBadgeBase}</div>` : '';
 
         let deliveryBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center justify-center w-6 h-6 bg-stone-900/70 backdrop-blur-md text-white text-[12px] rounded-md shadow-sm" title="Отправка PostExpress"><i class="fa-solid fa-truck-fast"></i></span>`;
