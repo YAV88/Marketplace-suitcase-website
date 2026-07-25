@@ -1046,7 +1046,7 @@ window.openModal = async id => {
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
                         
                         const t = window.t || (txt => txt);
-                        statusText.innerText = `PRO (${t('Активен еще')} ${diffDays} ${t('дн.')})`;
+                        statusText.innerText = `PRO (еще ${diffDays} дн.)`;
                         statusText.className = 'text-sm font-black text-amber-500';
                         proBtn.classList.add('hidden');
                     } else {
