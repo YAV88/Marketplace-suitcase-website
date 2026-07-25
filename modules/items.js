@@ -200,13 +200,13 @@ export const ItemsModule = {
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 
-                <!-- Значки для сетки (на фото) -->
                 <div class="img-badges">
-                    ${favHtmlImg}
+                    ${favHtmlImg} <!-- Кнопка "В склад" остается здесь всегда (в правом верхнем углу) -->
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
                     ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
-                    <div class="absolute bottom-2 left-2 right-2 flex flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
+                    <!-- Добавили hidden sm:flex, чтобы скрыть с фото на мобилках -->
+                    <div class="hidden sm:flex absolute bottom-2 left-2 right-2 flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
                         ${statusBadgeRow}
                         ${deliveryBadges}
                         ${paymentBadges}
@@ -228,13 +228,12 @@ export const ItemsModule = {
                             </div>
                         </div>
                         
-                        <!-- Значки для мобильного списка (ПОД ценой, скрыты по умолчанию) -->
-                        <div class="body-badges hidden flex-wrap items-center gap-1.5 mb-2">
+                        <!-- Значки для мобилок (показываем только на телефонах: flex sm:hidden) -->
+                        <div class="body-badges flex sm:hidden flex-wrap items-center gap-1.5 mb-2">
                             ${condBadgeBase}
                             ${statusBadgeRow}
                             ${deliveryBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
                             ${paymentBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
-                            ${favHtmlBody.replace('w-8 h-8', 'w-6 h-6 bg-stone-100 dark:bg-stone-800 shadow-none border border-stone-200 dark:border-stone-700')}
                         </div>
                         
                         <!-- УБРАЛИ border-t и цвета линий, добавили mt-auto для выравнивания по низу -->
