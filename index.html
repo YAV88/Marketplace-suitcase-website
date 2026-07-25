@@ -1618,8 +1618,8 @@
             <!-- Умный контейнер для кнопок: привязан левее крестика (right-16) и на том же уровне слоя z-[60] -->
             <div class="fixed sm:absolute top-4 right-16 sm:right-[4.5rem] flex items-center gap-2 sm:gap-3 z-[60]">
                 
-                <!-- Кнопка Поделиться (сделали дизайн в точности как у крестика) -->
-                <button id="modal-share-btn" onclick="window.shareItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md hover:bg-brand-600 hover:text-white cursor-pointer" data-i18n-title="share_item">
+                <!-- Кнопка Поделиться (Исправлен вызов функции на shareCurrentItem) -->
+                <button id="modal-share-btn" onclick="window.shareCurrentItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md hover:bg-brand-600 hover:text-white cursor-pointer">
                     <i class="fa-solid fa-share-nodes text-sm"></i>
                 </button>
                 
@@ -1627,7 +1627,7 @@
                 <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-400 rounded-full flex items-center justify-center transition shadow-md hover:text-brand-600 cursor-pointer">
                     <i class="fa-solid fa-box-open transition-transform text-sm" id="modal-fav-icon"></i>
                 </button>
-                 
+                
             </div>
 
             <!-- ЕДИНЫЙ КОНТЕЙНЕР (Сам адаптируется: на телефоне столбик, на ПК - сетка) -->
