@@ -2409,7 +2409,6 @@ window.renderProfileTabs = async () => {
 
     if (!grid) return;
 
-    // Включаем лоадер, чтобы пользователь понимал, что идет загрузка
     grid.innerHTML = '<div class="col-span-full flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-3xl"></i></div>';
     if (emptyState) emptyState.style.display = 'none';
 
@@ -2417,14 +2416,17 @@ window.renderProfileTabs = async () => {
         let dataToRender = [];
 
         if (window.currentProfileTab === 'saved') {
-            // ==========================================
-            // ЛОГИКА ДЛЯ ВКЛАДКИ "СКЛАД"
-            // ==========================================
-            const savedIds = window.currentUserData?.saved_items || [];
+            // ИСПРАВЛЕНИЕ: Ищем лайки в таблице favorites!
+            const { data: favs, error: favErr } = await window.supabase
+                .from('favorites')
+                .select('item_id')
+                .eq('user_id', window.currentUser.id);
             
-            if (savedIds.length > 0) {
-                // Делаем запрос к Supabase: вытягиваем только те товары, ID которых есть в массиве savedIds
-                const { data, error } = await supabase
+            if (favErr) throw favErr;
+
+            if (favs && favs.length > 0) {
+                const savedIds = favs.map(f => f.item_id);
+                const { data, error } = await window.supabase
                     .from('items')
                     .select('*')
                     .in('id', savedIds);
@@ -2433,11 +2435,9 @@ window.renderProfileTabs = async () => {
                 dataToRender = data || [];
             }
         } else {
-            // ==========================================
-            // ЛОГИКА ДЛЯ ВКЛАДКИ "МОИ ВЕЩИ"
-            // ==========================================
+            // Логика "Мои вещи"
             if (window.currentUser) {
-                const { data, error } = await supabase
+                const { data, error } = await window.supabase
                     .from('items')
                     .select('*')
                     .eq('user_id', window.currentUser.id)
@@ -2448,11 +2448,9 @@ window.renderProfileTabs = async () => {
             }
         }
 
-        // Очищаем лоадер перед отрисовкой
         grid.innerHTML = '';
 
         if (dataToRender.length === 0) {
-            // Если массив пустой — показываем красивый Empty State
             if (emptyState) {
                 emptyState.style.display = 'flex';
                 const emptyText = emptyState.querySelector('span');
@@ -2461,23 +2459,19 @@ window.renderProfileTabs = async () => {
                 }
             }
         } else {
-            // Если данные есть — мапим их и превращаем в HTML через твой модуль
             const html = dataToRender
                 .map(item => window.mapItemData(item))
                 .filter(Boolean)
                 .map(mappedItem => {
-                    // Используем метод из ItemsModule. Флаг isProfileView = true
                     if (window.ItemsModule && typeof window.ItemsModule.createCardHtml === 'function') {
                         return window.ItemsModule.createCardHtml(mappedItem, false, true);
                     }
-                    return ''; // Fallback, если модуль не загрузился
-                })
-                .join('');
+                    return ''; 
+                }).join('');
             
             grid.innerHTML = html;
         }
 
-        // Если пользователь до этого что-то ввел в поиск по профилю, применяем фильтр сразу к новым карточкам
         if (searchInput && searchInput.value && typeof window.filterProfileItems === 'function') {
             window.filterProfileItems(searchInput, 'profile-items-grid');
         }

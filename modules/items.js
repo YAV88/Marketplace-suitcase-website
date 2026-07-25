@@ -140,6 +140,7 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
+        // ИСПРАВЛЕНИЕ: Убрали прозрачный фон, добавили скругления и мягкую тень
         const cardClass = isVIP ?
             'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
             'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
@@ -148,7 +149,6 @@ export const ItemsModule = {
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
         
-        // --- ГЕНЕРАЦИЯ ЗНАЧКОВ ---
         let statusBadgeOverlay = ''; 
         let statusBadgeRow = '';
         let opacityClass = '';
@@ -188,11 +188,10 @@ export const ItemsModule = {
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
         const favHtmlImg = isOwner ? '' : `<div class="absolute top-2 right-2 z-[60]">${favBtnOnly}</div>`;
-        const favHtmlBody = isOwner ? '' : favBtnOnly;
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
-        const pClass = 'p-2.5 sm:p-3 flex-1 flex flex-col w-full'; 
+        const pClass = 'p-3 flex-1 flex flex-col w-full'; 
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
@@ -201,11 +200,10 @@ export const ItemsModule = {
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
                 
                 <div class="img-badges">
-                    ${favHtmlImg} <!-- Кнопка "В склад" остается здесь всегда (в правом верхнем углу) -->
+                    ${favHtmlImg}
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
                     ${(deliveryBadges || paymentBadges || statusBadgeRow) ? `
-                    <!-- Добавили hidden sm:flex, чтобы скрыть с фото на мобилках -->
                     <div class="hidden sm:flex absolute bottom-2 left-2 right-2 flex-row items-center gap-1.5 z-20 flex-wrap pr-2">
                         ${statusBadgeRow}
                         ${deliveryBadges}
@@ -216,7 +214,6 @@ export const ItemsModule = {
             
             <div class="card-body-wrap ${pClass}">
                 <div class="flex flex-row w-full h-full">
-                    <!-- Убрали justify-between, чтобы убрать лишний отступ (gap) снизу -->
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-start">
                         
                         <div class="flex flex-col mb-2">
@@ -228,7 +225,6 @@ export const ItemsModule = {
                             </div>
                         </div>
                         
-                        <!-- Значки для мобилок (показываем только на телефонах: flex sm:hidden) -->
                         <div class="body-badges flex sm:hidden flex-wrap items-center gap-1.5 mb-2">
                             ${condBadgeBase}
                             ${statusBadgeRow}
@@ -236,15 +232,13 @@ export const ItemsModule = {
                             ${paymentBadges.replace(/text-\[12px\]/g, 'text-[10px]').replace(/w-6 h-6/g, 'w-5 h-5')}
                         </div>
                         
-                        <!-- Добавили pr-2 (отступ справа) к контейнеру счетчиков -->
-                        <div class="flex items-center justify-between w-full pt-2 pb-0.5 mt-auto">
+                        <!-- ИСПРАВЛЕНИЕ: Убрали border-t, добавили mt-auto -->
+                        <div class="flex items-center justify-between w-full pt-2 mt-auto">
                             <button type="button" data-action="filter-city" data-city="${escapeHTML(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </button>
-                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 pr-2">
+                            <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 pr-1">
                                 <span title="Просмотры"><i class="fa-solid fa-eye mr-0.5 opacity-70"></i>${i.views || 0}</span>
-                                
-                                <!-- Добавили уникальный ID для счетчика склада -->
                                 <span id="fav-count-${i.id}" title="Добавлено на склад" class="${i.favoritesCount > 0 ? 'text-brand-500' : ''} transition-colors duration-300">
                                     <i class="fa-solid fa-box mr-0.5 opacity-70"></i><span class="count-val">${i.favoritesCount || 0}</span>
                                 </span>
@@ -252,7 +246,7 @@ export const ItemsModule = {
                         </div>
                     </div>
                     
-                    <!-- УБРАЛИ border-l и цвета линий, скорректировали отступы (pl-4 ml-4) -->
+                    <!-- ИСПРАВЛЕНИЕ: Убрали border-l -->
                     <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-4 ml-4">
                         <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                             ${safeDesc}
