@@ -1598,8 +1598,20 @@
         <div id="item-details-modal-content" class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[100dvh] sm:h-[90vh] sm:rounded-[2rem] shadow-2xl relative border-0 sm:border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             
             <button onclick="window.closeModal('item-modal')" class="fixed sm:absolute top-4 right-4 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition shadow-md cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="fixed sm:absolute top-4 right-16 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/30 hover:scale-110 transition-all duration-200 shadow-md cursor-pointer"><i class="fa-solid fa-box-open text-lg"></i></button>
-            <button id="modal-share-btn" onclick="window.shareCurrentItem()" class="fixed sm:absolute top-4 right-28 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-400 w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/30 hover:scale-110 transition-all duration-200 shadow-md cursor-pointer"><i class="fa-solid fa-share-nodes text-lg"></i></button>
+            <!-- Умный контейнер для кнопок: сам прижимается в правый верхний угол -->
+            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 flex items-center gap-2 sm:gap-3 z-50">
+                
+                <!-- Кнопка Поделиться (мы убрали у нее absolute и right) -->
+                <button id="modal-share-btn" onclick="window.shareItem()" class="w-8 h-8 sm:w-10 sm:h-10 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer text-stone-600 dark:text-stone-300">
+                    <i class="fa-solid fa-share-nodes text-xs sm:text-sm"></i>
+                </button>
+                
+                <!-- Кнопка На склад (мы убрали у нее absolute и right) -->
+                <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer text-stone-400">
+                    <i class="fa-solid fa-box-open transition-transform text-xs sm:text-sm" id="modal-fav-icon"></i>
+                </button>
+                
+            </div>
 
             <!-- ЕДИНЫЙ КОНТЕЙНЕР (Сам адаптируется: на телефоне столбик, на ПК - сетка) -->
             <div class="item-details-layout w-full p-4 sm:p-6 md:p-8 pt-20 sm:pt-8 gap-6 md:gap-8">
