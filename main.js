@@ -539,7 +539,13 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
             }
         }
 
-        // Управление вкладками
+        // Управление вкладками (ЖЕСТКАЯ ПРИВЯЗКА КЛИКОВ)
+        const tabItems = document.getElementById('tab-seller-items');
+        const tabReviews = document.getElementById('tab-seller-reviews');
+        
+        if (tabItems) tabItems.onclick = () => window.switchSellerTab('items');
+        if (tabReviews) tabReviews.onclick = () => window.switchSellerTab('reviews');
+
         window.switchSellerTab('items'); // По умолчанию открываем товары
 
         // Кнопка Оставить отзыв

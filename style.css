@@ -997,8 +997,6 @@ input[type="number"] {
   padding-bottom: 1rem;
 }
 
-/* Убрали жесткие ID профиля, теперь карточки слушаются родительского контейнера */
-
 .view-list .item-card {
   flex-direction: row !important;
   align-items: stretch !important;
@@ -1025,10 +1023,6 @@ input[type="number"] {
   color: #6b7280;
   font-size: 0.8rem !important;
   margin-top: 4px;
-}
-
-.view-list .body-badges {
-  display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -1059,14 +1053,6 @@ input[type="number"] {
   .view-list .price-text {
     font-size: 1.2rem !important;
     font-weight: 900;
-  }
-
-  .view-list .img-badges {
-    display: none !important;
-  }
-
-  .view-list .body-badges {
-    display: flex !important;
   }
 }
 
@@ -1641,10 +1627,6 @@ button, a, .cursor-pointer {
   bottom: 2.5rem;
 }
 
-.bottom-2{
-  bottom: 0.5rem;
-}
-
 .bottom-24{
   bottom: 6rem;
 }
@@ -2100,10 +2082,6 @@ button, a, .cursor-pointer {
   height: 1.5rem;
 }
 
-.h-7{
-  height: 1.75rem;
-}
-
 .h-8{
   height: 2rem;
 }
@@ -2256,10 +2234,6 @@ button, a, .cursor-pointer {
   width: 1.5rem;
 }
 
-.w-7{
-  width: 1.75rem;
-}
-
 .w-8{
   width: 2rem;
 }
@@ -2295,10 +2269,6 @@ button, a, .cursor-pointer {
 
 .min-w-0{
   min-width: 0px;
-}
-
-.min-w-\[130px\]{
-  min-width: 130px;
 }
 
 .min-w-\[18px\]{
@@ -2842,6 +2812,16 @@ button, a, .cursor-pointer {
   border-color: rgb(52 211 153 / var(--tw-border-opacity, 1));
 }
 
+.border-indigo-200{
+  --tw-border-opacity: 1;
+  border-color: rgb(199 210 254 / var(--tw-border-opacity, 1));
+}
+
+.border-orange-200{
+  --tw-border-opacity: 1;
+  border-color: rgb(254 215 170 / var(--tw-border-opacity, 1));
+}
+
 .border-red-100{
   --tw-border-opacity: 1;
   border-color: rgb(254 226 226 / var(--tw-border-opacity, 1));
@@ -3022,6 +3002,11 @@ button, a, .cursor-pointer {
   background-color: rgb(217 70 239 / var(--tw-bg-opacity, 1));
 }
 
+.bg-indigo-50{
+  --tw-bg-opacity: 1;
+  background-color: rgb(238 242 255 / var(--tw-bg-opacity, 1));
+}
+
 .bg-indigo-500{
   --tw-bg-opacity: 1;
   background-color: rgb(99 102 241 / var(--tw-bg-opacity, 1));
@@ -3031,8 +3016,9 @@ button, a, .cursor-pointer {
   background-color: rgb(99 102 241 / 0.1);
 }
 
-.bg-orange-500\/90{
-  background-color: rgb(249 115 22 / 0.9);
+.bg-orange-50{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1));
 }
 
 .bg-orange-700\/10{
@@ -3120,10 +3106,6 @@ button, a, .cursor-pointer {
 .bg-stone-900{
   --tw-bg-opacity: 1;
   background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
-}
-
-.bg-stone-900\/70{
-  background-color: rgb(28 25 23 / 0.7);
 }
 
 .bg-transparent{
@@ -3455,6 +3437,10 @@ button, a, .cursor-pointer {
   padding-left: 2.25rem;
 }
 
+.pl-\[68px\]{
+  padding-left: 68px;
+}
+
 .pr-1{
   padding-right: 0.25rem;
 }
@@ -3523,10 +3509,6 @@ button, a, .cursor-pointer {
   padding-top: 2rem;
 }
 
-.pl-\[68px\]{
-  padding-left: 68px;
-}
-
 .text-left{
   text-align: left;
 }
@@ -3575,10 +3557,6 @@ button, a, .cursor-pointer {
 
 .text-\[11px\]{
   font-size: 11px;
-}
-
-.text-\[12px\]{
-  font-size: 12px;
 }
 
 .text-\[13px\]{
@@ -3762,11 +3740,6 @@ button, a, .cursor-pointer {
   color: rgb(6 182 212 / var(--tw-text-opacity, 1));
 }
 
-.text-emerald-400{
-  --tw-text-opacity: 1;
-  color: rgb(52 211 153 / var(--tw-text-opacity, 1));
-}
-
 .text-emerald-500{
   --tw-text-opacity: 1;
   color: rgb(16 185 129 / var(--tw-text-opacity, 1));
@@ -3792,9 +3765,19 @@ button, a, .cursor-pointer {
   color: rgb(99 102 241 / var(--tw-text-opacity, 1));
 }
 
+.text-indigo-600{
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+
 .text-orange-500{
   --tw-text-opacity: 1;
   color: rgb(249 115 22 / var(--tw-text-opacity, 1));
+}
+
+.text-orange-600{
+  --tw-text-opacity: 1;
+  color: rgb(234 88 12 / var(--tw-text-opacity, 1));
 }
 
 .text-purple-500{
@@ -5011,8 +4994,23 @@ button, a, .cursor-pointer {
   border-color: rgb(5 150 105 / var(--tw-border-opacity, 1));
 }
 
+.dark\:border-emerald-800:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(6 95 70 / var(--tw-border-opacity, 1));
+}
+
 .dark\:border-emerald-800\/50:is(.dark *){
   border-color: rgb(6 95 70 / 0.5);
+}
+
+.dark\:border-indigo-800:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(55 48 163 / var(--tw-border-opacity, 1));
+}
+
+.dark\:border-orange-800:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(154 52 18 / var(--tw-border-opacity, 1));
 }
 
 .dark\:border-red-800\/50:is(.dark *){
@@ -5113,8 +5111,16 @@ button, a, .cursor-pointer {
   background-color: rgb(6 78 59 / 0.3);
 }
 
+.dark\:bg-indigo-900\/20:is(.dark *){
+  background-color: rgb(49 46 129 / 0.2);
+}
+
 .dark\:bg-orange-500\/10:is(.dark *){
   background-color: rgb(249 115 22 / 0.1);
+}
+
+.dark\:bg-orange-900\/30:is(.dark *){
+  background-color: rgb(124 45 18 / 0.3);
 }
 
 .dark\:bg-purple-900\/30:is(.dark *){
@@ -5261,6 +5267,11 @@ button, a, .cursor-pointer {
 .dark\:text-emerald-400:is(.dark *){
   --tw-text-opacity: 1;
   color: rgb(52 211 153 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-indigo-400:is(.dark *){
+  --tw-text-opacity: 1;
+  color: rgb(129 140 248 / var(--tw-text-opacity, 1));
 }
 
 .dark\:text-red-400:is(.dark *){
@@ -5496,12 +5507,12 @@ button, a, .cursor-pointer {
     margin-bottom: 1.5rem;
   }
 
-  .sm\:mt-0{
-    margin-top: 0px;
-  }
-
   .sm\:ml-2{
     margin-left: 0.5rem;
+  }
+
+  .sm\:mt-0{
+    margin-top: 0px;
   }
 
   .sm\:block{
@@ -5601,10 +5612,6 @@ button, a, .cursor-pointer {
     flex-direction: row;
   }
 
-  .sm\:items-start{
-    align-items: flex-start;
-  }
-
   .sm\:items-center{
     align-items: center;
   }
@@ -5621,12 +5628,12 @@ button, a, .cursor-pointer {
     gap: 0.75rem;
   }
 
-  .sm\:gap-6{
-    gap: 1.5rem;
-  }
-
   .sm\:gap-4{
     gap: 1rem;
+  }
+
+  .sm\:gap-6{
+    gap: 1.5rem;
   }
 
   .sm\:rounded-\[2rem\]{
@@ -5716,6 +5723,10 @@ button, a, .cursor-pointer {
     padding-left: 1.25rem;
   }
 
+  .sm\:pl-\[80px\]{
+    padding-left: 80px;
+  }
+
   .sm\:pt-0{
     padding-top: 0px;
   }
@@ -5726,10 +5737,6 @@ button, a, .cursor-pointer {
 
   .sm\:pt-8{
     padding-top: 2rem;
-  }
-
-  .sm\:pl-\[80px\]{
-    padding-left: 80px;
   }
 
   .sm\:text-2xl{
@@ -5745,6 +5752,10 @@ button, a, .cursor-pointer {
   .sm\:text-4xl{
     font-size: 2.25rem;
     line-height: 2.5rem;
+  }
+
+  .sm\:text-\[10px\]{
+    font-size: 10px;
   }
 
   .sm\:text-base{
@@ -5770,10 +5781,6 @@ button, a, .cursor-pointer {
   .sm\:text-xs{
     font-size: 0.75rem;
     line-height: 1rem;
-  }
-
-  .sm\:text-\[10px\]{
-    font-size: 10px;
   }
 }
 
