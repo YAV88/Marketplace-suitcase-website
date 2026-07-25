@@ -997,16 +997,15 @@ input[type="number"] {
   padding-bottom: 1rem;
 }
 
-.view-list .item-card, #profile-items-grid .item-card, #seller-items-grid .item-card {
+/* Убрали жесткие ID профиля, теперь карточки слушаются родительского контейнера */
+
+.view-list .item-card {
   flex-direction: row !important;
   align-items: stretch !important;
   background-color: #FDFBF7 !important;
-  /* Теплый кремовый оттенок */
   border: 1px solid #D8CFC0 !important;
-  /* Мягкая рамка в тон сайта */
   border-radius: 1rem !important;
   box-shadow: 0 4px 12px -2px rgba(62, 54, 46, 0.05) !important;
-  /* Благородная тень */
   padding: 0.5rem !important;
   margin-bottom: 0 !important;
   height: auto !important;
@@ -1028,7 +1027,7 @@ input[type="number"] {
   margin-top: 4px;
 }
 
-.body-badges {
+.view-list .body-badges {
   display: none !important;
 }
 
@@ -3524,6 +3523,10 @@ button, a, .cursor-pointer {
   padding-top: 2rem;
 }
 
+.pl-\[68px\]{
+  padding-left: 68px;
+}
+
 .text-left{
   text-align: left;
 }
@@ -4242,9 +4245,17 @@ button, a, .cursor-pointer {
     .view-grid .item-card .sm\:flex.mt-2.flex-wrap {
       display: none !important;
     }
+
+     .view-grid .item-card .sm\:text-[10px].text-stone-500 {
+      display: none !important;
+    }
   }
 
    #vip-items-grid .sm\:flex.mt-2.flex-wrap {
+    display: none !important;
+  }
+
+   #vip-items-grid .sm\:text-[10px] {
     display: none !important;
   }
 
@@ -5489,6 +5500,10 @@ button, a, .cursor-pointer {
     margin-top: 0px;
   }
 
+  .sm\:ml-2{
+    margin-left: 0.5rem;
+  }
+
   .sm\:block{
     display: block;
   }
@@ -5610,6 +5625,10 @@ button, a, .cursor-pointer {
     gap: 1.5rem;
   }
 
+  .sm\:gap-4{
+    gap: 1rem;
+  }
+
   .sm\:rounded-\[2rem\]{
     border-radius: 2rem;
   }
@@ -5709,6 +5728,10 @@ button, a, .cursor-pointer {
     padding-top: 2rem;
   }
 
+  .sm\:pl-\[80px\]{
+    padding-left: 80px;
+  }
+
   .sm\:text-2xl{
     font-size: 1.5rem;
     line-height: 2rem;
@@ -5747,6 +5770,10 @@ button, a, .cursor-pointer {
   .sm\:text-xs{
     font-size: 0.75rem;
     line-height: 1rem;
+  }
+
+  .sm\:text-\[10px\]{
+    font-size: 10px;
   }
 }
 
