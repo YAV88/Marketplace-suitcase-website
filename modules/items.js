@@ -810,7 +810,7 @@ export const ItemsModule = {
                     }
                     
                     html += `
-                    <div class="flex-1 w-full sm:w-1/2 border-t sm:border-t-0 sm:border-l border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-5">
+                    <div class="flex-1 w-full sm:w-1/2 border-t sm:border-t-0 border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-5">
                         <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 block"><i class="fa-solid fa-wallet mr-1.5"></i> ${t('Варианты оплаты')}</span>
                         <div class="flex flex-wrap gap-2">${payItems}</div>
                     </div>`;
