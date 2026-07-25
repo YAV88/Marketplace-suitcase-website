@@ -1,24 +1,19 @@
-# --- Системные файлы ---
-.DS_Store          # MacOS мусор
-Thumbs.db          # Windows мусор
-.env*              # ВАЖНО: Никогда не заливайте .env файлы с ключами Supabase!
+# Папка сборки Vercel
+.vercel/
 
+# Зависимости
 node_modules/
 
-# --- Логи и отчеты ---
-*.log
-*.tmp
-*.bak
+# Файлы окружения (если будешь использовать)
+.env
+.env.local
+.env.*.local
 
-# --- Сборка и временные файлы ---
-dist/
-build/
-.output/
-supabase/.temp/
+# Логи
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# --- Локальная среда ---
-.vscode/           # Настройки вашего редактора
-.idea/             # Настройки WebStorm/PhpStorm
-
-# --- Важные исключения (если вдруг нужны) ---
-#!config.js        # Если вы все же хотите хранить config.js, уберите # перед !
+# Системные файлы macOS и Windows
+.DS_Store
+Thumbs.db
