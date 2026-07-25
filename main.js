@@ -3008,6 +3008,11 @@ document.addEventListener('DOMContentLoaded', () => {
             window.updateAllShareTimers();
         }
     }, 1000); // Даем 1 секунду на загрузку товаров перед запуском трекеров
+
+    // Продуктовый фикс: Принудительно включаем вид списком на мобилках для высокой конверсии
+    if (window.innerWidth < 640 && typeof window.setViewMode === 'function') {
+        window.setViewMode('list');
+    }
 });
 
 // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---

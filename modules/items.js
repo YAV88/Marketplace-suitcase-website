@@ -237,7 +237,8 @@ export const ItemsModule = {
                             ${favHtmlBody.replace('w-8 h-8', 'w-6 h-6 bg-stone-100 dark:bg-stone-800 shadow-none border border-stone-200 dark:border-stone-700')}
                         </div>
                         
-                        <div class="flex items-center justify-between w-full pt-1.5 pb-0.5 border-t border-stone-100 dark:border-stone-800">
+                        <!-- УБРАЛИ border-t и цвета линий, добавили mt-auto для выравнивания по низу -->
+                        <div class="flex items-center justify-between w-full pt-2 pb-0.5 mt-auto">
                             <button type="button" data-action="filter-city" data-city="${escapeHTML(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </button>
@@ -248,7 +249,8 @@ export const ItemsModule = {
                         </div>
                     </div>
                     
-                    <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-5 border-l border-stone-200 dark:border-stone-800 ml-5">
+                    <!-- УБРАЛИ border-l и цвета линий, скорректировали отступы (pl-4 ml-4) -->
+                    <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-4 ml-4">
                         <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                             ${safeDesc}
                         </p>
@@ -470,11 +472,14 @@ export const ItemsModule = {
             const hasMore = items.length > window.displayedCount;
             const itemsToDisplay = hasMore ? items.slice(0, window.displayedCount) : items;
 
-            if (!isLoadMore) window.loadedItems = itemsToDisplay;
-            else window.loadedItems = [...window.loadedItems, ...itemsToDisplay];
+            // СЕНЬОР-ЛОГИКА: Вычисляем только новые карточки для плавной вставки
+            const previousLength = window.loadedItems ? window.loadedItems.length : 0;
+            const newItemsToRender = isLoadMore ? itemsToDisplay.slice(previousLength) : itemsToDisplay;
+
+            // Обновляем стейт без дублирования
+            window.loadedItems = itemsToDisplay; 
 
             if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                // Перемешиваем массив и берем 8 штук
                 const vipMapped = vipRes.data
                     .map(window.mapItemData)
                     .filter(Boolean)
@@ -485,18 +490,26 @@ export const ItemsModule = {
                     vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto';
                     vipGrid.innerHTML = vipMapped.map(i => ItemsModule.createCardHtml(i, true)).join('');
                     vipSection.classList.remove('hidden');
-                    // Добавляем в общий список загруженных, чтобы открывались модалки
                     vipMapped.forEach(v => { if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
                 }
             }
 
             if (itemsToDisplay.length > 0) {
                 let html = '';
-                itemsToDisplay.forEach(item => { html += ItemsModule.createCardHtml(item, item.isHighlighted); });
+                newItemsToRender.forEach(item => { html += ItemsModule.createCardHtml(item, item.isHighlighted); });
+                
                 if (mainGrid) {
-                    mainGrid.style.opacity = '1'; mainGrid.style.pointerEvents = 'auto';
-                    mainGrid.innerHTML = html;
+                    mainGrid.style.opacity = '1'; 
+                    mainGrid.style.pointerEvents = 'auto';
                     mainGrid.classList.remove('hidden');
+
+                    if (isLoadMore) {
+                        // ПЛАВНАЯ ВСТАВКА: добавляем только новые элементы вниз
+                        mainGrid.insertAdjacentHTML('beforeend', html);
+                    } else {
+                        // ПОЛНАЯ ЗАМЕНА: только при новом поиске или фильтрации
+                        mainGrid.innerHTML = html;
+                    }
                 }
                 if (loadMoreBtn) { if (hasMore) loadMoreBtn.classList.remove('hidden'); else loadMoreBtn.classList.add('hidden'); }
                 if (proBanner && !window.showUrgentOnly) proBanner.classList.remove('hidden');
