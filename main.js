@@ -2471,6 +2471,9 @@ window.renderProfileTabs = async () => {
                     }
                     return ''; 
                 }).join('');
+
+            grid.classList.remove('view-grid', 'view-list');
+            grid.classList.add(`view-${window.currentViewMode || 'grid'}`);
             
             grid.innerHTML = html;
             
@@ -2710,10 +2713,10 @@ window.currentViewMode = localStorage.getItem('svalka_view_mode') || 'grid';
 
 window.setViewMode = (mode) => {
     // 1. Сохраняем позицию
-    const grid = document.getElementById('main-items-grid');
+    const mainGrid = document.getElementById('main-items-grid');
     let topVisibleCardId = null;
-    if (grid) {
-        const cards = grid.querySelectorAll('.item-card');
+    if (mainGrid) {
+        const cards = mainGrid.querySelectorAll('.item-card');
         const headerHeight = document.getElementById('main-header')?.offsetHeight || 80;
         for (const card of cards) {
             const rect = card.getBoundingClientRect();
@@ -2722,16 +2725,13 @@ window.setViewMode = (mode) => {
                 break;
             }
         }
-        if (!topVisibleCardId && cards.length > 0) {
-            topVisibleCardId = cards[0].dataset.id;
-        }
+        if (!topVisibleCardId && cards.length > 0) topVisibleCardId = cards[0].dataset.id;
     }
 
     // 2. Меняем вид
     window.currentViewMode = mode;
     localStorage.setItem('svalka_view_mode', mode);
 
-    // Триггер для CSS: включаем режим сайдбара
     if (mode === 'list') { document.body.classList.add('is-list-mode'); }
     else { document.body.classList.remove('is-list-mode'); }
 
@@ -2746,10 +2746,14 @@ window.setViewMode = (mode) => {
         btnList.className = mode === 'list' ? activeClass : inactiveClass;
     }
 
-    if (grid) {
-        grid.classList.remove('view-grid', 'view-list');
-        grid.classList.add(`view-${mode}`);
-    }
+    // ИСПРАВЛЕНИЕ: Применяем режим (view-list или view-grid) ко ВСЕМ сеткам на сайте сразу!
+    ['main-items-grid', 'profile-items-grid', 'seller-items-grid'].forEach(id => {
+        const grid = document.getElementById(id);
+        if (grid) {
+            grid.classList.remove('view-grid', 'view-list');
+            grid.classList.add(`view-${mode}`);
+        }
+    });
 
     // 3. Восстанавливаем позицию
     if (topVisibleCardId) {
@@ -2757,7 +2761,7 @@ window.setViewMode = (mode) => {
             const targetCard = document.querySelector(`.item-card[data-id='${topVisibleCardId}']`);
             if (targetCard) {
                 const headerHeight = document.getElementById('main-header')?.offsetHeight || 80;
-                const targetPosition = targetCard.getBoundingClientRect().top + window.scrollY - headerHeight - 16; // 16px = 1rem отступ
+                const targetPosition = targetCard.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
                 window.scrollTo({ top: targetPosition, behavior: 'auto' });
             }
         });

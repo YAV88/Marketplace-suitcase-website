@@ -997,7 +997,7 @@ input[type="number"] {
   padding-bottom: 1rem;
 }
 
-.view-list .item-card, #profile-items-grid .item-card, #seller-items-grid .item-card {
+.view-list .item-card {
   flex-direction: row !important;
   align-items: stretch !important;
   background-color: #ffffff !important;
@@ -1009,7 +1009,7 @@ input[type="number"] {
   height: auto !important;
 }
 
-.dark .view-list .item-card, .dark #profile-items-grid .item-card, .dark #seller-items-grid .item-card {
+.dark .view-list .item-card {
   background-color: #292524 !important;
   border-color: #3f3f46 !important;
 }
@@ -1030,11 +1030,11 @@ input[type="number"] {
 }
 
 @media (max-width: 768px) {
-  .view-list .item-card, #profile-items-grid .item-card, #seller-items-grid .item-card {
+  .view-list .item-card {
     min-height: 125px !important;
   }
 
-  .view-list .card-img-wrap, #profile-items-grid .card-img-wrap, #seller-items-grid .card-img-wrap {
+  .view-list .card-img-wrap {
     width: 42% !important;
     min-width: 130px !important;
     max-width: 160px !important;
@@ -1042,28 +1042,28 @@ input[type="number"] {
     box-shadow: none !important;
   }
 
-  .view-list .card-body-wrap, #profile-items-grid .card-body-wrap, #seller-items-grid .card-body-wrap {
+  .view-list .card-body-wrap {
     padding: 0.25rem 0.25rem 0.25rem 0.75rem !important;
     gap: 2px !important;
   }
 
-  .view-list h4, #profile-items-grid h4, #seller-items-grid h4 {
+  .view-list h4 {
     min-height: auto !important;
     margin-bottom: 2px !important;
     margin-top: 0 !important;
     font-size: 0.88rem !important;
   }
 
-  .view-list .price-text, #profile-items-grid .price-text, #seller-items-grid .price-text {
+  .view-list .price-text {
     font-size: 1.2rem !important;
     font-weight: 900;
   }
 
-  .view-list .img-badges, #profile-items-grid .img-badges, #seller-items-grid .img-badges {
+  .view-list .img-badges {
     display: none !important;
   }
 
-  .view-list .body-badges, #profile-items-grid .body-badges, #seller-items-grid .body-badges {
+  .view-list .body-badges {
     display: flex !important;
   }
 }
@@ -2098,6 +2098,10 @@ button, a, .cursor-pointer {
   height: 1.5rem;
 }
 
+.h-7{
+  height: 1.75rem;
+}
+
 .h-8{
   height: 2rem;
 }
@@ -2140,10 +2144,6 @@ button, a, .cursor-pointer {
 
 .h-px{
   height: 1px;
-}
-
-.h-7{
-  height: 1.75rem;
 }
 
 .max-h-0{
@@ -2254,6 +2254,10 @@ button, a, .cursor-pointer {
   width: 1.5rem;
 }
 
+.w-7{
+  width: 1.75rem;
+}
+
 .w-8{
   width: 2rem;
 }
@@ -2287,20 +2291,16 @@ button, a, .cursor-pointer {
   width: max-content;
 }
 
-.w-7{
-  width: 1.75rem;
-}
-
 .min-w-0{
   min-width: 0px;
 }
 
-.min-w-\[18px\]{
-  min-width: 18px;
-}
-
 .min-w-\[130px\]{
   min-width: 130px;
+}
+
+.min-w-\[18px\]{
+  min-width: 18px;
 }
 
 .max-w-2xl{
@@ -3469,10 +3469,6 @@ button, a, .cursor-pointer {
   padding-right: 0.5rem;
 }
 
-.pr-20{
-  padding-right: 5rem;
-}
-
 .pr-24{
   padding-right: 6rem;
 }
@@ -3483,6 +3479,10 @@ button, a, .cursor-pointer {
 
 .pr-4{
   padding-right: 1rem;
+}
+
+.pr-8{
+  padding-right: 2rem;
 }
 
 .pt-0\.5{
@@ -3519,10 +3519,6 @@ button, a, .cursor-pointer {
 
 .pt-8{
   padding-top: 2rem;
-}
-
-.pr-8{
-  padding-right: 2rem;
 }
 
 .text-left{
@@ -4770,11 +4766,6 @@ button, a, .cursor-pointer {
   color: rgb(239 68 68 / var(--tw-text-opacity, 1));
 }
 
-.hover\:text-red-600:hover{
-  --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
-}
-
 .hover\:text-stone-700:hover{
   --tw-text-opacity: 1;
   color: rgb(68 64 60 / var(--tw-text-opacity, 1));
@@ -5499,10 +5490,6 @@ button, a, .cursor-pointer {
     display: block;
   }
 
-  .sm\:inline{
-    display: inline;
-  }
-
   .sm\:flex{
     display: flex;
   }
@@ -5616,10 +5603,6 @@ button, a, .cursor-pointer {
     gap: 0.75rem;
   }
 
-  .sm\:gap-4{
-    gap: 1rem;
-  }
-
   .sm\:gap-6{
     gap: 1.5rem;
   }
@@ -5709,10 +5692,6 @@ button, a, .cursor-pointer {
 
   .sm\:pl-5{
     padding-left: 1.25rem;
-  }
-
-  .sm\:pr-8{
-    padding-right: 2rem;
   }
 
   .sm\:pt-0{
