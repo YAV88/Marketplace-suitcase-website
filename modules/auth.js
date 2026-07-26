@@ -1,4 +1,5 @@
 import { supabase } from '../config.js';
+import { safeImageUrl, renderSafeAvatar } from './security.js';
 
 export const AuthModule = {
     checkUserSession: async () => {
@@ -33,12 +34,14 @@ export const AuthModule = {
                 } catch(e) {}
 
                 // Ищем аватарку: сначала в профиле, затем в метаданных (сохраненную при регистрации), затем генерируем дефолтную (версия 9.x)
-                const avatarUrl = window.currentUser?.avatar_url || meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
+                const rawAvatarUrl = window.currentUser?.avatar_url || meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
+                // avatar_url приходит из пользовательских метаданных — валидируем схему URL перед использованием
+                const avatarUrl = safeImageUrl(rawAvatarUrl, `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`);
                 document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
                 
                 const profileAvatarCont = document.getElementById('profile-avatar-container');
                 if (profileAvatarCont) {
-                    profileAvatarCont.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+                    renderSafeAvatar(profileAvatarCont, avatarUrl);
                 }
 
                 const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };

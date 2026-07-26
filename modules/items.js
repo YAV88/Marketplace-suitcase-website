@@ -1,5 +1,6 @@
 // modules/items.js
 import { supabase } from '../config.js';
+import { escapeHtml, safeImageUrl, renderSafeAvatar } from './security.js';
 
 export const ItemsModule = {
     // ==========================================
@@ -128,16 +129,11 @@ export const ItemsModule = {
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const t = window.t || (text => text);
-        
-        const escapeHTML = (str) => {
-            if (!str) return '';
-            return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
-        };
 
-        const safeTitle = escapeHTML(i.title || 'Без названия');
+        const safeTitle = escapeHtml(i.title || 'Без названия');
         let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
-        const safeDesc = escapeHTML(rawDesc);
+        const safeDesc = escapeHtml(rawDesc);
 
         const isOwner = window.currentUser && window.currentUser.id === (i.user_id || i.userId);
         const isService = i.category && i.category.includes('Услуги');
@@ -152,7 +148,9 @@ export const ItemsModule = {
         // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
         const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
         
-        const imageUrl = (Array.isArray(i.images) && i.images.length > 0 && i.images[0]) ? i.images[0] : (i.imageUrl || defaultImage);
+        const rawImageUrl = (Array.isArray(i.images) && i.images.length > 0 && i.images[0]) ? i.images[0] : (i.imageUrl || defaultImage);
+        // Пропускаем только безопасные схемы (http/https/data:image) и экранируем для вставки в атрибут src
+        const imageUrl = escapeHtml(safeImageUrl(rawImageUrl, defaultImage));
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
         const iconClass = isLiked ? 'text-brand-500 fa-box' : 'text-stone-400 fa-box-open';
@@ -209,7 +207,7 @@ export const ItemsModule = {
             ${favHtmlCard}
             
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
-                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${i.title}">
+                <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${safeTitle}">
                 
                 <!-- НА ФОТО ОСТАЛОСЬ ТОЛЬКО СОСТОЯНИЕ -->
                 <div class="img-badges">
@@ -225,7 +223,7 @@ export const ItemsModule = {
                         <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
                         <div class="flex flex-col mb-1.5 title-price-wrap">
                             <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
-                                ${vipCrown}${i.title || 'Без названия'}
+                                ${vipCrown}${safeTitle}
                             </h4>
                             <div class="text-brand-600 price-text font-black" style="font-size: 1.1rem; line-height: 1;">
                                 ${i.price || 0} ${i.currency || 'RSD'}
@@ -583,16 +581,25 @@ export const ItemsModule = {
             } else {
                 imagesArray = [defaultImage];
             }
+            // Пропускаем только безопасные схемы URL (http/https/data:image), защита от XSS через подменённые ссылки
+            imagesArray = imagesArray.map(src => safeImageUrl(src, defaultImage));
 
             // ИСПРАВЛЕНИЕ: передаем именно imagesArray
             window.currentLightboxImages = imagesArray;
 
-                // Генерируем главные слайды
-                carousel.innerHTML = imagesArray.map((src) => `
-                    <div class="w-full h-full shrink-0 flex items-center justify-center snap-center relative">
-                        <img src="${src}" class="max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]" onclick="window.openLightbox('${src}')">
-                    </div>
-                `).join('');
+                // Генерируем главные слайды через DOM API (не innerHTML), чтобы src/onclick
+                // никогда не парсились как HTML/JS-код, даже если в URL есть кавычки
+                carousel.innerHTML = '';
+                imagesArray.forEach((src) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'w-full h-full shrink-0 flex items-center justify-center snap-center relative';
+                    const imgEl = document.createElement('img');
+                    imgEl.src = src;
+                    imgEl.className = 'max-w-full max-h-full object-contain cursor-zoom-in transition duration-500 hover:scale-[1.02]';
+                    imgEl.addEventListener('click', () => window.openLightbox(src));
+                    slide.appendChild(imgEl);
+                    carousel.appendChild(slide);
+                });
 
                 if (imagesArray.length > 1) {
                     // Счётчик поверх фото (1 / 5)
@@ -601,14 +608,22 @@ export const ItemsModule = {
                         counterEl.classList.remove('hidden');
                     }
                     
-                    // Галерея миниатюр
+                    // Галерея миниатюр (тоже через DOM API по той же причине)
                     if (thumbsContainer) {
-                        thumbsContainer.innerHTML = imagesArray.map((src, idx) => `
-                            <button onclick="document.getElementById('modal-carousel').scrollTo({left: ${idx} * document.getElementById('modal-carousel').clientWidth, behavior: 'smooth'})" 
-                                    class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-brand-500' : 'border-transparent opacity-60 hover:opacity-100'} transition-all cursor-pointer">
-                                <img src="${src}" class="w-full h-full object-cover">
-                            </button>
-                        `).join('');
+                        thumbsContainer.innerHTML = '';
+                        imagesArray.forEach((src, idx) => {
+                            const btn = document.createElement('button');
+                            btn.className = `w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-brand-500' : 'border-transparent opacity-60 hover:opacity-100'} transition-all cursor-pointer`;
+                            btn.addEventListener('click', () => {
+                                const carouselEl = document.getElementById('modal-carousel');
+                                carouselEl.scrollTo({ left: idx * carouselEl.clientWidth, behavior: 'smooth' });
+                            });
+                            const thumbImg = document.createElement('img');
+                            thumbImg.src = src;
+                            thumbImg.className = 'w-full h-full object-cover';
+                            btn.appendChild(thumbImg);
+                            thumbsContainer.appendChild(btn);
+                        });
                         thumbsContainer.classList.remove('hidden');
                     }
 
@@ -666,19 +681,21 @@ export const ItemsModule = {
                     const mainCat = parts[0];
                     const subCat = parts[1] || '';
                     const t = window.t || (txt => txt);
+                    const safeMainCat = escapeHtml(mainCat);
+                    const safeFullCat = escapeHtml(item.category);
 
                     // Создаем кликабельную кнопку главной категории
                     let html = `
-                        <button type="button" data-action="filter-category" data-cat="${mainCat}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
-                            ${t(mainCat)}
+                        <button type="button" data-action="filter-category" data-cat="${safeMainCat}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
+                            ${escapeHtml(t(mainCat))}
                         </button>`;
                     
                     // Если есть подкатегория, добавляем стрелочку и вторую кнопку
                     if (subCat) {
                         html += `
                             <i class="fa-solid fa-chevron-right text-[8px] opacity-40 pt-0.5"></i>
-                            <button type="button" data-action="filter-category" data-cat="${item.category}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
-                                ${t(subCat)}
+                            <button type="button" data-action="filter-category" data-cat="${safeFullCat}" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer border-b border-transparent hover:border-brand-500">
+                                ${escapeHtml(t(subCat))}
                             </button>
                         `;
                     }
@@ -937,7 +954,7 @@ export const ItemsModule = {
             if (authorEl) authorEl.innerText = item.authorName || "Пользователь";
 
             const avatarEl = document.getElementById('modal-author-avatar');
-            if (avatarEl) avatarEl.innerHTML = item.authorAvatar ? `<img src="${item.authorAvatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user"></i>`;
+            if (avatarEl) renderSafeAvatar(avatarEl, item.authorAvatar);
 
             // --- ЛОГИКА ПЛАШКИ ПРОДАВЦА + РЕЙТИНГ + ДОВЕРИЕ ---
             const authorSubEl = document.getElementById('modal-author-sub');

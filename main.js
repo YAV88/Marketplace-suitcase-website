@@ -5,6 +5,7 @@ import { ItemsModule } from './modules/items.js';
 import { I18nModule } from './modules/i18n.js';        
 import { MapModule } from './modules/map.js';          
 import { PaymentsModule } from './modules/payments.js';
+import { escapeHtml, safeImageUrl, renderSafeAvatar } from './modules/security.js';
 
 // ==========================================
 // 1. STATE MANAGER (Единый источник истины)
@@ -416,11 +417,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
 
     if (nameEl) nameEl.innerText = sellerName || 'Продавец';
     if (avatarCont) {
-        if (sellerAvatar) {
-            avatarCont.innerHTML = `<img src="${sellerAvatar}" class="w-full h-full object-cover rounded-full">`;
-        } else {
-            avatarCont.innerHTML = `<i class="fa-solid fa-user text-stone-400"></i>`;
-        }
+        renderSafeAvatar(avatarCont, sellerAvatar, '<i class="fa-solid fa-user text-stone-400"></i>');
     }
 
     const grid = document.getElementById('seller-items-grid');
@@ -511,9 +508,10 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
                 listRev.innerHTML = reviews.map(r => {
                     // Достаем имя и аватар из нашего словаря
                     const revInfo = usersMap[r.reviewer_id] || {};
-                    const revName = revInfo.name || 'Покупатель';
-                    const revAvatar = revInfo.avatar
-                        ? `<img src="${revInfo.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0 shadow-sm border border-stone-200 dark:border-stone-700">`
+                    const revName = escapeHtml(revInfo.name || 'Покупатель');
+                    const safeRevAvatarUrl = safeImageUrl(revInfo.avatar);
+                    const revAvatar = safeRevAvatarUrl
+                        ? `<img src="${escapeHtml(safeRevAvatarUrl)}" class="w-6 h-6 rounded-full object-cover shrink-0 shadow-sm border border-stone-200 dark:border-stone-700">`
                         : `<div class="w-6 h-6 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-[10px] text-stone-500 shrink-0"><i class="fa-solid fa-user"></i></div>`;
 
                     return `
@@ -527,7 +525,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
                                 ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
                             </div>
                         </div>
-                        <div class="text-sm text-stone-700 dark:text-stone-300 mt-2">${r.comment || ''}</div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300 mt-2">${escapeHtml(r.comment || '')}</div>
                         <div class="text-[10px] text-stone-400 mt-2">${new Date(r.created_at).toLocaleDateString()}</div>
                     </div>
                 `}).join('');
@@ -875,24 +873,28 @@ window.openChatListModal = async (silentLoad = false) => {
             // Если мы продаем, собеседник - покупатель. И наоборот.
             const interlocutorName = isSeller ? (chat.buyer_name || "Покупатель") : (chat.seller_name || chat.item_title || "Продавец");
 
-            const lastMsg = chat.last_message || 'Нет сообщений...';
+            const safeLastMsg = escapeHtml(chat.last_message || 'Нет сообщений...');
             const unreadCount = unreadMap[chat.chat_id] || 0;
-            const itemImg = chat.item_image || 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100';
+            const itemImg = escapeHtml(safeImageUrl(chat.item_image, 'https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=100'));
+            const safeInterlocutorName = escapeHtml(interlocutorName);
+            const safeItemTitle = escapeHtml(chat.item_title || window.t('Товар удален'));
 
             const roleBadge = isSeller
                 ? `<span class="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200">${window.t('Вы продаете')}</span>`
                 : `<span class="bg-brand-50 text-brand-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-brand-100">${window.t('Вы покупаете')}</span>`;
 
+            // Данные передаются через data-* атрибуты (экранированные), а не через инлайновый onclick с интерполяцией —
+            // это устраняет риск как HTML-, так и JS-инъекции через имя собеседника/ID
             html += `
-            <div onclick="window.openExistingChat('${chat.chat_id}', '${chat.item_id}', '${isSeller}', '${interlocutorName.replace(/'/g, "\\'")}')" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+            <div data-action="open-existing-chat" data-chat-id="${escapeHtml(chat.chat_id)}" data-item-id="${escapeHtml(chat.item_id)}" data-is-seller="${isSeller}" data-name="${safeInterlocutorName}" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
                 <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
                 <div class="flex-1 overflow-hidden text-left">
                     <div class="flex items-center gap-2 mb-1">
                         ${roleBadge}
-                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${chat.item_title || window.t('Товар удален')}</h4>
+                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${safeItemTitle}</h4>
                     </div>
-                    <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> ${window.t('Собеседник:')} <span class="text-stone-800 dark:text-stone-200">${interlocutorName}</span></p>
-                    <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${lastMsg}</p>
+                    <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> ${window.t('Собеседник:')} <span class="text-stone-800 dark:text-stone-200">${safeInterlocutorName}</span></p>
+                    <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${safeLastMsg}</p>
                 </div>
                 ${unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : ''}
             </div>`;
@@ -2420,7 +2422,7 @@ window.submitNewItem = async (event) => {
 window.renderPhotoPreviews = () => {
     const list = document.getElementById('photo-preview-list'); if (!list) return; let html = '';
     (window.editExistingImages || []).forEach((src, i) => {
-        html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${src}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+        html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${escapeHtml(safeImageUrl(src))}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
     });
     (window.tempPhotos || []).forEach((dataUrl, i) => {
         html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${dataUrl}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
@@ -2576,9 +2578,10 @@ window.renderProfileTabs = async () => {
                 // Рендер карточек отзывов (чуть меньше отступов для мобилок)
                 html += reviews.map(r => {
                     const revInfo = usersMap[r.reviewer_id] || {};
-                    const revName = revInfo.name || 'Покупатель';
-                    const revAvatar = revInfo.avatar
-                        ? `<img src="${revInfo.avatar}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0 border-2 border-stone-200 dark:border-stone-700 shadow-sm">`
+                    const revName = escapeHtml(revInfo.name || 'Покупатель');
+                    const safeRevAvatarUrl2 = safeImageUrl(revInfo.avatar);
+                    const revAvatar = safeRevAvatarUrl2
+                        ? `<img src="${escapeHtml(safeRevAvatarUrl2)}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shrink-0 border-2 border-stone-200 dark:border-stone-700 shadow-sm">`
                         : `<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-base sm:text-lg text-stone-500 shrink-0 shadow-sm"><i class="fa-solid fa-user"></i></div>`;
 
                     return `
@@ -2595,7 +2598,7 @@ window.renderProfileTabs = async () => {
                                 ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
                             </div>
                         </div>
-                        <div class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">${r.comment || '<i class="opacity-50">Покупатель не оставил комментарий</i>'}</div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">${r.comment ? escapeHtml(r.comment) : '<i class="opacity-50">Покупатель не оставил комментарий</i>'}</div>
                     </div>`;
                 }).join('');
                 
@@ -3254,6 +3257,9 @@ document.body.addEventListener('click', (e) => {
         case 'delete-item':
             e.stopPropagation();
             window.deleteItemConfirm(id); // Вызываем функцию с подтверждением
+            break;
+        case 'open-existing-chat':
+            window.openExistingChat(btn.dataset.chatId, btn.dataset.itemId, btn.dataset.isSeller, btn.dataset.name);
             break;
         case 'toggle-favorite':
             e.stopPropagation();
