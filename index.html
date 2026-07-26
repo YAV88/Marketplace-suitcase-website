@@ -76,23 +76,9 @@
 
 <body class="antialiased relative z-0 pb-[70px] lg:pb-0 overflow-x-hidden max-w-full min-h-[100dvh]">
     
-    <!-- ГЛОБАЛЬНЫЙ ФОН: Ретро стиль (бумага + теплые засветы) -->
-    <div class="fixed inset-0 pointer-events-none z-[-1] bg-[#F4EFE6] dark:bg-[#2A241F] transition-colors duration-300 overflow-hidden">
-        
-        <!-- Текстура старой крафт-бумаги (легкий шум) -->
-        <div class="absolute inset-0 opacity-[0.5] dark:opacity-[0.15]" style="background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');"></div>
-        
-        <!-- Теплые винтажные засветы (сепия/оранж) -->
-        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-orange-700/10 dark:bg-orange-500/10 blur-[100px] md:blur-[120px] rounded-full mix-blend-multiply dark:mix-blend-screen opacity-80"></div>
-        
-        <!-- Янтарный засвет снизу -->
-        <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-amber-700/10 dark:bg-amber-500/10 blur-[100px] md:blur-[120px] rounded-full mix-blend-multiply dark:mix-blend-screen opacity-80"></div>
+    <!-- Глобальный фон теперь управляется через CSS переменные в body -->
 
-        <!-- Градиент для шапки -->
-        <div class="absolute top-0 left-0 right-0 h-[300px] bg-gradient-to-b from-[#EBE3D5] to-transparent dark:from-[#221C18] dark:to-transparent"></div>
-    </div>
-
-    <nav id="main-header" class="relative bg-[#FDFBF7]/85 dark:bg-[#322A24]/90 backdrop-blur-md border-b-2 border-[#D8CFC0] dark:border-[#4A3F35] sticky top-0 z-50 transform transition-all duration-300 shadow-sm">
+    <nav id="main-header" class="relative backdrop-blur-md border-b border-stone-200 dark:border-stone-800 sticky top-0 z-50 transform transition-all duration-300">
             
         <div id="header-container"
             class="relative z-10 container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 lg:gap-6 transition-all duration-300">
@@ -575,15 +561,15 @@
         </div>
 
         <!-- VIP ЛЕНТА (БЕЗ РАМОК, ТОЛЬКО АКЦЕНТ НА ТОВАР) -->
-        <div id="vip-section" class="mb-8 hidden relative bg-transparent py-2">
+        <div id="vip-section" class="mb-8 relative bg-transparent py-2">
             <div class="flex items-center gap-3 mb-4 px-4 sm:px-0">
                 <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight">
-                    <i class="fa-solid fa-fire-flame-curved text-orange-500 mr-2 drop-shadow-md"></i>
+                    <i class="fa-solid fa-crown text-amber-500 mr-2 drop-shadow-md"></i>
                     <span data-i18n="vip_title" class="font-display">ТОП Находки</span>
                 </h4>
             </div>
             
-            <div id="vip-items-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full">
+            <div id="vip-items-grid" class="w-full">
                 <!-- Сюда JS будет вставлять 8 статичных карточек -->
             </div>
         </div>

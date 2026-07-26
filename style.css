@@ -557,29 +557,32 @@ video {
 }
 
 :root {
-  /* СВЕТЛАЯ ТЕМА: Urban Mint */
-  --bg-page: #F3F4F6;
+  /* СВЕТЛАЯ ТЕМА */
+  --bg-page: #F8F9FA;
   --bg-surface: #FFFFFF;
-  --color-brand-400: #34D399;
+  --color-brand-400: #00D4B5;
+  /* Hover */
   --color-brand-500: #1FB6A6;
-  /* Морская бирюза */
-  --color-brand-600: #0F766E;
-  --color-brand-700: #115E59;
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --border-soft: rgba(0, 0, 0, 0.08);
+  /* Main */
+  --color-success: #22C55E;
+  --color-error: #EF4444;
+  --color-vip: #F5C542;
+  --text-primary: #18181B;
+  --text-secondary: #71717A;
+  --border-soft: #E4E4E7;
 }
 
 .dark {
-  /* ТЕМНАЯ ТЕМА: Urban Mint (#121417) */
+  /* ТЕМНАЯ ТЕМА */
   --bg-page: #121417;
   --bg-surface: #1C2025;
   --color-brand-400: #00D4B5;
-  /* Лазурный неон-акцент */
+  /* Hover */
   --color-brand-500: #1FB6A6;
-  --color-brand-600: #0F766E;
-  --color-brand-700: #115E59;
-  --text-primary: #F4F5F7;
+  --color-success: #22C55E;
+  --color-error: #EF4444;
+  --color-vip: #F5C542;
+  --text-primary: #F5F5F5;
   --text-secondary: #9CA3AF;
   --border-soft: #2D333B;
 }
@@ -724,14 +727,9 @@ body {
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-.item-card.is-visible {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: cardFadeIn 0.5s ease-out forwards;
 }
 
 @keyframes cardFadeIn {
@@ -951,30 +949,34 @@ body {
 /* ТОП-ЛЕНТА (VIP ПОСТЕРЫ) */
 
 #vip-items-grid .item-card {
-  width: 100% !important;
-  min-width: 0 !important;
-  border: none !important;
   background: transparent !important;
+  border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
+}
+
+#vip-items-grid .item-card:hover .card-img-wrap {
+  border-color: var(--color-vip) !important;
+  box-shadow: 0 10px 25px -5px rgba(245, 197, 66, 0.3) !important;
 }
 
 #vip-items-grid .card-img-wrap {
   height: 180px !important;
   min-height: 180px !important;
   border-radius: 1rem !important;
-  box-shadow: 0 8px 16px -4px rgba(31, 182, 166, 0.4) !important;
-  border: 2px solid var(--color-brand-500) !important;
+  box-shadow: 0 8px 16px -4px rgba(245, 197, 66, 0.2) !important;
+  border: 2px solid rgba(245, 197, 66, 0.5) !important;
+  transition: all 0.3s ease !important;
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 0.5rem 0 0 0 !important;
+  padding: 0.75rem 0 0 0 !important;
 }
 
 @media (min-width: 1024px) {
   #vip-items-grid .card-img-wrap {
-    height: 280px !important;
-    min-height: 280px !important;
+    height: 240px !important;
+    min-height: 240px !important;
     border-radius: 1.25rem !important;
   }
 
@@ -5127,10 +5129,6 @@ body {
 
   .sm\:mb-4{
     margin-bottom: 1rem;
-  }
-
-  .sm\:mb-6{
-    margin-bottom: 1.5rem;
   }
 
   .sm\:mb-8{
