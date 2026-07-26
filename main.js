@@ -117,18 +117,6 @@ window.openTokenPurchaseModal = () => {
 // АНИМАЦИЯ ПОЯВЛЕНИЯ ЭЛЕМЕНТОВ ПРИ СКРОЛЛЕ
 // ==========================================
 window.animateVisibleElements = () => {
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target); // Анимация сработает только один раз
-            }
-        });
-    }, {
-        rootMargin: '0px 0px -50px 0px' // Начать анимацию чуть раньше, чем элемент полностью появится
-    });
-
-    document.querySelectorAll('.item-card:not(.is-visible)').forEach(card => observer.observe(card));
 };
 
 // Закрываем меню при клике в пустую область

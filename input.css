@@ -1,4 +1,3 @@
-/* 1. ЗАГРУЗКА ШРИФТОВ И ФРЕЙМВОРКА */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tektur:wght@600;800&display=swap');
 
 @tailwind base;
@@ -7,258 +6,198 @@
 
 @layer base {
   :root {
-    /* Светлая тема: Неоновый Фуксия */
-    --color-brand-400: #e879f9; 
-    --color-brand-500: #d946ef; 
-    --color-brand-600: #c026d3; 
-    --color-brand-700: #a21caf; 
+    /* СВЕТЛАЯ ТЕМА: Нейтрально-серый фон и Лазурный неон */
+    --bg-page: #f3f4f6; 
+    --bg-surface: #ffffff;
+    
+    --color-brand-400: #22d3ee; /* Cyan 400 */
+    --color-brand-500: #06b6d4; /* Cyan 500 (Лазурный) */
+    --color-brand-600: #0891b2; /* Cyan 600 */
+    --color-brand-700: #0e7490;
+    
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-soft: rgba(0, 0, 0, 0.08);
   }
 
   .dark {
-    /* Темная тема: Неоновый Фуксия */
-    --color-brand-400: #f0abfc; 
-    --color-brand-500: #e879f9;
-    --color-brand-600: #d946ef;
+    /* ТЕМНАЯ ТЕМА: Глубокий темно-серый (Графит) и Лазурный неон */
+    --bg-page: #111827; /* Gray 900 */
+    --bg-surface: #1f2937; /* Gray 800 */
+    
+    --color-brand-400: #67e8f9; /* В темноте неон ярче */
+    --color-brand-500: #22d3ee; 
+    --color-brand-600: #06b6d4; 
+    --color-brand-700: #0891b2;
+    
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-soft: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer components {
-    /* ==========================================
-       УМНАЯ СЕТКА МОДАЛЬНОГО ОКНА
-       ========================================== */
-    .item-details-layout { display: flex; flex-direction: column; }
-    @media (min-width: 1024px) {
-        .item-details-layout { display: grid; grid-template-columns: 55% 1fr; grid-template-rows: auto 1fr; align-items: start; }
-        .il-photo { grid-column: 1; grid-row: 1; }
-        .il-desc { grid-column: 1; grid-row: 2; padding-right: 2rem; }
-        .il-info { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; padding-left: 1rem; }
+    /* ГЛОБАЛЬНЫЙ СТИЛЬ КАРТОЧЕК И ПОВЕРХНОСТЕЙ */
+    .bg-white { background-color: var(--bg-surface) !important; }
+    .dark\:bg-stone-900:is(.dark *) { background-color: var(--bg-surface) !important; }
+    
+    .border-stone-200 { border-color: var(--border-soft) !important; }
+    .dark\:border-stone-800:is(.dark *) { border-color: var(--border-soft) !important; }
+
+    /* ПРЕМИАЛЬНЫЕ ТЕНИ */
+    .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02) !important; }
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important; }
+
+    /* GLASSMORPHISM */
+    .backdrop-blur-md {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background-color: rgba(255, 255, 255, 0.75) !important;
+    }
+    .dark .backdrop-blur-md {
+        background-color: rgba(31, 41, 55, 0.8) !important;
     }
 
-    /* ==========================================
-       ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ
-       ========================================== */
+    /* ФОРМЫ И СЕЛЕКТЫ */
     input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
-        cursor: text !important; caret-color: #0d9488; font-size: 16px !important;
+        cursor: text !important; caret-color: var(--color-brand-500); font-size: 16px !important;
     }
     input:focus, textarea:focus, select:focus {
-        border-color: #0d9488 !important; outline: none !important; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+        border-color: var(--color-brand-500) !important; outline: none !important; box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15) !important;
     }
     select {
-        appearance: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; 
-        background-color: transparent !important; background-image: none !important;
-        cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;
+        appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important;
     }
-    select::-ms-expand { display: none !important; }
-    .dark select { background-image: none !important; }
-    select optgroup { font-weight: 800 !important; color: #0d9488 !important; background: #f0fdfa !important; padding: 5px !important; font-size: 16px !important; }
-    select option { font-weight: 500 !important; color: #1c1917 !important; background: #fff !important; padding: 5px !important; font-size: 16px !important; }
-    .dark select optgroup { background: #134e4a !important; color: #ccfbf1 !important; }
-    .dark select option { background: #2A241F !important; color: #E8E2D9 !important; }
-    .bg-stone-800 select, .bg-stone-900 select, .bg-black select { color: #ffffff !important; }
-    .bg-stone-800 select option, .bg-stone-900 select option, .bg-black select option { color: #1c1917 !important; }
-
-    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
-
-    /* ==========================================
-       ГЛОБАЛЬНАЯ ЧИСТКА АРТЕФАКТОВ СЕТКИ
-       ========================================== */
-    .divide-y > :not([hidden]) ~ :not([hidden]), .divide-x > :not([hidden]) ~ :not([hidden]) { border-width: 0px !important; }
-    #main-items-grid, #profile-items-grid, #seller-items-grid, .view-grid, .view-list { background-color: transparent !important; }
-
-    /* ==========================================
-       БАЗОВАЯ КАРТОЧКА ТОВАРА
-       ========================================== */
+    
+    /* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Без пропадания на скролле) */
     .item-card {
         display: flex !important; flex-direction: column !important; height: 100% !important;
-        border-radius: 0.75rem !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; overflow: hidden;
-        opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        border-radius: 1rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
+        padding: 0 !important; overflow: hidden;
+        animation: cardFadeIn 0.5s ease-out forwards;
     }
+    @keyframes cardFadeIn {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
     .card-body-wrap { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; justify-content: space-between !important; }
-    .item-card.is-visible { opacity: 1; transform: translateY(0); }
-    .card-img-wrap {
-        border-radius: 0.75rem !important; box-shadow: 0 4px 10px -2px rgba(13, 148, 136, 0.12) !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative;
-    }
+    .card-img-wrap { transition: transform 0.3s ease, filter 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative; }
     .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; }
-    .item-card:hover .card-img-wrap { transform: translateY(-4px) !important; box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.35) !important; }
+    .item-card:hover .card-img-wrap img { transform: scale(1.05) !important; }
 
     .item-card h4 {
         display: -webkit-box !important; line-clamp: 2 !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
         overflow: hidden !important; word-break: break-word !important; white-space: normal !important; line-height: 1.25 !important; margin-bottom: 2px !important;
     }
-    .item-card h4 i.fa-crown, .item-card h4 i.fa-gem, .item-card h4 i.fa-fire-flame-curved { display: inline !important; margin-right: 4px !important; }
-    .item-card h4 i.fa-fire-flame-curved { color: #f97316 !important; font-size: 1.1em !important; filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.4)) !important; }
+    .item-card h4 i.fa-fire-flame-curved { color: var(--color-brand-500) !important; font-size: 1.1em !important; filter: drop-shadow(0 2px 4px rgba(6, 182, 212, 0.4)) !important; }
 
-    /* ==========================================
-       VIP КАРТОЧКИ И ЭФФЕКТЫ
-       ========================================== */
-    .vip-card .card-img-wrap, #vip-items-grid .card-img-wrap { border: 2px solid #f59e0b !important; box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.4) !important; }
-    .vip-card:hover .card-img-wrap, #vip-items-grid .item-card:hover .card-img-wrap { border-color: #d97706 !important; box-shadow: 0 0 25px 4px rgba(245, 158, 11, 0.6) !important; }
-    .vip-card::after { 
-        content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; 
-        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%); 
-        transform: skewX(-25deg); animation: shimmer 4s infinite; z-index: 10; pointer-events: none; 
-    }
+    /* VIP КАРТОЧКИ С ЛАЗУРНЫМ СВЕЧЕНИЕМ */
+    .vip-card, #vip-items-grid .item-card { border: 1px solid rgba(6, 182, 212, 0.4) !important; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.08) !important; }
+    .vip-card:hover, #vip-items-grid .item-card:hover { border-color: rgba(6, 182, 212, 0.8) !important; box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25) !important; }
 
-    /* ==========================================
-       РЕЖИМ СЕТКИ (GRID)
-       ========================================== */
-    .view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.5rem !important; align-items: stretch !important; }
-    @media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.75rem !important; } }
-    @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+    /* РЕЖИМ СЕТКИ (GRID) */
+    .view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.75rem !important; align-items: stretch !important; }
+    @media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 1rem !important; } }
+    @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.25rem !important; } }
     @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
     @media (min-width: 1280px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; } }
     
-    .view-grid .card-img-wrap { height: 120px !important; min-height: 120px !important; max-height: 120px !important; flex-shrink: 0 !important; }
-    @media (min-width: 640px) { .view-grid .card-img-wrap { height: 150px !important; min-height: 150px !important; } }
-    @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 190px !important; min-height: 190px !important; } }
+    .view-grid .card-img-wrap { height: 140px !important; min-height: 140px !important; flex-shrink: 0 !important; border-radius: 1rem 1rem 0 0 !important; }
+    @media (min-width: 640px) { .view-grid .card-img-wrap { height: 160px !important; min-height: 160px !important; } }
+    @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 200px !important; min-height: 200px !important; } }
 
-    .view-grid .card-body-wrap { padding: 0.75rem 0 0 0 !important; background: transparent !important; }
+    .view-grid .card-body-wrap { padding: 0.75rem !important; background: transparent !important; }
     .view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
-    .view-grid-city { margin-top: auto !important; }
 
-    @media (max-width: 639px) {
-        .view-grid .item-card .mt-2.flex.flex-wrap, .view-grid .item-card .text-[10px].text-stone-500 { display: none !important; }
-        .view-grid .card-body-wrap { min-height: 90px !important; padding: 0.5rem 0 0 0 !important; }
-        .view-grid h4 { font-size: 0.85rem !important; min-height: 2.5em !important; }
-        .view-grid .price-text { font-size: 1rem !important; }
-    }
-
-    /* ==========================================
-       РЕЖИМ СПИСКА (МОНОЛИТНЫЕ КАРТОЧКИ)
-       ========================================== */
-    .view-list { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; padding-bottom: 1rem; }
-    
-    .view-list .item-card { 
-        flex-direction: row !important; align-items: stretch !important;
-        background-color: #FDFBF7 !important; border: 1px solid #D8CFC0 !important; border-radius: 1rem !important;
-        box-shadow: 0 4px 12px -2px rgba(62, 54, 46, 0.05) !important;
-        padding: 0.5rem !important; margin-bottom: 0 !important; height: auto !important;
-    }
-    .dark .view-list .item-card { background-color: #292524 !important; border-color: #3f3f46 !important; }
-
+    /* РЕЖИМ СПИСКА */
+    .view-list { display: flex !important; flex-direction: column !important; gap: 1rem !important; padding-bottom: 1rem; }
+    .view-list .item-card { flex-direction: row !important; align-items: stretch !important; padding: 0 !important; margin-bottom: 0 !important; height: auto !important; }
     .view-list .view-grid-city, .view-list .view-list-desc { display: none !important; }
-    .view-list .view-list-city { display: block !important; color: #6b7280; font-size: 0.8rem !important; margin-top: 4px; }
-
-    @media (max-width: 768px) {
-        .view-list .item-card { padding: 0 !important; min-height: 125px !important; }
-        .view-list .card-img-wrap { 
-            width: 42% !important; min-width: 125px !important; max-width: 150px !important; height: auto !important; 
-            box-shadow: none !important; border-radius: 1rem 0 0 1rem !important; overflow: hidden !important;
-        }
-        .view-list .card-body-wrap { padding: 0.75rem !important; gap: 4px !important; }
-        .view-list h4 { min-height: auto !important; margin-bottom: 2px !important; margin-top: 0 !important; font-size: 0.9rem !important; }
-        .view-list .price-text { font-size: 1.15rem !important; font-weight: 900; }
-    }
-
-    @media (min-width: 1024px) {
-        .view-list .item-card { min-height: 190px !important; padding: 0.75rem !important; }
-        .view-list .card-img-wrap { width: 250px !important; min-height: 170px !important; display: block !important; box-shadow: none !important;}
-        .view-list .card-body-wrap { padding: 0 0 0 1.25rem !important; flex-direction: row !important; align-items: stretch !important; gap: 1.5rem; }
-        .view-list .view-list-col-2 { flex: 0 0 35% !important; border-right: 1px solid #e7e5e4; padding-right: 1.5rem; }
-        .dark .view-list .view-list-col-2 { border-color: #44403c; }
-        .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
-        .view-list h4 { font-size: 1.05rem !important; }
-        .view-list .price-text { font-size: 1.6rem !important; margin-bottom: 0.25rem !important; }
-        .view-list .view-list-desc { display: -webkit-box !important; line-clamp: 5; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; color: #6b7280; font-size: 0.9rem; line-height: 1.5; }
-    }
-
-    /* ==========================================
-       ТОП-ЛЕНТА (VIP ПОСТЕРЫ)
-       ========================================== */
-    #vip-items-grid .item-card { width: 100% !important; min-width: 0 !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
-    #vip-items-grid .card-img-wrap { height: 180px !important; min-height: 180px !important; border-radius: 1rem !important; box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.4) !important; border: 2px solid #f59e0b !important; }
-    #vip-items-grid .card-body-wrap { padding: 0.5rem 0 0 0 !important; }
-    #vip-items-grid h4 { min-height: 2.6em !important; font-size: 0.95rem !important; margin-bottom: 2px !important; }
-    #vip-items-grid .view-grid-city, #vip-items-grid .mt-2.flex.flex-wrap, #vip-items-grid .text-[10px], #vip-items-grid .vip-card::after { display: none !important; }
     
+    @media (max-width: 768px) {
+        .view-list .item-card { min-height: 130px !important; }
+        .view-list .card-img-wrap { width: 40% !important; min-width: 130px !important; height: auto !important; border-radius: 1rem 0 0 1rem !important; }
+        .view-list .card-body-wrap { padding: 0.75rem !important; justify-content: center !important; }
+        .view-list h4 { margin-bottom: 4px !important; margin-top: 0 !important; font-size: 0.95rem !important; }
+        .view-list .price-text { font-size: 1.2rem !important; }
+    }
+    @media (min-width: 1024px) {
+        .view-list .item-card { min-height: 200px !important; padding: 1rem !important; }
+        .view-list .card-img-wrap { width: 280px !important; border-radius: 0.75rem !important; }
+        .view-list .card-body-wrap { padding: 0 0 0 1.5rem !important; flex-direction: row !important; align-items: stretch !important; gap: 2rem; }
+        .view-list .view-list-col-2 { flex: 0 0 35% !important; border-right: 1px solid var(--border-soft); padding-right: 1.5rem; }
+        .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
+    }
+
+    /* ТОП-ЛЕНТА (VIP ПОСТЕРЫ) */
+    #vip-items-grid .item-card { width: 100% !important; min-width: 0 !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+    #vip-items-grid .card-img-wrap { height: 180px !important; min-height: 180px !important; border-radius: 1rem !important; box-shadow: 0 8px 16px -4px rgba(6, 182, 212, 0.4) !important; border: 2px solid var(--color-brand-500) !important; }
+    #vip-items-grid .card-body-wrap { padding: 0.5rem 0 0 0 !important; }
     @media (min-width: 1024px) {
         #vip-items-grid .card-img-wrap { height: 280px !important; min-height: 280px !important; border-radius: 1.25rem !important; }
-        #vip-items-grid h4 { font-size: 1.05rem !important; margin-top: 6px !important; }
     }
 
     /* ==========================================
-       САЙТ НА ВСЮ ШИРИНУ И ВЫЕЗД VIP
+       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
        ========================================== */
-    .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; transition: padding 0.3s ease; }
-    @media (min-width: 640px) { .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
-    @media (min-width: 1024px) { .container, .max-w-7xl, .max-w-screen-xl, .max-w-6xl, .max-w-5xl { padding-left: 3rem !important; padding-right: 3rem !important; } }
+    .container, .max-w-[1400px] { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; }
+    @media (min-width: 1024px) { 
+        .container, .max-w-[1400px] { padding-left: 3rem !important; padding-right: 3rem !important; } 
+        
+        main {
+            display: grid !important;
+            grid-template-columns: 280px minmax(0, 1fr) !important;
+            align-items: start;
+            grid-auto-flow: row;
+            gap: 0 2.5rem !important;
+        }
 
-    #vip-section { width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; border-radius: 0 !important; background: transparent !important; }
-    #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 1rem !important; padding-right: 1rem !important; }
-    @media (min-width: 640px) { #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
-    @media (min-width: 1024px) { #vip-section > .flex.items-center.gap-3, #vip-items-grid { padding-left: 3rem !important; padding-right: 3rem !important; } }
+        /* Жестко раскидываем блоки по рядам, чтобы они не перекрывали друг друга */
+        main > div:nth-child(1) { grid-column: 1 / -1; grid-row: 1; } /* Заголовок */
+        main > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; } /* Backdrop */
+        
+        #filter-panel-wrapper {
+            grid-column: 1 / 2 !important;
+            grid-row: 3 / 10 !important; /* Сайдбар занимает ряды с 3 по 9 */
+            position: sticky !important;
+            top: 100px !important;
+            height: calc(100vh - 120px) !important;
+            display: block !important;
+            overflow-y: auto !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            transform: none !important;
+        }
+        
+        #main-cats-container { grid-column: 2 / 3 !important; grid-row: 3 !important; }
+        #sub-cats-container { grid-column: 2 / 3 !important; grid-row: 4 !important; }
+        #vip-section { grid-column: 2 / 3 !important; grid-row: 5 !important; width: auto !important; margin: 0 !important; }
+        #vip-section > div { padding-left: 0 !important; padding-right: 0 !important; }
+        main > div.bg-gradient-to-r { grid-column: 2 / 3 !important; grid-row: 6 !important; } /* PRO Banner */
+        #fresh-ads-section { grid-column: 2 / 3 !important; grid-row: 7 !important; }
 
-    /* ==========================================
-       САЙДБАР И СКРОЛЛЫ
-       ========================================== */
-    #filter-panel-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; overflow: hidden; }
-    #filter-panel-wrapper.active { grid-template-rows: 1fr; }
-    #filter-panel { min-height: 0; }
-    
-    @media (min-width: 1024px) {
-        main { display: grid !important; grid-template-columns: 250px 1fr !important; gap: 0 2.5rem !important; align-items: start; }
-        main > * { grid-column: 1 / -1 !important; }
-        #filter-panel-wrapper { position: sticky !important; top: 90px !important; grid-column: 1 !important; grid-row: 8 !important; width: 100% !important; height: calc(100vh - 120px) !important; max-height: none !important; overflow-y: auto !important; margin-top: 0 !important; scrollbar-width: thin; scrollbar-color: #d6d3d1 transparent; display: block !important; }
-        .dark #filter-panel-wrapper { scrollbar-color: #44403c transparent; }
-        #filter-panel h4:first-child { padding-top: 2px; margin-bottom: 1.5rem !important; }
-        #filter-panel-wrapper, .dark #filter-panel-wrapper, html.dark #filter-panel-wrapper { background-color: transparent !important; box-shadow: none !important; }
-        #filter-panel > div, .dark #filter-panel > div, html.dark #filter-panel > div { background-color: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+        /* Очистка стилей мобильного фильтра */
+        #filter-panel > div { border: none !important; background: transparent !important; padding: 0 !important; }
         #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
         #btn-toggle-filters { display: none !important; }
-        .sidebar-divider { border-bottom: 1px solid rgba(20, 184, 166, 0.2); margin: 1.5rem 0; }
-        .dark .sidebar-divider { border-color: rgba(20, 184, 166, 0.1); }
-        #filter-panel .flex.justify-end { flex-direction: column; gap: 0.75rem; border-top: none !important; margin-top: 1rem !important; }
-        #filter-panel .flex.justify-end button { width: 100%; }
-        #fresh-ads-section { grid-column: 2 !important; grid-row: 8 !important; }
     }
-
-    #main-cats-container, #sub-cats-container { -webkit-overflow-scrolling: touch !important; touch-action: pan-x !important; overscroll-behavior-x: contain !important; }
-
-    /* ==========================================
-       МОДАЛКИ И ИНТЕРФЕЙС
-       ========================================== */
-    body.modal-open { overflow: hidden !important; touch-action: none !important; }
-    .modal-overlay, .modal-content, #mobile-menu, .custom-scrollbar, #chat-messages { touch-action: auto !important; overscroll-behavior: contain !important; -webkit-overflow-scrolling: touch !important; }
-    .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
-    .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { transform: scale(0.95) translateY(15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-
-    .modal-content input, .modal-content textarea, .modal-content select { background-color: #F4EFE6 !important; border: 1px solid #D8CFC0 !important; border-radius: 4px !important; color: #3E362E !important; }
-    .dark .modal-content input, .dark .modal-content textarea, .dark .modal-content select { background-color: #2A241F !important; border: 1px solid #4A3F35 !important; color: #E8E2D9 !important; }
-    .modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus { border-color: #0d9488 !important; box-shadow: 2px 2px 0px 0px rgba(13, 148, 136, 0.3) !important; }
-
-    #add-modal-title { width: 100% !important; text-align: center !important; font-size: 1.5rem !important; line-height: 1.2 !important; margin-top: 0.75rem !important; margin-bottom: 1.5rem !important; padding-left: 2.5rem !important; padding-right: 2.5rem !important; }
-    @media (min-width: 640px) { #add-modal-title { font-size: 1.8rem !important; margin-top: 1rem !important; margin-bottom: 2rem !important; } }
-
-    /* ==========================================
-       ЧАТ И АВТОЗАПОЛНЕНИЕ
-       ========================================== */
-    #chat-input-field { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
-    #chat-input-container { border: none !important; box-shadow: none !important; }
-
-    .dark input:-webkit-autofill, .dark input:-webkit-autofill:hover, .dark input:-webkit-autofill:focus, .dark input:-webkit-autofill:active {
-        -webkit-text-fill-color: #ffffff !important; transition: background-color 5000s ease-in-out 0s;
-    }
-    .dark #chat-messages *, .dark #chat-input-field, .dark #chat-input-field::placeholder { color: #ffffff !important; }
-
-    /* ==========================================
-       ИКОНКИ И УТИЛИТЫ
-       ========================================== */
-    i.fa-solid, i.fa-regular, i.fa-brands { opacity: 0.85; text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.6) !important; transition: transform 0.2s ease, opacity 0.2s ease !important; }
-    .dark i.fa-solid, .dark i.fa-regular, .dark i.fa-brands { text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8) !important; }
-    button:hover > i, a:hover > i { opacity: 1; }
-
-    .leaflet-container, .leaflet-top, .leaflet-bottom { z-index: 10 !important; font-family: inherit; }
-    button, a, .cursor-pointer { cursor: pointer !important; }
-    .disable-transitions, .disable-transitions * { transition: none !important; }
 }
 
 @layer utilities {
-  .neon-glow { box-shadow: 0 0 12px rgba(217, 70, 239, 0.4), 0 0 24px rgba(217, 70, 239, 0.2); }
-  .dark .neon-glow { box-shadow: 0 0 16px rgba(232, 121, 249, 0.3), 0 0 32px rgba(232, 121, 249, 0.15); }
+  .neon-glow {
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 24px rgba(6, 182, 212, 0.2);
+  }
+  .dark .neon-glow {
+    box-shadow: 0 0 16px rgba(34, 211, 238, 0.3), 0 0 32px rgba(34, 211, 238, 0.15);
+  }
   .neon-pulse { animation: neon-pulse 2s infinite alternate; }
   @keyframes neon-pulse {
     0% { box-shadow: 0 0 5px var(--color-brand-500); }
@@ -266,27 +205,19 @@
   }
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(100, 116, 139, 0.3); border-radius: 10px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 116, 139, 0.5); }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(107, 114, 128, 0.3); border-radius: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(107, 114, 128, 0.5); }
 }
 
-/* ==========================================
-   УМНОЕ ПЕРЕКЛЮЧЕНИЕ ЗНАЧКОВ ДОСТАВКИ/ОПЛАТЫ
-   ========================================== */
 .body-badges { display: none !important; }
 .img-extra-badges { display: flex !important; }
-
 @media (min-width: 1024px) {
     .view-list .img-extra-badges { display: none !important; }
     .view-list .body-badges { display: flex !important; }
 }
 
-/* ==========================================
-   УМНАЯ КНОПКА "В СКЛАД" (Адаптивная позиция)
-   ========================================== */
 .card-fav-btn { top: 0.5rem; right: 0.5rem; }
 .view-list .title-price-wrap { padding-right: 2.5rem !important; }
-
 @media (min-width: 1024px) {
     .view-list .card-fav-btn { top: 0.75rem; right: 0.75rem; }
     .view-list .title-price-wrap { padding-right: 0 !important; }
