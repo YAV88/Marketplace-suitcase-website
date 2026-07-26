@@ -556,56 +556,28 @@ video {
   display: none;
 }
 
-html {
-  scrollbar-gutter: stable;
-  overflow-x: hidden;
-  max-width: 100vw;
+:root {
+  /* Светлая тема: яркие, поп-артовые акценты */
+  --color-brand-400: #e879f9;
+  --color-brand-500: #d946ef;
+  /* Основной неон (Фуксия) */
+  --color-brand-600: #c026d3;
+  --color-brand-700: #a21caf;
+  /* Дополнительный кислотный акцент для кнопок-уведомлений */
+  --color-accent-neon: #a3e635;
+  /* Кислотно-зеленый (Lime) */
 }
 
-body{
-  --tw-bg-opacity: 1;
-  background-color: rgb(244 239 230 / var(--tw-bg-opacity, 1));
-  --tw-text-opacity: 1;
-  color: rgb(62 54 46 / var(--tw-text-opacity, 1));
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  overflow-x: hidden;
-  max-width: 100%;
-  position: relative;
-}
-
-html.dark body, .dark body{
-  --tw-bg-opacity: 1;
-  background-color: rgb(42 36 31 / var(--tw-bg-opacity, 1));
-  --tw-text-opacity: 1;
-  color: rgb(232 226 217 / var(--tw-text-opacity, 1));
-}
-
-main {
-  flex: 1;
-}
-
-body, button, input, select, textarea, span, p, div {
-  font-family: 'Inter', sans-serif !important;
-}
-
-h1, h2, h3, h4, h5, h6, .font-display, .price-text, #modal-price, #add-submit-btn,
-    #auth-submit-btn, #btn-contact-seller, #btn-crypto-paid, #btn-header-add, #btn-mobile-add {
-  font-family: 'Tektur', sans-serif !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.5px !important;
-  text-transform: uppercase !important;
-}
-
-img {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
+.dark {
+  /* Темная тема: делаем фон по-настоящему глубоким, чтобы неон "горел" */
+  --color-brand-400: #f0abfc;
+  /* В темноте неон должен быть чуть светлее */
+  --color-brand-500: #e879f9;
+  --color-brand-600: #d946ef;
+  --bg-dark-base: #020617;
+  /* Глубокий космос (почти черный) вместо серого камня */
+  --bg-dark-surface: #0f172a;
+  /* Чуть светлее для карточек */
 }
 
 .\!container{
@@ -4168,32 +4140,25 @@ button, a, .cursor-pointer {
   will-change: transform;
 }
 
-@keyframes shimmer {
-  0% {
-    left: -150%;
-  }
-
-  20% {
-    left: 150%;
-  }
-
-  100% {
-    left: 150%;
-  }
+.neon-glow {
+  box-shadow: 0 0 10px rgba(217, 70, 239, 0.5), 
+                0 0 20px rgba(217, 70, 239, 0.3);
 }
 
-@keyframes heartPop {
-  0% {
-    transform: scale(1);
-  }
+.dark .neon-glow {
+  box-shadow: 0 0 15px rgba(232, 121, 249, 0.6), 
+                0 0 30px rgba(232, 121, 249, 0.4);
+}
 
-  50% {
-    transform: scale(1.4);
-    color: #f43f5e;
+/* Анимация пульсации для самых важных кнопок */
+
+@keyframes neon-pulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-brand-500);
   }
 
   100% {
-    transform: scale(1);
+    box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600);
   }
 }
 
@@ -4953,6 +4918,10 @@ button, a, .cursor-pointer {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:neon-pulse:hover {
+  animation: neon-pulse 2s infinite alternate;
 }
 
 .focus\:border-brand-500:focus{

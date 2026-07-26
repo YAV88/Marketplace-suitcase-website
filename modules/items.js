@@ -1026,7 +1026,7 @@ export const ItemsModule = {
                     // 1. Проверка VIP
                     const t = window.t || (txt => txt);
                     const statusHtml = item.isHighlighted ?
-                        `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0">${t('VIP ПРОДАВЕЦ')}</span>` :
+                        `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shrink-0 neon-glow">${t('VIP ПРОДАВЕЦ')}</span>` :
                         `<span class="shrink-0 font-medium">${t('Продавец SVALKA')}</span>`;
                     
                     // 2. Проверка Верификации
