@@ -478,23 +478,20 @@ export const ItemsModule = {
             window.loadedItems = itemsToDisplay; 
 
             if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                // 1. Очищаем старый интервал для предотвращения утечек памяти
+                // 1. Очищаем старый интервал для предотвращения утечек
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
 
                 // 2. Формируем пул и берем РОВНО 8 карточек для старта
                 window.vipPool = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random());
-                const initialVips = window.vipPool.slice(0, 8);
+                const initialVips = window.vipPool.slice(0, 8); // Жесткий срез массива до 8 штук
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
-                    vipGrid.style.opacity = '1'; 
-                    vipGrid.style.pointerEvents = 'auto';
-                    
-                    // Жестко фиксируем классы сетки (максимум 8 слотов: 2 ряда по 4)
+                    // Возвращаем визуальную сетку
                     vipGrid.className = 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full';
                     
-                    // Рендерим 8 слотов
+                    // Рендерим ровно 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
-                        <div class="vip-slot transition-all duration-700 opacity-100 h-full flex transform-gpu" data-slot="${idx}">
+                        <div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
                         </div>
                     `).join('');
@@ -520,18 +517,16 @@ export const ItemsModule = {
                             if (availableItems.length === 0) return;
                             const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
 
-                            slotEl.classList.replace('opacity-100', 'opacity-0');
-                            slotEl.classList.add('scale-95');
+                            slotEl.classList.add('opacity-0', 'scale-95');
 
                             setTimeout(() => {
                                 slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
                                 if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
                                 
-                                slotEl.classList.replace('opacity-0', 'opacity-100');
-                                slotEl.classList.remove('scale-95');
+                                slotEl.classList.remove('opacity-0', 'scale-95');
                             }, 700); 
                             
-                        }, 8000); 
+                        }, 8000); // Строго 8 секунд (8000мс)
                     }
                 }
             } else {

@@ -1017,11 +1017,11 @@ window.openModal = async id => {
     if (el) {
         if (window.modalStack.length === 0) {
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            window.toggleBodyScroll(true);
+            window.toggleBodyScroll(true); 
             document.body.style.paddingRight = `${scrollbarWidth}px`;
         }
-        
-        // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, удаляя класс 'active'
+
+        // Прячем предыдущее окно в стеке
         if (window.modalStack.length > 0) {
             const prevId = window.modalStack[window.modalStack.length - 1];
             const prevEl = document.getElementById(prevId);
@@ -1032,7 +1032,7 @@ window.openModal = async id => {
             window.modalStack.push(id);
         }
 
-        // Показываем текущее окно через CSS
+        // Показываем окно исключительно через CSS-класс (БЕЗ style.display)
         el.classList.add('active');
         document.body.classList.add('modal-open');
 
@@ -1091,13 +1091,13 @@ window.openModal = async id => {
 window.closeModal = id => {
     const el = document.getElementById(id);
     if (el) {
-        // Скрываем текущее окно
+        // Скрываем окно исключительно через CSS-класс (БЕЗ style.display)
         el.classList.remove('active');
 
-        // УМНЫЙ СТЕК: Удаляем текущее окно из памяти
+        // Удаляем из стека
         window.modalStack = window.modalStack.filter(m => m !== id);
 
-        // Если в стеке еще есть окна, ВОЗВРАЩАЕМ ПРЕДЫДУЩЕЕ
+        // Возвращаем предыдущее окно
         if (window.modalStack.length > 0) {
             const prevId = window.modalStack[window.modalStack.length - 1];
             const prevEl = document.getElementById(prevId);
