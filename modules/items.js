@@ -478,23 +478,21 @@ export const ItemsModule = {
             window.loadedItems = itemsToDisplay; 
 
             if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                // 1. БЕЗОПАСНОСТЬ: Очищаем старый интервал, чтобы избежать утечек памяти и дублирования
+                // 1. Очищаем старый интервал для предотвращения утечек памяти
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
 
-                // 2. Формируем общий пул товаров и перемешиваем его
+                // 2. Формируем пул и берем 8 карточек для старта
                 window.vipPool = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random());
-                
-                // 3. СТРОГИЙ ЛИМИТ: Берем ровно 8 карточек для инициализации (2 ряда по 4 на ПК)
                 const initialVips = window.vipPool.slice(0, 8);
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
                     vipGrid.style.opacity = '1'; 
                     vipGrid.style.pointerEvents = 'auto';
                     
-                    // Жестко фиксируем сетку
+                    // Жестко фиксируем классы сетки
                     vipGrid.className = 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full';
                     
-                    // Генерируем ровно 8 слотов
+                    // Рендерим 8 слотов с поддержкой аппаратного ускорения
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
                         <div class="vip-slot transition-all duration-700 opacity-100 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
@@ -507,10 +505,10 @@ export const ItemsModule = {
                         if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                     });
 
-                    // 4. УМНЫЙ КАСКАД
+                    // 3. Запускаем каскадную замену (если товаров больше 8)
                     if (window.vipPool.length > 8) {
                         window.vipCascadeInterval = setInterval(() => {
-                            // UX: Останавливаем анимацию, если пользователь взаимодействует с лентой
+                            // Пауза при наведении мыши (UX паттерн)
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;
 
                             const slotIndex = Math.floor(Math.random() * initialVips.length);
@@ -523,7 +521,7 @@ export const ItemsModule = {
                             if (availableItems.length === 0) return;
                             const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
 
-                            // Анимация ухода вглубь
+                            // Анимация затухания
                             slotEl.classList.replace('opacity-100', 'opacity-0');
                             slotEl.classList.add('scale-95');
 
@@ -536,11 +534,10 @@ export const ItemsModule = {
                                 slotEl.classList.remove('scale-95');
                             }, 700); 
                             
-                        }, 3500); // 3.5 секунды — оптимальный ритм для восприятия
+                        }, 3500); 
                     }
                 }
             } else {
-                // Если VIP-ов нет, обязательно чистим интервал
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
                 if (vipSection) vipSection.classList.add('hidden');
             }
