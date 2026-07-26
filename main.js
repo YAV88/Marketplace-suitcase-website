@@ -3079,8 +3079,7 @@ window.triggerShare = async (platform) => {
 
     try {
         if (window.currentShareEligible) {
-            // ИСПРАВЛЕНО: используется supabaseClient
-            await supabaseClient.from('share_tracking').insert([
+            await window.supabase.from('share_tracking').insert([
                 { user_id: window.currentUser.id, item_id: targetId, share_token: shareToken, clicks_count: 0 }
             ]);
         }

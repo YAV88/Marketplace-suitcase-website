@@ -236,7 +236,7 @@ export const ItemsModule = {
                         </div>
                         
                         <div class="flex items-center justify-between w-full pt-2 mt-auto">
-                            <button type="button" data-action="filter-city" data-city="${escapeHTML(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
+                            <button type="button" data-action="filter-city" data-city="${escapeHtml(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </button>
                             <div class="flex items-center gap-2.5 text-[10px] font-bold text-stone-400 shrink-0 pr-1">
