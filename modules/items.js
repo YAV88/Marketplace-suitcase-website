@@ -477,17 +477,29 @@ export const ItemsModule = {
             // Обновляем стейт без дублирования
             window.loadedItems = itemsToDisplay; 
 
-            if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
+            if (!isLoadMore && vipRes.data && !window.showUrgentOnly) {
                 // 1. Очищаем старый интервал для предотвращения утечек
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
 
                 // 2. Формируем пул и берем РОВНО 8 карточек для старта
-                window.vipPool = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random());
+                let vipItems = vipRes.data.map(window.mapItemData).filter(Boolean);
+
+                // --- НОВАЯ ЛОГИКА: Гарантируем 8 карточек для 2-х рядов ---
+                if (vipItems.length > 0 && vipItems.length < 8) {
+                    const originalVips = [...vipItems];
+                    while (vipItems.length < 8) {
+                        vipItems.push(...originalVips);
+                    }
+                    vipItems = vipItems.slice(0, 8);
+                }
+                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
+
+                window.vipPool = vipItems.sort(() => 0.5 - Math.random());
                 const initialVips = window.vipPool.slice(0, 8); // Жесткий срез массива до 8 штук
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
                     // Возвращаем визуальную сетку
-                    vipGrid.className = 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full';
+                    vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full';
                     
                     // Рендерим ровно 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
@@ -495,6 +507,9 @@ export const ItemsModule = {
                             ${ItemsModule.createCardHtml(i, true)}
                         </div>
                     `).join('');
+
+                    vipGrid.style.opacity = '1';
+                    vipGrid.style.pointerEvents = 'auto';
                     
                     vipSection.classList.remove('hidden');
 
@@ -528,6 +543,9 @@ export const ItemsModule = {
                             
                         }, 8000); // Строго 8 секунд (8000мс)
                     }
+                } else {
+                    if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
+                    if (vipSection) vipSection.classList.add('hidden');
                 }
             } else {
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
