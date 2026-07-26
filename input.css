@@ -390,3 +390,99 @@
         padding-right: 2.5rem !important;
     }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ТИПОГРАФИКА: Системный премиум-шрифт */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    
+    /* СВЕТЛАЯ ТЕМА: Стиль Apple / Stripe */
+    --bg-page: #FAFAFA;
+    --bg-surface: #FFFFFF;
+    
+    /* Сочные неоновые акценты (Электрический индиго / Пурпур) */
+    --color-brand-400: #818cf8;
+    --color-brand-500: #6366f1;
+    --color-brand-600: #4f46e5;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-soft: rgba(0, 0, 0, 0.06);
+  }
+
+  .dark {
+    /* ТЕМНАЯ ТЕМА: Стиль Linear / Discord */
+    --bg-page: #09090b; /* Глубокий OLED-черный */
+    --bg-surface: #111115; /* Мягкий графит для карточек */
+    
+    --color-brand-400: #a5b4fc;
+    --color-brand-500: #818cf8;
+    --color-brand-600: #6366f1;
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-soft: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* ГЛОБАЛЬНЫЙ СТИЛЬ КАРТОЧЕК И ПОВЕРХНОСТЕЙ */
+  .bg-white { background-color: var(--bg-surface) !important; }
+  .dark\:bg-stone-900:is(.dark *) { background-color: var(--bg-surface) !important; }
+  
+  .border-stone-200 { border-color: var(--border-soft) !important; }
+  .dark\:border-stone-800:is(.dark *) { border-color: var(--border-soft) !important; }
+
+  /* ПРЕМИАЛЬНЫЕ ТЕНИ (Soft UI) */
+  .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02) !important; }
+  .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important; }
+  .shadow-lg { box-shadow: 0 10px 25px -3px rgba(0,0,0,0.06), 0 4px 6px -4px rgba(0,0,0,0.02) !important; }
+
+  /* ЭФФЕКТ НЕОНОВОГО СВЕЧЕНИЯ ДЛЯ КНОПОК */
+  .neon-glow {
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4), 0 0 24px rgba(99, 102, 241, 0.2);
+  }
+  .dark .neon-glow {
+    box-shadow: 0 0 16px rgba(129, 140, 248, 0.3), 0 0 32px rgba(129, 140, 248, 0.15);
+  }
+  
+  /* GLASSMORPHISM (Для шапки и модальных окон) */
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.75) !important;
+  }
+  .dark .backdrop-blur-md {
+    background-color: rgba(17, 17, 21, 0.8) !important;
+  }
+
+  /* КАСТОМНЫЙ СКРОЛЛБАР В СТИЛЕ MACOS */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 116, 139, 0.3);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 116, 139, 0.5);
+  }
+}
