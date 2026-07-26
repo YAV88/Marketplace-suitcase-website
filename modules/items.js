@@ -478,17 +478,71 @@ export const ItemsModule = {
             window.loadedItems = itemsToDisplay; 
 
             if (!isLoadMore && vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
-                const vipMapped = vipRes.data
-                    .map(window.mapItemData)
-                    .filter(Boolean)
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 8);
+                // Сохраняем все доступные VIP-товары (до 40 штук) в "бассейн"
+                window.vipPool = vipRes.data.map(window.mapItemData).filter(Boolean);
+                
+                // Берем первые 8 случайных для старта
+                const initialVips = window.vipPool.sort(() => 0.5 - Math.random()).slice(0, 8);
 
-                if (vipMapped.length > 0 && vipGrid && vipSection) {
-                    vipGrid.style.opacity = '1'; vipGrid.style.pointerEvents = 'auto';
-                    vipGrid.innerHTML = vipMapped.map(i => ItemsModule.createCardHtml(i, true)).join('');
+                if (initialVips.length > 0 && vipGrid && vipSection) {
+                    vipGrid.style.opacity = '1'; 
+                    vipGrid.style.pointerEvents = 'auto';
+                    
+                    // Рендерим 8 слотов с плавной CSS-анимацией
+                    vipGrid.innerHTML = initialVips.map((i, idx) => `
+                        <div class="vip-slot transition-opacity duration-700 opacity-100 h-full flex" data-slot="${idx}">
+                            ${ItemsModule.createCardHtml(i, true)}
+                        </div>
+                    `).join('');
+                    
                     vipSection.classList.remove('hidden');
-                    vipMapped.forEach(v => { if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); });
+
+                    // Добавляем их в глобальный стейт, чтобы модалки открывались корректно
+                    initialVips.forEach(v => { 
+                        if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
+                    });
+
+                    // --- ЛОГИКА ЖИВОГО КАСКАДА ---
+                    if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
+                    
+                    window.vipCascadeInterval = setInterval(() => {
+                        // Если товаров мало, нет смысла их крутить
+                        if (window.vipPool.length <= 8) return; 
+                        
+                        // УМНАЯ ПАУЗА: Если юзер навел курсор на сетку — останавливаем каскад
+                        if (vipGrid.matches(':hover')) return;
+
+                        // Выбираем 1 случайный слот из 8 для обновления
+                        const slotIndex = Math.floor(Math.random() * Math.min(8, initialVips.length));
+                        const slotEl = vipGrid.querySelector(`.vip-slot[data-slot="${slotIndex}"]`);
+                        if (!slotEl) return;
+
+                        // Собираем ID тех товаров, которые УЖЕ показываются на экране
+                        const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
+                        
+                        // Ищем свободные товары из пула
+                        const availableItems = window.vipPool.filter(item => !displayedIds.includes(item.id));
+                        if (availableItems.length === 0) return;
+
+                        // Берем случайный новый товар
+                        const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
+
+                        // 1. Плавно гасим слот
+                        slotEl.classList.remove('opacity-100');
+                        slotEl.classList.add('opacity-0');
+
+                        // 2. Ждем, пока исчезнет (700мс из-за duration-700), меняем HTML и зажигаем обратно
+                        setTimeout(() => {
+                            slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
+                            
+                            // Не забываем добавить в глобальный стейт, чтобы при клике он открылся
+                            if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
+                            
+                            slotEl.classList.remove('opacity-0');
+                            slotEl.classList.add('opacity-100');
+                        }, 700); 
+                        
+                    }, 2500); // Каждые 2.5 секунды ОДНА случайная карточка уходит в закат и меняется на новую
                 }
             }
 
