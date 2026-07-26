@@ -93,20 +93,17 @@ export const ItemsModule = {
             if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
                 const mainCat = cat.split(' - ')[0];
                 
-                // ПРЕМИАЛЬНЫЕ КЛАССЫ ДЛЯ КНОПКИ "ВСЕ" В ПОДКАТЕГОРИИ
-                let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? 'active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]' : 'px-4 py-2 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start'}">${window.t ? window.t('Все в') : 'Все в'} «${window.t ? window.t(mainCat) : mainCat}»</button>`;
+                const activeSubClass = "active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-500 text-white border border-brand-500 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]";
+                const inactiveSubClass = "px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-500 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                
+                let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? activeSubClass : inactiveSubClass}">${window.t ? window.t('Все в') : 'Все в'} «${window.t ? window.t(mainCat) : mainCat}»</button>`;
                 
                 window.subcategoriesMap[mainCat].forEach(sub => {
                     const prefix = sub.prefix || mainCat;
                     const fullCat = `${prefix} - ${sub.val}`;
                     const isActive = cat === fullCat;
                     
-                    // ПРЕМИАЛЬНЫЕ КЛАССЫ ДЛЯ ОБЫЧНЫХ ПОДКАТЕГОРИЙ
-                    const activeClass = isActive
-                        ? "active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
-                        : "px-4 py-2 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
-                    
-                    subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${activeClass}">${window.t ? window.t(sub.label || sub.val) : (sub.label || sub.val)}</button>`;
+                    subHtml += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="sub-cat-btn ${isActive ? activeSubClass : inactiveSubClass}">${window.t ? window.t(sub.label || sub.val) : (sub.label || sub.val)}</button>`;
                 });
                 subCatsContainer.innerHTML = subHtml;
                 subCatsContainer.style.display = 'flex';

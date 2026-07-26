@@ -231,8 +231,8 @@
                     </button>
                 </div>
                 <!-- Кнопка добавления (Оригинальный стиль сайта) -->
-                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()"
-                        class="hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-500 text-white font-black transition-all duration-300 hover:scale-105 hover:bg-brand-600 cursor-pointer shrink-0 shadow-md">
+                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" 
+                        class="hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-500 text-white font-black transition-all duration-300 hover:bg-brand-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer shrink-0 shadow-md">
                         <i class="fa-solid fa-tag shrink-0"></i>
                         <span class="hidden xl:block truncate" data-i18n="btn_publish">Пристроить добро</span>
                         <span class="block xl:hidden truncate" data-i18n="btn_publish_mob">Продать</span>
@@ -495,7 +495,7 @@
             style="scrollbar-width: none; -ms-overflow-style: none;">
             
             <button data-cat="Все" onclick="window.filterByCategory('Все', event)"
-                class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
+                class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md bg-brand-500 text-white border border-brand-500 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
                 data-i18n="cat_all">Все</button>
                 
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()"
@@ -1343,16 +1343,16 @@
                     <div id="add-condition-block" class="flex flex-col gap-2">
                         <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest px-1" data-i18n="lbl_condition">Состояние товара</span>
                         <div id="modal-condition-block" class="grid grid-cols-2 gap-3">
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="radio" name="item-condition" value="Новое" class="peer sr-only">
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-brand-300 peer-checked:border-brand-500 peer-checked:bg-brand-50 dark:peer-checked:bg-brand-900/30 peer-checked:text-brand-600 dark:peer-checked:text-brand-400 transition-all shadow-sm">
-                                    <i class="fa-solid fa-sparkles text-amber-500"></i> <span data-i18n="Новое">Новое</span>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-brand-400 transition-all shadow-sm peer-checked:bg-brand-500 peer-checked:border-brand-500 peer-checked:text-white">
+                                    <i class="fa-solid fa-sparkles text-amber-500 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="Новое">Новое</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="radio" name="item-condition" value="Б/У" class="peer sr-only" checked>
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-brand-300 peer-checked:border-brand-500 peer-checked:bg-brand-50 dark:peer-checked:bg-brand-900/30 peer-checked:text-brand-600 dark:peer-checked:text-brand-400 transition-all shadow-sm">
-                                    <i class="fa-solid fa-recycle opacity-80"></i> <span data-i18n="Б/У">Б/У</span>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-brand-400 transition-all shadow-sm peer-checked:bg-brand-500 peer-checked:border-brand-500 peer-checked:text-white">
+                                    <i class="fa-solid fa-recycle opacity-80 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="Б/У">Б/У</span>
                                 </div>
                             </label>
                         </div>
@@ -1362,22 +1362,22 @@
                     <div class="flex flex-col gap-2">
                         <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest px-1" data-i18n="lbl_payment">Варианты оплаты</span>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="checkbox" id="pay-cash" value="Наличные" class="peer sr-only" checked>
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-emerald-300 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20 peer-checked:text-emerald-700 dark:peer-checked:text-emerald-400 transition-all shadow-sm">
-                                    <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> <span data-i18n="pay_cash">Наличные</span>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-emerald-400 transition-all shadow-sm peer-checked:bg-emerald-500 peer-checked:border-emerald-500 peer-checked:text-white">
+                                    <i class="fa-solid fa-money-bill-wave text-emerald-500 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="pay_cash">Наличные</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="checkbox" id="pay-card" value="Перевод на карту" class="peer sr-only">
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-sky-300 peer-checked:border-sky-500 peer-checked:bg-sky-50 dark:peer-checked:bg-sky-900/20 peer-checked:text-sky-700 dark:peer-checked:text-sky-400 transition-all shadow-sm">
-                                    <i class="fa-regular fa-credit-card text-sky-500"></i> <span data-i18n="pay_card">На карту</span>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-sky-400 transition-all shadow-sm peer-checked:bg-sky-500 peer-checked:border-sky-500 peer-checked:text-white">
+                                    <i class="fa-regular fa-credit-card text-sky-500 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="pay_card">На карту</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="checkbox" id="pay-crypto" value="Криптоперевод" class="peer sr-only">
-                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-amber-300 peer-checked:border-amber-500 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-900/20 peer-checked:text-amber-700 dark:peer-checked:text-amber-400 transition-all shadow-sm">
-                                    <i class="fa-brands fa-bitcoin text-amber-500"></i> <span data-i18n="pay_crypto">Крипто</span>
+                                <div class="flex items-center justify-center gap-2 px-3 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-amber-400 transition-all shadow-sm peer-checked:bg-amber-500 peer-checked:border-amber-500 peer-checked:text-white">
+                                    <i class="fa-brands fa-bitcoin text-amber-500 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="pay_crypto">Крипто</span>
                                 </div>
                             </label>
                         </div>
@@ -1387,16 +1387,16 @@
                     <div class="flex flex-col gap-2">
                         <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest px-1" data-i18n="lbl_delivery">Способ передачи</span>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="checkbox" id="del-meet" value="Личная встреча" class="peer sr-only" checked>
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-blue-300 peer-checked:border-blue-500 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 peer-checked:text-blue-700 dark:peer-checked:text-blue-400 transition-all shadow-sm">
-                                    <i class="fa-solid fa-handshake text-blue-500"></i> <span data-i18n="del_meet">Личная встреча</span>
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-blue-400 transition-all shadow-sm peer-checked:bg-blue-500 peer-checked:border-blue-500 peer-checked:text-white">
+                                    <i class="fa-solid fa-handshake text-blue-500 transition-colors group-has-[:checked]:text-white"></i> <span data-i18n="del_meet">Личная встреча</span>
                                 </div>
                             </label>
-                            <label class="cursor-pointer relative">
+                            <label class="cursor-pointer relative group">
                                 <input type="checkbox" id="del-post" value="PostExpress" class="peer sr-only">
-                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-indigo-300 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20 peer-checked:text-indigo-700 dark:peer-checked:text-indigo-400 transition-all shadow-sm">
-                                    <i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress
+                                <div class="flex items-center justify-center gap-2 px-4 py-3 bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-600 dark:text-stone-300 hover:border-indigo-400 transition-all shadow-sm peer-checked:bg-indigo-500 peer-checked:border-indigo-500 peer-checked:text-white">
+                                    <i class="fa-solid fa-box-open text-indigo-500 transition-colors group-has-[:checked]:text-white"></i> PostExpress
                                 </div>
                             </label>
                         </div>
