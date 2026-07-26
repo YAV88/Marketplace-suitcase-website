@@ -496,7 +496,7 @@ export const ItemsModule = {
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
                     // Возвращаем визуальную сетку
-                    vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full';
+                    vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full';
                     
                     // Рендерим ровно 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
