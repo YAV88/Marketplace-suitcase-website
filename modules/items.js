@@ -532,13 +532,13 @@ export const ItemsModule = {
                             if (availableItems.length === 0) return;
                             const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
 
-                            slotEl.classList.add('opacity-0', 'scale-95');
+                            slotEl.classList.add('opacity-0', 'scale-90', 'rotate-3');
 
                             setTimeout(() => {
                                 slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
                                 if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
                                 
-                                slotEl.classList.remove('opacity-0', 'scale-95');
+                                slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                             }, 700); 
                             
                         }, 8000); // Строго 8 секунд (8000мс)

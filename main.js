@@ -3405,22 +3405,25 @@ window.initSmartHeader = () => {
     // 2. ИДЕАЛЬНОЕ РЕШЕНИЕ проблемы перекрытия:
     // ResizeObserver следит за реальной высотой шапки и задает точный отступ для сайта.
     if (!window.headerObserverAdded) {
-        document.body.style.paddingTop = `${header.offsetHeight}px`;
-        
-        const ro = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                const headerHeight = entry.contentRect.height;
-                
-                if (window.scrollY <= 10) {
-                    document.body.style.paddingTop = `${headerHeight}px`;
-                }
+        const setPanelPosition = (headerHeight) => {
+            if (window.scrollY <= 10) {
+                document.body.style.paddingTop = `${headerHeight}px`;
+            }
 
-                const filterPanel = document.getElementById('filter-panel-wrapper');
-                if (window.innerWidth >= 1024 && filterPanel) {
-                    const newTop = headerHeight + 24;
-                    filterPanel.style.top = `${newTop}px`;
-                    filterPanel.style.height = `calc(100vh - ${newTop}px)`;
-                }
+            const filterPanel = document.getElementById('filter-panel-wrapper');
+            if (window.innerWidth >= 1024 && filterPanel) {
+                const newTop = headerHeight + 24;
+                filterPanel.style.top = `${newTop}px`;
+                filterPanel.style.height = `calc(100vh - ${newTop}px)`;
+            }
+        };
+
+        // Немедленный вызов для корректной установки при загрузке
+        setPanelPosition(header.offsetHeight);
+
+        const ro = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                setPanelPosition(entry.contentRect.height);
             }
         });
         ro.observe(header);
