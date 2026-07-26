@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tektur:wght@600;800&display=swap');
 
-/* 1. ЗАГРУЗКА ШРИФТОВ И ФРЕЙМВОРКА */
-
 *, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -110,7 +108,9 @@
   --tw-contain-style:  ;
 }
 
-/* ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com */
+/*
+! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
+*/
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -557,35 +557,31 @@ video {
 }
 
 :root {
-  /* СВЕТЛАЯ ТЕМА: Нейтрально-серый фон и Лазурный неон */
-  --bg-page: #f3f4f6;
-  --bg-surface: #ffffff;
-  --color-brand-400: #22d3ee;
-  /* Cyan 400 */
-  --color-brand-500: #06b6d4;
-  /* Cyan 500 (Лазурный) */
-  --color-brand-600: #0891b2;
-  /* Cyan 600 */
-  --color-brand-700: #0e7490;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
+  /* СВЕТЛАЯ ТЕМА: Urban Mint */
+  --bg-page: #F3F4F6;
+  --bg-surface: #FFFFFF;
+  --color-brand-400: #34D399;
+  --color-brand-500: #1FB6A6;
+  /* Морская бирюза */
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
   --border-soft: rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-  /* ТЕМНАЯ ТЕМА: Глубокий темно-серый (Графит) и Лазурный неон */
-  --bg-page: #111827;
-  /* Gray 900 */
-  --bg-surface: #1f2937;
-  /* Gray 800 */
-  --color-brand-400: #67e8f9;
-  /* В темноте неон ярче */
-  --color-brand-500: #22d3ee;
-  --color-brand-600: #06b6d4;
-  --color-brand-700: #0891b2;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --border-soft: rgba(255, 255, 255, 0.08);
+  /* ТЕМНАЯ ТЕМА: Urban Mint (#121417) */
+  --bg-page: #121417;
+  --bg-surface: #1C2025;
+  --color-brand-400: #00D4B5;
+  /* Лазурный неон-акцент */
+  --color-brand-500: #1FB6A6;
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
+  --text-primary: #F4F5F7;
+  --text-secondary: #9CA3AF;
+  --border-soft: #2D333B;
 }
 
 body {
@@ -690,33 +686,34 @@ body {
 }
 
 .dark .backdrop-blur-md {
-  background-color: rgba(31, 41, 55, 0.8) !important;
+  background-color: rgba(28, 32, 37, 0.8) !important;
 }
 
-/* ФОРМЫ И СЕЛЕКТЫ */
+/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Фикс неработающих крестиков) */
 
-input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
-  cursor: text !important;
-  caret-color: var(--color-brand-500);
-  font-size: 16px !important;
+.modal-overlay {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-input:focus, textarea:focus, select:focus {
-  border-color: var(--color-brand-500) !important;
-  outline: none !important;
-  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15) !important;
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
-select {
-  -webkit-appearance: none !important;
-     -moz-appearance: none !important;
-          appearance: none !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  cursor: pointer !important;
+.modal-content {
+  transform: scale(0.95) translateY(15px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Без пропадания на скролле) */
+.modal-overlay.active .modal-content {
+  transform: scale(1) translateY(0);
+}
+
+/* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Фикс пропадания ленты) */
 
 .item-card {
   display: flex !important;
@@ -727,6 +724,8 @@ select {
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
+  opacity: 1 !important;
+  transform: none !important;
   animation: cardFadeIn 0.5s ease-out forwards;
 }
 
@@ -785,19 +784,19 @@ select {
 .item-card h4 i.fa-fire-flame-curved {
   color: var(--color-brand-500) !important;
   font-size: 1.1em !important;
-  filter: drop-shadow(0 2px 4px rgba(6, 182, 212, 0.4)) !important;
+  filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important;
 }
 
 /* VIP КАРТОЧКИ С ЛАЗУРНЫМ СВЕЧЕНИЕМ */
 
 .vip-card, #vip-items-grid .item-card {
-  border: 1px solid rgba(6, 182, 212, 0.4) !important;
-  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.08) !important;
+  border: 1px solid rgba(31, 182, 166, 0.4) !important;
+  box-shadow: 0 4px 15px rgba(31, 182, 166, 0.08) !important;
 }
 
 .vip-card:hover, #vip-items-grid .item-card:hover {
-  border-color: rgba(6, 182, 212, 0.8) !important;
-  box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25) !important;
+  border-color: rgba(31, 182, 166, 0.8) !important;
+  box-shadow: 0 8px 25px rgba(31, 182, 166, 0.25) !important;
 }
 
 /* РЕЖИМ СЕТКИ (GRID) */
@@ -959,7 +958,7 @@ select {
   height: 180px !important;
   min-height: 180px !important;
   border-radius: 1rem !important;
-  box-shadow: 0 8px 16px -4px rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 8px 16px -4px rgba(31, 182, 166, 0.4) !important;
   border: 2px solid var(--color-brand-500) !important;
 }
 
@@ -980,9 +979,7 @@ select {
   }
 }
 
-/* ==========================================
-       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
-       ========================================== */
+/* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
 
 .\!container {
   max-width: 100% !important;
@@ -1012,26 +1009,19 @@ select {
     gap: 0 2.5rem !important;
   }
 
-  /* Жестко раскидываем блоки по рядам, чтобы они не перекрывали друг друга */
-
   main > div:nth-child(1) {
     grid-column: 1 / -1;
     grid-row: 1;
   }
-
-  /* Заголовок */
 
   main > div:nth-child(2) {
     grid-column: 1 / -1;
     grid-row: 2;
   }
 
-  /* Backdrop */
-
   #filter-panel-wrapper {
     grid-column: 1 / 2 !important;
     grid-row: 3 / 10 !important;
-    /* Сайдбар занимает ряды с 3 по 9 */
     position: sticky !important;
     top: 100px !important;
     height: calc(100vh - 120px) !important;
@@ -1069,14 +1059,10 @@ select {
     grid-row: 6 !important;
   }
 
-  /* PRO Banner */
-
   #fresh-ads-section {
     grid-column: 2 / 3 !important;
     grid-row: 7 !important;
   }
-
-  /* Очистка стилей мобильного фильтра */
 
   #filter-panel > div {
     border: none !important;
@@ -1097,16 +1083,6 @@ select {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
   }
-
-  /* Жестко раскидываем блоки по рядам, чтобы они не перекрывали друг друга */
-
-  /* Заголовок */
-
-  /* Backdrop */
-
-  /* PRO Banner */
-
-  /* Очистка стилей мобильного фильтра */
 }
 
 .sr-only{
@@ -3862,24 +3838,6 @@ select {
   will-change: transform;
 }
 
-.neon-glow {
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), 0 0 24px rgba(6, 182, 212, 0.2);
-}
-
-.dark .neon-glow {
-  box-shadow: 0 0 16px rgba(34, 211, 238, 0.3), 0 0 32px rgba(34, 211, 238, 0.15);
-}
-
-@keyframes neon-pulse {
-  0% {
-    box-shadow: 0 0 5px var(--color-brand-500);
-  }
-
-  100% {
-    box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600);
-  }
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -3977,16 +3935,6 @@ select {
       padding-left: 3rem !important;
       padding-right: 3rem !important;
     }
-
-    /* Жестко раскидываем блоки по рядам, чтобы они не перекрывали друг друга */
-
-    /* Заголовок */
-
-    /* Backdrop */
-
-    /* PRO Banner */
-
-    /* Очистка стилей мобильного фильтра */
   }
 }
 
@@ -4323,10 +4271,6 @@ select {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.hover\:neon-pulse:hover {
-  animation: neon-pulse 2s infinite alternate;
 }
 
 .focus\:border-brand-500:focus{

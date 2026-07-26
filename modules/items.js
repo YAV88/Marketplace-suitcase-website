@@ -481,7 +481,7 @@ export const ItemsModule = {
                 // 1. Очищаем старый интервал для предотвращения утечек памяти
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
 
-                // 2. Формируем пул и берем 8 карточек для старта
+                // 2. Формируем пул и берем РОВНО 8 карточек для старта
                 window.vipPool = vipRes.data.map(window.mapItemData).filter(Boolean).sort(() => 0.5 - Math.random());
                 const initialVips = window.vipPool.slice(0, 8);
 
@@ -489,10 +489,10 @@ export const ItemsModule = {
                     vipGrid.style.opacity = '1'; 
                     vipGrid.style.pointerEvents = 'auto';
                     
-                    // Жестко фиксируем классы сетки
+                    // Жестко фиксируем классы сетки (максимум 8 слотов: 2 ряда по 4)
                     vipGrid.className = 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full';
                     
-                    // Рендерим 8 слотов с поддержкой аппаратного ускорения
+                    // Рендерим 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
                         <div class="vip-slot transition-all duration-700 opacity-100 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
@@ -505,10 +505,9 @@ export const ItemsModule = {
                         if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                     });
 
-                    // 3. Запускаем каскадную замену (если товаров больше 8)
+                    // 3. Запускаем каскадную замену раз в 8 секунд
                     if (window.vipPool.length > 8) {
                         window.vipCascadeInterval = setInterval(() => {
-                            // Пауза при наведении мыши (UX паттерн)
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;
 
                             const slotIndex = Math.floor(Math.random() * initialVips.length);
@@ -521,7 +520,6 @@ export const ItemsModule = {
                             if (availableItems.length === 0) return;
                             const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
 
-                            // Анимация затухания
                             slotEl.classList.replace('opacity-100', 'opacity-0');
                             slotEl.classList.add('scale-95');
 
@@ -529,12 +527,11 @@ export const ItemsModule = {
                                 slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
                                 if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
                                 
-                                // Анимация появления
                                 slotEl.classList.replace('opacity-0', 'opacity-100');
                                 slotEl.classList.remove('scale-95');
                             }, 700); 
                             
-                        }, 3500); 
+                        }, 8000); 
                     }
                 }
             } else {

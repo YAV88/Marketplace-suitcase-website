@@ -1015,27 +1015,24 @@ window.modalStack = []; // Инициализируем стек открыты�
 window.openModal = async id => {
     const el = document.getElementById(id);
     if (el) {
-        // --- ИСТИННАЯ БРОНЕБОЙНАЯ БЛОКИРОВКА СКРОЛЛА ---
         if (window.modalStack.length === 0) {
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            window.toggleBodyScroll(true); // Запускаем хард-лок для iOS/Android
+            window.toggleBodyScroll(true);
             document.body.style.paddingRight = `${scrollbarWidth}px`;
         }
-        document.body.classList.add('modal-open');
-
-        // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, чтобы не было наложения теней
+        
+        // 1. УМНЫЙ СТЕК: Прячем предыдущее окно, удаляя класс 'active'
         if (window.modalStack.length > 0) {
             const prevId = window.modalStack[window.modalStack.length - 1];
             const prevEl = document.getElementById(prevId);
-            if (prevEl && prevId !== id) prevEl.style.display = 'none';
+            if (prevEl && prevId !== id) prevEl.classList.remove('active');
         }
 
-        // Добавляем текущее окно в стек
         if (!window.modalStack.includes(id)) {
             window.modalStack.push(id);
         }
 
-        el.style.display = '';
+        // Показываем текущее окно через CSS
         el.classList.add('active');
         document.body.classList.add('modal-open');
 
@@ -1044,53 +1041,43 @@ window.openModal = async id => {
             if (boostyInput) boostyInput.value = window.currentUser.id;
         }
 
-        // === ОБЪЕДИНЕННАЯ ЛОГИКА: Динамическое обновление статуса PRO в профиле ===
         if (id === 'profile-modal' && window.currentUser) {
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
-            const tokensEl = document.getElementById('profile-vip-tokens'); // Контейнер токенов
+            const tokensEl = document.getElementById('profile-vip-tokens'); 
             
             if (statusText) statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-stone-400"></i>';
             
             try {
-                // Запрашиваем актуальные данные напрямую из Supabase
                 const { data } = await window.supabase.from('profiles').select('pro_until, vip_tokens').eq('id', window.currentUser.id).single();
-                
                 if (data && statusText && proBtn) {
                     if (!window.currentUserData) window.currentUserData = {}; 
                     window.currentUserData.pro_until = data.pro_until;
                     window.currentUserData.vip_tokens = data.vip_tokens || 0;
-                    
-                    // СРАЗУ ОБНОВЛЯЕМ ФЛАГ is_pro ЧТОБЫ КНОПКА ТОПА РАБОТАЛА
                     window.currentUserData.is_pro = window.checkRealVipStatus ? window.checkRealVipStatus(data) : false;
                     
                     if (tokensEl) tokensEl.innerText = `${data.vip_tokens || 0} шт.`;
                     
                     if (window.currentUserData.is_pro) {
-                        // Высчитываем оставшиеся дни
                         const proUntilDate = new Date(data.pro_until);
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
-                        
                         const t = window.t || (txt => txt);
                         statusText.innerText = t('pro_active_days').replace('{days}', diffDays);
                         statusText.className = 'text-sm font-black text-amber-500';
                         proBtn.classList.add('hidden');
                     } else {
                         const t = window.t || (txt => txt);
-                        statusText.innerText = t('Базовый'); // <--- ПЕРЕВОД ЗДЕСЬ
+                        statusText.innerText = t('Базовый'); 
                         statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
                     }
                 } 
             } catch(e) {
-                console.error("Ошибка загрузки профиля:", e);
                 if (statusText) statusText.innerText = 'Ошибка';
             }
         }
 
-        // === ГАРАНТИРОВАННЫЙ ВЫЗОВ ПОХОЖИХ ТОВАРОВ И ПРОСМОТРОВ ===
-        // ... (existing code)
         if (id === 'item-modal') {
             setTimeout(() => {
                 if (window.activeModalItemId && typeof window.triggerItemViewsAndSimilar === 'function') {
@@ -1104,8 +1091,8 @@ window.openModal = async id => {
 window.closeModal = id => {
     const el = document.getElementById(id);
     if (el) {
+        // Скрываем текущее окно
         el.classList.remove('active');
-        el.style.display = '';
 
         // УМНЫЙ СТЕК: Удаляем текущее окно из памяти
         window.modalStack = window.modalStack.filter(m => m !== id);
@@ -1114,11 +1101,10 @@ window.closeModal = id => {
         if (window.modalStack.length > 0) {
             const prevId = window.modalStack[window.modalStack.length - 1];
             const prevEl = document.getElementById(prevId);
-            if (prevEl) prevEl.style.display = '';
+            if (prevEl) prevEl.classList.add('active');
         } else {
             if (!document.querySelector('.modal-overlay.active')) {
                 document.body.classList.remove('modal-open');
-                // --- СНИМАЕМ БРОНЕБОЙНУЮ БЛОКИРОВКУ ---
                 window.toggleBodyScroll(false); 
                 document.body.style.paddingRight = '';
             }
@@ -1144,21 +1130,17 @@ window.closeModal = id => {
         const formEl = document.getElementById('add-form'); if (formEl) formEl.reset();
         window.tempPhotos = []; window.editExistingImages = [];
         const photoList = document.getElementById('photo-preview-list'); if (photoList) photoList.innerHTML = '';
-        
-        // ---> ВОЗВРАЩАЕМ ФОРМУ НА ПЕРВЫЙ ШАГ ПРИ ЗАКРЫТИИ <---
         if (typeof window.backToAddStep1 === 'function') {
             window.backToAddStep1();
         }
     }
 
-    // === ИСПРАВЛЕНИЕ: БЕЗОПАСНАЯ ОЧИСТКА ЧАТА ===
     if (id === 'chat-modal') {
         window.currentChatId = null;
         if (window.chatSubscription) {
-            // Перехватываем подписку в локальную переменную перед удалением
             const subToKill = window.chatSubscription;
             window.chatSubscription = null;
-            supabase.removeChannel(subToKill); // Fire-and-forget (не блокируем закрытие UI)
+            supabase.removeChannel(subToKill); 
         }
     }
 };
