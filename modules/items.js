@@ -215,24 +215,25 @@ export const ItemsModule = {
             
             <div class="card-body-wrap ${pClass}">
                 <div class="flex flex-row w-full h-full">
-                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-start">
+                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
                         
-                        <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
-                        <div class="flex flex-col mb-1.5 title-price-wrap">
-                            <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
-                                ${vipCrown}${safeTitle}
-                            </h4>
-                            <div class="text-brand-600 price-text font-black" style="font-size: 1.1rem; line-height: 1;">
-                                ${i.price || 0} ${i.currency || 'RSD'}
+                        <div>
+                            <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
+                            <div class="flex flex-col mb-1.5 title-price-wrap">
+                                <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
+                                    ${vipCrown}${safeTitle}
+                                </h4>
+                                <div class="text-brand-600 price-text font-black" style="font-size: 1.1rem; line-height: 1;">
+                                    ${i.price || 0} ${i.currency || 'RSD'}
+                                </div>
+                            </div>
+                            
+                            <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
+                                ${statusBadgeRow}
+                                ${extraInfoBadges}
                             </div>
                         </div>
-                        
-                        <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
-                            ${statusBadgeRow}
-                            ${extraInfoBadges}
-                        </div>
-                        
-                        <div class="flex items-center justify-between w-full pt-2 mt-auto">
+                        <div class="flex items-center justify-between w-full pt-2">
                             <button type="button" data-action="filter-city" data-city="${escapeHtml(i.city)}" class="text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase truncate flex-1 min-w-0 text-left hover:text-brand-600 transition-colors">
                                 <i class="fa-solid fa-location-dot mr-1 opacity-70"></i>${t(i.city)}
                             </button>
@@ -495,15 +496,16 @@ export const ItemsModule = {
                 const initialVips = window.vipPool.slice(0, 8); // Жесткий срез массива до 8 штук
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
-                    // Возвращаем визуальную сетку
-                    vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full';
-                    
-                    // Рендерим ровно 8 слотов
+                    // Рендерим слоты для карусели
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
-                        <div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
+                        <div class="vip-slot w-[65vw] sm:w-[280px] lg:w-[300px] shrink-0 snap-start transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
                         </div>
                     `).join('');
+                    
+                    // Показываем кнопки управления каруселью
+                    const vipControls = document.getElementById('vip-carousel-controls');
+                    if (vipControls) vipControls.classList.remove('hidden');
 
                     vipGrid.style.opacity = '1';
                     vipGrid.style.pointerEvents = 'auto';
@@ -520,8 +522,9 @@ export const ItemsModule = {
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;
 
                             const slotIndex = Math.floor(Math.random() * initialVips.length);
-                            const slotEl = vipGrid.querySelector(`.vip-slot[data-slot="${slotIndex}"]`);
-                            if (!slotEl) return;
+                            const slots = vipGrid.querySelectorAll('.vip-slot');
+                            if (!slots || slots.length <= slotIndex) return;
+                            const slotEl = slots[slotIndex];
 
                             const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
                             const availableItems = window.vipPool.filter(item => !displayedIds.includes(item.id));

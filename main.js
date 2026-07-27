@@ -94,6 +94,17 @@ window.payWithPlisio = PaymentsModule.payWithPlisio;
 // ==========================================
 
 // ---> ДОБАВЛЯЕМ НОВУЮ ФУНКЦИЮ:
+window.scrollVipCarousel = (direction) => {
+    const carousel = document.getElementById('vip-items-grid');
+    if (carousel) {
+        const card = carousel.querySelector('.vip-slot');
+        if (card) {
+            // Получаем ширину одной карточки + отступ (gap-4 = 1rem = 16px)
+            const scrollAmount = card.offsetWidth + 16;
+            carousel.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+        }
+    }
+};
 window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
 
 window.openTokenPurchaseModal = () => {

@@ -555,27 +555,29 @@
                 data-i18n="cat_other">Другое</button>
         </div>
 
-        <div id="sub-cats-container"
-            class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-2 pb-2 md:pb-0 snap-x md:snap-none hidden"
-            style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div id="sub-cats-container" class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-2 pb-2 md:pb-0 snap-x md:snap-none hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
         </div>
 
         <!-- VIP ЛЕНТА (БЕЗ РАМОК, ТОЛЬКО АКЦЕНТ НА ТОВАР) -->
         <div id="vip-section" class="mb-8 relative bg-transparent py-2">
-            <div class="flex items-center gap-3 mb-4 px-4 sm:px-0">
+            <div class="flex items-center justify-between gap-3 mb-4 px-4 sm:px-0">
                 <h4 class="font-black text-xl sm:text-2xl text-stone-800 dark:text-stone-200 uppercase tracking-tight">
                     <i class="fa-solid fa-crown text-amber-500 mr-2 drop-shadow-md"></i>
                     <span data-i18n="vip_title" class="font-display">ТОП Находки</span>
                 </h4>
+                <!-- Carousel Controls -->
+                <div id="vip-carousel-controls" class="hidden sm:flex items-center gap-2">
+                    <button onclick="window.scrollVipCarousel(-1)" class="w-10 h-10 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-brand-600 transition shadow-sm flex items-center justify-center cursor-pointer"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button onclick="window.scrollVipCarousel(1)" class="w-10 h-10 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 hover:text-brand-600 transition shadow-sm flex items-center justify-center cursor-pointer"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
             </div>
             
-            <div id="vip-items-grid" class="w-full">
-                <!-- Сюда JS будет вставлять 8 статичных карточек -->
+            <div id="vip-items-grid" class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 custom-scrollbar -mx-4 px-4" style="scroll-behavior: smooth;">
+                <!-- Сюда JS будет вставлять карточки карусели -->
             </div>
         </div>
 
-        <div class="mb-8 sm:mb-10 rounded-[2rem] bg-gradient-to-r from-brand-500 to-brand-400 p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4 group"
-            onclick="window.openModal('crypto-modal')">
+        <div class="mb-8 sm:mb-10 rounded-[2rem] bg-gradient-to-r from-brand-500 to-brand-400 p-4 sm:p-5 text-white flex flex-col sm:flex-row items-center justify-between shadow-md hover:shadow-lg transition cursor-pointer gap-4 group" onclick="window.openModal('crypto-modal')">
             <div class="flex items-center gap-4 w-full sm:w-auto">
                 <span
                     class="bg-white/20 backdrop-blur text-white px-3 py-1 rounded text-xs font-black uppercase tracking-widest shrink-0 shadow-sm border border-white/20">PRO</span>
@@ -583,7 +585,7 @@
                     продавай вещи быстрее!</span>
             </div>
             <button
-                class="bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-sm shrink-0 w-full sm:w-auto cursor-pointer flex items-center justify-center gap-2 group-hover:shadow-md">
+                class="bg-white text-brand-600 px-6 py-2.5 rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-sm shrink-0 w-full sm:w-auto cursor-pointer flex items-center justify-center gap-2 group-hover:shadow-md dark:hover:bg-stone-50">
                 <span data-i18n="btn_connect">Подключить</span> <i
                     class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
             </button>
