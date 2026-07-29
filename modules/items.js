@@ -140,6 +140,7 @@ export const ItemsModule = {
         
         const cardClass = isVIP ?
             'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
+            'item-card vip-card bg-white dark:bg-stone-900 border-2 border-amber-400 dark:border-amber-500 rounded-2xl overflow-hidden shadow-lg shadow-amber-500/10 dark:shadow-amber-500/10 cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-xl' :
             'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
                 
         // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
@@ -194,6 +195,7 @@ export const ItemsModule = {
         const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
+        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_4px_#f97316]"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
         const pClass = 'p-3 flex-1 flex flex-col w-full'; 
 
@@ -214,8 +216,10 @@ export const ItemsModule = {
             </div>
             
             <div class="card-body-wrap ${pClass}">
+            <div class="card-body-wrap flex-1 flex flex-col w-full">
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
+                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between p-3">
                         
                         <div>
                             <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
@@ -497,8 +501,13 @@ export const ItemsModule = {
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
                     // Рендерим слоты для карусели
+                    // Возвращаем визуальную сетку
+                    vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full';
+                    
+                    // Рендерим ровно 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
                         <div class="vip-slot w-[65vw] sm:w-[280px] lg:w-[300px] shrink-0 snap-start transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
+                        <div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
                         </div>
                     `).join('');
@@ -517,6 +526,7 @@ export const ItemsModule = {
                     });
 
                     // 3. Запускаем каскадную замену раз в 8 секунд
+                    // 3. Запускаем каскадную замену раз в 6 секунд
                     if (window.vipPool.length > 8) {
                         window.vipCascadeInterval = setInterval(() => {
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;
@@ -542,6 +552,7 @@ export const ItemsModule = {
                             }, 700); 
                             
                         }, 8000); // Строго 8 секунд (8000мс)
+                        }, 6000); // 6 секунд
                     }
                 } else {
                     if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
