@@ -139,7 +139,6 @@ export const ItemsModule = {
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
         const cardClass = isVIP ?
-            'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
             'item-card vip-card bg-white dark:bg-stone-900 border-2 border-amber-400 dark:border-amber-500 rounded-2xl overflow-hidden shadow-lg shadow-amber-500/10 dark:shadow-amber-500/10 cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-xl' :
             'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
                 
