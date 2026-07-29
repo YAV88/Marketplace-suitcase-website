@@ -8,8 +8,7 @@ export const I18nModule = {
     dictionary: {
         ru: {
             'page_title': 'SVALKA — Маркетплейс вещей в Сербии', 'og_desc': 'Отличные находки и быстрые продажи в Сербии.',
-            'search_placeholder': 'Я ищу...', 'btn_login': 'Войти', 'btn_publish': 'Пристроить добро', 'btn_publish_mob': 'Продать',
-            'crypto_warning_title': 'Важно при оплате с бирж',
+            'search_placeholder': 'Я ищу...', 'btn_login': 'Войти', 'btn_publish': 'Пристроить добро', 'btn_publish_mob': 'Продать',            
             'cat_gr_electro': 'Электроника', 'cat_phones': 'Смартфоны', 'cat_pc': 'Компьютеры / ПК', 'cat_laptops': 'Ноутбуки', 'cat_tablets': 'Планшеты', 'cat_tv': 'ТВ и Видео', 'cat_audio': 'Аудио', 'cat_consoles': 'Игры / Консоли', 'cat_appliances': 'Бытовая техника', 'cat_photo': 'Фототехника',
             'cat_gr_home': 'Дом и Интерьер', 'cat_furniture': 'Мебель', 'cat_decor': 'Декор', 'cat_dishes': 'Посуда', 'cat_textile': 'Текстиль', 'cat_repair': 'Стройматериалы', 'cat_tools': 'Инструменты', 'cat_garden': 'Сад и Огород',
             'cat_gr_transport': 'Транспорт', 'cat_cars': 'Автомобили', 'cat_moto': 'Мото', 'cat_velo': 'Велосипеды', 'cat_scooters': 'Самокаты', 'cat_parts': 'Запчасти', 'cat_tires': 'Шины и диски',
@@ -20,8 +19,7 @@ export const I18nModule = {
             'Категория': 'Категория',
             'Состояние': 'Состояние',
             'Новое': 'Новое',
-            'Б/У': 'Б/У',
-            'tokens_desc': 'Используйте токены, чтобы закреплять ваши товары в VIP-блоке на 7 дней.',
+            'Б/У': 'Б/У',            
             'tokens_word': 'токенов',
             'tokens_single': 'Поштучно',
             'tokens_save': 'Выгода 20%',
