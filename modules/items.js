@@ -93,8 +93,8 @@ export const ItemsModule = {
             if (cat !== 'Все' && window.subcategoriesMap && window.subcategoriesMap[cat.split(' - ')[0]]) {
                 const mainCat = cat.split(' - ')[0];
                 
-                const activeSubClass = "active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md bg-brand-500 text-white border border-brand-500 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]";
-                const inactiveSubClass = "px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-500 rounded-xl font-bold text-xs sm:text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+                const activeSubClass = "cat-btn liquid-btn active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]";
+                const inactiveSubClass = "cat-btn liquid-btn px-4 py-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-xs sm:text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
                 
                 let subHtml = `<button onclick="window.filterByCategory('${mainCat}', event, true)" class="sub-cat-btn ${cat === mainCat ? activeSubClass : inactiveSubClass}">${window.t ? window.t('Все в') : 'Все в'} «${window.t ? window.t(mainCat) : mainCat}»</button>`;
                 

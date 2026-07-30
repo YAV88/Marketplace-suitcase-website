@@ -562,7 +562,6 @@ video {
   --bg-surface: #FFFFFF;
   --color-brand-400: #00D4B5;
   --color-brand-500: #1FB6A6;
-  /* Морская бирюза */
   --color-brand-600: #0F766E;
   --color-brand-700: #115E59;
   --color-vip: #F5C542;
@@ -651,8 +650,6 @@ body {
   }
 }
 
-/* ГЛОБАЛЬНЫЙ СТИЛЬ ПОВЕРХНОСТЕЙ */
-
 .bg-white {
   background-color: var(--bg-surface) !important;
 }
@@ -687,8 +684,6 @@ body {
   background-color: rgba(28, 32, 37, 0.8) !important;
 }
 
-/* ФОРМЫ И СЕЛЕКТЫ */
-
 input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
   cursor: text !important;
   caret-color: var(--color-brand-500);
@@ -709,8 +704,6 @@ select {
   background-image: none !important;
   cursor: pointer !important;
 }
-
-/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА */
 
 .modal-overlay {
   opacity: 0;
@@ -735,19 +728,17 @@ select {
 }
 
 /* ==========================================
-       ЭФФЕКТ "ЖИДКАЯ ВОЛНА" ДЛЯ КНОПОК
+       УНИВЕРСАЛЬНЫЕ КНОПКИ LIQUID WAVE
        ========================================== */
 
-.cat-btn, #btn-header-add {
+.liquid-btn {
   position: relative;
   overflow: hidden;
   z-index: 1;
   transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
 }
 
-/* Заливка спрятана глубоко внизу (-150%) */
-
-.cat-btn::before, #btn-header-add::before {
+.liquid-btn::before {
   content: '';
   position: absolute;
   top: 150%;
@@ -757,28 +748,25 @@ select {
   background-color: var(--color-brand-500);
   z-index: -1;
   transform: rotate(-8deg);
-  /* Замедленная, тягучая анимация (1.2s) */
   transition: top 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 40% 30% 0 0;
 }
 
-/* Плавное заполнение при наведении */
-
-.cat-btn:hover::before, #btn-header-add:hover::before {
+.liquid-btn:hover::before {
   top: -10%;
   transform: rotate(0deg);
 }
 
-.cat-btn:hover {
+.liquid-btn:hover {
   color: #ffffff !important;
   border-color: transparent !important;
 }
 
-.cat-btn:hover i {
+.liquid-btn:hover i {
   color: #ffffff !important;
 }
 
-/* Активная категория */
+/* Активная кнопка категории */
 
 .cat-btn.active {
   background-color: var(--color-brand-500) !important;
@@ -790,36 +778,43 @@ select {
   display: none;
 }
 
-/* Кастомная красная волна для кнопки ТОП */
+/* Цветовые модификаторы волны */
 
-#btn-cat-urgent::before {
+.liquid-btn-red::before {
   background-color: #EF4444 !important;
 }
 
-#btn-cat-urgent:hover {
-  border-color: transparent !important;
-  color: #ffffff !important;
-}
+/* Модификатор для темной высококонтрастной кнопки (Пристроить добро) */
 
-#btn-cat-urgent:hover i {
-  color: #ffffff !important;
-}
-
-/* Умный контраст для главной кнопки */
-
-#btn-header-add {
-  background-color: var(--color-brand-500) !important;
-  color: #ffffff !important;
+.liquid-btn-black {
+  background-color: #111827 !important;
+  color: #FFFFFF !important;
   border: none !important;
 }
 
-#btn-header-add i {
+.liquid-btn-black i {
+  color: #FFFFFF !important;
+}
+
+.dark .liquid-btn-black {
+  background-color: #F3F4F6 !important;
+  color: #111827 !important;
+}
+
+.dark .liquid-btn-black i {
+  color: #111827 !important;
+}
+
+.liquid-btn-black::before {
+  background-color: var(--color-brand-500) !important;
+}
+
+.dark .liquid-btn-black:hover {
   color: #ffffff !important;
 }
 
-#btn-header-add::before {
-  background-color: var(--color-brand-700) !important;
-  /* Наполняется тёмной бирюзой */
+.dark .liquid-btn-black:hover i {
+  color: #ffffff !important;
 }
 
 /* ==========================================
@@ -863,7 +858,7 @@ select {
 
 .dark .item-card:hover {
   box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-  border-color: var(--border-soft) !important;
+  border-color: rgba(0, 212, 181, 0.4) !important;
 }
 
 .card-body-wrap {
@@ -907,14 +902,12 @@ select {
   margin-bottom: 2px !important;
 }
 
-/* ОЧИСТКА МУСОРА ИЗ ОБЫЧНОЙ ЛЕНТЫ (Оставляем только город и счетчики) */
-
 .view-grid .body-badges {
   display: none !important;
 }
 
 /* ==========================================
-       VIP ТОП-ЛЕНТА (ЯРКИЙ АКЦЕНТ И ФОКУС НА ФОТО)
+       VIP ТОП-ЛЕНТА (ИДЕАЛЬНАЯ МАТЕМАТИКА)
        ========================================== */
 
 #vip-items-grid {
@@ -939,11 +932,10 @@ select {
 .vip-card, #vip-items-grid .item-card {
   background: var(--bg-surface) !important;
   border: 2px solid #F59E0B !important;
-  /* Аккуратная 2px рамка */
   border-radius: 1.25rem !important;
   /* Внешний радиус: 20px */
-  padding: 0.5rem !important;
-  /* Внутренний отступ: 8px */
+  padding: 0 !important;
+  /* УБРАН PADDING ДЛЯ ПЛОТНОГО ПРИЛЕГАНИЯ ФОТО */
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: scale(1.02);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
@@ -952,8 +944,6 @@ select {
 .dark .vip-card, .dark #vip-items-grid .item-card {
   border-color: #F59E0B !important;
 }
-
-/* Значок огонька золотой, а цена возвращается к дефолтному цвету бренда */
 
 .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
   color: #F59E0B !important;
@@ -971,21 +961,17 @@ select {
 #vip-items-grid .card-img-wrap {
   height: 220px !important;
   min-height: 220px !important;
-  /* Идеальная математика углов (20px радиус - 8px паддинг = 12px = 0.75rem). Никаких зазоров! */
-  border-radius: 0.75rem 0.75rem 0 0 !important;
+  /* Идеальный срез (20px радиус - 2px рамка = 18px = 1.125rem) */
+  border-radius: 1.125rem 1.125rem 0 0 !important;
   border: none !important;
 }
 
-/* ТОТАЛЬНАЯ ОЧИСТКА МУСОРА ИЗ VIP: только название и цена */
-
-#vip-items-grid .body-badges,
-    #vip-items-grid .img-badges,
-    #vip-items-grid .view-list-col-2 > div:last-child {
+#vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child {
   display: none !important;
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 1rem 0.5rem 0.5rem 0.5rem !important;
+  padding: 1rem !important;
   justify-content: center !important;
 }
 
@@ -1025,8 +1011,6 @@ select {
     max-width: 1152px !important;
   }
 
-  /* 6xl */
-
   #modal-img-container {
     height: 550px !important;
   }
@@ -1063,16 +1047,12 @@ select {
     max-width: 1280px !important;
   }
 
-  /* 7xl */
-
   #modal-img-container {
     height: 600px !important;
   }
 }
 
-/* ==========================================
-       РЕЖИМ СЕТКИ (GRID) И СПИСКА
-       ========================================== */
+/* РЕЖИМ СЕТКИ (GRID) И СПИСКА */
 
 .view-grid {
   display: grid !important;
@@ -1215,9 +1195,7 @@ select {
   }
 }
 
-/* ==========================================
-       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
-       ========================================== */
+/* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
 
 .\!container {
   max-width: 100% !important;
@@ -1264,12 +1242,7 @@ select {
     grid-column: 2 / -1 !important;
   }
 
-  main > div:first-child,
-        main > div#mobile-filter-backdrop,
-        #main-cats-container,
-        #sub-cats-container,
-        #vip-section,
-        main > div.bg-gradient-to-r {
+  main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, main > div.bg-gradient-to-r {
     grid-column: 1 / -1 !important;
   }
 
@@ -3006,6 +2979,10 @@ select {
   background-color: rgb(255 255 255 / 0.95);
 }
 
+.bg-stone-100\/90{
+  background-color: rgb(245 245 244 / 0.9);
+}
+
 .bg-gradient-to-br{
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -3549,10 +3526,6 @@ select {
   letter-spacing: -0.05em;
 }
 
-.tracking-wide{
-  letter-spacing: 0.025em;
-}
-
 .tracking-wider{
   letter-spacing: 0.05em;
 }
@@ -3842,12 +3815,6 @@ select {
 .shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.02\)\]{
   --tw-shadow: 0 20px 50px rgba(0,0,0,0.02);
   --tw-shadow-colored: 0 20px 50px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-\[0_2px_10px_rgba\(0\2c 0\2c 0\2c 0\.02\)\]{
-  --tw-shadow: 0 2px 10px rgba(0,0,0,0.02);
-  --tw-shadow-colored: 0 2px 10px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -5284,10 +5251,6 @@ select {
     height: 90vh;
   }
 
-  .sm\:w-1\/2{
-    width: 50%;
-  }
-
   .sm\:w-11{
     width: 2.75rem;
   }
@@ -5397,12 +5360,12 @@ select {
     border-width: 1px;
   }
 
-  .sm\:border-t-0{
-    border-top-width: 0px;
-  }
-
   .sm\:border-l{
     border-left-width: 1px;
+  }
+
+  .sm\:border-t-0{
+    border-top-width: 0px;
   }
 
   .sm\:p-0{
@@ -5411,10 +5374,6 @@ select {
 
   .sm\:p-10{
     padding: 2.5rem;
-  }
-
-  .sm\:p-3\.5{
-    padding: 0.875rem;
   }
 
   .sm\:p-4{
@@ -5481,8 +5440,8 @@ select {
     padding-left: 0.75rem;
   }
 
-  .sm\:pl-5{
-    padding-left: 1.25rem;
+  .sm\:pl-8{
+    padding-left: 2rem;
   }
 
   .sm\:pl-\[80px\]{
@@ -5499,10 +5458,6 @@ select {
 
   .sm\:pt-8{
     padding-top: 2rem;
-  }
-
-  .sm\:pl-8{
-    padding-left: 2rem;
   }
 
   .sm\:text-2xl{

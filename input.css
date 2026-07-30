@@ -12,7 +12,7 @@
     --bg-surface: #FFFFFF;
     
     --color-brand-400: #00D4B5; 
-    --color-brand-500: #1FB6A6; /* Морская бирюза */
+    --color-brand-500: #1FB6A6; 
     --color-brand-600: #0F766E; 
     --color-brand-700: #115E59;
     --color-vip: #F5C542;
@@ -48,68 +48,36 @@
 }
 
 @layer components {
-    /* ГЛОБАЛЬНЫЙ СТИЛЬ ПОВЕРХНОСТЕЙ */
     .bg-white { background-color: var(--bg-surface) !important; }
     .border-stone-200 { border-color: var(--border-soft) !important; }
-    
     .dark .dark\:bg-stone-900 { background-color: var(--bg-surface) !important; }
     .dark .dark\:border-stone-800 { border-color: var(--border-soft) !important; }
 
     .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02) !important; }
     .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important; }
 
-    .backdrop-blur-md {
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background-color: rgba(255, 255, 255, 0.75) !important;
-    }
-    .dark .backdrop-blur-md {
-        background-color: rgba(28, 32, 37, 0.8) !important;
-    }
+    .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.75) !important; }
+    .dark .backdrop-blur-md { background-color: rgba(28, 32, 37, 0.8) !important; }
 
-    /* ФОРМЫ И СЕЛЕКТЫ */
-    input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
-        cursor: text !important; caret-color: var(--color-brand-500); font-size: 16px !important;
-    }
-    input:focus, textarea:focus, select:focus {
-        border-color: var(--color-brand-500) !important; outline: none !important; box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important;
-    }
-    select {
-        appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important;
-    }
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea { cursor: text !important; caret-color: var(--color-brand-500); font-size: 16px !important; }
+    input:focus, textarea:focus, select:focus { border-color: var(--color-brand-500) !important; outline: none !important; box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important; }
+    select { appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important; }
 
-    /* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА */
-    .modal-overlay {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-    .modal-overlay.active {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-    .modal-content { 
-        transform: scale(0.95) translateY(15px); 
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-    .modal-overlay.active .modal-content { 
-        transform: scale(1) translateY(0); 
-    }
+    .modal-overlay { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-content { transform: scale(0.95) translateY(15px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 
     /* ==========================================
-       ЭФФЕКТ "ЖИДКАЯ ВОЛНА" ДЛЯ КНОПОК
+       УНИВЕРСАЛЬНЫЕ КНОПКИ LIQUID WAVE
        ========================================== */
-    .cat-btn, #btn-header-add {
+    .liquid-btn {
         position: relative;
         overflow: hidden;
         z-index: 1;
         transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
     }
-
-    /* Заливка спрятана глубоко внизу (-150%) */
-    .cat-btn::before, #btn-header-add::before {
+    .liquid-btn::before {
         content: '';
         position: absolute;
         top: 150%; 
@@ -119,46 +87,33 @@
         background-color: var(--color-brand-500);
         z-index: -1;
         transform: rotate(-8deg); 
-        /* Замедленная, тягучая анимация (1.2s) */
         transition: top 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         border-radius: 40% 30% 0 0; 
     }
-
-    /* Плавное заполнение при наведении */
-    .cat-btn:hover::before, #btn-header-add:hover::before {
-        top: -10%;
-        transform: rotate(0deg);
-    }
-
-    .cat-btn:hover {
-        color: #ffffff !important;
-        border-color: transparent !important;
-    }
-    .cat-btn:hover i { color: #ffffff !important; }
-
-    /* Активная категория */
-    .cat-btn.active {
-        background-color: var(--color-brand-500) !important;
-        color: #ffffff !important;
-        border-color: var(--color-brand-500) !important;
-    }
+    .liquid-btn:hover::before { top: -10%; transform: rotate(0deg); }
+    
+    .liquid-btn:hover { color: #ffffff !important; border-color: transparent !important; }
+    .liquid-btn:hover i { color: #ffffff !important; }
+    
+    /* Активная кнопка категории */
+    .cat-btn.active { background-color: var(--color-brand-500) !important; color: #ffffff !important; border-color: var(--color-brand-500) !important; }
     .cat-btn.active::before { display: none; }
 
-    /* Кастомная красная волна для кнопки ТОП */
-    #btn-cat-urgent::before { background-color: #EF4444 !important; }
-    #btn-cat-urgent:hover { border-color: transparent !important; color: #ffffff !important; }
-    #btn-cat-urgent:hover i { color: #ffffff !important; }
-
-    /* Умный контраст для главной кнопки */
-    #btn-header-add {
-        background-color: var(--color-brand-500) !important;
-        color: #ffffff !important;
-        border: none !important;
-    }
-    #btn-header-add i { color: #ffffff !important; }
-    #btn-header-add::before {
-        background-color: var(--color-brand-700) !important; /* Наполняется тёмной бирюзой */
-    }
+    /* Цветовые модификаторы волны */
+    .liquid-btn-red::before { background-color: #EF4444 !important; }
+    .liquid-btn-amber::before { background-color: #F59E0B !important; }
+    .liquid-btn-emerald::before { background-color: #10B981 !important; }
+    .liquid-btn-blue::before { background-color: #3B82F6 !important; }
+    
+    /* Модификатор для темной высококонтрастной кнопки (Пристроить добро) */
+    .liquid-btn-black { background-color: #111827 !important; color: #FFFFFF !important; border: none !important;}
+    .liquid-btn-black i { color: #FFFFFF !important; }
+    .dark .liquid-btn-black { background-color: #F3F4F6 !important; color: #111827 !important; }
+    .dark .liquid-btn-black i { color: #111827 !important; }
+    
+    .liquid-btn-black::before { background-color: var(--color-brand-500) !important; }
+    .dark .liquid-btn-black:hover { color: #ffffff !important; }
+    .dark .liquid-btn-black:hover i { color: #ffffff !important; }
 
     /* ==========================================
        БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
@@ -175,7 +130,6 @@
         0% { opacity: 0; transform: translateY(30px); }
         100% { opacity: 1; transform: translateY(0); }
     }
-
     .item-card:hover {
         transform: translateY(-6px) !important;
         box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
@@ -184,32 +138,20 @@
     }
     .dark .item-card:hover {
         box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-        border-color: var(--border-soft) !important;
+        border-color: rgba(0, 212, 181, 0.4) !important;
     }
-    
     .card-body-wrap { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; justify-content: space-between !important; }
     .card-img-wrap { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative; }
     .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important; }
     .item-card:hover .card-img-wrap img { transform: scale(1.08) !important; }
-
-    .item-card h4 {
-        display: -webkit-box !important; line-clamp: 2 !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
-        overflow: hidden !important; word-break: break-word !important; white-space: normal !important; line-height: 1.25 !important; margin-bottom: 2px !important;
-    }
-
-    /* ОЧИСТКА МУСОРА ИЗ ОБЫЧНОЙ ЛЕНТЫ (Оставляем только город и счетчики) */
-    .view-grid .body-badges {
-        display: none !important;
-    }
+    .item-card h4 { display: -webkit-box !important; line-clamp: 2 !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; word-break: break-word !important; white-space: normal !important; line-height: 1.25 !important; margin-bottom: 2px !important; }
+    
+    .view-grid .body-badges { display: none !important; }
 
     /* ==========================================
-       VIP ТОП-ЛЕНТА (ЯРКИЙ АКЦЕНТ И ФОКУС НА ФОТО)
+       VIP ТОП-ЛЕНТА (ИДЕАЛЬНАЯ МАТЕМАТИКА)
        ========================================== */
-    #vip-items-grid {
-        padding: 1rem 0 2.5rem 0 !important;
-        gap: 1.5rem !important; 
-    }
-    
+    #vip-items-grid { padding: 1rem 0 2.5rem 0 !important; gap: 1.5rem !important; }
     @keyframes vipPulseGlow {
         0% { box-shadow: 0 0 8px 0px rgba(245, 158, 11, 0.15); }
         50% { box-shadow: 0 0 20px 4px rgba(245, 158, 11, 0.4); }
@@ -218,18 +160,15 @@
 
     .vip-card, #vip-items-grid .item-card { 
         background: var(--bg-surface) !important;
-        border: 2px solid #F59E0B !important; /* Аккуратная 2px рамка */
+        border: 2px solid #F59E0B !important; 
         border-radius: 1.25rem !important; /* Внешний радиус: 20px */
-        padding: 0.5rem !important; /* Внутренний отступ: 8px */
+        padding: 0 !important; /* УБРАН PADDING ДЛЯ ПЛОТНОГО ПРИЛЕГАНИЯ ФОТО */
         animation: vipPulseGlow 3s infinite ease-in-out !important;
         transform: scale(1.02); 
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
     }
-    .dark .vip-card, .dark #vip-items-grid .item-card {
-        border-color: #F59E0B !important;
-    }
+    .dark .vip-card, .dark #vip-items-grid .item-card { border-color: #F59E0B !important; }
     
-    /* Значок огонька золотой, а цена возвращается к дефолтному цвету бренда */
     .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
         color: #F59E0B !important;
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -245,21 +184,13 @@
 
     #vip-items-grid .card-img-wrap { 
         height: 220px !important; min-height: 220px !important; 
-        /* Идеальная математика углов (20px радиус - 8px паддинг = 12px = 0.75rem). Никаких зазоров! */
-        border-radius: 0.75rem 0.75rem 0 0 !important; 
+        /* Идеальный срез (20px радиус - 2px рамка = 18px = 1.125rem) */
+        border-radius: 1.125rem 1.125rem 0 0 !important; 
         border: none !important; 
     }
     
-    /* ТОТАЛЬНАЯ ОЧИСТКА МУСОРА ИЗ VIP: только название и цена */
-    #vip-items-grid .body-badges,
-    #vip-items-grid .img-badges,
-    #vip-items-grid .view-list-col-2 > div:last-child { 
-        display: none !important; 
-    }
-
-    #vip-items-grid .card-body-wrap { 
-        padding: 1rem 0.5rem 0.5rem 0.5rem !important; justify-content: center !important; 
-    }
+    #vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child { display: none !important; }
+    #vip-items-grid .card-body-wrap { padding: 1rem !important; justify-content: center !important; }
     #vip-items-grid h4 { font-size: 1.1rem !important; font-weight: 900 !important; margin-bottom: 6px !important; line-height: 1.3 !important;}
     
     @media (min-width: 1024px) {
@@ -273,7 +204,7 @@
        ПРЕМИАЛЬНЫЙ РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
        ========================================== */
     @media (min-width: 1024px) {
-        #item-details-modal-content { max-width: 1152px !important; } /* 6xl */
+        #item-details-modal-content { max-width: 1152px !important; } 
         #modal-img-container { height: 550px !important; }
         .item-details-layout { display: grid; grid-template-columns: 55% 1fr; grid-template-rows: auto 1fr; align-items: start; }
         .il-photo { grid-column: 1; grid-row: 1; }
@@ -281,13 +212,11 @@
         .il-info { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; padding-left: 1rem; }
     }
     @media (min-width: 1280px) {
-        #item-details-modal-content { max-width: 1280px !important; } /* 7xl */
+        #item-details-modal-content { max-width: 1280px !important; }
         #modal-img-container { height: 600px !important; }
     }
 
-    /* ==========================================
-       РЕЖИМ СЕТКИ (GRID) И СПИСКА
-       ========================================== */
+    /* РЕЖИМ СЕТКИ (GRID) И СПИСКА */
     .view-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.75rem !important; align-items: stretch !important; }
     @media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 1rem !important; } }
     @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.25rem !important; } }
@@ -297,7 +226,6 @@
     .view-grid .card-img-wrap { height: 140px !important; min-height: 140px !important; flex-shrink: 0 !important; border-radius: 1.25rem 1.25rem 0 0 !important; }
     @media (min-width: 640px) { .view-grid .card-img-wrap { height: 160px !important; min-height: 160px !important; } }
     @media (min-width: 1024px) { .view-grid .card-img-wrap { height: 200px !important; min-height: 200px !important; } }
-
     .view-grid .card-body-wrap { padding: 0.75rem !important; background: transparent !important; }
     .view-grid .view-list-city, .view-grid .view-list-desc { display: none !important; }
 
@@ -320,55 +248,22 @@
         .view-list .view-list-col-3 { flex: 1 !important; display: flex !important; flex-direction: column; }
     }
 
-    /* ==========================================
-       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
-       ========================================== */
+    /* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
     .container, .max-w-[1400px] { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; transition: padding 0.3s ease; }
     @media (min-width: 640px) { .container, .max-w-[1400px] { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
     @media (min-width: 1024px) { 
         .container, .max-w-[1400px] { padding-left: 3rem !important; padding-right: 3rem !important; } 
-        
-        main {
-            display: grid !important;
-            grid-template-columns: 280px minmax(0, 1fr) !important;
-            align-items: start;
-            gap: 0 2.5rem !important;
-        }
-
+        main { display: grid !important; grid-template-columns: 280px minmax(0, 1fr) !important; align-items: start; gap: 0 2.5rem !important; }
         main > * { grid-column: 2 / -1 !important; }
-        
-        main > div:first-child,
-        main > div#mobile-filter-backdrop,
-        #main-cats-container,
-        #sub-cats-container,
-        #vip-section,
-        main > div.bg-gradient-to-r { 
-            grid-column: 1 / -1 !important; 
-        }
-        
+        main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, main > div.bg-gradient-to-r { grid-column: 1 / -1 !important; }
         #vip-section { width: 100% !important; margin: 0 !important; }
         #vip-section > div { padding-left: 0 !important; padding-right: 0 !important; }
-
-        #filter-panel-wrapper {
-            grid-column: 1 / 2 !important;
-            grid-row: 7 / 20 !important; 
-            position: sticky !important;
-            top: 100px !important;
-            height: calc(100vh - 120px) !important;
-            display: block !important;
-            overflow-y: auto !important;
-            box-shadow: none !important;
-            background: transparent !important;
-            transform: none !important;
-            padding-top: 0.5rem !important;
-        }
-
+        #filter-panel-wrapper { grid-column: 1 / 2 !important; grid-row: 7 / 20 !important; position: sticky !important; top: 100px !important; height: calc(100vh - 120px) !important; display: block !important; overflow-y: auto !important; box-shadow: none !important; background: transparent !important; transform: none !important; padding-top: 0.5rem !important; }
         #fresh-ads-section { grid-column: 2 / 3 !important; grid-row: 7 !important; }
         #loading-placeholder { grid-column: 2 / 3 !important; grid-row: 8 !important; }
         #main-items-grid { grid-column: 2 / 3 !important; grid-row: 9 !important; }
         .flex.justify-center.mt-10.mb-6 { grid-column: 2 / 3 !important; grid-row: 10 !important; }
         #empty-state { grid-column: 2 / 3 !important; grid-row: 11 !important; }
-
         #filter-panel > div { border: none !important; background: transparent !important; padding: 0 !important; }
         #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
         #btn-toggle-filters { display: none !important; }

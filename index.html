@@ -230,9 +230,9 @@
                         <i class="fa-regular fa-user text-lg"></i>
                     </button>
                 </div>
-                <!-- Кнопка добавления (Оригинальный стиль сайта) -->
-                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" 
-                        class="hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-500 text-white font-black transition-all duration-300 hover:bg-brand-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer shrink-0 shadow-md">
+                <!-- Кнопка добавления (Urban Liquid Style) -->
+                <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()"
+                        class="liquid-btn liquid-btn-black hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl font-black transition-all duration-300 hover:scale-105 cursor-pointer shrink-0 shadow-md">
                         <i class="fa-solid fa-tag shrink-0"></i>
                         <span class="hidden xl:block truncate" data-i18n="btn_publish">Пристроить добро</span>
                         <span class="block xl:hidden truncate" data-i18n="btn_publish_mob">Продать</span>
@@ -495,64 +495,34 @@
             style="scrollbar-width: none; -ms-overflow-style: none;">
             
             <button data-cat="Все" onclick="window.filterByCategory('Все', event)"
-                class="cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md bg-brand-500 text-white border border-brand-500 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
+                class="cat-btn liquid-btn active px-5 py-2.5 rounded-xl font-bold text-sm shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]"
                 data-i18n="cat_all">Все</button>
                 
             <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()"
-                class="cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i
+                class="cat-btn liquid-btn liquid-btn-red px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i
                     class="fa-solid fa-crown mr-1"></i> <span data-i18n="cat_top">ТОП</span></button>
 
+            <!-- Пример для остальных: -->
             <button data-cat="Одежда" onclick="window.filterByCategory('Одежда', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
+                class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
                 data-i18n="cat_clothes">Одежда</button>
-                
             <button data-cat="Детям" onclick="window.filterByCategory('Детям', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
+                class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
                 data-i18n="cat_kids">Детям</button>
-                
             <button data-cat="Электроника" onclick="window.filterByCategory('Электроника', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
+                class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
                 data-i18n="cat_electro">Электроника</button>
-                
-            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_interior">Интерьер</button>
-                
-            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_transport">Транспорт</button>
-                
-            <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_beauty">Красота</button>
-                
-            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_services">Услуги</button>
-                
-            <button data-cat="Работа" onclick="window.filterByCategory('Работа', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_job">Работа</button>
-                
-            <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_business">Бизнес</button>
-                
-            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_hobby">Хобби</button>
-                
-            <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_animals">Животные</button>
-                
-            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_home">Жилье</button>
-                
-            <button data-cat="Другое" onclick="window.filterByCategory('Другое', event)"
-                class="cat-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 dark:hover:border-brand-500 dark:hover:text-brand-500 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"
-                data-i18n="cat_other">Другое</button>
+            <!-- Добавь класс `liquid-btn` аналогично для Интерьер, Транспорт, Красота и т.д. -->
+            <button data-cat="Интерьер" onclick="window.filterByCategory('Интерьер', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_interior">Интерьер</button>
+            <button data-cat="Транспорт" onclick="window.filterByCategory('Транспорт', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_transport">Транспорт</button>
+            <button data-cat="Красота" onclick="window.filterByCategory('Красота', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_beauty">Красота</button>
+            <button data-cat="Услуги" onclick="window.filterByCategory('Услуги', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_services">Услуги</button>
+            <button data-cat="Работа" onclick="window.filterByCategory('Работа', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_job">Работа</button>
+            <button data-cat="Бизнес" onclick="window.filterByCategory('Бизнес', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_business">Бизнес</button>
+            <button data-cat="Хобби" onclick="window.filterByCategory('Хобби', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_hobby">Хобби</button>
+            <button data-cat="Животные" onclick="window.filterByCategory('Животные', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_animals">Животные</button>
+            <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_home">Жилье</button>
+            <button data-cat="Другое" onclick="window.filterByCategory('Другое', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start" data-i18n="cat_other">Другое</button>
         </div>
 
         <div id="sub-cats-container" class="mb-8 flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible items-center gap-2 sm:gap-2 pb-2 md:pb-0 snap-x md:snap-none hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
@@ -1592,20 +1562,20 @@
         <div id="item-details-modal-content" class="modal-content bg-white dark:bg-stone-900 w-full max-w-5xl h-[100dvh] sm:h-[90vh] sm:rounded-[2rem] shadow-2xl relative border-0 sm:border dark:border-stone-800 overflow-y-auto custom-scrollbar">
             
             <!-- Кнопка закрытия (Крестик) -->
-            <button onclick="window.closeModal('item-modal')" class="fixed sm:absolute top-4 right-4 z-[60] bg-white/90 dark:bg-stone-800/90 text-stone-900 dark:text-white w-10 h-10 rounded-full flex items-center justify-center transition shadow-md cursor-pointer hover:bg-brand-600 hover:text-white dark:hover:bg-brand-500 dark:hover:text-white">
+            <button onclick="window.closeModal('item-modal')" class="liquid-btn fixed sm:absolute top-4 right-4 z-[60] bg-stone-100/90 dark:bg-stone-800/90 backdrop-blur-md text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 w-10 h-10 rounded-full flex items-center justify-center transition shadow-sm cursor-pointer">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <!-- Умный контейнер для кнопок: привязан левее крестика (right-16) и на том же уровне слоя z-[60] -->
+            <!-- Контейнер для кнопок -->
             <div class="fixed sm:absolute top-4 right-16 sm:right-[4.5rem] flex items-center gap-2 sm:gap-3 z-[60]">
                 
                 <!-- Кнопка Поделиться -->
-                <button id="modal-share-btn" onclick="window.shareCurrentItem()" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-900 dark:text-white rounded-full flex items-center justify-center transition shadow-md cursor-pointer hover:bg-brand-600 hover:text-white dark:hover:bg-brand-500 dark:hover:text-white">
+                <button id="modal-share-btn" onclick="window.shareCurrentItem()" class="liquid-btn w-10 h-10 bg-stone-100/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 rounded-full flex items-center justify-center transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-share-nodes text-sm"></i>
                 </button>
                 
                 <!-- Кнопка На склад -->
-                <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="w-10 h-10 bg-white/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-400 rounded-full flex items-center justify-center transition shadow-md cursor-pointer hover:text-brand-600 dark:hover:text-brand-400 hover:bg-stone-100 dark:hover:bg-stone-700">
+                <button id="modal-fav-btn" onclick="window.toggleFavoriteModal(event)" class="liquid-btn w-10 h-10 bg-stone-100/90 dark:bg-stone-800/90 backdrop-blur-sm text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 rounded-full flex items-center justify-center transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-box-open transition-transform text-sm" id="modal-fav-icon"></i>
                 </button>
                 

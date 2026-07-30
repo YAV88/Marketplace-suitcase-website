@@ -3611,6 +3611,7 @@ window.triggerItemViewsAndSimilar = async (id) => {
     if (container) { container.classList.add('hidden'); container.classList.remove('flex'); }
     if (carousel) carousel.innerHTML = '';
 
+    // ТИХО ОБНОВЛЯЕМ СТАТИСТИКУ В БД (ВИЗУАЛЬНЫЙ БЛОК УДАЛЕН ПОЛНОСТЬЮ)
     window.supabase.rpc('increment_item_view', { p_item_id: id })
     .then(({ data, error }) => {
         if (error) console.error("Ошибка при обновлении просмотров:", error);
@@ -3619,30 +3620,7 @@ window.triggerItemViewsAndSimilar = async (id) => {
     const currentItem = window.loadedItems.find(i => i.id === id);
     if (!currentItem) return;
 
-    const ownerControls = document.getElementById('modal-owner-controls');
-    const isOwner = window.currentUser && currentItem.userId === window.currentUser.id;
-    let statsBlock = document.getElementById('modal-owner-stats');
-    if (isOwner && ownerControls) {
-        if (!statsBlock) {
-            statsBlock = document.createElement('div');
-            statsBlock.id = 'modal-owner-stats';
-            statsBlock.className = 'flex items-center gap-4 bg-stone-50 dark:bg-stone-800 p-4 rounded-2xl mb-4 border border-stone-200 dark:border-stone-700 shadow-sm';
-            ownerControls.parentNode.insertBefore(statsBlock, ownerControls);
-        }
-        window.supabase.from('items').select('views').eq('id', id).single().then(({data}) => {
-            const viewsCount = data ? (data.views || 0) : 0;
-            statsBlock.innerHTML = `
-                <div class="flex-1">
-                    <div class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2">Статистика объявления</div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 border border-brand-200 dark:border-brand-800"><i class="fa-solid fa-eye"></i></div>
-                        <div><div class="font-black text-lg text-stone-900 dark:text-white leading-none">${viewsCount}</div><div class="text-xs font-bold text-stone-500 mt-0.5">просмотров карточки</div></div>
-                    </div>
-                </div>
-            `;
-            statsBlock.style.display = 'flex';
-        }).catch(()=>{});
-    } else if (statsBlock) { statsBlock.style.display = 'none'; }
+    // СЕРЫЙ БЛОК СТАТИСТИКИ (statsBlock) ПОЛНОСТЬЮ УДАЛЕН ОТСЮДА
 
     // Загрузка 8 товаров для карусели
     if (currentItem.category) {
@@ -3656,7 +3634,8 @@ window.triggerItemViewsAndSimilar = async (id) => {
             .then(({data}) => {
                 if (data && data.length > 0 && carousel && container) {
                     const mapped = data.map(window.mapItemData).filter(Boolean);
-                    carousel.innerHTML = mapped.map(i => `<div class="w-[260px] sm:w-[280px] shrink-0 snap-start">${window.createCardHtml(i)}</div>`).join('');
+                    // Важно: вызываем ItemsModule.createCardHtml вместо window.createCardHtml
+                    carousel.innerHTML = mapped.map(i => `<div class="w-[260px] sm:w-[280px] shrink-0 snap-start">${ItemsModule.createCardHtml(i)}</div>`).join('');
                     container.classList.remove('hidden'); 
                     container.classList.add('flex');
                 }
