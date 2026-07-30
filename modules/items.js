@@ -191,8 +191,7 @@ export const ItemsModule = {
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
         
-        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
-        const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
+        const favHtmlCard = isOwner ? '' : `<div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-[60]">${favBtnOnly}</div>`;
 
         // ЕДИНЫЙ ПРОДАЮЩИЙ ЗНАК "ОГОНЬ" ДЛЯ ТОП-КАРТ (С пульсирующей тенью)
         const vipCrown = isVIP ? `<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>` : '';
@@ -526,11 +525,13 @@ export const ItemsModule = {
                         if (window.vipPool.length > 10) {
                             const slots = vipGrid.querySelectorAll('.vip-slot');
                             slots.forEach((slotEl, index) => {
-                                // Первая меняется через 7с, вторая через 7.7с, третья через 8.4с и т.д.
                                 const initialDelay = index * 700; 
                                 
                                 setTimeout(() => {
                                     const intervalId = setInterval(() => {
+                                        // СЕНЬОР-ФИКС: Не крутим анимацию, если вкладка браузера скрыта (решает баг с "перезагрузкой")
+                                        if (document.hidden) return;
+
                                         // Если ИМЕННО ЭТА карточка в ховере — мы её не трогаем!
                                         if (slotEl.matches(':hover') || slotEl.matches(':active') || slotEl.querySelector(':hover')) return;
 
@@ -548,12 +549,13 @@ export const ItemsModule = {
                                             
                                             slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                                         }, 700); 
-                                    }, 7000); // Таймер ровно 7 секунд
+                                    }, 7000); 
                                     
                                     window.vipCascadeIntervals.push(intervalId);
                                 }, initialDelay);
                             });
                         }
+
                     } else {
                         if (window.vipCascadeIntervals) window.vipCascadeIntervals.forEach(clearInterval);
                         if (vipSection) vipSection.classList.add('hidden');
