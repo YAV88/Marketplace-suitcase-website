@@ -924,22 +924,26 @@ select {
 
 @keyframes vipPulseGlow {
   0% {
-    box-shadow: 0 0 10px 0px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 8px 0px rgba(245, 158, 11, 0.15);
   }
 
   50% {
-    box-shadow: 0 0 25px 6px rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 20px 4px rgba(245, 158, 11, 0.4);
   }
 
   100% {
-    box-shadow: 0 0 10px 0px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 8px 0px rgba(245, 158, 11, 0.15);
   }
 }
 
 .vip-card, #vip-items-grid .item-card {
   background: var(--bg-surface) !important;
-  border: 3px solid #F59E0B !important;
+  border: 2px solid #F59E0B !important;
+  /* Аккуратная 2px рамка */
   border-radius: 1.25rem !important;
+  /* Внешний радиус: 20px */
+  padding: 0.5rem !important;
+  /* Внутренний отступ: 8px */
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: scale(1.02);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
@@ -949,11 +953,7 @@ select {
   border-color: #F59E0B !important;
 }
 
-/* Синхронизация цветов цены и иконки с рамкой */
-
-.vip-card .price-text, #vip-items-grid .item-card .price-text {
-  color: #F59E0B !important;
-}
+/* Значок огонька золотой, а цена возвращается к дефолтному цвету бренда */
 
 .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
   color: #F59E0B !important;
@@ -961,17 +961,18 @@ select {
 }
 
 .vip-card:hover, #vip-items-grid .item-card:hover {
-  transform: translateY(-10px) scale(1.04) !important;
+  transform: translateY(-8px) scale(1.04) !important;
   border-color: #FCD34D !important;
   animation: none !important;
-  box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.6), 0 0 30px 10px rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important;
   z-index: 10;
 }
 
 #vip-items-grid .card-img-wrap {
   height: 220px !important;
   min-height: 220px !important;
-  border-radius: 1.1rem 1.1rem 0 0 !important;
+  /* Идеальная математика углов (20px радиус - 8px паддинг = 12px = 0.75rem). Никаких зазоров! */
+  border-radius: 0.75rem 0.75rem 0 0 !important;
   border: none !important;
 }
 
@@ -984,7 +985,7 @@ select {
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 1rem 0.75rem !important;
+  padding: 1rem 0.5rem 0.5rem 0.5rem !important;
   justify-content: center !important;
 }
 
@@ -2404,6 +2405,10 @@ select {
 
 .gap-6{
   gap: 1.5rem;
+}
+
+.gap-8{
+  gap: 2rem;
 }
 
 .gap-x-6{
@@ -5396,6 +5401,10 @@ select {
     border-top-width: 0px;
   }
 
+  .sm\:border-l{
+    border-left-width: 1px;
+  }
+
   .sm\:p-0{
     padding: 0px;
   }
@@ -5490,6 +5499,10 @@ select {
 
   .sm\:pt-8{
     padding-top: 2rem;
+  }
+
+  .sm\:pl-8{
+    padding-left: 2rem;
   }
 
   .sm\:text-2xl{

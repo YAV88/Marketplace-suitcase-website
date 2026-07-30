@@ -815,34 +815,28 @@ export const ItemsModule = {
             const priceEl = document.getElementById('modal-price');
             if (priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
 
-            // ==========================================
-            // 1. СЕТКА ХАРАКТЕРИСТИК (Как на Авито)
-            // ==========================================
+            // 2. ЧИСТЫЕ ХАРАКТЕРИСТИКИ (Вместо серых квадратов -> легкие теги)
             const specsContainer = document.getElementById('modal-detailed-specs');
             if (specsContainer) {
+                // Изменяем классы родителя: убираем сетку
+                specsContainer.className = 'flex flex-wrap items-center gap-2 mb-6 empty:hidden';
                 let specsHtml = '';
                 const t = window.t || (txt => txt);
                 
-                // Функция-генератор красивой плитки
                 const addSpec = (label, val, icon, colorClass) => {
                     if (val) {
                         const safeVal = String(val).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
+                        // Чистый дизайн Apple/Shopify: мягкий фон, иконка и текст
                         specsHtml += `
-                        <div class="flex flex-col justify-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-3 sm:p-3.5 border border-stone-200/50 dark:border-stone-700/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                            <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-1.5 truncate">${t(label)}</span>
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid ${icon} ${colorClass} text-sm"></i>
-                                <span class="font-bold text-sm text-stone-800 dark:text-stone-200 truncate">${t(safeVal)}</span>
-                            </div>
+                        <div class="flex items-center gap-2 px-3 py-1.5 bg-stone-100 dark:bg-stone-800/50 rounded-lg text-sm font-bold text-stone-700 dark:text-stone-300">
+                            <i class="fa-solid ${icon} ${colorClass} opacity-80"></i> ${t(safeVal)}
                         </div>`;
                     }
                 };
 
-                // Категорию выводим всегда
                 const catName = item.category ? item.category.split(' - ').pop() : 'Другое';
                 addSpec('Категория', catName, 'fa-tags', 'text-brand-500');
 
-                // Динамические поля в зависимости от типа
                 if (item.item_type === 'estate' || (item.category && item.category.includes('Жилье'))) {
                     addSpec('Сделка', item.deal_type, 'fa-key', 'text-blue-500');
                     if (item.area) addSpec('Площадь', `${item.area} м²`, 'fa-ruler-combined', 'text-indigo-500');
@@ -854,7 +848,6 @@ export const ItemsModule = {
                     if (item.company_name) addSpec('Компания', item.company_name, 'fa-building', 'text-stone-500');
                 }
                 else {
-                    // Для обычных вещей выводим Состояние
                     const noConditionCats = ['Услуги', 'Животные'];
                     const isNoCondCat = noConditionCats.some(c => (item.category || '').startsWith(c));
                     if (!isNoCondCat && item.condition) {
@@ -866,50 +859,51 @@ export const ItemsModule = {
                 specsContainer.innerHTML = specsHtml;
             }
 
-            // ==========================================
-            // 2. ПАНЕЛЬ "УСЛОВИЯ СДЕЛКИ" (Оплата и Доставка)
-            // ==========================================
+            // 3. ИДЕАЛЬНОЕ ВЫРАВНИВАНИЕ "ОПЛАТЫ" И "ДОСТАВКИ" (Убрали серую коробку)
             const transContainer = document.getElementById('modal-transaction-info');
             if (transContainer) {
+                // Тотально зачищаем классы родительского контейнера
+                transContainer.className = 'mb-8 flex flex-col sm:flex-row items-start gap-8 empty:hidden border-t border-stone-100 dark:border-stone-800/60 pt-6';
+                
                 const t = window.t || (txt => txt);
                 let html = '';
 
-                // Блок ДОСТАВКИ (Стиль компактных чипов)
+                // Способ получения
                 const delList = item.delivery || ['Личная встреча'];
                 if (delList.length > 0) {
                     let delItems = '';
                     if (delList.includes('Личная встреча')) {
-                        delItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
+                        delItems += `<div class="flex items-center gap-2 text-sm font-bold text-stone-800 dark:text-stone-200"><i class="fa-solid fa-handshake text-blue-500 text-lg w-6"></i> ${t('Личная встреча')}</div>`;
                     }
                     if (delList.includes('PostExpress')) {
-                        delItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
+                        delItems += `<div class="flex items-center gap-2 text-sm font-bold text-stone-800 dark:text-stone-200"><i class="fa-solid fa-box-open text-indigo-500 text-lg w-6"></i> PostExpress</div>`;
                     }
                     
                     html += `
-                    <div class="flex-1 w-full sm:w-1/2">
-                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 block"><i class="fa-solid fa-truck-fast mr-1.5"></i> ${t('Способ получения')}</span>
-                        <div class="flex flex-wrap gap-2">${delItems}</div>
+                    <div class="flex-1 w-full">
+                        <span class="text-xs font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-3 block">${t('Способ получения')}</span>
+                        <div class="flex flex-col gap-3">${delItems}</div>
                     </div>`;
                 }
 
-                // Блок ОПЛАТЫ (Стиль компактных чипов)
+                // Оплата
                 const payList = item.payment || ['Наличные'];
                 if (payList.length > 0) {
                     let payItems = '';
                     if (payList.includes('Наличные')) {
-                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> ${t('Наличные')}</span>`;
+                        payItems += `<div class="flex items-center gap-2 text-sm font-bold text-stone-800 dark:text-stone-200"><i class="fa-solid fa-money-bill-wave text-emerald-500 text-lg w-6"></i> ${t('Наличные')}</div>`;
                     }
                     if (payList.includes('Перевод на карту')) {
-                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-regular fa-credit-card text-sky-500"></i> ${t('На карту')}</span>`;
+                        payItems += `<div class="flex items-center gap-2 text-sm font-bold text-stone-800 dark:text-stone-200"><i class="fa-regular fa-credit-card text-sky-500 text-lg w-6"></i> ${t('На карту')}</div>`;
                     }
                     if (payList.includes('Криптоперевод')) {
-                        payItems += `<span class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-lg text-xs font-bold text-stone-700 dark:text-stone-300 shadow-sm"><i class="fa-brands fa-bitcoin text-amber-500"></i> ${t('Крипто')}</span>`;
+                        payItems += `<div class="flex items-center gap-2 text-sm font-bold text-stone-800 dark:text-stone-200"><i class="fa-brands fa-bitcoin text-amber-500 text-lg w-6"></i> ${t('Крипто')}</div>`;
                     }
                     
                     html += `
-                    <div class="flex-1 w-full sm:w-1/2 border-t sm:border-t-0 border-stone-200 dark:border-stone-700 pt-4 sm:pt-0 sm:pl-5">
-                        <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 block"><i class="fa-solid fa-wallet mr-1.5"></i> ${t('Варианты оплаты')}</span>
-                        <div class="flex flex-wrap gap-2">${payItems}</div>
+                    <div class="flex-1 w-full border-t sm:border-t-0 border-stone-100 dark:border-stone-800/60 pt-6 sm:pt-0 sm:pl-8 sm:border-l">
+                        <span class="text-xs font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-3 block">${t('Варианты оплаты')}</span>
+                        <div class="flex flex-col gap-3">${payItems}</div>
                     </div>`;
                 }
 
@@ -999,26 +993,22 @@ export const ItemsModule = {
                 descEl.style.whiteSpace = 'pre-line';
             }
 
+            // 1. ЧИСТЫЙ ГОРОД И СЧЕТЧИКИ (Убраны тяжелые плашки)
             const cityTextEl = document.getElementById('modal-city-text');
             if (cityTextEl) {
                 const currentViews = (item.views || 0) + 1;
-                
-                // Перебиваем старые стили контейнера, делая его удобной flex-оберткой для плашек
-                cityTextEl.className = 'flex flex-wrap items-center gap-2 w-full mt-2'; 
-                
-                // Рисуем 3 отдельные плашки по единому дизайн-коду
+                // Тотальная очистка: минималистичный дизайн
+                cityTextEl.className = 'flex flex-wrap items-center gap-4 sm:gap-6 w-full mt-2 mb-4 border-b border-stone-100 dark:border-stone-800/60 pb-4'; 
                 cityTextEl.innerHTML = `
-                    <span class="flex items-center justify-center bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700 uppercase tracking-wide">
-                        <i class="fa-solid fa-location-dot text-stone-400 mr-1.5"></i> ${t(item.city || "СЕРБИЯ")}
-                    </span>
-                    
-                    <span class="flex items-center justify-center bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700" title="Просмотры карточки">
-                        <i class="fa-solid fa-eye text-stone-400 mr-1.5"></i> ${currentViews}
-                    </span>
-                    
-                    <span class="flex items-center justify-center bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold px-3 py-1.5 rounded-lg border border-brand-200 dark:border-brand-800/50" title="Добавлено на склад">
-                        <i class="fa-solid fa-box text-brand-500 dark:text-brand-400 mr-1.5"></i> ${item.favoritesCount || 0}
-                    </span>
+                    <div class="flex items-center text-sm font-bold text-stone-900 dark:text-white">
+                        <i class="fa-solid fa-location-dot text-brand-500 mr-2"></i> ${t(item.city || "СЕРБИЯ")}
+                    </div>
+                    <div class="flex items-center text-sm font-medium text-stone-500" title="Просмотры">
+                        <i class="fa-solid fa-eye mr-1.5 opacity-70"></i> ${currentViews}
+                    </div>
+                    <div class="flex items-center text-sm font-medium text-stone-500" title="В избранном">
+                        <i class="fa-solid fa-box mr-1.5 opacity-70"></i> ${item.favoritesCount || 0}
+                    </div>
                 `;
             }
 
