@@ -138,9 +138,10 @@ export const ItemsModule = {
         const isEstate = i.category && (i.category.includes('Жилье') || i.category.includes('Недвижимость'));
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
-        const cardClass = isVIP ?
-            'item-card vip-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md' :
-            'item-card bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1 hover:shadow-md';
+        const baseCardClasses = 'item-card bg-white dark:bg-stone-900 rounded-2xl overflow-hidden cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
+        const vipCardClasses = 'vip-card border-2 border-amber-400/60 dark:border-amber-500/60 shadow-xl shadow-amber-500/20 dark:shadow-amber-500/20 hover:shadow-amber-500/30';
+        const regularCardClasses = 'border border-stone-200 dark:border-stone-800 shadow-md hover:shadow-lg';
+        const cardClass = `${baseCardClasses} ${isVIP ? vipCardClasses : regularCardClasses}`;
                 
         // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
         const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
@@ -497,15 +498,10 @@ export const ItemsModule = {
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
                     // Рендерим слоты для карусели
-                    vipGrid.innerHTML = initialVips.map((i, idx) => `
-                        <div class="vip-slot w-[65vw] sm:w-[280px] lg:w-[300px] shrink-0 snap-start transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
-                            ${ItemsModule.createCardHtml(i, true)}
-                        </div>
-                    `).join('');
-                    
-                    // Показываем кнопки управления каруселью
-                    const vipControls = document.getElementById('vip-carousel-controls');
-                    if (vipControls) vipControls.classList.remove('hidden');
+                    vipGrid.innerHTML = initialVips.map((i, idx) => {
+                        // Оборачиваем каждую карточку в div-слот для логики ротации
+                        return `<div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">${ItemsModule.createCardHtml(i, true)}</div>`;
+                    }).join('');
 
                     vipGrid.style.opacity = '1';
                     vipGrid.style.pointerEvents = 'auto';
