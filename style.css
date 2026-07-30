@@ -740,51 +740,51 @@ select {
 }
 
 /* ==========================================
-       SHOPIFY-STYLE КНОПКИ (ЭФФЕКТ "ВОЛНЫ")
+       ЭФФЕКТ "ЖИДКАЯ ВОЛНА" ДЛЯ КНОПОК
        ========================================== */
 
 .cat-btn, #btn-header-add {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, transform 0.2s ease !important;
+  transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease !important;
 }
 
-/* Псевдоэлемент для заливки "Волной" снизу вверх с легким наклоном */
+/* Заливка спрятана глубоко внизу */
 
 .cat-btn::before, #btn-header-add::before {
   content: '';
   position: absolute;
-  top: 100%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
+  top: 110%;
+  /* Опущено ниже, уголок больше не торчит */
+  left: -20%;
+  width: 140%;
+  height: 140%;
   background-color: var(--color-brand-500);
   z-index: -1;
-  /* Начинает анимацию слегка под углом */
-  transform: translateY(0) rotate(-5deg);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: inherit;
+  transform: rotate(-8deg);
+  transition: top 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 40% 30% 0 0;
+  /* Округлый край, имитирующий жидкость */
 }
 
-/* Ховер эффект: заливка плавно поднимается и выравнивается */
+/* Плавное заполнение при наведении */
 
 .cat-btn:hover::before, #btn-header-add:hover::before {
-  transform: translateY(-100%) rotate(0deg);
+  top: -10%;
+  transform: rotate(0deg);
 }
-
-/* Изменяем цвет текста на белый при ховере */
 
 .cat-btn:hover, #btn-header-add:hover {
   color: #ffffff !important;
-  border-color: var(--color-brand-500) !important;
+  border-color: transparent !important;
 }
 
 .cat-btn:hover i, #btn-header-add:hover i {
   color: #ffffff !important;
 }
 
-/* Фикс активной категории: она всегда закрашена */
+/* Активная категория */
 
 .cat-btn.active {
   background-color: var(--color-brand-500) !important;
@@ -792,8 +792,24 @@ select {
   border-color: var(--color-brand-500) !important;
 }
 
+.cat-btn.active::before {
+  display: none;
+}
+
+/* Отключаем волну для нажатой */
+
+/* Кастомная красная волна для кнопки ТОП */
+
+#btn-cat-urgent::before {
+  background-color: #EF4444 !important;
+}
+
+#btn-cat-urgent:hover {
+  border-color: transparent !important;
+}
+
 /* ==========================================
-       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
+       КАРТОЧКИ ТОВАРОВ И ИХ ОЧИСТКА
        ========================================== */
 
 .item-card {
@@ -877,103 +893,80 @@ select {
   margin-bottom: 2px !important;
 }
 
+.item-card h4 i.fa-fire-flame-curved {
+  color: var(--color-brand-500) !important;
+  font-size: 1.1em !important;
+  filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important;
+}
+
+/* --- ОЧИСТКА МУСОРА ИЗ ОБЫЧНОЙ ЛЕНТЫ --- */
+
+/* Прячем бейджи оплаты и доставки, оставляем только Город и Глазки */
+
+.view-grid .body-badges {
+  display: none !important;
+}
+
 /* ==========================================
-       VIP ТОП-ЛЕНТА (АНИМАЦИЯ "ДЫШАЩИЙ НЕОН")
+       VIP ТОП-ЛЕНТА (МАКСИМАЛЬНЫЙ МИНИМАЛИЗМ)
        ========================================== */
-
-/* Анимация плавного пульсирования рамки и теней */
-
-@keyframes vipBreathingLight {
-  0% {
-    box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1);
-    border-color: rgba(245, 197, 66, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 8px 30px rgba(245, 197, 66, 0.4);
-    border-color: rgba(245, 197, 66, 0.9);
-  }
-
-  100% {
-    box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1);
-    border-color: rgba(245, 197, 66, 0.3);
-  }
-}
-
-@keyframes vipBreathingDark {
-  0% {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(245, 158, 11, 0.3);
-    border-color: rgba(245, 158, 11, 0.8);
-  }
-
-  100% {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.3);
-  }
-}
 
 #vip-items-grid {
   padding: 0.5rem 0 1rem 0 !important;
   gap: 1.25rem !important;
 }
 
-/* Применяем пульсацию к картам в состоянии покоя */
-
 .vip-card, #vip-items-grid .item-card {
-  background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.04) 100%) !important;
-  border-radius: 1.5rem !important;
-  padding: 0.5rem !important;
-  animation: vipBreathingLight 3s infinite ease-in-out !important;
-  /* Непрерывное дыхание */
+  background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
+  border: 2px solid rgba(245, 158, 11, 0.4) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 6px 20px -5px rgba(245, 158, 11, 0.15) !important;
 }
 
 .dark .vip-card, .dark #vip-items-grid .item-card {
-  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
-  animation: vipBreathingDark 3s infinite ease-in-out !important;
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
 }
 
-/* При наведении: анимация останавливается, карта "взлетает" и горит ярко */
-
 .vip-card:hover, #vip-items-grid .item-card:hover {
-  animation: none !important;
-  /* Отключаем пульсацию */
   transform: translateY(-8px) scale(1.02) !important;
-  border-color: rgba(245, 158, 11, 1) !important;
-  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(245, 158, 11, 0.8) !important;
+  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   z-index: 10;
 }
 
 .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
-  animation: none !important;
-  border-color: rgba(245, 158, 11, 0.9) !important;
-  box-shadow: 0 20px 50px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.2) !important;
+  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
 }
 
 #vip-items-grid .card-img-wrap {
   height: 180px !important;
   min-height: 180px !important;
-  border-radius: 1.125rem !important;
+  border-radius: 1rem 1rem 0 0 !important;
   border: none !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+}
+
+/* --- ТОТАЛЬНАЯ ОЧИСТКА VIP КАРТ --- */
+
+/* Прячем оплату, значки "Новое/БУ" на фото и всю нижнюю панель (Город, Глазки) */
+
+#vip-items-grid .body-badges,
+    #vip-items-grid .img-badges,
+    #vip-items-grid .view-list-col-2 > div:last-child {
+  display: none !important;
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 0.75rem 0.5rem 0.25rem 0.5rem !important;
+  padding: 0.75rem !important;
+  justify-content: flex-start !important;
+  /* Прижимаем текст наверх, так как футера больше нет */
 }
 
 #vip-items-grid h4 {
   font-size: 1.05rem !important;
   font-weight: 800 !important;
   margin-bottom: 4px !important;
-}
-
-#vip-items-grid .view-grid-city, #vip-items-grid .mt-2.flex.flex-wrap, #vip-items-grid .text-[10px], #vip-items-grid .vip-card::after {
-  display: none !important;
 }
 
 @media (min-width: 1024px) {
@@ -993,6 +986,64 @@ select {
 
   #vip-section {
     margin-bottom: 2rem !important;
+  }
+}
+
+/* ==========================================
+       ПРЕМИАЛЬНЫЙ РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
+       ========================================== */
+
+@media (min-width: 1024px) {
+  /* Расширяем модальное окно на ПК */
+
+  #item-details-modal-content {
+    max-width: 1152px !important;
+    /* Уровень 6xl */
+  }
+
+  /* Пропорционально увеличиваем высоту фото */
+
+  #modal-img-container {
+    height: 550px !important;
+  }
+
+  .item-details-layout {
+    display: grid;
+    grid-template-columns: 55% 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+
+  .il-photo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .il-desc {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 2rem;
+  }
+
+  .il-info {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 0;
+    padding-left: 1rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* На очень больших экранах делаем окно еще шире */
+
+  #item-details-modal-content {
+    max-width: 1280px !important;
+    /* Уровень 7xl */
+  }
+
+  #modal-img-container {
+    height: 600px !important;
   }
 }
 
@@ -1266,41 +1317,6 @@ select {
   .\!container {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
-  }
-}
-
-/* Модальная сетка (Карточка товара) */
-
-.item-details-layout {
-  display: flex;
-  flex-direction: column;
-}
-
-@media (min-width: 1024px) {
-  .item-details-layout {
-    display: grid;
-    grid-template-columns: 55% 1fr;
-    grid-template-rows: auto 1fr;
-    align-items: start;
-  }
-
-  .il-photo {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .il-desc {
-    grid-column: 1;
-    grid-row: 2;
-    padding-right: 2rem;
-  }
-
-  .il-info {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    position: sticky;
-    top: 0;
-    padding-left: 1rem;
   }
 }
 
@@ -4022,10 +4038,6 @@ select {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important;
 }
 
- #vip-items-grid .hover\:text-:hover[10px] {
-  display: none !important;
-}
-
 .focus\:bg-white:focus {
   background-color: var(--bg-surface) !important;
 }
@@ -4039,10 +4051,6 @@ select {
 }
 
 @media (min-width: 640px){
-   #vip-items-grid .sm\:flex.mt-2.flex-wrap {
-    display: none !important;
-  }
-
   .sm\:max-w-[1400px] {
     max-width: 100% !important;
     width: 100% !important;
@@ -4072,14 +4080,6 @@ select {
 }
 
 @media (min-width: 768px){
-   #vip-items-grid .md\:flex.mt-2.flex-wrap {
-    display: none !important;
-  }
-
-   #vip-items-grid .md\:flex-wrap.mt-2.flex {
-    display: none !important;
-  }
-
   @media (min-width: 1024px) {
     .md\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
@@ -4089,10 +4089,6 @@ select {
 }
 
 @media (min-width: 1024px){
-   #vip-items-grid .lg\:flex.mt-2.flex-wrap {
-    display: none !important;
-  }
-
   @media (min-width: 1024px) {
     .lg\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
