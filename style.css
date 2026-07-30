@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tektur:wght@600;800&display=swap');
 
+/* 1. ЗАГРУЗКА ШРИФТОВ И ФРЕЙМВОРКА */
+
 *, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -108,9 +110,7 @@
   --tw-contain-style:  ;
 }
 
-/*
-! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
-*/
+/* ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com */
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -557,34 +557,41 @@ video {
 }
 
 :root {
-  /* СВЕТЛАЯ ТЕМА */
-  --bg-page: #F8F9FA;
+  /* СВЕТЛАЯ ТЕМА: Urban Mint */
+  --bg-page: #F4F5F7;
+  /* Светлый фон по гамме */
   --bg-surface: #FFFFFF;
   --color-brand-400: #00D4B5;
-  /* Hover */
+  /* Акцент (Лазурный неон) */
   --color-brand-500: #1FB6A6;
-  /* Main */
-  --color-success: #22C55E;
-  --color-error: #EF4444;
+  /* Основной (Морская бирюза) */
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
   --color-vip: #F5C542;
-  --text-primary: #18181B;
-  --text-secondary: #71717A;
-  --border-soft: #E4E4E7;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --border-soft: #E5E7EB;
 }
 
 .dark {
-  /* ТЕМНАЯ ТЕМА */
+  /* ТЕМНАЯ ТЕМА: Urban Mint */
   --bg-page: #121417;
+  /* Темный фон */
   --bg-surface: #1C2025;
+  /* Карточки */
   --color-brand-400: #00D4B5;
-  /* Hover */
+  /* Акцент (Лазурный неон) */
   --color-brand-500: #1FB6A6;
-  --color-success: #22C55E;
-  --color-error: #EF4444;
+  /* Основной */
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
   --color-vip: #F5C542;
-  --text-primary: #F5F5F5;
+  --text-primary: #F4F5F7;
+  /* Светлый текст */
   --text-secondary: #9CA3AF;
+  /* Вторичный текст */
   --border-soft: #2D333B;
+  /* Границы */
 }
 
 body {
@@ -592,6 +599,7 @@ body {
   background-color: var(--bg-page);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .\!container{
@@ -652,13 +660,9 @@ body {
   }
 }
 
-/* ГЛОБАЛЬНЫЙ СТИЛЬ КАРТОЧЕК И ПОВЕРХНОСТЕЙ */
+/* ГЛОБАЛЬНЫЙ СТИЛЬ ПОВЕРХНОСТЕЙ */
 
 .bg-white {
-  background-color: var(--bg-surface) !important;
-}
-
-.dark\:bg-stone-900:is(.dark *) {
   background-color: var(--bg-surface) !important;
 }
 
@@ -666,7 +670,11 @@ body {
   border-color: var(--border-soft) !important;
 }
 
-.dark\:border-stone-800:is(.dark *) {
+.dark .dark\:bg-stone-900 {
+  background-color: var(--bg-surface) !important;
+}
+
+.dark .dark\:border-stone-800 {
   border-color: var(--border-soft) !important;
 }
 
@@ -692,7 +700,30 @@ body {
   background-color: rgba(28, 32, 37, 0.8) !important;
 }
 
-/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Фикс неработающих крестиков и невидимого щита) */
+/* ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ */
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
+  cursor: text !important;
+  caret-color: var(--color-brand-500);
+  font-size: 16px !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-brand-500) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important;
+}
+
+select {
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  cursor: pointer !important;
+}
+
+/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Управляются через visibility) */
 
 .modal-overlay {
   opacity: 0;
@@ -716,32 +747,51 @@ body {
   transform: scale(1) translateY(0);
 }
 
-/* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Фикс пропадания ленты) */
+/* ==========================================
+       SHOPIFY-STYLE КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
+       ========================================== */
 
 .item-card {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
-  border-radius: 1rem !important;
+  border-radius: 1.25rem !important;
   border: 1px solid var(--border-soft) !important;
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
+  /* Железобетонная видимость + Shopify Physics анимация при появлении */
   opacity: 1 !important;
+  visibility: visible !important;
   transform: none !important;
-  animation: cardFadeIn 0.5s ease-out forwards;
+  animation: shopifyReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
 }
 
-@keyframes cardFadeIn {
+@keyframes shopifyReveal {
   0% {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(30px);
   }
 
   100% {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Эффект левитации при наведении */
+
+.item-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(31, 182, 166, 0.3) !important;
+  z-index: 10;
+}
+
+.dark .item-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--border-soft) !important;
 }
 
 .card-body-wrap {
@@ -752,7 +802,7 @@ body {
 }
 
 .card-img-wrap {
-  transition: transform 0.3s ease, filter 0.3s ease !important;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important;
   z-index: 1;
   overflow: hidden !important;
   position: relative;
@@ -766,10 +816,13 @@ body {
   position: absolute !important;
   top: 0;
   left: 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+/* Параллакс-эффект картинки при наведении */
+
 .item-card:hover .card-img-wrap img {
-  transform: scale(1.05) !important;
+  transform: scale(1.08) !important;
 }
 
 .item-card h4 {
@@ -790,21 +843,86 @@ body {
   filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important;
 }
 
-/* VIP КАРТОЧКИ С ЛАЗУРНЫМ СВЕЧЕНИЕМ */
+/* ==========================================
+       НОВЫЙ ДИЗАЙН ТОП-ЛЕНТЫ (PREMIUM PASSEPARTOUT)
+       ========================================== */
 
-.vip-card, #vip-items-grid .item-card {
-  border: 1px solid rgba(31, 182, 166, 0.4) !important;
-  box-shadow: 0 4px 15px rgba(31, 182, 166, 0.08) !important;
+#vip-items-grid {
+  padding: 0.5rem 0 1rem 0 !important;
+  gap: 1.25rem !important;
+  /* Увеличили отступы между VIP картами */
 }
 
-.vip-card:hover, #vip-items-grid .item-card:hover {
-  border-color: rgba(31, 182, 166, 0.8) !important;
-  box-shadow: 0 8px 25px rgba(31, 182, 166, 0.25) !important;
+#vip-items-grid .item-card {
+  background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(31, 182, 166, 0.03) 100%) !important;
+  border: 1px solid rgba(31, 182, 166, 0.2) !important;
+  border-radius: 1.5rem !important;
+  /* Объемная рамка вокруг картинки */
+  padding: 0.5rem !important;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* РЕЖИМ СЕТКИ (GRID) */
+.dark #vip-items-grid .item-card {
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(0, 212, 181, 0.05) 100%) !important;
+  border-color: rgba(0, 212, 181, 0.2) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+}
+
+#vip-items-grid .item-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  border-color: var(--color-brand-400) !important;
+  box-shadow: 0 20px 40px -10px rgba(31, 182, 166, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark #vip-items-grid .item-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+#vip-items-grid .card-img-wrap {
+  height: 180px !important;
+  min-height: 180px !important;
+  border-radius: 1.125rem !important;
+  /* Закругление внутри рамки */
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+}
+
+#vip-items-grid .card-body-wrap {
+  padding: 0.75rem 0.5rem 0.25rem 0.5rem !important;
+}
+
+#vip-items-grid h4 {
+  font-size: 1.05rem !important;
+  margin-top: 4px !important;
+  font-weight: 800 !important;
+}
+
+#vip-items-grid .view-grid-city, #vip-items-grid .mt-2.flex.flex-wrap, #vip-items-grid .text-[10px], #vip-items-grid .vip-card::after {
+  display: none !important;
+}
+
+@media (min-width: 1024px) {
+  #vip-items-grid .card-img-wrap {
+    height: 260px !important;
+    min-height: 260px !important;
+  }
+
+  #vip-items-grid h4 {
+    font-size: 1.15rem !important;
+    margin-top: 8px !important;
+  }
+
+  #vip-section {
+    margin-bottom: 2rem !important;
+  }
+}
+
+/* ==========================================
+       РЕЖИМ СЕТКИ (GRID) И СПИСКА
+       ========================================== */
 
 .view-grid {
+  display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 0.75rem !important;
   align-items: stretch !important;
@@ -840,7 +958,7 @@ body {
   height: 140px !important;
   min-height: 140px !important;
   flex-shrink: 0 !important;
-  border-radius: 1rem 1rem 0 0 !important;
+  border-radius: 1.25rem 1.25rem 0 0 !important;
 }
 
 @media (min-width: 640px) {
@@ -865,8 +983,6 @@ body {
 .view-grid .view-list-city, .view-grid .view-list-desc {
   display: none !important;
 }
-
-/* РЕЖИМ СПИСКА */
 
 .view-list {
   display: flex !important;
@@ -896,7 +1012,7 @@ body {
     width: 40% !important;
     min-width: 130px !important;
     height: auto !important;
-    border-radius: 1rem 0 0 1rem !important;
+    border-radius: 1.25rem 0 0 1.25rem !important;
   }
 
   .view-list .card-body-wrap {
@@ -946,53 +1062,16 @@ body {
   }
 }
 
-/* ТОП-ЛЕНТА (VIP ПОСТЕРЫ) */
-
-#vip-items-grid .item-card {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-#vip-items-grid .item-card:hover .card-img-wrap {
-  border-color: var(--color-vip) !important;
-  box-shadow: 0 10px 25px -5px rgba(245, 197, 66, 0.3) !important;
-}
-
-#vip-items-grid .card-img-wrap {
-  height: 180px !important;
-  min-height: 180px !important;
-  border-radius: 1rem !important;
-  box-shadow: 0 8px 16px -4px rgba(245, 197, 66, 0.2) !important;
-  border: 2px solid rgba(245, 197, 66, 0.5) !important;
-  transition: all 0.3s ease !important;
-}
-
-#vip-items-grid .card-body-wrap {
-  padding: 0.75rem 0.5rem 0 0.5rem !important;
-}
-
-@media (min-width: 1024px) {
-  #vip-items-grid .card-img-wrap {
-    height: 280px !important;
-    min-height: 280px !important;
-    border-radius: 1.25rem !important;
-  }
-
-  #vip-items-grid h4 {
-    font-size: 1.1rem !important;
-    margin-top: 8px !important;
-  }
-}
-
-/* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
+/* ==========================================
+       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА И КОНТЕНТА
+       ========================================== */
 
 .\!container {
   max-width: 100% !important;
   width: 100% !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
+  transition: padding 0.3s ease !important;
 }
 
 .container, .max-w-[1400px] {
@@ -1000,6 +1079,19 @@ body {
   width: 100% !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
+  transition: padding 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .\!container {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .container, .max-w-[1400px] {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -1012,45 +1104,24 @@ body {
     display: grid !important;
     grid-template-columns: 280px minmax(0, 1fr) !important;
     align-items: start;
-    grid-auto-flow: row;
     gap: 0 2.5rem !important;
   }
 
-  main > div:nth-child(1) {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
+  /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
 
-  main > div:nth-child(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  #filter-panel-wrapper {
-    grid-column: 1 / 2 !important;
-    grid-row: 7 / 10 !important;
-    position: sticky !important;
-    display: block !important;
-    overflow-y: auto !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    transform: none !important;
-  }
-
-  #main-cats-container {
+  main > div:first-child,
+        main > div#mobile-filter-backdrop,
+        #main-cats-container,
+        #sub-cats-container,
+        #vip-section,
+        main > div.bg-gradient-to-r {
     grid-column: 1 / -1 !important;
-    grid-row: 3 !important;
   }
 
-  #sub-cats-container {
-    grid-column: 1 / -1 !important;
-    grid-row: 4 !important;
-  }
+  /* VIP Лента тянется на всю доступную ширину */
 
   #vip-section {
-    grid-column: 1 / -1 !important;
-    grid-row: 5 !important;
-    width: auto !important;
+    width: 100% !important;
     margin: 0 !important;
   }
 
@@ -1059,15 +1130,50 @@ body {
     padding-right: 0 !important;
   }
 
-  main > div.bg-gradient-to-r {
-    grid-column: 2 / 3 !important;
-    grid-row: 6 !important;
+  /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+  #filter-panel-wrapper {
+    grid-column: 1 / 2 !important;
+    grid-row: 7 / 20 !important;
+    position: sticky !important;
+    top: 100px !important;
+    height: calc(100vh - 120px) !important;
+    display: block !important;
+    overflow-y: auto !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+    padding-top: 0.5rem !important;
   }
+
+  /* 3. Обычная лента и все, что ниже, идет в правую колонку */
 
   #fresh-ads-section {
     grid-column: 2 / 3 !important;
     grid-row: 7 !important;
   }
+
+  #loading-placeholder {
+    grid-column: 2 / 3 !important;
+    grid-row: 8 !important;
+  }
+
+  #main-items-grid {
+    grid-column: 2 / 3 !important;
+    grid-row: 9 !important;
+  }
+
+  .flex.justify-center.mt-10.mb-6 {
+    grid-column: 2 / 3 !important;
+    grid-row: 10 !important;
+  }
+
+  #empty-state {
+    grid-column: 2 / 3 !important;
+    grid-row: 11 !important;
+  }
+
+  /* Очистка стилей мобильного сайдбара на ПК */
 
   #filter-panel > div {
     border: none !important;
@@ -1087,6 +1193,51 @@ body {
   .\!container {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
+  }
+
+  /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+
+  /* VIP Лента тянется на всю доступную ширину */
+
+  /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+  /* 3. Обычная лента и все, что ниже, идет в правую колонку */
+
+  /* Очистка стилей мобильного сайдбара на ПК */
+}
+
+/* Модальная сетка (Карточка товара) */
+
+.item-details-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .item-details-layout {
+    display: grid;
+    grid-template-columns: 55% 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+
+  .il-photo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .il-desc {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 2rem;
+  }
+
+  .il-info {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 0;
+    padding-left: 1rem;
   }
 }
 
@@ -3778,6 +3929,24 @@ body {
   will-change: transform;
 }
 
+.neon-glow {
+  box-shadow: 0 0 12px rgba(31, 182, 166, 0.4), 0 0 24px rgba(31, 182, 166, 0.2);
+}
+
+.dark .neon-glow {
+  box-shadow: 0 0 16px rgba(0, 212, 181, 0.3), 0 0 32px rgba(0, 212, 181, 0.15);
+}
+
+@keyframes neon-pulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-brand-500);
+  }
+
+  100% {
+    box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600);
+  }
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -3850,6 +4019,10 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important;
 }
 
+ #vip-items-grid .hover\:text-:hover[10px] {
+  display: none !important;
+}
+
 .focus\:bg-white:focus {
   background-color: var(--bg-surface) !important;
 }
@@ -3863,11 +4036,23 @@ body {
 }
 
 @media (min-width: 640px){
+   #vip-items-grid .sm\:flex.mt-2.flex-wrap {
+    display: none !important;
+  }
+
   .sm\:max-w-[1400px] {
     max-width: 100% !important;
     width: 100% !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    transition: padding 0.3s ease;
+  }
+
+  @media (min-width: 640px) {
+    .sm\:max-w-[1400px] {
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
   }
 
   @media (min-width: 1024px) {
@@ -3875,6 +4060,81 @@ body {
       padding-left: 3rem !important;
       padding-right: 3rem !important;
     }
+
+    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+
+    /* VIP Лента тянется на всю доступную ширину */
+
+    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
+
+    /* Очистка стилей мобильного сайдбара на ПК */
+
+    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+
+    /* VIP Лента тянется на всю доступную ширину */
+
+    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
+
+    .sm\:flex.justify-center.mt-10.mb-6 {
+      grid-column: 2 / 3 !important;
+      grid-row: 10 !important;
+    }
+
+    /* Очистка стилей мобильного сайдбара на ПК */
+  }
+}
+
+@media (min-width: 768px){
+   #vip-items-grid .md\:flex.mt-2.flex-wrap {
+    display: none !important;
+  }
+
+   #vip-items-grid .md\:flex-wrap.mt-2.flex {
+    display: none !important;
+  }
+
+  @media (min-width: 1024px) {
+    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+
+    /* VIP Лента тянется на всю доступную ширину */
+
+    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
+
+    .md\:flex.justify-center.mt-10.mb-6 {
+      grid-column: 2 / 3 !important;
+      grid-row: 10 !important;
+    }
+
+    /* Очистка стилей мобильного сайдбара на ПК */
+  }
+}
+
+@media (min-width: 1024px){
+   #vip-items-grid .lg\:flex.mt-2.flex-wrap {
+    display: none !important;
+  }
+
+  @media (min-width: 1024px) {
+    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+
+    /* VIP Лента тянется на всю доступную ширину */
+
+    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
+
+    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
+
+    .lg\:flex.justify-center.mt-10.mb-6 {
+      grid-column: 2 / 3 !important;
+      grid-row: 10 !important;
+    }
+
+    /* Очистка стилей мобильного сайдбара на ПК */
   }
 }
 
