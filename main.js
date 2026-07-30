@@ -132,17 +132,13 @@ window.animateVisibleElements = () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('is-visible');
-                // Важно: отписываемся после появления, чтобы при скролле вверх/вниз карточка не исчезала
-                obs.unobserve(entry.target); 
+                obs.unobserve(entry.target);
             }
         });
-    }, {
-        rootMargin: '0px 0px -50px 0px',
-        threshold: 0.05
-    });
+    }, { threshold: 0.05 });
 
-    // Наблюдаем только за карточками, которые еще не появились
-    document.querySelectorAll('.item-card:not(.is-visible)').forEach(card => observer.observe(card));
+    const elements = document.querySelectorAll('.item-card:not(.is-visible)');
+    elements.forEach(el => observer.observe(el));
 };
 
 // Закрываем меню при клике в пустую область
