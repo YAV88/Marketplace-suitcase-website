@@ -559,12 +559,10 @@ video {
 :root {
   /* СВЕТЛАЯ ТЕМА: Urban Mint */
   --bg-page: #F4F5F7;
-  /* Светлый фон по гамме */
   --bg-surface: #FFFFFF;
   --color-brand-400: #00D4B5;
-  /* Акцент (Лазурный неон) */
   --color-brand-500: #1FB6A6;
-  /* Основной (Морская бирюза) */
+  /* Морская бирюза */
   --color-brand-600: #0F766E;
   --color-brand-700: #115E59;
   --color-vip: #F5C542;
@@ -576,22 +574,16 @@ video {
 .dark {
   /* ТЕМНАЯ ТЕМА: Urban Mint */
   --bg-page: #121417;
-  /* Темный фон */
   --bg-surface: #1C2025;
-  /* Карточки */
   --color-brand-400: #00D4B5;
-  /* Акцент (Лазурный неон) */
+  /* Лазурный неон-акцент */
   --color-brand-500: #1FB6A6;
-  /* Основной */
   --color-brand-600: #0F766E;
   --color-brand-700: #115E59;
   --color-vip: #F5C542;
   --text-primary: #F4F5F7;
-  /* Светлый текст */
   --text-secondary: #9CA3AF;
-  /* Вторичный текст */
   --border-soft: #2D333B;
-  /* Границы */
 }
 
 body {
@@ -700,7 +692,7 @@ body {
   background-color: rgba(28, 32, 37, 0.8) !important;
 }
 
-/* ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ */
+/* ФОРМЫ И СЕЛЕКТЫ */
 
 input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
   cursor: text !important;
@@ -723,7 +715,7 @@ select {
   cursor: pointer !important;
 }
 
-/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Управляются через visibility) */
+/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА */
 
 .modal-overlay {
   opacity: 0;
@@ -748,7 +740,60 @@ select {
 }
 
 /* ==========================================
-       SHOPIFY-STYLE КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
+       SHOPIFY-STYLE КНОПКИ (ЭФФЕКТ "ВОЛНЫ")
+       ========================================== */
+
+.cat-btn, #btn-header-add {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, transform 0.2s ease !important;
+}
+
+/* Псевдоэлемент для заливки "Волной" снизу вверх с легким наклоном */
+
+.cat-btn::before, #btn-header-add::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background-color: var(--color-brand-500);
+  z-index: -1;
+  /* Начинает анимацию слегка под углом */
+  transform: translateY(0) rotate(-5deg);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: inherit;
+}
+
+/* Ховер эффект: заливка плавно поднимается и выравнивается */
+
+.cat-btn:hover::before, #btn-header-add:hover::before {
+  transform: translateY(-100%) rotate(0deg);
+}
+
+/* Изменяем цвет текста на белый при ховере */
+
+.cat-btn:hover, #btn-header-add:hover {
+  color: #ffffff !important;
+  border-color: var(--color-brand-500) !important;
+}
+
+.cat-btn:hover i, #btn-header-add:hover i {
+  color: #ffffff !important;
+}
+
+/* Фикс активной категории: она всегда закрашена */
+
+.cat-btn.active {
+  background-color: var(--color-brand-500) !important;
+  color: #ffffff !important;
+  border-color: var(--color-brand-500) !important;
+}
+
+/* ==========================================
+       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
        ========================================== */
 
 .item-card {
@@ -760,7 +805,6 @@ select {
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  /* Железобетонная видимость + Shopify Physics анимация при появлении */
   opacity: 1 !important;
   visibility: visible !important;
   transform: none !important;
@@ -780,8 +824,6 @@ select {
   }
 }
 
-/* Эффект левитации при наведении */
-
 .item-card:hover {
   transform: translateY(-6px) !important;
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
@@ -790,8 +832,8 @@ select {
 }
 
 .dark .item-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-  border-color: var(--border-soft) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(0, 212, 181, 0.4) !important;
 }
 
 .card-body-wrap {
@@ -819,8 +861,6 @@ select {
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Параллакс-эффект картинки при наведении */
-
 .item-card:hover .card-img-wrap img {
   transform: scale(1.08) !important;
 }
@@ -837,58 +877,93 @@ select {
   margin-bottom: 2px !important;
 }
 
-.item-card h4 i.fa-fire-flame-curved {
-  color: var(--color-brand-500) !important;
-  font-size: 1.1em !important;
-  filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important;
+/* ==========================================
+       VIP ТОП-ЛЕНТА (АНИМАЦИЯ "ДЫШАЩИЙ НЕОН")
+       ========================================== */
+
+/* Анимация плавного пульсирования рамки и теней */
+
+@keyframes vipBreathingLight {
+  0% {
+    box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1);
+    border-color: rgba(245, 197, 66, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 8px 30px rgba(245, 197, 66, 0.4);
+    border-color: rgba(245, 197, 66, 0.9);
+  }
+
+  100% {
+    box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1);
+    border-color: rgba(245, 197, 66, 0.3);
+  }
 }
 
-/* ==========================================
-       НОВЫЙ ДИЗАЙН ТОП-ЛЕНТЫ (ЯРКОЕ ВЫДЕЛЕНИЕ)
-       ========================================== */
+@keyframes vipBreathingDark {
+  0% {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(245, 158, 11, 0.3);
+    border-color: rgba(245, 158, 11, 0.8);
+  }
+
+  100% {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+}
 
 #vip-items-grid {
   padding: 0.5rem 0 1rem 0 !important;
   gap: 1.25rem !important;
 }
 
-/* Карточки в ТОПе (Premium Amber Glow) - Выделяются из общей массы */
+/* Применяем пульсацию к картам в состоянии покоя */
 
 .vip-card, #vip-items-grid .item-card {
-  background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
-  border: 2px solid rgba(245, 158, 11, 0.4) !important;
-  border-radius: 1.25rem !important;
-  box-shadow: 0 6px 20px -5px rgba(245, 158, 11, 0.15) !important;
+  background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.04) 100%) !important;
+  border-radius: 1.5rem !important;
+  padding: 0.5rem !important;
+  animation: vipBreathingLight 3s infinite ease-in-out !important;
+  /* Непрерывное дыхание */
 }
 
 .dark .vip-card, .dark #vip-items-grid .item-card {
-  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
-  border-color: rgba(245, 158, 11, 0.3) !important;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
+  animation: vipBreathingDark 3s infinite ease-in-out !important;
 }
 
-/* Эффект левитации VIP-карты */
+/* При наведении: анимация останавливается, карта "взлетает" и горит ярко */
 
 .vip-card:hover, #vip-items-grid .item-card:hover {
+  animation: none !important;
+  /* Отключаем пульсацию */
   transform: translateY(-8px) scale(1.02) !important;
-  border-color: rgba(245, 158, 11, 0.8) !important;
-  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(245, 158, 11, 1) !important;
+  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   z-index: 10;
 }
 
 .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
+  animation: none !important;
+  border-color: rgba(245, 158, 11, 0.9) !important;
+  box-shadow: 0 20px 50px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.2) !important;
 }
 
 #vip-items-grid .card-img-wrap {
   height: 180px !important;
   min-height: 180px !important;
-  border-radius: 1rem 1rem 0 0 !important;
+  border-radius: 1.125rem !important;
   border: none !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 0.75rem !important;
+  padding: 0.75rem 0.5rem 0.25rem 0.5rem !important;
 }
 
 #vip-items-grid h4 {
@@ -902,8 +977,6 @@ select {
 }
 
 @media (min-width: 1024px) {
-  /* Принудительно 5 колонок на десктопе для 10 карточек (2 ряда по 5) */
-
   #vip-items-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   }
@@ -1069,7 +1142,7 @@ select {
 }
 
 /* ==========================================
-       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА И КОНТЕНТА
+       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
        ========================================== */
 
 .\!container {
@@ -1113,7 +1186,9 @@ select {
     gap: 0 2.5rem !important;
   }
 
-  /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+  main > * {
+    grid-column: 2 / -1 !important;
+  }
 
   main > div:first-child,
         main > div#mobile-filter-backdrop,
@@ -1124,8 +1199,6 @@ select {
     grid-column: 1 / -1 !important;
   }
 
-  /* VIP Лента тянется на всю доступную ширину */
-
   #vip-section {
     width: 100% !important;
     margin: 0 !important;
@@ -1135,8 +1208,6 @@ select {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
-
-  /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
 
   #filter-panel-wrapper {
     grid-column: 1 / 2 !important;
@@ -1151,8 +1222,6 @@ select {
     transform: none !important;
     padding-top: 0.5rem !important;
   }
-
-  /* 3. Обычная лента и все, что ниже, идет в правую колонку */
 
   #fresh-ads-section {
     grid-column: 2 / 3 !important;
@@ -1179,8 +1248,6 @@ select {
     grid-row: 11 !important;
   }
 
-  /* Очистка стилей мобильного сайдбара на ПК */
-
   #filter-panel > div {
     border: none !important;
     background: transparent !important;
@@ -1200,16 +1267,6 @@ select {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
   }
-
-  /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
-
-  /* VIP Лента тянется на всю доступную ширину */
-
-  /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
-
-  /* 3. Обычная лента и все, что ниже, идет в правую колонку */
-
-  /* Очистка стилей мобильного сайдбара на ПК */
 }
 
 /* Модальная сетка (Карточка товара) */
@@ -3935,24 +3992,6 @@ select {
   will-change: transform;
 }
 
-.neon-glow {
-  box-shadow: 0 0 12px rgba(31, 182, 166, 0.4), 0 0 24px rgba(31, 182, 166, 0.2);
-}
-
-.dark .neon-glow {
-  box-shadow: 0 0 16px rgba(0, 212, 181, 0.3), 0 0 32px rgba(0, 212, 181, 0.15);
-}
-
-@keyframes neon-pulse {
-  0% {
-    box-shadow: 0 0 5px var(--color-brand-500);
-  }
-
-  100% {
-    box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600);
-  }
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -3969,48 +4008,6 @@ select {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(107, 114, 128, 0.5);
-}
-
-.body-badges {
-  display: none !important;
-}
-
-.img-extra-badges {
-  display: flex !important;
-}
-
-@media (min-width: 1024px) {
-  .view-list .img-extra-badges {
-    display: none !important;
-  }
-
-  .view-list .body-badges {
-    display: flex !important;
-  }
-}
-
-.card-fav-btn {
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
-.view-list .title-price-wrap {
-  padding-right: 2.5rem !important;
-}
-
-@media (min-width: 1024px) {
-  .view-list .card-fav-btn {
-    top: 0.75rem;
-    right: 0.75rem;
-  }
-
-  .view-list .title-price-wrap {
-    padding-right: 0 !important;
-  }
-
-  .view-list .view-list-col-3 {
-    padding-right: 2.5rem !important;
-  }
 }
 
 .hover\:bg-white:hover {
@@ -4067,30 +4064,10 @@ select {
       padding-right: 3rem !important;
     }
 
-    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
-
-    /* VIP Лента тянется на всю доступную ширину */
-
-    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
-
-    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
-
-    /* Очистка стилей мобильного сайдбара на ПК */
-
-    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
-
-    /* VIP Лента тянется на всю доступную ширину */
-
-    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
-
-    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
-
     .sm\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
     }
-
-    /* Очистка стилей мобильного сайдбара на ПК */
   }
 }
 
@@ -4104,20 +4081,10 @@ select {
   }
 
   @media (min-width: 1024px) {
-    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
-
-    /* VIP Лента тянется на всю доступную ширину */
-
-    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
-
-    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
-
     .md\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
     }
-
-    /* Очистка стилей мобильного сайдбара на ПК */
   }
 }
 
@@ -4127,20 +4094,10 @@ select {
   }
 
   @media (min-width: 1024px) {
-    /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
-
-    /* VIP Лента тянется на всю доступную ширину */
-
-    /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
-
-    /* 3. Обычная лента и все, что ниже, идет в правую колонку */
-
     .lg\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
     }
-
-    /* Очистка стилей мобильного сайдбара на ПК */
   }
 }
 
@@ -5136,11 +5093,6 @@ select {
 
 .dark\:hover\:bg-red-900\/40:hover:is(.dark *){
   background-color: rgb(127 29 29 / 0.4);
-}
-
-.dark\:hover\:bg-stone-50:hover:is(.dark *){
-  --tw-bg-opacity: 1;
-  background-color: rgb(250 250 249 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:hover\:bg-stone-600:hover:is(.dark *){

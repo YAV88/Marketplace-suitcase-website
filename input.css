@@ -8,11 +8,11 @@
 @layer base {
   :root {
     /* СВЕТЛАЯ ТЕМА: Urban Mint */
-    --bg-page: #F4F5F7; /* Светлый фон по гамме */
+    --bg-page: #F4F5F7; 
     --bg-surface: #FFFFFF;
     
-    --color-brand-400: #00D4B5; /* Акцент (Лазурный неон) */
-    --color-brand-500: #1FB6A6; /* Основной (Морская бирюза) */
+    --color-brand-400: #00D4B5; 
+    --color-brand-500: #1FB6A6; /* Морская бирюза */
     --color-brand-600: #0F766E; 
     --color-brand-700: #115E59;
     --color-vip: #F5C542;
@@ -24,18 +24,18 @@
 
   .dark {
     /* ТЕМНАЯ ТЕМА: Urban Mint */
-    --bg-page: #121417; /* Темный фон */
-    --bg-surface: #1C2025; /* Карточки */
+    --bg-page: #121417; 
+    --bg-surface: #1C2025; 
     
-    --color-brand-400: #00D4B5; /* Акцент (Лазурный неон) */
-    --color-brand-500: #1FB6A6; /* Основной */
+    --color-brand-400: #00D4B5; /* Лазурный неон-акцент */
+    --color-brand-500: #1FB6A6; 
     --color-brand-600: #0F766E; 
     --color-brand-700: #115E59;
     --color-vip: #F5C542;
     
-    --text-primary: #F4F5F7; /* Светлый текст */
-    --text-secondary: #9CA3AF; /* Вторичный текст */
-    --border-soft: #2D333B; /* Границы */
+    --text-primary: #F4F5F7; 
+    --text-secondary: #9CA3AF; 
+    --border-soft: #2D333B; 
   }
 
   body {
@@ -69,7 +69,7 @@
         background-color: rgba(28, 32, 37, 0.8) !important;
     }
 
-    /* ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ */
+    /* ФОРМЫ И СЕЛЕКТЫ */
     input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
         cursor: text !important; caret-color: var(--color-brand-500); font-size: 16px !important;
     }
@@ -80,7 +80,7 @@
         appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important;
     }
 
-    /* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Управляются через visibility) */
+    /* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА */
     .modal-overlay {
         opacity: 0;
         visibility: hidden;
@@ -101,28 +101,68 @@
     }
 
     /* ==========================================
-       SHOPIFY-STYLE КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
+       SHOPIFY-STYLE КНОПКИ (ЭФФЕКТ "ВОЛНЫ")
+       ========================================== */
+    .cat-btn, #btn-header-add {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, transform 0.2s ease !important;
+    }
+
+    /* Псевдоэлемент для заливки "Волной" снизу вверх с легким наклоном */
+    .cat-btn::before, #btn-header-add::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background-color: var(--color-brand-500);
+        z-index: -1;
+        /* Начинает анимацию слегка под углом */
+        transform: translateY(0) rotate(-5deg); 
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: inherit;
+    }
+
+    /* Ховер эффект: заливка плавно поднимается и выравнивается */
+    .cat-btn:hover::before, #btn-header-add:hover::before {
+        transform: translateY(-100%) rotate(0deg);
+    }
+
+    /* Изменяем цвет текста на белый при ховере */
+    .cat-btn:hover, #btn-header-add:hover {
+        color: #ffffff !important;
+        border-color: var(--color-brand-500) !important;
+    }
+    .cat-btn:hover i, #btn-header-add:hover i {
+        color: #ffffff !important;
+    }
+
+    /* Фикс активной категории: она всегда закрашена */
+    .cat-btn.active {
+        background-color: var(--color-brand-500) !important;
+        color: #ffffff !important;
+        border-color: var(--color-brand-500) !important;
+    }
+
+    /* ==========================================
+       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
        ========================================== */
     .item-card {
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
-        
-        /* Железобетонная видимость + Shopify Physics анимация при появлении */
-        opacity: 1 !important; 
-        visibility: visible !important;
-        transform: none !important;
+        opacity: 1 !important; visibility: visible !important; transform: none !important;
         animation: shopifyReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        
         transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
     }
-    
     @keyframes shopifyReveal {
         0% { opacity: 0; transform: translateY(30px); }
         100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* Эффект левитации при наведении */
     .item-card:hover {
         transform: translateY(-6px) !important;
         box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
@@ -130,68 +170,81 @@
         z-index: 10;
     }
     .dark .item-card:hover {
-        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-        border-color: var(--border-soft) !important;
+        box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(0, 212, 181, 0.4) !important;
     }
     
     .card-body-wrap { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; justify-content: space-between !important; }
     .card-img-wrap { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative; }
     .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important; }
-    
-    /* Параллакс-эффект картинки при наведении */
     .item-card:hover .card-img-wrap img { transform: scale(1.08) !important; }
 
     .item-card h4 {
         display: -webkit-box !important; line-clamp: 2 !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
         overflow: hidden !important; word-break: break-word !important; white-space: normal !important; line-height: 1.25 !important; margin-bottom: 2px !important;
     }
-    .item-card h4 i.fa-fire-flame-curved { color: var(--color-brand-500) !important; font-size: 1.1em !important; filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important; }
 
     /* ==========================================
-       НОВЫЙ ДИЗАЙН ТОП-ЛЕНТЫ (ЯРКОЕ ВЫДЕЛЕНИЕ)
+       VIP ТОП-ЛЕНТА (АНИМАЦИЯ "ДЫШАЩИЙ НЕОН")
        ========================================== */
+       
+    /* Анимация плавного пульсирования рамки и теней */
+    @keyframes vipBreathingLight {
+        0% { box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1); border-color: rgba(245, 197, 66, 0.3); }
+        50% { box-shadow: 0 8px 30px rgba(245, 197, 66, 0.4); border-color: rgba(245, 197, 66, 0.9); }
+        100% { box-shadow: 0 4px 15px rgba(245, 197, 66, 0.1); border-color: rgba(245, 197, 66, 0.3); }
+    }
+    
+    @keyframes vipBreathingDark {
+        0% { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        50% { box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(245, 158, 11, 0.3); border-color: rgba(245, 158, 11, 0.8); }
+        100% { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+    }
+
     #vip-items-grid {
         padding: 0.5rem 0 1rem 0 !important;
         gap: 1.25rem !important; 
     }
     
-    /* Карточки в ТОПе (Premium Amber Glow) - Выделяются из общей массы */
+    /* Применяем пульсацию к картам в состоянии покоя */
     .vip-card, #vip-items-grid .item-card { 
-        background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important; 
-        border: 2px solid rgba(245, 158, 11, 0.4) !important; 
-        border-radius: 1.25rem !important; 
-        box-shadow: 0 6px 20px -5px rgba(245, 158, 11, 0.15) !important;
+        background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.04) 100%) !important; 
+        border-radius: 1.5rem !important; 
+        padding: 0.5rem !important; 
+        animation: vipBreathingLight 3s infinite ease-in-out !important; /* Непрерывное дыхание */
     }
     .dark .vip-card, .dark #vip-items-grid .item-card {
-        background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
-        border-color: rgba(245, 158, 11, 0.3) !important;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
+        background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
+        animation: vipBreathingDark 3s infinite ease-in-out !important;
     }
     
-    /* Эффект левитации VIP-карты */
+    /* При наведении: анимация останавливается, карта "взлетает" и горит ярко */
     .vip-card:hover, #vip-items-grid .item-card:hover {
+        animation: none !important; /* Отключаем пульсацию */
         transform: translateY(-8px) scale(1.02) !important;
-        border-color: rgba(245, 158, 11, 0.8) !important;
-        box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(245, 158, 11, 1) !important;
+        box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
         z-index: 10;
     }
     .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
-        box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
+        animation: none !important;
+        border-color: rgba(245, 158, 11, 0.9) !important;
+        box-shadow: 0 20px 50px -10px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(245, 158, 11, 0.2) !important;
     }
 
     #vip-items-grid .card-img-wrap { 
         height: 180px !important; 
         min-height: 180px !important; 
-        border-radius: 1rem 1rem 0 0 !important; 
+        border-radius: 1.125rem !important; 
         border: none !important; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
     }
-    
-    #vip-items-grid .card-body-wrap { padding: 0.75rem !important; }
+    #vip-items-grid .card-body-wrap { padding: 0.75rem 0.5rem 0.25rem 0.5rem !important; }
     #vip-items-grid h4 { font-size: 1.05rem !important; font-weight: 800 !important; margin-bottom: 4px !important; }
+    
     #vip-items-grid .view-grid-city, #vip-items-grid .mt-2.flex.flex-wrap, #vip-items-grid .text-[10px], #vip-items-grid .vip-card::after { display: none !important; }
     
     @media (min-width: 1024px) {
-        /* Принудительно 5 колонок на десктопе для 10 карточек (2 ряда по 5) */
         #vip-items-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
         #vip-items-grid .card-img-wrap { height: 220px !important; min-height: 220px !important; }
         #vip-items-grid h4 { font-size: 1.1rem !important; margin-top: 4px !important; }
@@ -234,7 +287,7 @@
     }
 
     /* ==========================================
-       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА И КОНТЕНТА
+       ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА
        ========================================== */
     .container, .max-w-[1400px] { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; transition: padding 0.3s ease; }
     @media (min-width: 640px) { .container, .max-w-[1400px] { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
@@ -248,7 +301,8 @@
             gap: 0 2.5rem !important;
         }
 
-        /* 1. Блоки верхней части сайта занимают всю ширину (от края до края сетки) */
+        main > * { grid-column: 2 / -1 !important; }
+        
         main > div:first-child,
         main > div#mobile-filter-backdrop,
         #main-cats-container,
@@ -258,11 +312,9 @@
             grid-column: 1 / -1 !important; 
         }
         
-        /* VIP Лента тянется на всю доступную ширину */
         #vip-section { width: 100% !important; margin: 0 !important; }
         #vip-section > div { padding-left: 0 !important; padding-right: 0 !important; }
 
-        /* 2. Сайдбар фиксируется слева строго параллельно "Свежим объявлениям" (Начинается с 7 ряда) */
         #filter-panel-wrapper {
             grid-column: 1 / 2 !important;
             grid-row: 7 / 20 !important; 
@@ -277,14 +329,12 @@
             padding-top: 0.5rem !important;
         }
 
-        /* 3. Обычная лента и все, что ниже, идет в правую колонку */
         #fresh-ads-section { grid-column: 2 / 3 !important; grid-row: 7 !important; }
         #loading-placeholder { grid-column: 2 / 3 !important; grid-row: 8 !important; }
         #main-items-grid { grid-column: 2 / 3 !important; grid-row: 9 !important; }
         .flex.justify-center.mt-10.mb-6 { grid-column: 2 / 3 !important; grid-row: 10 !important; }
         #empty-state { grid-column: 2 / 3 !important; grid-row: 11 !important; }
 
-        /* Очистка стилей мобильного сайдбара на ПК */
         #filter-panel > div { border: none !important; background: transparent !important; padding: 0 !important; }
         #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
         #btn-toggle-filters { display: none !important; }
@@ -301,34 +351,8 @@
 }
 
 @layer utilities {
-  .neon-glow {
-    box-shadow: 0 0 12px rgba(31, 182, 166, 0.4), 0 0 24px rgba(31, 182, 166, 0.2);
-  }
-  .dark .neon-glow {
-    box-shadow: 0 0 16px rgba(0, 212, 181, 0.3), 0 0 32px rgba(0, 212, 181, 0.15);
-  }
-  .neon-pulse { animation: neon-pulse 2s infinite alternate; }
-  @keyframes neon-pulse {
-    0% { box-shadow: 0 0 5px var(--color-brand-500); }
-    100% { box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600); }
-  }
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(107, 114, 128, 0.3); border-radius: 10px; }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(107, 114, 128, 0.5); }
-}
-
-.body-badges { display: none !important; }
-.img-extra-badges { display: flex !important; }
-@media (min-width: 1024px) {
-    .view-list .img-extra-badges { display: none !important; }
-    .view-list .body-badges { display: flex !important; }
-}
-
-.card-fav-btn { top: 0.5rem; right: 0.5rem; }
-.view-list .title-price-wrap { padding-right: 2.5rem !important; }
-@media (min-width: 1024px) {
-    .view-list .card-fav-btn { top: 0.75rem; right: 0.75rem; }
-    .view-list .title-price-wrap { padding-right: 0 !important; }
-    .view-list .view-list-col-3 { padding-right: 2.5rem !important; }
 }
