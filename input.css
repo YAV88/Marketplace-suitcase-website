@@ -1,3 +1,4 @@
+/* 1. ЗАГРУЗКА ШРИФТОВ И ФРЕЙМВОРКА */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tektur:wght@600;800&display=swap');
 
 @tailwind base;
@@ -6,33 +7,33 @@
 
 @layer base {
   :root {
-    /* СВЕТЛАЯ ТЕМА */
-    --bg-page: #F8F9FA;
+    /* СВЕТЛАЯ ТЕМА: Urban Mint */
+    --bg-page: #F3F4F6; 
     --bg-surface: #FFFFFF;
     
-    --color-brand-400: #00D4B5; /* Hover */
-    --color-brand-500: #1FB6A6; /* Main */
-    --color-success: #22C55E;
-    --color-error: #EF4444;
+    --color-brand-400: #34D399; 
+    --color-brand-500: #1FB6A6; /* Морская бирюза */
+    --color-brand-600: #0F766E; 
+    --color-brand-700: #115E59;
     --color-vip: #F5C542;
     
-    --text-primary: #18181B;
-    --text-secondary: #71717A;
-    --border-soft: #E4E4E7;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --border-soft: rgba(0, 0, 0, 0.08);
   }
 
   .dark {
-    /* ТЕМНАЯ ТЕМА */
+    /* ТЕМНАЯ ТЕМА: Urban Mint (#121417) */
     --bg-page: #121417; 
     --bg-surface: #1C2025; 
     
-    --color-brand-400: #00D4B5; /* Hover */
+    --color-brand-400: #00D4B5; /* Лазурный неон-акцент */
     --color-brand-500: #1FB6A6; 
-    --color-success: #22C55E;
-    --color-error: #EF4444;
+    --color-brand-600: #0F766E; 
+    --color-brand-700: #115E59;
     --color-vip: #F5C542;
     
-    --text-primary: #F5F5F5;
+    --text-primary: #F4F5F7;
     --text-secondary: #9CA3AF;
     --border-soft: #2D333B;
   }
@@ -48,10 +49,13 @@
 @layer components {
     /* ГЛОБАЛЬНЫЙ СТИЛЬ КАРТОЧЕК И ПОВЕРХНОСТЕЙ */
     .bg-white { background-color: var(--bg-surface) !important; }
-    .dark\:bg-stone-900:is(.dark *) { background-color: var(--bg-surface) !important; }
     
+    /* Стилизация бордеров с поддержкой переменных */
     .border-stone-200 { border-color: var(--border-soft) !important; }
-    .dark\:border-stone-800:is(.dark *) { border-color: var(--border-soft) !important; }
+
+    /* Темная тема поверхностей безопасным селектором */
+    .dark .dark\:bg-stone-900 { background-color: var(--bg-surface) !important; }
+    .dark .dark\:border-stone-800 { border-color: var(--border-soft) !important; }
 
     /* ПРЕМИАЛЬНЫЕ ТЕНИ */
     .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02) !important; }
@@ -67,7 +71,18 @@
         background-color: rgba(28, 32, 37, 0.8) !important;
     }
 
-    /* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Фикс неработающих крестиков и невидимого щита) */
+    /* ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ */
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
+        cursor: text !important; caret-color: var(--color-brand-500); font-size: 16px !important;
+    }
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--color-brand-500) !important; outline: none !important; box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important;
+    }
+    select {
+        appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important;
+    }
+
+    /* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Управляются через visibility) */
     .modal-overlay {
         opacity: 0;
         visibility: hidden;
@@ -87,12 +102,17 @@
         transform: scale(1) translateY(0); 
     }
 
-    /* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Фикс пропадания ленты) */
+    /* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Никогда не исчезают при скролле) */
     .item-card {
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
-        opacity: 1 !important; transform: none !important;
+        
+        /* Защита от JS */
+        opacity: 1 !important; 
+        visibility: visible !important;
+        transform: none !important;
+        
         animation: cardFadeIn 0.5s ease-out forwards;
     }
     @keyframes cardFadeIn {
@@ -115,8 +135,8 @@
     .vip-card, #vip-items-grid .item-card { border: 1px solid rgba(31, 182, 166, 0.4) !important; box-shadow: 0 4px 15px rgba(31, 182, 166, 0.08) !important; }
     .vip-card:hover, #vip-items-grid .item-card:hover { border-color: rgba(31, 182, 166, 0.8) !important; box-shadow: 0 8px 25px rgba(31, 182, 166, 0.25) !important; }
 
-    /* РЕЖИМ СЕТКИ (GRID) */
-    .view-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.75rem !important; align-items: stretch !important; }
+    /* РЕЖИМ СЕТКИ (GRID) - ИСПРАВЛЕНИЕ ОДНОГО СТОЛБЦА */
+    .view-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.75rem !important; align-items: stretch !important; }
     @media (min-width: 480px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 1rem !important; } }
     @media (min-width: 768px) { .view-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.25rem !important; } }
     @media (min-width: 1024px) { .view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
@@ -150,27 +170,17 @@
     }
 
     /* ТОП-ЛЕНТА (VIP ПОСТЕРЫ) */
-    #vip-items-grid .item-card { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
-    #vip-items-grid .item-card:hover .card-img-wrap {
-        border-color: var(--color-vip) !important;
-        box-shadow: 0 10px 25px -5px rgba(245, 197, 66, 0.3) !important;
-    }
-    #vip-items-grid .card-img-wrap { 
-        height: 180px !important; 
-        min-height: 180px !important; 
-        border-radius: 1rem !important; 
-        box-shadow: 0 8px 16px -4px rgba(245, 197, 66, 0.2) !important; 
-        border: 2px solid rgba(245, 197, 66, 0.5) !important; 
-        transition: all 0.3s ease !important;
-    }
-    #vip-items-grid .card-body-wrap { padding: 0.75rem 0.5rem 0 0.5rem !important; }
+    #vip-items-grid .item-card { width: 100% !important; min-width: 0 !important; border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+    #vip-items-grid .card-img-wrap { height: 180px !important; min-height: 180px !important; border-radius: 1rem !important; box-shadow: 0 8px 16px -4px rgba(31, 182, 166, 0.4) !important; border: 2px solid var(--color-brand-500) !important; }
+    #vip-items-grid .card-body-wrap { padding: 0.5rem 0 0 0 !important; }
     @media (min-width: 1024px) {
         #vip-items-grid .card-img-wrap { height: 280px !important; min-height: 280px !important; border-radius: 1.25rem !important; }
-        #vip-items-grid h4 { font-size: 1.1rem !important; margin-top: 8px !important; }
+        #vip-items-grid h4 { font-size: 1.05rem !important; margin-top: 6px !important; }
     }
 
-    /* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
-    .container, .max-w-[1400px] { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; }
+    /* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА И КОНТЕНТА */
+    .container, .max-w-[1400px] { max-width: 100% !important; width: 100% !important; padding-left: 1rem !important; padding-right: 1rem !important; transition: padding 0.3s ease; }
+    @media (min-width: 640px) { .container, .max-w-[1400px] { padding-left: 1.5rem !important; padding-right: 1.5rem !important; } }
     @media (min-width: 1024px) { 
         .container, .max-w-[1400px] { padding-left: 3rem !important; padding-right: 3rem !important; } 
         
@@ -178,38 +188,58 @@
             display: grid !important;
             grid-template-columns: 280px minmax(0, 1fr) !important;
             align-items: start;
-            grid-auto-flow: row;
             gap: 0 2.5rem !important;
         }
 
-        main > div:nth-child(1) { grid-column: 1 / -1; grid-row: 1; }
-        main > div:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+        /* 1. По умолчанию направляем все элементы ленты в правую колонку */
+        main > * { grid-column: 2 / -1 !important; }
         
+        /* 2. Заголовок и Backdrop занимают всю ширину */
+        main > div:nth-child(1),
+        main > div#mobile-filter-backdrop { grid-column: 1 / -1 !important; }
+        
+        /* 3. Сайдбар жестко привязан к левой колонке */
         #filter-panel-wrapper {
             grid-column: 1 / 2 !important;
-            grid-row: 7 / 10 !important;
+            grid-row: 2 / 100 !important; 
             position: sticky !important;
+            top: 100px !important;
+            height: calc(100vh - 120px) !important;
             display: block !important;
             overflow-y: auto !important;
             box-shadow: none !important;
             background: transparent !important;
             transform: none !important;
         }
-        
-        #main-cats-container { grid-column: 2 / 3 !important; grid-row: 3 !important; }
-        #sub-cats-container { grid-column: 2 / 3 !important; grid-row: 4 !important; }
-        #vip-section { grid-column: 2 / 3 !important; grid-row: 5 !important; width: auto !important; margin: 0 !important; }
-        #vip-section > div { padding-left: 0 !important; padding-right: 0 !important; }
-        main > div.bg-gradient-to-r { grid-column: 2 / 3 !important; grid-row: 6 !important; }
-        #fresh-ads-section { grid-column: 2 / 3 !important; grid-row: 7 !important; }
 
+        /* Убираем стили мобильного сайдбара на ПК */
         #filter-panel > div { border: none !important; background: transparent !important; padding: 0 !important; }
         #filter-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
         #btn-toggle-filters { display: none !important; }
     }
+
+    /* Модальная сетка (Карточка товара) */
+    .item-details-layout { display: flex; flex-direction: column; }
+    @media (min-width: 1024px) {
+        .item-details-layout { display: grid; grid-template-columns: 55% 1fr; grid-template-rows: auto 1fr; align-items: start; }
+        .il-photo { grid-column: 1; grid-row: 1; }
+        .il-desc { grid-column: 1; grid-row: 2; padding-right: 2rem; }
+        .il-info { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 0; padding-left: 1rem; }
+    }
 }
 
 @layer utilities {
+  .neon-glow {
+    box-shadow: 0 0 12px rgba(31, 182, 166, 0.4), 0 0 24px rgba(31, 182, 166, 0.2);
+  }
+  .dark .neon-glow {
+    box-shadow: 0 0 16px rgba(0, 212, 181, 0.3), 0 0 32px rgba(0, 212, 181, 0.15);
+  }
+  .neon-pulse { animation: neon-pulse 2s infinite alternate; }
+  @keyframes neon-pulse {
+    0% { box-shadow: 0 0 5px var(--color-brand-500); }
+    100% { box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600); }
+  }
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(107, 114, 128, 0.3); border-radius: 10px; }

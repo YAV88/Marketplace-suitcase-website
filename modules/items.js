@@ -122,7 +122,7 @@ export const ItemsModule = {
     },
 
     // ==========================================
-    // 2. КАРТОЧКА ТОВАРА
+    // 2. КАРТОЧКА ТОВАРА (ИСПРАВЛЕН VIPCROWN)
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
         const t = window.t || (text => text);
@@ -190,35 +190,26 @@ export const ItemsModule = {
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
         const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
-        // ИСПРАВЛЕНО: Только одно объявление vipCrown!
+        // ЕДИНСТВЕННАЯ ДЕКЛАРАЦИЯ vipCrown (ОШИБКА ИСПРАВЛЕНА)
         const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-brand-500 drop-shadow-sm"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
-        const pClass = 'p-3 flex-1 flex flex-col w-full';
+        const pClass = 'p-3 flex-1 flex flex-col w-full'; 
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
-            
-            <!-- КНОПКА СКЛАДА ВЫНЕСЕНА НА ВЕРХНИЙ УРОВЕНЬ -->
             ${favHtmlCard}
-            
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${safeTitle}">
-                
-                <!-- НА ФОТО ОСТАЛОСЬ ТОЛЬКО СОСТОЯНИЕ -->
                 <div class="img-badges">
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
                 </div>
             </div>
-            
             <div class="card-body-wrap ${pClass}">
             <div class="card-body-wrap flex-1 flex flex-col w-full">
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
-                    <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between p-3">
-                        
                         <div>
-                            <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
                             <div class="flex flex-col mb-1.5 title-price-wrap">
                                 <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
                                     ${vipCrown}${safeTitle}
@@ -227,7 +218,6 @@ export const ItemsModule = {
                                     ${i.price || 0} ${i.currency || 'RSD'}
                                 </div>
                             </div>
-                            
                             <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
                                 ${statusBadgeRow}
                                 ${extraInfoBadges}
@@ -245,7 +235,6 @@ export const ItemsModule = {
                             </div>
                         </div>
                     </div>
-                    
                     <div class="view-list-col-3 hidden flex-col flex-1 h-full overflow-hidden relative pl-4 ml-4">
                         <p class="text-sm text-stone-500 dark:text-stone-400 leading-relaxed break-words whitespace-normal pb-2">
                             ${safeDesc}
@@ -511,7 +500,7 @@ export const ItemsModule = {
                         if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                     });
 
-                    // ИСПРАВЛЕНО: Убрана лишняя запятая, интервал установлен на 8 секунд
+                    // ИСПРАВЛЕНА СИНТАКСИЧЕСКАЯ ОШИБКА ТАЙМЕРА (8 сек)
                     if (window.vipPool.length > 8) {
                         window.vipCascadeInterval = setInterval(() => {
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;

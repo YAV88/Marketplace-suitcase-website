@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tektur:wght@600;800&display=swap');
 
+/* 1. ЗАГРУЗКА ШРИФТОВ И ФРЕЙМВОРКА */
+
 *, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -108,9 +110,7 @@
   --tw-contain-style:  ;
 }
 
-/*
-! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com
-*/
+/* ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com */
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -557,32 +557,31 @@ video {
 }
 
 :root {
-  /* СВЕТЛАЯ ТЕМА */
-  --bg-page: #F8F9FA;
+  /* СВЕТЛАЯ ТЕМА: Urban Mint */
+  --bg-page: #F3F4F6;
   --bg-surface: #FFFFFF;
-  --color-brand-400: #00D4B5;
-  /* Hover */
+  --color-brand-400: #34D399;
   --color-brand-500: #1FB6A6;
-  /* Main */
-  --color-success: #22C55E;
-  --color-error: #EF4444;
+  /* Морская бирюза */
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
   --color-vip: #F5C542;
-  --text-primary: #18181B;
-  --text-secondary: #71717A;
-  --border-soft: #E4E4E7;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --border-soft: rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-  /* ТЕМНАЯ ТЕМА */
+  /* ТЕМНАЯ ТЕМА: Urban Mint (#121417) */
   --bg-page: #121417;
   --bg-surface: #1C2025;
   --color-brand-400: #00D4B5;
-  /* Hover */
+  /* Лазурный неон-акцент */
   --color-brand-500: #1FB6A6;
-  --color-success: #22C55E;
-  --color-error: #EF4444;
+  --color-brand-600: #0F766E;
+  --color-brand-700: #115E59;
   --color-vip: #F5C542;
-  --text-primary: #F5F5F5;
+  --text-primary: #F4F5F7;
   --text-secondary: #9CA3AF;
   --border-soft: #2D333B;
 }
@@ -658,15 +657,19 @@ body {
   background-color: var(--bg-surface) !important;
 }
 
-.dark\:bg-stone-900:is(.dark *) {
-  background-color: var(--bg-surface) !important;
-}
+/* Стилизация бордеров с поддержкой переменных */
 
 .border-stone-200 {
   border-color: var(--border-soft) !important;
 }
 
-.dark\:border-stone-800:is(.dark *) {
+/* Темная тема поверхностей безопасным селектором */
+
+.dark .dark\:bg-stone-900 {
+  background-color: var(--bg-surface) !important;
+}
+
+.dark .dark\:border-stone-800 {
   border-color: var(--border-soft) !important;
 }
 
@@ -692,7 +695,30 @@ body {
   background-color: rgba(28, 32, 37, 0.8) !important;
 }
 
-/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Фикс неработающих крестиков и невидимого щита) */
+/* ФОРМЫ, ИНПУТЫ И СЕЛЕКТЫ */
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"], input[type="tel"], textarea {
+  cursor: text !important;
+  caret-color: var(--color-brand-500);
+  font-size: 16px !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-brand-500) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important;
+}
+
+select {
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  cursor: pointer !important;
+}
+
+/* БЕЗОПАСНЫЕ МОДАЛЬНЫЕ ОКНА (Управляются через visibility) */
 
 .modal-overlay {
   opacity: 0;
@@ -716,7 +742,7 @@ body {
   transform: scale(1) translateY(0);
 }
 
-/* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Фикс пропадания ленты) */
+/* БЕЗОПАСНАЯ АНИМАЦИЯ КАРТОЧЕК (Никогда не исчезают при скролле) */
 
 .item-card {
   display: flex !important;
@@ -727,7 +753,9 @@ body {
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
+  /* Защита от JS */
   opacity: 1 !important;
+  visibility: visible !important;
   transform: none !important;
   animation: cardFadeIn 0.5s ease-out forwards;
 }
@@ -802,9 +830,10 @@ body {
   box-shadow: 0 8px 25px rgba(31, 182, 166, 0.25) !important;
 }
 
-/* РЕЖИМ СЕТКИ (GRID) */
+/* РЕЖИМ СЕТКИ (GRID) - ИСПРАВЛЕНИЕ ОДНОГО СТОЛБЦА */
 
 .view-grid {
+  display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 0.75rem !important;
   align-items: stretch !important;
@@ -949,28 +978,24 @@ body {
 /* ТОП-ЛЕНТА (VIP ПОСТЕРЫ) */
 
 #vip-items-grid .item-card {
-  background: transparent !important;
+  width: 100% !important;
+  min-width: 0 !important;
   border: none !important;
+  background: transparent !important;
   box-shadow: none !important;
   padding: 0 !important;
-}
-
-#vip-items-grid .item-card:hover .card-img-wrap {
-  border-color: var(--color-vip) !important;
-  box-shadow: 0 10px 25px -5px rgba(245, 197, 66, 0.3) !important;
 }
 
 #vip-items-grid .card-img-wrap {
   height: 180px !important;
   min-height: 180px !important;
   border-radius: 1rem !important;
-  box-shadow: 0 8px 16px -4px rgba(245, 197, 66, 0.2) !important;
-  border: 2px solid rgba(245, 197, 66, 0.5) !important;
-  transition: all 0.3s ease !important;
+  box-shadow: 0 8px 16px -4px rgba(31, 182, 166, 0.4) !important;
+  border: 2px solid var(--color-brand-500) !important;
 }
 
 #vip-items-grid .card-body-wrap {
-  padding: 0.75rem 0.5rem 0 0.5rem !important;
+  padding: 0.5rem 0 0 0 !important;
 }
 
 @media (min-width: 1024px) {
@@ -981,18 +1006,19 @@ body {
   }
 
   #vip-items-grid h4 {
-    font-size: 1.1rem !important;
-    margin-top: 8px !important;
+    font-size: 1.05rem !important;
+    margin-top: 6px !important;
   }
 }
 
-/* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА */
+/* ЖЕЛЕЗОБЕТОННАЯ СЕТКА САЙДБАРА И КОНТЕНТА */
 
 .\!container {
   max-width: 100% !important;
   width: 100% !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
+  transition: padding 0.3s ease !important;
 }
 
 .container, .max-w-[1400px] {
@@ -1000,6 +1026,19 @@ body {
   width: 100% !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
+  transition: padding 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .\!container {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .container, .max-w-[1400px] {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -1012,24 +1051,30 @@ body {
     display: grid !important;
     grid-template-columns: 280px minmax(0, 1fr) !important;
     align-items: start;
-    grid-auto-flow: row;
     gap: 0 2.5rem !important;
   }
 
-  main > div:nth-child(1) {
-    grid-column: 1 / -1;
-    grid-row: 1;
+  /* 1. По умолчанию направляем все элементы ленты в правую колонку */
+
+  main > * {
+    grid-column: 2 / -1 !important;
   }
 
-  main > div:nth-child(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  /* 2. Заголовок и Backdrop занимают всю ширину */
+
+  main > div:nth-child(1),
+        main > div#mobile-filter-backdrop {
+    grid-column: 1 / -1 !important;
   }
+
+  /* 3. Сайдбар жестко привязан к левой колонке */
 
   #filter-panel-wrapper {
     grid-column: 1 / 2 !important;
-    grid-row: 7 / 10 !important;
+    grid-row: 2 / 100 !important;
     position: sticky !important;
+    top: 100px !important;
+    height: calc(100vh - 120px) !important;
     display: block !important;
     overflow-y: auto !important;
     box-shadow: none !important;
@@ -1037,37 +1082,7 @@ body {
     transform: none !important;
   }
 
-  #main-cats-container {
-    grid-column: 2 / 3 !important;
-    grid-row: 3 !important;
-  }
-
-  #sub-cats-container {
-    grid-column: 2 / 3 !important;
-    grid-row: 4 !important;
-  }
-
-  #vip-section {
-    grid-column: 2 / 3 !important;
-    grid-row: 5 !important;
-    width: auto !important;
-    margin: 0 !important;
-  }
-
-  #vip-section > div {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  main > div.bg-gradient-to-r {
-    grid-column: 2 / 3 !important;
-    grid-row: 6 !important;
-  }
-
-  #fresh-ads-section {
-    grid-column: 2 / 3 !important;
-    grid-row: 7 !important;
-  }
+  /* Убираем стили мобильного сайдбара на ПК */
 
   #filter-panel > div {
     border: none !important;
@@ -1087,6 +1102,49 @@ body {
   .\!container {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
+  }
+
+  /* 1. По умолчанию направляем все элементы ленты в правую колонку */
+
+  /* 2. Заголовок и Backdrop занимают всю ширину */
+
+  /* 3. Сайдбар жестко привязан к левой колонке */
+
+  /* Убираем стили мобильного сайдбара на ПК */
+}
+
+/* Модальная сетка (Карточка товара) */
+
+.item-details-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .item-details-layout {
+    display: grid;
+    grid-template-columns: 55% 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+
+  .il-photo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .il-desc {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 2rem;
+  }
+
+  .il-info {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 0;
+    padding-left: 1rem;
   }
 }
 
@@ -1824,10 +1882,6 @@ body {
   width: 500px;
 }
 
-.w-\[65vw\]{
-  width: 65vw;
-}
-
 .w-\[85vw\]{
   width: 85vw;
 }
@@ -2397,6 +2451,10 @@ body {
   border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
 }
 
+.border-brand-400{
+  border-color: var(--color-brand-400);
+}
+
 .border-brand-500{
   border-color: var(--color-brand-500);
 }
@@ -2450,11 +2508,6 @@ body {
   border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));
 }
 
-.border-sky-200{
-  --tw-border-opacity: 1;
-  border-color: rgb(186 230 253 / var(--tw-border-opacity, 1));
-}
-
 .border-stone-100{
   --tw-border-opacity: 1;
   border-color: rgb(245 245 244 / var(--tw-border-opacity, 1));
@@ -2501,10 +2554,6 @@ body {
 
 .border-white\/40{
   border-color: rgb(255 255 255 / 0.4);
-}
-
-.border-brand-400{
-  border-color: var(--color-brand-400);
 }
 
 .bg-\[\#0088cc\]{
@@ -2660,11 +2709,6 @@ body {
 
 .bg-rose-500\/10{
   background-color: rgb(244 63 94 / 0.1);
-}
-
-.bg-sky-50{
-  --tw-bg-opacity: 1;
-  background-color: rgb(240 249 255 / var(--tw-bg-opacity, 1));
 }
 
 .bg-sky-500\/10{
@@ -3453,11 +3497,6 @@ body {
   color: rgb(14 165 233 / var(--tw-text-opacity, 1));
 }
 
-.text-sky-700{
-  --tw-text-opacity: 1;
-  color: rgb(3 105 161 / var(--tw-text-opacity, 1));
-}
-
 .text-stone-300{
   --tw-text-opacity: 1;
   color: rgb(214 211 209 / var(--tw-text-opacity, 1));
@@ -3647,11 +3686,6 @@ body {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.shadow-amber-500\/10{
-  --tw-shadow-color: rgb(245 158 11 / 0.1);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
 .shadow-emerald-500\/30{
   --tw-shadow-color: rgb(16 185 129 / 0.3);
   --tw-shadow: var(--tw-shadow-colored);
@@ -3669,11 +3703,6 @@ body {
 
 .blur-\[120px\]{
   --tw-blur: blur(120px);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.drop-shadow-\[0_0_4px_\#f97316\]{
-  --tw-drop-shadow: drop-shadow(0 0 4px #f97316);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -3792,6 +3821,24 @@ body {
   will-change: transform;
 }
 
+.neon-glow {
+  box-shadow: 0 0 12px rgba(31, 182, 166, 0.4), 0 0 24px rgba(31, 182, 166, 0.2);
+}
+
+.dark .neon-glow {
+  box-shadow: 0 0 16px rgba(0, 212, 181, 0.3), 0 0 32px rgba(0, 212, 181, 0.15);
+}
+
+@keyframes neon-pulse {
+  0% {
+    box-shadow: 0 0 5px var(--color-brand-500);
+  }
+
+  100% {
+    box-shadow: 0 0 20px var(--color-brand-500), 0 0 40px var(--color-brand-600);
+  }
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -3882,6 +3929,14 @@ body {
     width: 100% !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    transition: padding 0.3s ease;
+  }
+
+  @media (min-width: 640px) {
+    .sm\:max-w-[1400px] {
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
   }
 
   @media (min-width: 1024px) {
@@ -3889,6 +3944,14 @@ body {
       padding-left: 3rem !important;
       padding-right: 3rem !important;
     }
+
+    /* 1. По умолчанию направляем все элементы ленты в правую колонку */
+
+    /* 2. Заголовок и Backdrop занимают всю ширину */
+
+    /* 3. Сайдбар жестко привязан к левой колонке */
+
+    /* Убираем стили мобильного сайдбара на ПК */
   }
 }
 
@@ -4425,11 +4488,6 @@ body {
   border-color: rgb(74 63 53 / var(--tw-border-opacity, 1));
 }
 
-.dark\:border-amber-500:is(.dark *){
-  --tw-border-opacity: 1;
-  border-color: rgb(245 158 11 / var(--tw-border-opacity, 1));
-}
-
 .dark\:border-amber-600:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(217 119 6 / var(--tw-border-opacity, 1));
@@ -4462,14 +4520,13 @@ body {
   border-color: rgb(30 64 175 / 0.5);
 }
 
+.dark\:border-brand-500:is(.dark *){
+  border-color: var(--color-brand-500);
+}
+
 .dark\:border-emerald-600:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(5 150 105 / var(--tw-border-opacity, 1));
-}
-
-.dark\:border-emerald-800:is(.dark *){
-  --tw-border-opacity: 1;
-  border-color: rgb(6 95 70 / var(--tw-border-opacity, 1));
 }
 
 .dark\:border-emerald-800\/50:is(.dark *){
@@ -4512,11 +4569,6 @@ body {
   border-color: rgb(127 29 29 / 0.3);
 }
 
-.dark\:border-sky-800:is(.dark *){
-  --tw-border-opacity: 1;
-  border-color: rgb(7 89 133 / var(--tw-border-opacity, 1));
-}
-
 .dark\:border-stone-600:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(87 83 78 / var(--tw-border-opacity, 1));
@@ -4551,10 +4603,6 @@ body {
 .dark\:border-stone-900:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(28 25 23 / var(--tw-border-opacity, 1));
-}
-
-.dark\:border-brand-500:is(.dark *){
-  border-color: var(--color-brand-500);
 }
 
 .dark\:bg-\[\#1c1917\]:is(.dark *){
@@ -4624,10 +4672,6 @@ body {
   background-color: rgb(127 29 29 / 0.3);
 }
 
-.dark\:bg-sky-900\/20:is(.dark *){
-  background-color: rgb(12 74 110 / 0.2);
-}
-
 .dark\:bg-stone-600:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(87 83 78 / var(--tw-bg-opacity, 1));
@@ -4668,6 +4712,10 @@ body {
   background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
 }
 
+.dark\:bg-stone-900\/20:is(.dark *){
+  background-color: rgb(28 25 23 / 0.2);
+}
+
 .dark\:bg-stone-900\/50:is(.dark *){
   background-color: rgb(28 25 23 / 0.5);
 }
@@ -4696,10 +4744,6 @@ body {
 .dark\:bg-white:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
-.dark\:bg-stone-900\/20:is(.dark *){
-  background-color: rgb(28 25 23 / 0.2);
 }
 
 .dark\:from-amber-900\/20:is(.dark *){
@@ -4779,11 +4823,6 @@ body {
   color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 
-.dark\:text-sky-400:is(.dark *){
-  --tw-text-opacity: 1;
-  color: rgb(56 189 248 / var(--tw-text-opacity, 1));
-}
-
 .dark\:text-stone-200:is(.dark *){
   --tw-text-opacity: 1;
   color: rgb(231 229 228 / var(--tw-text-opacity, 1));
@@ -4839,11 +4878,6 @@ body {
   --tw-shadow: 0 10px 40px rgba(20,184,166,0.05);
   --tw-shadow-colored: 0 10px 40px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.dark\:shadow-amber-500\/10:is(.dark *){
-  --tw-shadow-color: rgb(245 158 11 / 0.1);
-  --tw-shadow: var(--tw-shadow-colored);
 }
 
 .dark\:hover\:border-brand-500:hover:is(.dark *){
@@ -5455,10 +5489,6 @@ body {
 
   .lg\:h-\[85vh\]{
     height: 85vh;
-  }
-
-  .lg\:w-\[300px\]{
-    width: 300px;
   }
 
   .lg\:w-auto{
