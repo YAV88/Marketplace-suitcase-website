@@ -842,26 +842,28 @@ select {
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  opacity: 1 !important;
+  /* СЕНЬОР-ФИКС: Изначально карточка скрыта и опущена вниз */
+  opacity: 0;
+  transform: translateY(40px);
   visibility: visible !important;
-  transform: none !important;
-  animation: shopifyReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+  /* Оставляем visible, чтобы IntersectionObserver ее видел */
+  will-change: opacity, transform;
+  /* Плавная инерционная анимация (Срабатывает при добавлении класса .is-visible) */
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                    border-color 0.3s ease !important;
 }
 
-@keyframes shopifyReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
+/* Состояние, когда карточка попала в экран (добавляется через main.js) */
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.item-card.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 .item-card:hover {
+  /* При ховере поднимаем от 0 (так как is-visible ставит 0) */
   transform: translateY(-6px) !important;
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
   border-color: rgba(31, 182, 166, 0.3) !important;
@@ -951,6 +953,12 @@ select {
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: scale(1.02);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
+}
+
+/* Сохраняем увеличенный масштаб VIP-карт при их появлении на экране */
+
+#vip-items-grid .item-card.is-visible {
+  transform: translateY(0) scale(1.02) !important;
 }
 
 .dark .vip-card, .dark #vip-items-grid .item-card {
@@ -1843,10 +1851,6 @@ select {
 
 .h-2\.5{
   height: 0.625rem;
-}
-
-.h-24{
-  height: 6rem;
 }
 
 .h-3{
@@ -2917,6 +2921,10 @@ select {
   background-color: rgb(245 245 244 / 0.5);
 }
 
+.bg-stone-100\/90{
+  background-color: rgb(245 245 244 / 0.9);
+}
+
 .bg-stone-200{
   --tw-bg-opacity: 1;
   background-color: rgb(231 229 228 / var(--tw-bg-opacity, 1));
@@ -2989,10 +2997,6 @@ select {
 
 .bg-white\/95{
   background-color: rgb(255 255 255 / 0.95);
-}
-
-.bg-stone-100\/90{
-  background-color: rgb(245 245 244 / 0.9);
 }
 
 .bg-gradient-to-br{
@@ -3587,11 +3591,6 @@ select {
 .text-blue-600{
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
-}
-
-.text-blue-700{
-  --tw-text-opacity: 1;
-  color: rgb(29 78 216 / var(--tw-text-opacity, 1));
 }
 
 .text-brand-400{
@@ -4249,11 +4248,6 @@ select {
   background-color: rgb(0 0 0 / 0.6);
 }
 
-.hover\:bg-blue-100:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-blue-50:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
@@ -4275,11 +4269,6 @@ select {
   background-color: var(--color-brand-700);
 }
 
-.hover\:bg-emerald-100:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-emerald-200:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(167 243 208 / var(--tw-bg-opacity, 1));
@@ -4298,11 +4287,6 @@ select {
 .hover\:bg-orange-500:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(249 115 22 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-red-100:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-red-200:hover{
@@ -4347,11 +4331,6 @@ select {
 
 .hover\:bg-stone-50\/80:hover{
   background-color: rgb(250 250 249 / 0.8);
-}
-
-.hover\:bg-stone-800:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(41 37 36 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-white:hover{
@@ -4794,11 +4773,6 @@ select {
   background-color: rgb(120 53 15 / 0.3);
 }
 
-.dark\:bg-black:is(.dark *){
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
-}
-
 .dark\:bg-black\/60:is(.dark *){
   background-color: rgb(0 0 0 / 0.6);
 }
@@ -5087,28 +5061,12 @@ select {
   background-color: rgb(30 58 138 / 0.2);
 }
 
-.dark\:hover\:bg-blue-900\/40:hover:is(.dark *){
-  background-color: rgb(30 58 138 / 0.4);
-}
-
-.dark\:hover\:bg-brand-500:hover:is(.dark *){
-  background-color: var(--color-brand-500);
-}
-
-.dark\:hover\:bg-emerald-900\/40:hover:is(.dark *){
-  background-color: rgb(6 78 59 / 0.4);
-}
-
 .dark\:hover\:bg-emerald-900\/50:hover:is(.dark *){
   background-color: rgb(6 78 59 / 0.5);
 }
 
 .dark\:hover\:bg-red-900\/20:hover:is(.dark *){
   background-color: rgb(127 29 29 / 0.2);
-}
-
-.dark\:hover\:bg-red-900\/40:hover:is(.dark *){
-  background-color: rgb(127 29 29 / 0.4);
 }
 
 .dark\:hover\:bg-stone-600:hover:is(.dark *){
@@ -5138,17 +5096,8 @@ select {
   background-color: rgb(41 37 36 / 0.8);
 }
 
-.dark\:hover\:bg-stone-900:hover:is(.dark *){
-  --tw-bg-opacity: 1;
-  background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
-}
-
 .dark\:hover\:text-brand-400:hover:is(.dark *){
   color: var(--color-brand-400);
-}
-
-.dark\:hover\:text-brand-500:hover:is(.dark *){
-  color: var(--color-brand-500);
 }
 
 .dark\:hover\:text-red-400:hover:is(.dark *){
@@ -5571,10 +5520,6 @@ select {
     flex-wrap: wrap;
   }
 
-  .md\:gap-3{
-    gap: 0.75rem;
-  }
-
   .md\:gap-8{
     gap: 2rem;
   }
@@ -5754,10 +5699,6 @@ select {
 
   .xl\:w-auto{
     width: auto;
-  }
-
-  .xl\:grid-cols-4{
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .xl\:flex-row{

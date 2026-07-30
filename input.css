@@ -122,15 +122,28 @@
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
-        opacity: 1 !important; visibility: visible !important; transform: none !important;
-        animation: shopifyReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+        
+        /* СЕНЬОР-ФИКС: Изначально карточка скрыта и опущена вниз */
+        opacity: 0; 
+        transform: translateY(40px);
+        visibility: visible !important; /* Оставляем visible, чтобы IntersectionObserver ее видел */
+        will-change: opacity, transform;
+        
+        /* Плавная инерционная анимация (Срабатывает при добавлении класса .is-visible) */
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                    border-color 0.3s ease !important;
     }
-    @keyframes shopifyReveal {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
+    
+    /* Состояние, когда карточка попала в экран (добавляется через main.js) */
+    .item-card.is-visible {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
     }
+
     .item-card:hover {
+        /* При ховере поднимаем от 0 (так как is-visible ставит 0) */
         transform: translateY(-6px) !important;
         box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
         border-color: rgba(31, 182, 166, 0.3) !important;
@@ -140,6 +153,7 @@
         box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
         border-color: rgba(0, 212, 181, 0.4) !important;
     }
+
     .card-body-wrap { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; justify-content: space-between !important; }
     .card-img-wrap { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease !important; z-index: 1; overflow: hidden !important; position: relative; }
     .card-img-wrap img { width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; top: 0; left: 0; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important; }
@@ -167,6 +181,11 @@
         transform: scale(1.02); 
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
     }
+    /* Сохраняем увеличенный масштаб VIP-карт при их появлении на экране */
+    #vip-items-grid .item-card.is-visible {
+        transform: translateY(0) scale(1.02) !important;
+    }
+    
     .dark .vip-card, .dark #vip-items-grid .item-card { border-color: #F59E0B !important; }
     
     .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
