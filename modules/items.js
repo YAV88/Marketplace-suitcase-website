@@ -194,9 +194,11 @@ export const ItemsModule = {
         // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
         const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
-        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-sm"></i></span>` : '';
+        // ЕДИНЫЙ ПРОДАЮЩИЙ ЗНАК "ОГОНЬ" ДЛЯ ТОП-КАРТ (С пульсирующей тенью)
+        const vipCrown = isVIP ? `<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>` : '';
+        
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
-        const pClass = 'p-3 flex-1 flex flex-col w-full'; 
+        const pClass = 'p-3 flex-1 flex flex-col w-full';
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">

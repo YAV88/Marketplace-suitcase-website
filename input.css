@@ -200,58 +200,79 @@
     }
 
     /* ==========================================
-       VIP ТОП-ЛЕНТА (МАКСИМАЛЬНЫЙ МИНИМАЛИЗМ)
+       VIP ТОП-ЛЕНТА (ЯРКИЙ АКЦЕНТ И ФОКУС НА ФОТО)
        ========================================== */
     #vip-items-grid {
-        padding: 0.5rem 0 1rem 0 !important;
-        gap: 1.25rem !important; 
+        padding: 1rem 0 2.5rem 0 !important;
+        gap: 1.5rem !important; 
     }
     
-    .vip-card, #vip-items-grid .item-card { 
-        background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important; 
-        border: 2px solid rgba(245, 158, 11, 0.4) !important; 
-        border-radius: 1.25rem !important; 
-        box-shadow: 0 6px 20px -5px rgba(245, 158, 11, 0.15) !important;
-    }
-    .dark .vip-card, .dark #vip-items-grid .item-card {
-        background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
-        border-color: rgba(245, 158, 11, 0.3) !important;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
-    }
-    
-    .vip-card:hover, #vip-items-grid .item-card:hover {
-        transform: translateY(-8px) scale(1.02) !important;
-        border-color: rgba(245, 158, 11, 0.8) !important;
-        box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-        z-index: 10;
-    }
-    .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
-        box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(245, 158, 11, 0.1) !important;
+    /* Дышащее неоновое свечение для VIP */
+    @keyframes vipPulseGlow {
+        0% { box-shadow: 0 0 10px 0px rgba(245, 158, 11, 0.2); }
+        50% { box-shadow: 0 0 25px 6px rgba(245, 158, 11, 0.5); }
+        100% { box-shadow: 0 0 10px 0px rgba(245, 158, 11, 0.2); }
     }
 
-    #vip-items-grid .card-img-wrap { 
-        height: 180px !important; min-height: 180px !important; border-radius: 1rem 1rem 0 0 !important; border: none !important; 
+    .vip-card, #vip-items-grid .item-card { 
+        background: var(--bg-surface) !important;
+        /* Увеличиваем толщину рамки и делаем ее огненно-янтарной */
+        border: 3px solid #F59E0B !important; 
+        border-radius: 1.25rem !important; 
+        animation: vipPulseGlow 3s infinite ease-in-out !important;
+        transform: scale(1.02); /* Базовый масштаб чуть больше обычных карт */
+        
+        /* Жесткий сброс transition, чтобы не конфликтовать с hover */
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
+    }
+    .dark .vip-card, .dark #vip-items-grid .item-card {
+        border-color: #F59E0B !important;
     }
     
-    /* --- ТОТАЛЬНАЯ ОЧИСТКА VIP КАРТ --- */
-    /* Прячем оплату, значки "Новое/БУ" на фото и всю нижнюю панель (Город, Глазки) */
+    /* При наведении: анимация пульсации останавливается, карта "взлетает" и горит максимально ярко */
+    .vip-card:hover, #vip-items-grid .item-card:hover {
+        transform: translateY(-10px) scale(1.04) !important;
+        border-color: #FCD34D !important; /* Рамка светлеет (эффект накаливания) */
+        animation: none !important;
+        box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.6), 0 0 30px 10px rgba(245, 158, 11, 0.3) !important;
+        z-index: 10;
+    }
+
+    /* Приоритет на фото: делаем картинку намного выше */
+    #vip-items-grid .card-img-wrap { 
+        height: 220px !important; 
+        min-height: 220px !important; 
+        /* Из-за border: 3px скругление картинки должно быть чуть меньше радиуса карты */
+        border-radius: 1.1rem 1.1rem 0 0 !important; 
+        border: none !important; 
+    }
+    
+    /* ТОТАЛЬНАЯ ОЧИСТКА МУСОРА: только название и цена */
     #vip-items-grid .body-badges,
     #vip-items-grid .img-badges,
     #vip-items-grid .view-list-col-2 > div:last-child { 
         display: none !important; 
     }
 
+    /* Центрируем контент, так как подвала (город, глазки) больше нет */
     #vip-items-grid .card-body-wrap { 
-        padding: 0.75rem !important; 
-        justify-content: flex-start !important; /* Прижимаем текст наверх, так как футера больше нет */
+        padding: 1rem 0.75rem !important; 
+        justify-content: center !important; 
     }
-    #vip-items-grid h4 { font-size: 1.05rem !important; font-weight: 800 !important; margin-bottom: 4px !important; }
+    
+    #vip-items-grid h4 { 
+        font-size: 1.1rem !important; 
+        font-weight: 900 !important; 
+        margin-bottom: 6px !important; 
+        line-height: 1.3 !important;
+    }
     
     @media (min-width: 1024px) {
+        /* Принудительно 5 колонок на десктопе */
         #vip-items-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
-        #vip-items-grid .card-img-wrap { height: 220px !important; min-height: 220px !important; }
-        #vip-items-grid h4 { font-size: 1.1rem !important; margin-top: 4px !important; }
-        #vip-section { margin-bottom: 2rem !important; }
+        #vip-items-grid .card-img-wrap { height: 260px !important; min-height: 260px !important; }
+        #vip-items-grid h4 { font-size: 1.2rem !important; margin-top: 4px !important; }
+        #vip-section { margin-bottom: 3rem !important; }
     }
 
     /* ==========================================
