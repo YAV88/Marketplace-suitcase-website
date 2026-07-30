@@ -113,18 +113,42 @@ window.openTokenPurchaseModal = () => {
 };
 
 // ==========================================
-// АНИМАЦИЯ ПОЯВЛЕНИЯ ЭЛЕМЕНТОВ ПРИ СКРОЛЛЕ
+// SHOPIFY-STYLE: КАСКАДНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
 // ==========================================
 window.animateVisibleElements = () => {
+    // Используем таймер для создания "волны" (Stagger effect)
+    let staggerDelay = 0;
+    let resetTimer = null;
+
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
+                // Если карточка попала в экран, отписываемся от нее навсегда (чтобы не пропадала при скролле вверх)
                 obs.unobserve(entry.target);
+                
+                // Добавляем задержку для каждой следующей карточки в текущем батче
+                setTimeout(() => {
+                    // Используем requestAnimationFrame для синхронизации с частотой кадров монитора
+                    requestAnimationFrame(() => {
+                        entry.target.classList.add('is-visible');
+                    });
+                }, staggerDelay);
+
+                staggerDelay += 75; // Каждая следующая карточка появится на 75мс позже
+
+                // Сбрасываем задержку, когда пачка карточек отрендерилась
+                if (resetTimer) clearTimeout(resetTimer);
+                resetTimer = setTimeout(() => {
+                    staggerDelay = 0;
+                }, 100); 
             }
         });
-    }, { threshold: 0.05 });
+    }, { 
+        threshold: 0.05, 
+        rootMargin: '0px 0px -50px 0px' // Начинаем анимацию чуть до того, как карточка полностью появится
+    });
 
+    // Ищем все карточки, которые еще не появились, и вешаем на них обсервер
     const elements = document.querySelectorAll('.item-card:not(.is-visible)');
     elements.forEach(el => observer.observe(el));
 };
