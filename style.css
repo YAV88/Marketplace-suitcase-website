@@ -576,7 +576,6 @@ video {
   --bg-page: #121417;
   --bg-surface: #1C2025;
   --color-brand-400: #00D4B5;
-  /* Лазурный неон-акцент */
   --color-brand-500: #1FB6A6;
   --color-brand-600: #0F766E;
   --color-brand-700: #115E59;
@@ -670,8 +669,6 @@ body {
   border-color: var(--border-soft) !important;
 }
 
-/* ПРЕМИАЛЬНЫЕ ТЕНИ */
-
 .shadow-sm {
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02) !important;
 }
@@ -679,8 +676,6 @@ body {
 .shadow-md {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03) !important;
 }
-
-/* GLASSMORPHISM */
 
 .backdrop-blur-md {
   backdrop-filter: blur(12px);
@@ -747,25 +742,24 @@ select {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease !important;
+  transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
 }
 
-/* Заливка спрятана глубоко внизу */
+/* Заливка спрятана глубоко внизу (-150%) */
 
 .cat-btn::before, #btn-header-add::before {
   content: '';
   position: absolute;
-  top: 110%;
-  /* Опущено ниже, уголок больше не торчит */
-  left: -20%;
-  width: 140%;
-  height: 140%;
+  top: 150%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
   background-color: var(--color-brand-500);
   z-index: -1;
   transform: rotate(-8deg);
-  transition: top 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Замедленная, тягучая анимация (1.2s) */
+  transition: top 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 40% 30% 0 0;
-  /* Округлый край, имитирующий жидкость */
 }
 
 /* Плавное заполнение при наведении */
@@ -775,12 +769,12 @@ select {
   transform: rotate(0deg);
 }
 
-.cat-btn:hover, #btn-header-add:hover {
+.cat-btn:hover {
   color: #ffffff !important;
   border-color: transparent !important;
 }
 
-.cat-btn:hover i, #btn-header-add:hover i {
+.cat-btn:hover i {
   color: #ffffff !important;
 }
 
@@ -796,8 +790,6 @@ select {
   display: none;
 }
 
-/* Отключаем волну для нажатой */
-
 /* Кастомная красная волна для кнопки ТОП */
 
 #btn-cat-urgent::before {
@@ -806,10 +798,32 @@ select {
 
 #btn-cat-urgent:hover {
   border-color: transparent !important;
+  color: #ffffff !important;
+}
+
+#btn-cat-urgent:hover i {
+  color: #ffffff !important;
+}
+
+/* Умный контраст для главной кнопки */
+
+#btn-header-add {
+  background-color: var(--color-brand-500) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+#btn-header-add i {
+  color: #ffffff !important;
+}
+
+#btn-header-add::before {
+  background-color: var(--color-brand-700) !important;
+  /* Наполняется тёмной бирюзой */
 }
 
 /* ==========================================
-       КАРТОЧКИ ТОВАРОВ И ИХ ОЧИСТКА
+       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
        ========================================== */
 
 .item-card {
@@ -849,7 +863,7 @@ select {
 
 .dark .item-card:hover {
   box-shadow: 0 20px 40px -10px rgba(0, 212, 181, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(0, 212, 181, 0.4) !important;
+  border-color: var(--border-soft) !important;
 }
 
 .card-body-wrap {
@@ -893,15 +907,7 @@ select {
   margin-bottom: 2px !important;
 }
 
-.item-card h4 i.fa-fire-flame-curved {
-  color: var(--color-brand-500) !important;
-  font-size: 1.1em !important;
-  filter: drop-shadow(0 2px 4px rgba(31, 182, 166, 0.4)) !important;
-}
-
-/* --- ОЧИСТКА МУСОРА ИЗ ОБЫЧНОЙ ЛЕНТЫ --- */
-
-/* Прячем бейджи оплаты и доставки, оставляем только Город и Глазки */
+/* ОЧИСТКА МУСОРА ИЗ ОБЫЧНОЙ ЛЕНТЫ (Оставляем только город и счетчики) */
 
 .view-grid .body-badges {
   display: none !important;
@@ -915,8 +921,6 @@ select {
   padding: 1rem 0 2.5rem 0 !important;
   gap: 1.5rem !important;
 }
-
-/* Дышащее неоновое свечение для VIP */
 
 @keyframes vipPulseGlow {
   0% {
@@ -934,13 +938,10 @@ select {
 
 .vip-card, #vip-items-grid .item-card {
   background: var(--bg-surface) !important;
-  /* Увеличиваем толщину рамки и делаем ее огненно-янтарной */
   border: 3px solid #F59E0B !important;
   border-radius: 1.25rem !important;
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: scale(1.02);
-  /* Базовый масштаб чуть больше обычных карт */
-  /* Жесткий сброс transition, чтобы не конфликтовать с hover */
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
 }
 
@@ -948,36 +949,39 @@ select {
   border-color: #F59E0B !important;
 }
 
-/* При наведении: анимация пульсации останавливается, карта "взлетает" и горит максимально ярко */
+/* Синхронизация цветов цены и иконки с рамкой */
+
+.vip-card .price-text, #vip-items-grid .item-card .price-text {
+  color: #F59E0B !important;
+}
+
+.vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
+  color: #F59E0B !important;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
 .vip-card:hover, #vip-items-grid .item-card:hover {
   transform: translateY(-10px) scale(1.04) !important;
   border-color: #FCD34D !important;
-  /* Рамка светлеет (эффект накаливания) */
   animation: none !important;
   box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.6), 0 0 30px 10px rgba(245, 158, 11, 0.3) !important;
   z-index: 10;
 }
 
-/* Приоритет на фото: делаем картинку намного выше */
-
 #vip-items-grid .card-img-wrap {
   height: 220px !important;
   min-height: 220px !important;
-  /* Из-за border: 3px скругление картинки должно быть чуть меньше радиуса карты */
   border-radius: 1.1rem 1.1rem 0 0 !important;
   border: none !important;
 }
 
-/* ТОТАЛЬНАЯ ОЧИСТКА МУСОРА: только название и цена */
+/* ТОТАЛЬНАЯ ОЧИСТКА МУСОРА ИЗ VIP: только название и цена */
 
 #vip-items-grid .body-badges,
     #vip-items-grid .img-badges,
     #vip-items-grid .view-list-col-2 > div:last-child {
   display: none !important;
 }
-
-/* Центрируем контент, так как подвала (город, глазки) больше нет */
 
 #vip-items-grid .card-body-wrap {
   padding: 1rem 0.75rem !important;
@@ -992,8 +996,6 @@ select {
 }
 
 @media (min-width: 1024px) {
-  /* Принудительно 5 колонок на десктопе */
-
   #vip-items-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   }
@@ -1018,14 +1020,11 @@ select {
        ========================================== */
 
 @media (min-width: 1024px) {
-  /* Расширяем модальное окно на ПК */
-
   #item-details-modal-content {
     max-width: 1152px !important;
-    /* Уровень 6xl */
   }
 
-  /* Пропорционально увеличиваем высоту фото */
+  /* 6xl */
 
   #modal-img-container {
     height: 550px !important;
@@ -1059,12 +1058,11 @@ select {
 }
 
 @media (min-width: 1280px) {
-  /* На очень больших экранах делаем окно еще шире */
-
   #item-details-modal-content {
     max-width: 1280px !important;
-    /* Уровень 7xl */
   }
+
+  /* 7xl */
 
   #modal-img-container {
     height: 600px !important;
