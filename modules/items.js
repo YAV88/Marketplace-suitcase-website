@@ -139,15 +139,13 @@ export const ItemsModule = {
         const isAnimalEntity = i.category && i.category.startsWith('Животные') && !i.category.includes('Товары');
         
         const baseCardClasses = 'item-card bg-white dark:bg-stone-900 rounded-2xl overflow-hidden cursor-pointer flex flex-col relative w-full transition-all duration-300 transform-gpu hover:-translate-y-1';
-        const vipCardClasses = 'vip-card border-2 border-amber-400 dark:border-amber-500 shadow-lg shadow-amber-500/10 dark:shadow-amber-500/10 hover:shadow-xl';
+        const vipCardClasses = 'vip-card border-2 border-brand-400 dark:border-brand-500 shadow-lg shadow-brand-500/10 hover:shadow-xl';
         const regularCardClasses = 'border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md';
         const cardClass = `${baseCardClasses} ${isVIP ? vipCardClasses : regularCardClasses}`;
                 
-        // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
         const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
         
         const rawImageUrl = (Array.isArray(i.images) && i.images.length > 0 && i.images[0]) ? i.images[0] : (i.imageUrl || defaultImage);
-        // Пропускаем только безопасные схемы (http/https/data:image) и экранируем для вставки в атрибут src
         const imageUrl = escapeHtml(safeImageUrl(rawImageUrl, defaultImage));
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -172,31 +170,30 @@ export const ItemsModule = {
         else if (isEstate) condBadgeBase = `<span class="bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Недвижимость')}</span>`;
         else if (isAnimalEntity) condBadgeBase = '';
         else {
-            if (i.condition === 'Новое') condBadgeBase = `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Новое')}</span>`;
+            if (i.condition === 'Новое') condBadgeBase = `<span class="bg-brand-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Новое')}</span>`;
             else condBadgeBase = `<span class="bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Б/У')}</span>`;
         }
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
         let extraInfoBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-truck-fast text-indigo-500"></i> PostExpress</span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
+        if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-truck-fast text-brand-500"></i> PostExpress</span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-handshake text-brand-500"></i> ${t('Личная встреча')}</span>`;
         
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
             const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-            if (hasCrypto) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-2 py-1 rounded-md text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shadow-sm shrink-0"><i class="fa-brands fa-bitcoin"></i> Крипто</span>`;
-            if (hasCard) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 px-2 py-1 rounded-md text-[10px] font-bold text-sky-700 dark:text-sky-400 shadow-sm shrink-0"><i class="fa-regular fa-credit-card"></i> Перевод</span>`;
+            if (hasCrypto) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 px-2 py-1 rounded-md text-[10px] font-bold text-brand-700 dark:text-brand-400 shadow-sm shrink-0"><i class="fa-brands fa-bitcoin"></i> Крипто</span>`;
+            if (hasCard) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-900/20 border border-stone-200 dark:border-stone-800 px-2 py-1 rounded-md text-[10px] font-bold text-stone-700 dark:text-stone-400 shadow-sm shrink-0"><i class="fa-regular fa-credit-card"></i> Перевод</span>`;
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
-        
-        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
         const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
-        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_4px_#f97316]"></i></span>` : '';
+        // ИСПРАВЛЕНО: Только одно объявление vipCrown!
+        const vipCrown = isVIP ? `<span class="inline-block mr-1.5" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-brand-500 drop-shadow-sm"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
-        const pClass = 'p-3 flex-1 flex flex-col w-full'; 
+        const pClass = 'p-3 flex-1 flex flex-col w-full';
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
@@ -479,13 +476,10 @@ export const ItemsModule = {
             window.loadedItems = itemsToDisplay; 
 
             if (!isLoadMore && vipRes.data && !window.showUrgentOnly) {
-                // 1. Очищаем старый интервал для предотвращения утечек
                 if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
 
-                // 2. Формируем пул и берем РОВНО 8 карточек для старта
                 let vipItems = vipRes.data.map(window.mapItemData).filter(Boolean);
 
-                // --- НОВАЯ ЛОГИКА: Гарантируем 8 карточек для 2-х рядов ---
                 if (vipItems.length > 0 && vipItems.length < 8) {
                     const originalVips = [...vipItems];
                     while (vipItems.length < 8) {
@@ -493,39 +487,31 @@ export const ItemsModule = {
                     }
                     vipItems = vipItems.slice(0, 8);
                 }
-                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
 
                 window.vipPool = vipItems.sort(() => 0.5 - Math.random());
-                const initialVips = window.vipPool.slice(0, 8); // Жесткий срез массива до 8 штук
+                const initialVips = window.vipPool.slice(0, 8);
 
                 if (initialVips.length > 0 && vipGrid && vipSection) {
-                    // Рендерим слоты для карусели
-                    // Возвращаем визуальную сетку
                     vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full';
                     
-                    // Рендерим ровно 8 слотов
                     vipGrid.innerHTML = initialVips.map((i, idx) => `
-                        <div class="vip-slot w-[65vw] sm:w-[280px] lg:w-[300px] shrink-0 snap-start transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
                         <div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
                             ${ItemsModule.createCardHtml(i, true)}
                         </div>
                     `).join('');
                     
-                    // Показываем кнопки управления каруселью
                     const vipControls = document.getElementById('vip-carousel-controls');
                     if (vipControls) vipControls.classList.remove('hidden');
 
                     vipGrid.style.opacity = '1';
                     vipGrid.style.pointerEvents = 'auto';
-                    
                     vipSection.classList.remove('hidden');
 
                     initialVips.forEach(v => { 
                         if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                     });
 
-                    // 3. Запускаем каскадную замену раз в 8 секунд
-                    // 3. Запускаем каскадную замену раз в 6 секунд
+                    // ИСПРАВЛЕНО: Убрана лишняя запятая, интервал установлен на 8 секунд
                     if (window.vipPool.length > 8) {
                         window.vipCascadeInterval = setInterval(() => {
                             if (vipGrid.matches(':hover') || vipGrid.matches(':active')) return;
@@ -549,9 +535,7 @@ export const ItemsModule = {
                                 
                                 slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                             }, 700); 
-                            
-                        }, 8000); // Строго 8 секунд (8000мс)
-                        }, 6000); // 6 секунд
+                        }, 8000); 
                     }
                 } else {
                     if (window.vipCascadeInterval) clearInterval(window.vipCascadeInterval);
