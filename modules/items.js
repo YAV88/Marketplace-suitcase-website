@@ -193,7 +193,8 @@ export const ItemsModule = {
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
-        const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
+        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
+        const favHtmlCard = isOwner ? '' : `<div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-[60]">${favBtnOnly}</div>`;
 
         const vipCrown = isVIP ? `<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>` : '';
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
@@ -496,14 +497,12 @@ export const ItemsModule = {
                     window.vipPool = vipItems.sort(() => 0.5 - Math.random());
                     const initialVips = window.vipPool.slice(0, 10);
 
-                    // ЗАДАЧА 2: Гарантируем восстановление liquid-btn на всех категориях
                     document.querySelectorAll('.cat-btn, #btn-cat-urgent').forEach(btn => {
                         if (!btn.classList.contains('liquid-btn')) btn.classList.add('liquid-btn');
                     });
 
                     if (initialVips.length > 0 && vipGrid && vipSection) {
-                        // ЗАДАЧА 5: Мобильная лента теперь горизонтальный свайп, на ПК - сетка
-                        vipGrid.className = 'flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 lg:gap-6 w-full snap-x snap-mandatory custom-scrollbar pb-6 lg:pb-0';
+                        vipGrid.className = 'flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 lg:gap-6 w-full snap-x snap-mandatory custom-scrollbar pb-8 pt-3 px-4 -mx-4 lg:mx-0 lg:px-0 lg:pt-0 lg:pb-0';
                         
                         vipGrid.innerHTML = initialVips.map((i, idx) => `
                             <div class="vip-slot transition-all duration-700 h-full flex transform-gpu shrink-0 snap-center w-[75vw] max-w-[260px] lg:w-full lg:max-w-none" data-slot="${idx}">
@@ -806,9 +805,13 @@ export const ItemsModule = {
 
                 catTextEl.className = `text-xs sm:text-sm font-black text-white px-3 py-1 rounded ${bgClass}`;
             }
-
+            
+            // Цвет цены
             const priceEl = document.getElementById('modal-price');
-            if (priceEl) priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+            if (priceEl) {
+                priceEl.innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
+                priceEl.className = "text-xl sm:text-2xl font-black tracking-tight text-stone-900 dark:text-white";
+            }
 
             // 2. ЧИСТЫЕ ХАРАКТЕРИСТИКИ (Вместо серых квадратов -> легкие теги)
             const specsContainer = document.getElementById('modal-detailed-specs');
@@ -1101,62 +1104,62 @@ export const ItemsModule = {
             const chatBtn = document.getElementById('btn-contact-seller'); 
 
             if (isOwner) {
-                // ЗАДАЧА 3: Динамический статус кнопки VIP
+                // Динамический статус кнопки VIP
                 const isItemVip = item.is_highlighted || item.isHighlighted;
-                // Если товар уже VIP — кнопка становится графитовой (gray), иначе золотой (amber)
+                // Добавлен hover:bg-transparent, чтобы сплошной фон не блокировал жидкую волну при наведении
                 const vipBtnClass = isItemVip 
-                    ? 'liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700' 
-                    : 'liquid-btn liquid-btn-amber bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50';
+                    ? 'liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700' 
+                    : 'liquid-btn liquid-btn-amber group bg-amber-50 dark:bg-amber-900/20 hover:bg-transparent dark:hover:bg-transparent text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50';
                 const vipIconClass = isItemVip ? 'fa-solid fa-crown text-xl pointer-events-none opacity-50' : 'fa-solid fa-crown text-xl pointer-events-none';
                 const vipBtnText = isItemVip ? 'Убрать из VIP' : 'VIP-Статус';
 
                 if (ownerControls) {
                     ownerControls.classList.remove('hidden');
                     
-                    // Полностью перерисовываем кнопки с новыми эффектами liquid-btn
+                    // Перерисовываем кнопки с прозрачным фоном по ховеру (group-hover:text-white для иконок и текста)
                     ownerControls.innerHTML = `
-                        <button id="btn-owner-edit" data-action="edit-item" data-id="${item.id}" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="fa-solid fa-pen text-xl pointer-events-none"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_edit">Изменить</span>
+                        <button id="btn-owner-edit" data-action="edit-item" data-id="${item.id}" class="liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-pen text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none group-hover:text-white transition-colors duration-300" data-i18n="btn_edit">Изменить</span>
                         </button>
                         
-                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="liquid-btn liquid-btn-brand bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="fa-solid fa-arrow-up text-xl pointer-events-none"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none" id="btn-owner-bump-text" data-i18n="btn_bump">В ТОП</span>
+                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="liquid-btn liquid-btn-brand group bg-brand-50 dark:bg-brand-900/20 hover:bg-transparent dark:hover:bg-transparent text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-arrow-up text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300" id="btn-owner-bump-text" data-i18n="btn_bump">В ТОП</span>
                         </button>
                         
                         <button id="btn-owner-vip" onclick="window.promoteToVip()" class="${vipBtnClass} border p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="${vipIconClass}"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none" data-i18n="btn_vip">${vipBtnText}</span>
+                            <i class="${vipIconClass} group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300" data-i18n="btn_vip">${vipBtnText}</span>
                         </button>
                         
-                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="liquid-btn liquid-btn-blue bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="fa-solid fa-clock text-xl pointer-events-none"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" id="btn-reserve-text" data-i18n="btn_reserve">В резерв</span>
+                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="liquid-btn liquid-btn-blue group bg-blue-50 dark:bg-blue-900/20 hover:bg-transparent dark:hover:bg-transparent text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-clock text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none group-hover:text-white transition-colors duration-300" id="btn-reserve-text" data-i18n="btn_reserve">В резерв</span>
                         </button>
                         
-                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="liquid-btn liquid-btn-emerald bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="fa-solid fa-check-circle text-xl pointer-events-none"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_sold">Продано</span>
+                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="liquid-btn liquid-btn-emerald group bg-emerald-50 dark:bg-emerald-900/20 hover:bg-transparent dark:hover:bg-transparent text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-check-circle text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none group-hover:text-white transition-colors duration-300" data-i18n="btn_sold">Продано</span>
                         </button>
                         
-                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="liquid-btn liquid-btn-red bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
-                            <i class="fa-solid fa-trash-can text-xl pointer-events-none"></i>
-                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_delete">Удалить</span>
+                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="liquid-btn liquid-btn-red group bg-red-50 dark:bg-red-900/20 hover:bg-transparent dark:hover:bg-transparent text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-trash-can text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none group-hover:text-white transition-colors duration-300" data-i18n="btn_delete">Удалить</span>
                         </button>
                     `;
                 }
                 
                 if (chatBtn) chatBtn.classList.add('hidden');
 
-                // Восстанавливаем логику динамических текстов для кнопок (Токены, Резерв)
                 const bumpBtnText = document.getElementById('btn-owner-bump-text');
                 if (bumpBtnText) {
                     const userTokens = (window.currentUserData && window.currentUserData.vip_tokens) || 0;
                     if (userTokens > 0) {
                         bumpBtnText.innerHTML = `Поднять (1 токен)`;
                     } else {
-                        bumpBtnText.innerHTML = `<span class="text-amber-500">Купить токены</span>`;
+                        // Исправлен цвет "Купить токены": до наведения янтарный, после — белый
+                        bumpBtnText.innerHTML = `<span class="text-amber-600 dark:text-amber-500 group-hover:text-white transition-colors duration-300">Купить токены</span>`;
                     }
                 }
 
