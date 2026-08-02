@@ -143,11 +143,9 @@ export const ItemsModule = {
         const regularCardClasses = 'border border-stone-200 dark:border-stone-800 shadow-md hover:shadow-lg';
         const cardClass = `${baseCardClasses} ${isVIP ? vipCardClasses : regularCardClasses}`;
                 
-        // 1. Прозрачная заглушка (идеально адаптируется под фон сайта)
         const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
         
         const rawImageUrl = (Array.isArray(i.images) && i.images.length > 0 && i.images[0]) ? i.images[0] : (i.imageUrl || defaultImage);
-        // Пропускаем только безопасные схемы (http/https/data:image) и экранируем для вставки в атрибут src
         const imageUrl = escapeHtml(safeImageUrl(rawImageUrl, defaultImage));
         
         const isLiked = window.userFavorites && window.userFavorites.has(i.id);
@@ -177,69 +175,59 @@ export const ItemsModule = {
         }
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
-        let extraInfoBadges = '';
+        // ЗАДАЧА 1 и 2: Разделяем бейджи на две строки и скрываем на мобилках
+        let deliveryBadges = '';
+        if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) deliveryBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
         
-        // ЧИСТЫЙ ДИЗАЙН (Apple Style): убираем фоны и рамки, оставляем только типографику и иконки
-        if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
-        
+        let paymentBadges = '';
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
             const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
             const hasCash = i.payment.includes('Наличные');
             
-            if (hasCash) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> ${t('Наличные')}</span>`;
-            if (hasCard) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-regular fa-credit-card text-sky-500"></i> ${t('На карту')}</span>`;
-            if (hasCrypto) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-brands fa-bitcoin text-amber-500"></i> ${t('Крипто')}</span>`;
+            if (hasCash) paymentBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> ${t('Наличные')}</span>`;
+            if (hasCard) paymentBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-regular fa-credit-card text-sky-500"></i> ${t('На карту')}</span>`;
+            if (hasCrypto) paymentBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-brands fa-bitcoin text-amber-500"></i> ${t('Крипто')}</span>`;
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
-        
-        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
         const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
-        // ЕДИНЫЙ ПРОДАЮЩИЙ ЗНАК "ОГОНЬ" ДЛЯ ТОП-КАРТ (С пульсирующей тенью)
         const vipCrown = isVIP ? `<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>` : '';
-        
         const imgHeight = 'h-40 sm:h-48 shrink-0 rounded-t-[inherit] overflow-hidden';
         const pClass = 'p-3 flex-1 flex flex-col w-full';
 
         return `
         <div class="${cardClass} ${opacityClass}" data-action="open-item" data-id="${i.id}">
-            
-            <!-- КНОПКА СКЛАДА ВЫНЕСЕНА НА ВЕРХНИЙ УРОВЕНЬ -->
             ${favHtmlCard}
-            
             <div class="card-img-wrap ${imgHeight} bg-stone-100 dark:bg-stone-700 relative w-full">
                 <img src="${imageUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover absolute top-0 left-0 transition-transform duration-700 group-hover:scale-110" alt="${safeTitle}">
-                
-                <!-- НА ФОТО ОСТАЛОСЬ ТОЛЬКО СОСТОЯНИЕ -->
                 <div class="img-badges">
                     ${statusBadgeOverlay}
                     ${condBadgeImg}
                 </div>
             </div>
-            
             <div class="card-body-wrap ${pClass}">
                 <div class="flex flex-row w-full h-full">
                     <div class="view-list-col-2 flex-1 flex flex-col h-full w-full min-w-0 justify-between">
-                        
                         <div>
-                            <!-- ОБЕРТКА ДЛЯ ТЕКСТА С КЛАССОМ title-price-wrap -->
                             <div class="flex flex-col mb-1.5 title-price-wrap">
                                 <h4 class="font-bold text-stone-900 dark:text-white break-words" style="font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.15; min-height: 2.3em; margin-bottom: 2px;">
                                     ${vipCrown}${safeTitle}
                                 </h4>
-                                <div class="text-brand-600 price-text font-black" style="font-size: 1.1rem; line-height: 1;">
+                                <!-- ЗАДАЧА 4: Премиальный темный цвет цены -->
+                                <div class="text-stone-900 dark:text-white price-text font-black tracking-tight" style="font-size: 1.15rem; line-height: 1;">
                                     ${i.price || 0} ${i.currency || 'RSD'}
                                 </div>
                             </div>
                             
-                            <div class="body-badges flex-wrap items-center gap-2 mb-2 empty:hidden">
-                                ${statusBadgeRow}
-                                <!-- ОГРАНИЧЕНИЕ ПО ПЛАТФОРМЕ: Показываем плашки оплаты/доставки только на ПК (lg:flex), на мобильных скрываем -->
-                                ${extraInfoBadges ? `<div class="hidden lg:flex items-center gap-3 ml-1">${extraInfoBadges}</div>` : ''}
+                            <!-- ЗАДАЧА 1 и 2: Оплата и доставка разделены на строки и скрыты на мобильных -->
+                            <div class="body-badges flex flex-col gap-1.5 mb-2 empty:hidden">
+                                ${statusBadgeRow ? `<div>${statusBadgeRow}</div>` : ''}
+                                ${deliveryBadges ? `<div class="hidden lg:flex flex-wrap items-center gap-3 ml-1">${deliveryBadges}</div>` : ''}
+                                ${paymentBadges ? `<div class="hidden lg:flex flex-wrap items-center gap-3 ml-1">${paymentBadges}</div>` : ''}
                             </div>
                         </div>
                         <div class="flex items-center justify-between w-full pt-2">
@@ -508,11 +496,17 @@ export const ItemsModule = {
                     window.vipPool = vipItems.sort(() => 0.5 - Math.random());
                     const initialVips = window.vipPool.slice(0, 10);
 
+                    // ЗАДАЧА 2: Гарантируем восстановление liquid-btn на всех категориях
+                    document.querySelectorAll('.cat-btn, #btn-cat-urgent').forEach(btn => {
+                        if (!btn.classList.contains('liquid-btn')) btn.classList.add('liquid-btn');
+                    });
+
                     if (initialVips.length > 0 && vipGrid && vipSection) {
-                        vipGrid.className = 'grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 w-full';
+                        // ЗАДАЧА 5: Мобильная лента теперь горизонтальный свайп, на ПК - сетка
+                        vipGrid.className = 'flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 lg:gap-6 w-full snap-x snap-mandatory custom-scrollbar pb-6 lg:pb-0';
                         
                         vipGrid.innerHTML = initialVips.map((i, idx) => `
-                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu" data-slot="${idx}">
+                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu shrink-0 snap-center w-[75vw] max-w-[260px] lg:w-full lg:max-w-none" data-slot="${idx}">
                                 ${ItemsModule.createCardHtml(i, true)}
                             </div>
                         `).join('');
@@ -528,18 +522,13 @@ export const ItemsModule = {
                             if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                         });
 
-                        // 2. Индивидуальные каскадные таймеры для КАЖДОЙ карточки
                         if (window.vipPool.length > 10) {
                             const slots = vipGrid.querySelectorAll('.vip-slot');
                             slots.forEach((slotEl, index) => {
                                 const initialDelay = index * 700; 
-                                
                                 setTimeout(() => {
                                     const intervalId = setInterval(() => {
-                                        // СЕНЬОР-ФИКС: Не крутим анимацию, если вкладка браузера скрыта (решает баг с "перезагрузкой")
                                         if (document.hidden) return;
-
-                                        // Если ИМЕННО ЭТА карточка в ховере — мы её не трогаем!
                                         if (slotEl.matches(':hover') || slotEl.matches(':active') || slotEl.querySelector(':hover')) return;
 
                                         const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
@@ -553,16 +542,13 @@ export const ItemsModule = {
                                         setTimeout(() => {
                                             slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
                                             if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
-                                            
                                             slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                                         }, 700); 
                                     }, 7000); 
-                                    
                                     window.vipCascadeIntervals.push(intervalId);
                                 }, initialDelay);
                             });
                         }
-
                     } else {
                         if (window.vipCascadeIntervals) window.vipCascadeIntervals.forEach(clearInterval);
                         if (vipSection) vipSection.classList.add('hidden');
@@ -1115,40 +1101,62 @@ export const ItemsModule = {
             const chatBtn = document.getElementById('btn-contact-seller'); 
 
             if (isOwner) {
-                const editBtn = document.getElementById('btn-owner-edit');
-                if (editBtn) editBtn.dataset.id = item.id;
-                if (ownerControls) ownerControls.classList.remove('hidden');
+                // ЗАДАЧА 3: Динамический статус кнопки VIP
+                const isItemVip = item.is_highlighted || item.isHighlighted;
+                // Если товар уже VIP — кнопка становится графитовой (gray), иначе золотой (amber)
+                const vipBtnClass = isItemVip 
+                    ? 'liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700' 
+                    : 'liquid-btn liquid-btn-amber bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50';
+                const vipIconClass = isItemVip ? 'fa-solid fa-crown text-xl pointer-events-none opacity-50' : 'fa-solid fa-crown text-xl pointer-events-none';
+                const vipBtnText = isItemVip ? 'Убрать из VIP' : 'VIP-Статус';
+
+                if (ownerControls) {
+                    ownerControls.classList.remove('hidden');
+                    
+                    // Полностью перерисовываем кнопки с новыми эффектами liquid-btn
+                    ownerControls.innerHTML = `
+                        <button id="btn-owner-edit" data-action="edit-item" data-id="${item.id}" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-pen text-xl pointer-events-none"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_edit">Изменить</span>
+                        </button>
+                        
+                        <button id="btn-owner-bump" onclick="window.bumpItem()" class="liquid-btn liquid-btn-brand bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-arrow-up text-xl pointer-events-none"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none" id="btn-owner-bump-text" data-i18n="btn_bump">В ТОП</span>
+                        </button>
+                        
+                        <button id="btn-owner-vip" onclick="window.promoteToVip()" class="${vipBtnClass} border p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="${vipIconClass}"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none" data-i18n="btn_vip">${vipBtnText}</span>
+                        </button>
+                        
+                        <button id="btn-owner-reserve" onclick="window.toggleReserve()" class="liquid-btn liquid-btn-blue bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-clock text-xl pointer-events-none"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" id="btn-reserve-text" data-i18n="btn_reserve">В резерв</span>
+                        </button>
+                        
+                        <button id="btn-owner-sold" onclick="window.markAsSold()" class="liquid-btn liquid-btn-emerald bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-check-circle text-xl pointer-events-none"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_sold">Продано</span>
+                        </button>
+                        
+                        <button id="btn-owner-delete" onclick="window.deleteItemConfirm()" class="liquid-btn liquid-btn-red bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
+                            <i class="fa-solid fa-trash-can text-xl pointer-events-none"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none" data-i18n="btn_delete">Удалить</span>
+                        </button>
+                    `;
+                }
+                
                 if (chatBtn) chatBtn.classList.add('hidden');
 
-                const shareBadge = document.getElementById('share-bump-badge');
-                const shareTimer = document.getElementById('share-bump-timer');
-                
-                // 1. БЛОК БЕСПЛАТНОГО РЕПОСТА (24 часа кулдаун)
-                if (shareBadge && shareTimer) {
-                    const lastShared = item.last_shared_at ? new Date(item.last_shared_at).getTime() : 0;
-                    const now = new Date().getTime();
-                    const hoursPassed = lastShared ? (now - lastShared) / (1000 * 60 * 60) : 25;
-
-                    if (hoursPassed >= 24) {
-                        shareBadge.classList.remove('hidden');
-                        shareTimer.innerHTML = "<i class='fa-solid fa-bullhorn mr-1'></i> Бесплатно";
-                        shareTimer.className = 'text-brand-600 dark:text-brand-400 font-black text-xs sm:text-sm mt-1';
-                    } else {
-                        shareBadge.classList.add('hidden');
-                        const hoursLeft = Math.ceil(24 - hoursPassed);
-                        shareTimer.innerHTML = `Кулдаун: ${hoursLeft} ч.`;
-                        shareTimer.className = 'text-stone-500 dark:text-stone-400 font-bold text-[11px] sm:text-xs mt-1';
-                    }
-                }
-
-                // 2. БЛОК ПЛАТНОГО ПОДНЯТИЯ (Динамический текст кнопки)
+                // Восстанавливаем логику динамических текстов для кнопок (Токены, Резерв)
                 const bumpBtnText = document.getElementById('btn-owner-bump-text');
                 if (bumpBtnText) {
                     const userTokens = (window.currentUserData && window.currentUserData.vip_tokens) || 0;
                     if (userTokens > 0) {
-                        bumpBtnText.innerHTML = `<i class='fa-solid fa-arrow-up mr-1.5'></i> Поднять (1 токен)`;
+                        bumpBtnText.innerHTML = `Поднять (1 токен)`;
                     } else {
-                        bumpBtnText.innerHTML = `<i class='fa-solid fa-gem mr-1.5 text-amber-500'></i> Купить токены`;
+                        bumpBtnText.innerHTML = `<span class="text-amber-500">Купить токены</span>`;
                     }
                 }
 
