@@ -178,20 +178,26 @@ export const ItemsModule = {
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
 
         let extraInfoBadges = '';
-        if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-truck-fast text-indigo-500"></i> PostExpress</span>`;
-        if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-md text-[10px] font-bold text-stone-600 dark:text-stone-300 shadow-sm shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
+        
+        // ЧИСТЫЙ ДИЗАЙН (Apple Style): убираем фоны и рамки, оставляем только типографику и иконки
+        if (i.delivery && i.delivery.includes('PostExpress')) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
+        if (i.delivery && i.delivery.includes('Личная встреча')) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-handshake text-blue-500"></i> ${t('Личная встреча')}</span>`;
         
         if (i.payment) {
             const hasCrypto = i.payment.includes('Криптоперевод') || i.payment.includes('USDT TRC-20');
             const hasCard = i.payment.includes('Перевод на карту') || i.payment.includes('Перевод');
-            if (hasCrypto) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-2 py-1 rounded-md text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shadow-sm shrink-0"><i class="fa-brands fa-bitcoin"></i> Крипто</span>`;
-            if (hasCard) extraInfoBadges += `<span class="flex items-center gap-1.5 bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 px-2 py-1 rounded-md text-[10px] font-bold text-sky-700 dark:text-sky-400 shadow-sm shrink-0"><i class="fa-regular fa-credit-card"></i> Перевод</span>`;
+            const hasCash = i.payment.includes('Наличные');
+            
+            if (hasCash) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-money-bill-wave text-emerald-500"></i> ${t('Наличные')}</span>`;
+            if (hasCard) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-regular fa-credit-card text-sky-500"></i> ${t('На карту')}</span>`;
+            if (hasCrypto) extraInfoBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-brands fa-bitcoin text-amber-500"></i> ${t('Крипто')}</span>`;
         }
 
         const favTitle = isLiked ? t('Убрать со склада') : t('Добавить на склад');
         const favBtnOnly = isOwner ? '' : `<button type="button" title="${favTitle}" onclick="event.preventDefault(); event.stopPropagation(); if(window.toggleFavoriteCard) window.toggleFavoriteCard('${i.id}', this);" class="w-8 h-8 bg-white/90 dark:bg-stone-900/80 backdrop-blur-sm rounded-full flex items-center justify-center transition shadow-sm hover:scale-110 cursor-pointer"><i class="fa-solid ${iconClass} text-sm drop-shadow-sm pointer-events-none"></i></button>`;
         
-        const favHtmlCard = isOwner ? '' : `<div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-[60]">${favBtnOnly}</div>`;
+        // НОВАЯ ОБЕРТКА КНОПКИ СКЛАДА (Независима от фото)
+        const favHtmlCard = isOwner ? '' : `<div class="card-fav-btn absolute z-[60]">${favBtnOnly}</div>`;
 
         // ЕДИНЫЙ ПРОДАЮЩИЙ ЗНАК "ОГОНЬ" ДЛЯ ТОП-КАРТ (С пульсирующей тенью)
         const vipCrown = isVIP ? `<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>` : '';
@@ -230,9 +236,10 @@ export const ItemsModule = {
                                 </div>
                             </div>
                             
-                            <div class="body-badges flex-wrap items-center gap-1.5 mb-2 empty:hidden">
+                            <div class="body-badges flex-wrap items-center gap-2 mb-2 empty:hidden">
                                 ${statusBadgeRow}
-                                ${extraInfoBadges}
+                                <!-- ОГРАНИЧЕНИЕ ПО ПЛАТФОРМЕ: Показываем плашки оплаты/доставки только на ПК (lg:flex), на мобильных скрываем -->
+                                ${extraInfoBadges ? `<div class="hidden lg:flex items-center gap-3 ml-1">${extraInfoBadges}</div>` : ''}
                             </div>
                         </div>
                         <div class="flex items-center justify-between w-full pt-2">
