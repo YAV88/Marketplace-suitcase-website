@@ -477,7 +477,7 @@ export const ItemsModule = {
             if (!isLoadMore) {
                 if (vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
                     
-                    // 1. Очищаем все запущенные интервалы
+                    // Очищаем все запущенные интервалы
                     if (window.vipCascadeIntervals) {
                         window.vipCascadeIntervals.forEach(clearInterval);
                     }
@@ -485,27 +485,29 @@ export const ItemsModule = {
 
                     let vipItems = vipRes.data.map(window.mapItemData).filter(Boolean);
 
-                    // Гарантируем 10 карточек для идеальной сетки 5х2 на ПК
-                    if (vipItems.length > 0 && vipItems.length < 10) {
+                    // Гарантируем ровно 8 карточек для идеальной сетки (2 колонки на моб, 4 на ПК)
+                    if (vipItems.length > 0 && vipItems.length < 8) {
                         const originalVips = [...vipItems];
-                        while (vipItems.length < 10) {
+                        while (vipItems.length < 8) {
                             vipItems.push(...originalVips);
                         }
-                        vipItems = vipItems.slice(0, 10);
+                        vipItems = vipItems.slice(0, 8);
                     }
 
                     window.vipPool = vipItems.sort(() => 0.5 - Math.random());
-                    const initialVips = window.vipPool.slice(0, 10);
+                    const initialVips = window.vipPool.slice(0, 8);
 
+                    // Гарантируем восстановление liquid-btn на всех категориях
                     document.querySelectorAll('.cat-btn, #btn-cat-urgent').forEach(btn => {
                         if (!btn.classList.contains('liquid-btn')) btn.classList.add('liquid-btn');
                     });
 
                     if (initialVips.length > 0 && vipGrid && vipSection) {
-                        vipGrid.className = 'flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 lg:gap-6 w-full snap-x snap-mandatory custom-scrollbar pb-8 pt-3 px-4 -mx-4 lg:mx-0 lg:px-0 lg:pt-0 lg:pb-0';
+                        // Мобилки: 2 колонки (плитки). Планшеты/ПК: 4 колонки. 
+                        vipGrid.className = 'grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full mb-2 lg:mb-4';
                         
                         vipGrid.innerHTML = initialVips.map((i, idx) => `
-                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu shrink-0 snap-center w-[75vw] max-w-[260px] lg:w-full lg:max-w-none" data-slot="${idx}">
+                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu w-full" data-slot="${idx}">
                                 ${ItemsModule.createCardHtml(i, true)}
                             </div>
                         `).join('');
@@ -521,13 +523,19 @@ export const ItemsModule = {
                             if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                         });
 
-                        if (window.vipPool.length > 10) {
+                        // Индивидуальные каскадные таймеры для КАЖДОЙ из 8 карточек (работает и на моб, и на ПК)
+                        if (window.vipPool.length > 8) {
                             const slots = vipGrid.querySelectorAll('.vip-slot');
                             slots.forEach((slotEl, index) => {
+                                // Первая меняется через 7с, вторая через 7.7с, третья через 8.4с и т.д.
                                 const initialDelay = index * 700; 
+                                
                                 setTimeout(() => {
                                     const intervalId = setInterval(() => {
+                                        // Не крутим анимацию, если вкладка браузера скрыта
                                         if (document.hidden) return;
+
+                                        // Если ИМЕННО ЭТА карточка в ховере — мы её не трогаем!
                                         if (slotEl.matches(':hover') || slotEl.matches(':active') || slotEl.querySelector(':hover')) return;
 
                                         const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
@@ -541,9 +549,11 @@ export const ItemsModule = {
                                         setTimeout(() => {
                                             slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
                                             if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
+                                            
                                             slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                                         }, 700); 
-                                    }, 7000); 
+                                    }, 7000); // Строго 7 секунд
+                                    
                                     window.vipCascadeIntervals.push(intervalId);
                                 }, initialDelay);
                             });
