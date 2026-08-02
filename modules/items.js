@@ -477,7 +477,7 @@ export const ItemsModule = {
             if (!isLoadMore) {
                 if (vipRes.data && vipRes.data.length > 0 && !window.showUrgentOnly) {
                     
-                    // Очищаем все запущенные интервалы
+                    // 1. Очищаем все запущенные интервалы
                     if (window.vipCascadeIntervals) {
                         window.vipCascadeIntervals.forEach(clearInterval);
                     }
@@ -485,17 +485,17 @@ export const ItemsModule = {
 
                     let vipItems = vipRes.data.map(window.mapItemData).filter(Boolean);
 
-                    // Гарантируем ровно 8 карточек для идеальной сетки (2 колонки на моб, 4 на ПК)
-                    if (vipItems.length > 0 && vipItems.length < 8) {
+                    // ЗАДАЧА 2: Гарантируем ровно 10 карточек (5 колонок * 2 ряда на ПК).
+                    if (vipItems.length > 0 && vipItems.length < 10) {
                         const originalVips = [...vipItems];
-                        while (vipItems.length < 8) {
+                        while (vipItems.length < 10) {
                             vipItems.push(...originalVips);
                         }
-                        vipItems = vipItems.slice(0, 8);
+                        vipItems = vipItems.slice(0, 10);
                     }
 
                     window.vipPool = vipItems.sort(() => 0.5 - Math.random());
-                    const initialVips = window.vipPool.slice(0, 8);
+                    const initialVips = window.vipPool.slice(0, 10);
 
                     // Гарантируем восстановление liquid-btn на всех категориях
                     document.querySelectorAll('.cat-btn, #btn-cat-urgent').forEach(btn => {
@@ -503,11 +503,13 @@ export const ItemsModule = {
                     });
 
                     if (initialVips.length > 0 && vipGrid && vipSection) {
-                        // Мобилки: 2 колонки (плитки). Планшеты/ПК: 4 колонки. 
-                        vipGrid.className = 'grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full mb-2 lg:mb-4';
+                        // Сетка: 2 колонки на мобильных (зазоры регулируются в CSS), 5 колонок на ПК
+                        vipGrid.className = 'grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4 lg:gap-6 w-full mb-2 lg:mb-4';
                         
+                        // Рендерим 10 слотов. 9-й и 10-й прячем на мобильных экранах (hidden lg:flex). 
+                        // Таким образом, на телефонах всегда ровно 8 карт (4 ряда), а на ПК ровно 10.
                         vipGrid.innerHTML = initialVips.map((i, idx) => `
-                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu w-full" data-slot="${idx}">
+                            <div class="vip-slot transition-all duration-700 h-full flex transform-gpu w-full ${idx >= 8 ? 'hidden lg:flex' : ''}" data-slot="${idx}">
                                 ${ItemsModule.createCardHtml(i, true)}
                             </div>
                         `).join('');
@@ -523,19 +525,15 @@ export const ItemsModule = {
                             if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                         });
 
-                        // Индивидуальные каскадные таймеры для КАЖДОЙ из 8 карточек (работает и на моб, и на ПК)
-                        if (window.vipPool.length > 8) {
+                        // Каскадные таймеры для КАЖДОЙ из 10 карточек
+                        if (window.vipPool.length > 10) {
                             const slots = vipGrid.querySelectorAll('.vip-slot');
                             slots.forEach((slotEl, index) => {
-                                // Первая меняется через 7с, вторая через 7.7с, третья через 8.4с и т.д.
                                 const initialDelay = index * 700; 
                                 
                                 setTimeout(() => {
                                     const intervalId = setInterval(() => {
-                                        // Не крутим анимацию, если вкладка браузера скрыта
                                         if (document.hidden) return;
-
-                                        // Если ИМЕННО ЭТА карточка в ховере — мы её не трогаем!
                                         if (slotEl.matches(':hover') || slotEl.matches(':active') || slotEl.querySelector(':hover')) return;
 
                                         const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
@@ -552,7 +550,7 @@ export const ItemsModule = {
                                             
                                             slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
                                         }, 700); 
-                                    }, 7000); // Строго 7 секунд
+                                    }, 7000); 
                                     
                                     window.vipCascadeIntervals.push(intervalId);
                                 }, initialDelay);
