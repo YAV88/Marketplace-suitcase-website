@@ -3746,7 +3746,7 @@ window.handleSearch = (event) => {
 };
 
 // ==========================================
-// ПАТЧ: ЕДИНАЯ ЛОГИКА ДОБАВЛЕНИЯ И УДАЛЕНИЯ ИЗ ТОПА
+// ПАТЧ: БЕСШОВНАЯ ЛОГИКА ДОБАВЛЕНИЯ И УДАЛЕНИЯ ИЗ ТОПА
 // ==========================================
 window.toggleItemVip = async (itemId, btnElement) => {
     if (!window.currentUser) return;
@@ -3756,7 +3756,7 @@ window.toggleItemVip = async (itemId, btnElement) => {
     const originalText = btnElement ? btnElement.innerHTML : '';
     if (btnElement) {
         btnElement.disabled = true;
-        btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Обработка...';
+        btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i><span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">Обработка...</span>';
     }
 
     try {
@@ -3772,49 +3772,64 @@ window.toggleItemVip = async (itemId, btnElement) => {
 
         // 2. Блокируем кассой ТОЛЬКО если юзер пытается ДОБАВИТЬ товар, и у него нет PRO
         if (!item.isHighlighted && !isPro) {
-            window.showToast("Для размещения в VIP-ленте нужен SVALKA PRO", true);
+            window.showToast("Для размещения на VIP-витрине нужен SVALKA PRO", true);
             setTimeout(() => window.openModal('crypto-modal'), 1000);
+            if (btnElement) btnElement.innerHTML = originalText;
             return; 
         }
 
-        // 3. ЗАПРОСЫ К БАЗЕ ДАННЫХ (Без визуального оформления кнопок!)
+        // 3. ФОНОВЫЕ ЗАПРОСЫ К БАЗЕ ДАННЫХ
         if (item.isHighlighted) {
-            // СНИМАЕМ ИЗ ТОПА
+            // СНИМАЕМ С ВИТРИНЫ
             const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
             if (error) throw error;
-            window.showToast("Слот освобожден! Товар убран из VIP-ленты.");
+            window.showToast("Слот освобожден! Товар снят с витрины.");
             item.isHighlighted = false; 
         } else {
-            // ДОБАВЛЯЕМ В ТОП
+            // ДОБАВЛЯЕМ НА ВИТРИНУ
             const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
             if (error) throw error;
 
             if (data === 'success') {
-                window.showToast('Товар размещен в VIP-блоке на 7 дней!');
+                window.showToast('Товар успешно размещен на VIP-витрине!');
                 item.isHighlighted = true; 
             } else if (data === 'not_pro') {
                 window.showToast('Для размещения требуется SVALKA PRO.', true);
+                if (btnElement) btnElement.innerHTML = originalText;
                 return;
             } else {
                 window.showToast(data, true); 
+                if (btnElement) btnElement.innerHTML = originalText;
                 return;
             }
         }
 
-        window.closeModal('item-modal');
+        // 4. БЕСШОВНОЕ ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ КНОПКИ (Без закрытия окна!)
+        if (btnElement) {
+            const isItemVip = item.isHighlighted;
+            const vipBtnClass = isItemVip 
+                ? 'liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24' 
+                : 'liquid-btn liquid-btn-amber group bg-amber-50 dark:bg-amber-900/20 hover:bg-transparent dark:hover:bg-transparent text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24';
+            const vipIconClass = isItemVip ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' : 'fa-solid fa-crown text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
+            const vipBtnText = isItemVip ? 'Снять с витрины' : 'На витрину (VIP)';
+            
+            btnElement.className = vipBtnClass;
+            btnElement.innerHTML = `
+                <i class="${vipIconClass}"></i>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">${vipBtnText}</span>
+            `;
+        }
+
+        // Тихо обновляем ленту на фоне, чтобы изменения применились снаружи
         if (window.fetchItems) window.fetchItems(false);
         if (window.renderProfileTabs) window.renderProfileTabs();
         
     } catch (e) {
         console.error("VIP Toggle Error:", e);
         window.showToast("Произошла ошибка связи с сервером", true);
+        if (btnElement) btnElement.innerHTML = originalText;
     } finally {
-        if (btnElement) { 
-            btnElement.disabled = false; 
-            if (btnElement.innerHTML.includes('fa-spinner')) {
-                btnElement.innerHTML = originalText;
-            }
-        }
+        if (btnElement) btnElement.disabled = false; 
     }
 };
 
