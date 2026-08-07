@@ -163,11 +163,11 @@
     .view-grid .body-badges { display: none !important; }
 
     /* ==========================================
-       VIP ТОП-ЛЕНТА (АДАПТИВНАЯ МАТЕМАТИКА)
+       VIP ТОП-ЛЕНТА (АДАПТИВНАЯ МАТЕМАТИКА И ИДЕАЛЬНЫЕ УГЛЫ)
        ========================================== */
     #vip-items-grid { 
         padding: 0.5rem 0 1.5rem 0 !important; 
-        gap: 0.5rem !important; /* ЗАДАЧА 1: Уменьшены отступы между картами на моб. */
+        gap: 0.5rem !important; 
     }
     @media (min-width: 640px) { #vip-items-grid { gap: 1rem !important; } }
     @media (min-width: 1024px) { #vip-items-grid { padding: 1rem 0 2.5rem 0 !important; gap: 1.5rem !important; } }
@@ -181,42 +181,50 @@
     .vip-card, #vip-items-grid .item-card { 
         background: var(--bg-surface) !important;
         border: 1.5px solid #F59E0B !important; 
-        border-radius: 1rem !important; /* На моб. делаем радиус чуть меньше */
+        border-radius: 1rem !important; 
         padding: 0 !important; 
+        
+        /* СЕНЬОР-ФИКС: Аппаратное отсечение для мобильных браузеров */
         overflow: hidden !important; 
+        isolation: isolate !important; /* Изолируем контекст наложения */
+        -webkit-mask-image: -webkit-radial-gradient(white, black); /* Хак для обрезки углов в iOS Safari */
+        
         animation: vipPulseGlow 3s infinite ease-in-out !important;
-        transform: scale(1.02); 
+        transform: translateZ(0) scale(1.02); /* Аппаратное ускорение */
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
     }
     .dark .vip-card, .dark #vip-items-grid .item-card { border-color: #F59E0B !important; }
 
     .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved { color: #F59E0B !important; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    .vip-card:hover, #vip-items-grid .item-card:hover { transform: translateY(-8px) scale(1.04) !important; border-color: #FCD34D !important; animation: none !important; box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important; z-index: 10; }
+    .vip-card:hover, #vip-items-grid .item-card:hover { transform: translateZ(0) translateY(-8px) scale(1.04) !important; border-color: #FCD34D !important; animation: none !important; box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important; z-index: 10; }
 
-    /* ЗАДАЧА 1: Высота картинки: на моб уменьшена (140px), на ПК крупная (240px) */
+    /* СЕНЬОР-ФИКС: Идеальная математика внутренних углов. Убран margin: -1px */
     #vip-items-grid .card-img-wrap { 
         height: 140px !important; min-height: 140px !important; 
-        border-radius: 0 !important; border: none !important; 
-        margin: -1px; width: calc(100% + 2px) !important;
+        /* Внутренний радиус = Внешний радиус (1rem) минус толщина рамки (1.5px) */
+        border-radius: calc(1rem - 1.5px) calc(1rem - 1.5px) 0 0 !important; 
+        border: none !important; 
+        margin: 0 !important; width: 100% !important; 
     }
     @media (min-width: 640px) { #vip-items-grid .card-img-wrap { height: 180px !important; min-height: 180px !important; } }
-    @media (min-width: 1024px) { #vip-items-grid .card-img-wrap { height: 240px !important; min-height: 240px !important; } }
     
     #vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child { display: none !important; }
     
-    /* Отступы контента: на моб компактнее */
     #vip-items-grid .card-body-wrap { padding: 0.5rem !important; justify-content: center !important; }
-    @media (min-width: 1024px) { #vip-items-grid .card-body-wrap { padding: 1rem 0.75rem !important; } }
-
-    /* ЗАДАЧА 1: Шрифты на моб размер как у обычной ленты, на ПК крупнее */
     #vip-items-grid h4 { font-size: 0.85rem !important; font-weight: 800 !important; margin-bottom: 4px !important; line-height: 1.2 !important; }
     #vip-items-grid .price-text { font-size: 1rem !important; }
     
-    /* Десктопные размеры */
     @media (min-width: 1024px) {
         #vip-items-grid h4 { font-size: 1.1rem !important; }
         #vip-items-grid .price-text { font-size: 1.2rem !important; }
         .vip-card, #vip-items-grid .item-card { border-radius: 1.25rem !important; }
+        
+        /* Десктопный радиус картинки = 1.25rem - 1.5px */
+        #vip-items-grid .card-img-wrap { 
+            height: 240px !important; min-height: 240px !important; 
+            border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
+        }
+        #vip-items-grid .card-body-wrap { padding: 1rem 0.75rem !important; }
         #vip-items-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
         #vip-section { margin-bottom: 3rem !important; }
     }
