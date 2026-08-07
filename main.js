@@ -1233,14 +1233,13 @@ window.toggleFavoriteModal = async (event) => {
     }
 
     const itemId = window.currentOpenedItemId || window.activeModalItemId;
-
-    if (!itemId) {
-        window.showToast("Ошибка: ID товара не найден", true);
-        return;
-    }
+    if (!itemId) return;
 
     if (!window.userFavorites) window.userFavorites = new Set();
     const isLiked = window.userFavorites.has(itemId);
+
+    // СЕНЬОР-ФИКС: Очищаем кэш склада
+    if (window.profileTabCache) delete window.profileTabCache['saved'];
 
     const favBtn = document.getElementById('modal-fav-btn');
     const favIcon = document.querySelector('#modal-fav-btn i');
@@ -1255,63 +1254,57 @@ window.toggleFavoriteModal = async (event) => {
             favBtn.classList.remove('text-brand-600');
             favIcon.className = 'fa-solid fa-box-open text-lg transition-transform';
         }
-
         favBtn.classList.add('scale-110');
         setTimeout(() => favBtn.classList.remove('scale-110'), 200);
     }
 
-    const countContainer = document.getElementById(`fav-count-${itemId}`);
-    if (countContainer) {
-        const valEl = countContainer.querySelector('.count-val');
+    // Обновляем все счетчики на странице
+    const countContainers = document.querySelectorAll(`[id="fav-count-${itemId}"]`);
+    countContainers.forEach(container => {
+        const valEl = container.querySelector('.count-val');
+        if(!valEl) return;
         let currentCount = parseInt(valEl.innerText) || 0;
 
         if (!isLiked) {
             currentCount++;
-            countContainer.classList.add('text-brand-500');
+            container.classList.add('text-brand-500');
         } else {
             currentCount = Math.max(0, currentCount - 1);
-            if (currentCount === 0) countContainer.classList.remove('text-brand-500');
+            if (currentCount === 0) container.classList.remove('text-brand-500');
         }
-        
         valEl.innerText = currentCount;
         valEl.classList.add('scale-125', 'text-brand-600');
         setTimeout(() => valEl.classList.remove('scale-125', 'text-brand-600'), 200);
-    }
+    });
 
-    const cardBtnWrapper = document.querySelector(`.item-card[data-id="${itemId}"]`);
-    if (cardBtnWrapper) {
-        const cardBtnIcon = cardBtnWrapper.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
-        if (cardBtnIcon) {
-            cardBtnIcon.className = !isLiked 
+    // СЕНЬОР-ФИКС: Обновляем все кнопки на карточках
+    const cardBtnWrappers = document.querySelectorAll(`.item-card[data-id="${itemId}"]`);
+    cardBtnWrappers.forEach(wrapper => {
+        const icon = wrapper.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
+        if (icon) {
+            icon.className = !isLiked 
                 ? 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform' 
                 : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
         }
-    }
+
+        // Визуальное удаление со склада, если карточка открыта прямо оттуда
+        if (isLiked && window.currentProfileTab === 'saved' && wrapper.closest('#profile-items-grid')) {
+            wrapper.style.opacity = '0';
+            wrapper.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                wrapper.remove();
+                const profileGrid = document.getElementById('profile-items-grid');
+                if (profileGrid && profileGrid.querySelectorAll('.item-card').length === 0 && typeof window.renderProfileTabs === 'function') {
+                    window.renderProfileTabs(true);
+                }
+            }, 300);
+        }
+    });
 
     try {
         if (isLiked) {
             window.userFavorites.delete(itemId);
             window.showToast("Убрано со склада");
-            
-            // --- АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ ВКЛАДКИ СКЛАДА ИЗНУТРИ ОКНА ---
-            if (window.currentProfileTab === 'saved') {
-                const profileGrid = document.getElementById('profile-items-grid');
-                if (profileGrid) {
-                    const cardToRemove = profileGrid.querySelector(`.item-card[data-id="${itemId}"]`);
-                    if (cardToRemove) {
-                        cardToRemove.style.opacity = '0';
-                        cardToRemove.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            cardToRemove.remove();
-                            // Если склад опустел, перерисовываем для показа Empty State
-                            if (profileGrid.querySelectorAll('.item-card').length === 0 && typeof window.renderProfileTabs === 'function') {
-                                window.renderProfileTabs();
-                            }
-                        }, 300);
-                    }
-                }
-            }
-
             await window.supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: itemId });
         } else {
             window.userFavorites.add(itemId);
@@ -1319,7 +1312,6 @@ window.toggleFavoriteModal = async (event) => {
             await window.supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: itemId }]);
         }
     } catch (e) {
-        console.error("Ошибка сохранения на склад:", e);
         window.showToast("Ошибка соединения с базой", true);
     }
 };
@@ -1382,11 +1374,11 @@ window.toggleMobileFilters = () => {
 window.toggleFilters = window.toggleMobileFilters;
 
 window.showToast = (msg, type = 'info') => {
-    // Совместимость со старым кодом, если передавался boolean (true/false)
+    // Совместимость со старым кодом
     if (type === true) type = 'error';
     if (type === false) type = 'info';
     
-    // Авто-перехват позитивных сообщений (Успешный вход, сохранение и т.д.)
+    // Авто-перехват позитивных сообщений
     const positiveWords = ['возвращением', 'успешно', 'поздравляем', 'опубликован', 'сохранен', 'готово'];
     if (positiveWords.some(word => msg.toLowerCase().includes(word))) {
         type = 'success';
@@ -1400,23 +1392,29 @@ window.showToast = (msg, type = 'info') => {
     
     let bgClass = '', iconClass = '';
     
+    // ЗАДАЧА 2: Премиальный Glassmorphism с жестким контрастом
     if (type === 'error') {
-        bgClass = 'bg-red-600 text-white';
+        bgClass = 'bg-red-500/95 dark:bg-red-600/95 text-white border border-red-400 dark:border-red-500 shadow-[0_10px_40px_rgba(239,68,68,0.3)] backdrop-blur-md';
         iconClass = 'fa-circle-exclamation text-white';
     } else if (type === 'success') {
-        bgClass = 'bg-emerald-500 text-white';
+        bgClass = 'bg-emerald-500/95 dark:bg-emerald-600/95 text-white border border-emerald-400 dark:border-emerald-500 shadow-[0_10px_40px_rgba(16,185,129,0.3)] backdrop-blur-md';
         iconClass = 'fa-circle-check text-white';
     } else {
-        // Стандартный (инфо)
-        bgClass = 'bg-stone-900 dark:bg-white text-white dark:text-stone-900';
-        iconClass = 'fa-circle-check text-brand-400';
+        // Убрано со склада и прочая инфа. Жесткий контраст + рамка, чтобы не сливалось.
+        bgClass = 'bg-white/95 dark:bg-stone-800/95 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 shadow-xl backdrop-blur-md';
+        iconClass = 'fa-circle-info text-brand-500';
     }
     
     if (tIco) tIco.className = `fa-solid ${iconClass} text-lg`;
     
     if (t) {
-        t.className = `fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 z-[9999] transition-opacity duration-300 pointer-events-none ${bgClass} opacity-100`;
-        setTimeout(() => t.classList.replace('opacity-100', 'opacity-0'), 3000);
+        // Анимация выезда снизу вверх с пружинистым эффектом
+        t.className = `fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm flex items-center gap-3 z-[9999] transition-all duration-400 pointer-events-none ${bgClass} opacity-100 transform translate-y-0 scale-100`;
+        
+        setTimeout(() => {
+            t.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+            t.classList.add('opacity-0', 'translate-y-4', 'scale-95');
+        }, 3000);
     }
 };
 
@@ -1914,61 +1912,71 @@ window.toggleFavoriteCard = async (id, btnEl) => {
     
     if (!window.userFavorites) window.userFavorites = new Set();
     const isLiked = window.userFavorites.has(id);
-    const icon = btnEl.querySelector('i');
     
-    const countContainer = document.getElementById(`fav-count-${id}`);
-
-    if (countContainer) {
-        const valEl = countContainer.querySelector('.count-val');
+    // СЕНЬОР-ФИКС: Мгновенно сбрасываем кэш склада, чтобы при переходе туда подтянулись свежие данные!
+    if (window.profileTabCache) delete window.profileTabCache['saved'];
+    
+    // 1. Обновляем счетчики везде (querySelectorAll, так как карточек может быть несколько на экране)
+    const countContainers = document.querySelectorAll(`[id="fav-count-${id}"]`);
+    countContainers.forEach(container => {
+        const valEl = container.querySelector('.count-val');
+        if (!valEl) return;
         let currentCount = parseInt(valEl.innerText) || 0;
 
         if (!isLiked) { 
             currentCount++;
-            countContainer.classList.add('text-brand-500');
+            container.classList.add('text-brand-500');
         } else { 
             currentCount = Math.max(0, currentCount - 1);
-            if (currentCount === 0) {
-                countContainer.classList.remove('text-brand-500');
-            }
+            if (currentCount === 0) container.classList.remove('text-brand-500');
         }
-        
         valEl.innerText = currentCount;
         valEl.classList.add('scale-125', 'text-brand-600');
         setTimeout(() => valEl.classList.remove('scale-125', 'text-brand-600'), 200);
-    }
+    });
     
-    if (isLiked) {
-        window.userFavorites.delete(id);
-        if (icon) icon.className = 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
-        btnEl.title = window.t ? window.t("Добавить на склад") : "Добавить на склад";
-        if (typeof window.showToast === 'function') window.showToast("Убрано со склада");
+    // 2. СЕНЬОР-ФИКС: Находим ВСЕ кнопки-коробки для этого товара (в ленте, в ТОПе, в профиле)
+    const cardBtnWrappers = document.querySelectorAll(`.item-card[data-id="${id}"]`);
+    cardBtnWrappers.forEach(wrapper => {
+        const icon = wrapper.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
+        const btn = wrapper.querySelector('.card-fav-btn button, .absolute.z-\\[60\\] button');
         
-        // --- АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ ВКЛАДКИ СКЛАДА ---
-        if (window.currentProfileTab === 'saved') {
-            const profileGrid = document.getElementById('profile-items-grid');
-            if (profileGrid) {
-                const cardToRemove = profileGrid.querySelector(`.item-card[data-id="${id}"]`);
-                if (cardToRemove) {
-                    cardToRemove.style.opacity = '0';
-                    cardToRemove.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        cardToRemove.remove();
-                        // Если склад опустел, перерисовываем, чтобы показать Empty State
-                        if (profileGrid.querySelectorAll('.item-card').length === 0 && typeof window.renderProfileTabs === 'function') {
-                            window.renderProfileTabs();
-                        }
-                    }, 300);
-                }
-            }
+        if (icon) {
+            icon.className = !isLiked 
+                ? 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform' 
+                : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
+        }
+        if (btn) {
+            btn.title = !isLiked ? (window.t ? window.t("Убрать со склада") : "Убрать со склада") : (window.t ? window.t("Добавить на склад") : "Добавить на склад");
         }
         
-        await window.supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: id });
-    } else {
-        window.userFavorites.add(id);
-        if (icon) icon.className = 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform';
-        btnEl.title = window.t ? window.t("Убрать со склада") : "Убрать со склада";
-        if (typeof window.showToast === 'function') window.showToast("Добавлено на склад", "success");
-        await window.supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: id }]);
+        // 3. Если мы СЕЙЧАС на вкладке "Склад" и убрали товар — визуально растворяем именно эту карточку
+        if (isLiked && window.currentProfileTab === 'saved' && wrapper.closest('#profile-items-grid')) {
+            wrapper.style.opacity = '0';
+            wrapper.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                wrapper.remove();
+                const profileGrid = document.getElementById('profile-items-grid');
+                if (profileGrid && profileGrid.querySelectorAll('.item-card').length === 0 && typeof window.renderProfileTabs === 'function') {
+                    window.renderProfileTabs(true); // Форсируем перерисовку на Empty State
+                }
+            }, 300);
+        }
+    });
+    
+    // 4. Фоновый запрос к БД
+    try {
+        if (isLiked) {
+            window.userFavorites.delete(id);
+            if (typeof window.showToast === 'function') window.showToast("Убрано со склада");
+            await window.supabase.from('favorites').delete().match({ user_id: window.currentUser.id, item_id: id });
+        } else {
+            window.userFavorites.add(id);
+            if (typeof window.showToast === 'function') window.showToast("Добавлено на склад", "success");
+            await window.supabase.from('favorites').insert([{ user_id: window.currentUser.id, item_id: id }]);
+        }
+    } catch (e) {
+        console.error("Ошибка сохранения на склад:", e);
     }
 };
 
