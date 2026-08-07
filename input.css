@@ -99,7 +99,12 @@
     
     /* Активная кнопка категории */
     .cat-btn.active { background-color: var(--color-brand-500) !important; color: #ffffff !important; border-color: var(--color-brand-500) !important; }
+    .cat-btn.active.liquid-btn-red { background-color: #EF4444 !important; border-color: #EF4444 !important; }
     .cat-btn.active::before { display: none; }
+    
+    /* Жесткий контроль цвета текста при системном автозаполнении браузера */
+    input:-webkit-autofill, textarea:-webkit-autofill { -webkit-text-fill-color: var(--text-primary) !important; }
+    .dark input:-webkit-autofill, .dark textarea:-webkit-autofill { -webkit-text-fill-color: #ffffff !important; }
 
     /* Цветовые модификаторы волны */
     .liquid-btn-red::before { background-color: #EF4444 !important; }

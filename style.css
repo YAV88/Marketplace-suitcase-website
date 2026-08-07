@@ -780,8 +780,23 @@ option, optgroup {
   border-color: var(--color-brand-500) !important;
 }
 
+.cat-btn.active.liquid-btn-red {
+  background-color: #EF4444 !important;
+  border-color: #EF4444 !important;
+}
+
 .cat-btn.active::before {
   display: none;
+}
+
+/* Жесткий контроль цвета текста при системном автозаполнении браузера */
+
+input:-webkit-autofill, textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--text-primary) !important;
+}
+
+.dark input:-webkit-autofill, .dark textarea:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Цветовые модификаторы волны */
@@ -1591,6 +1606,10 @@ option, optgroup {
   top: 100%;
 }
 
+.top-\[calc\(100\%\+4px\)\]{
+  top: calc(100% + 4px);
+}
+
 .z-0{
   z-index: 0;
 }
@@ -1665,6 +1684,10 @@ option, optgroup {
 
 .z-\[99\]{
   z-index: 99;
+}
+
+.z-40{
+  z-index: 40;
 }
 
 .order-3{
@@ -1895,6 +1918,10 @@ option, optgroup {
   display: none;
 }
 
+.\!hidden{
+  display: none !important;
+}
+
 .h-1\.5{
   height: 0.375rem;
 }
@@ -1999,6 +2026,10 @@ option, optgroup {
   height: 1px;
 }
 
+.h-\[50px\]{
+  height: 50px;
+}
+
 .max-h-0{
   max-height: 0px;
 }
@@ -2029,6 +2060,10 @@ option, optgroup {
 
 .max-h-full{
   max-height: 100%;
+}
+
+.max-h-64{
+  max-height: 16rem;
 }
 
 .min-h-0{
@@ -2240,6 +2275,10 @@ option, optgroup {
   flex-shrink: 0;
 }
 
+.origin-top{
+  transform-origin: top;
+}
+
 .-translate-x-1\/2{
   --tw-translate-x: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -2301,6 +2340,12 @@ option, optgroup {
 .scale-\[1\.02\]{
   --tw-scale-x: 1.02;
   --tw-scale-y: 1.02;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.scale-95{
+  --tw-scale-x: .95;
+  --tw-scale-y: .95;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2841,11 +2886,6 @@ option, optgroup {
   background-color: rgb(244 239 230 / var(--tw-bg-opacity, 1));
 }
 
-.bg-\[\#FDFBF7\]{
-  --tw-bg-opacity: 1;
-  background-color: rgb(253 251 247 / var(--tw-bg-opacity, 1));
-}
-
 .bg-\[\#f5f5f4\]{
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 244 / var(--tw-bg-opacity, 1));
@@ -3061,6 +3101,11 @@ option, optgroup {
 
 .bg-white\/95{
   background-color: rgb(255 255 255 / 0.95);
+}
+
+.bg-blue-600{
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-br{
@@ -3558,10 +3603,6 @@ option, optgroup {
   font-weight: 500;
 }
 
-.font-semibold{
-  font-weight: 600;
-}
-
 .uppercase{
   text-transform: uppercase;
 }
@@ -3612,11 +3653,6 @@ option, optgroup {
 
 .tracking-widest{
   letter-spacing: 0.1em;
-}
-
-.text-\[\#3E362E\]{
-  --tw-text-opacity: 1;
-  color: rgb(62 54 46 / var(--tw-text-opacity, 1));
 }
 
 .text-amber-400{
@@ -4288,6 +4324,16 @@ option, optgroup {
   border-color: rgb(214 211 209 / var(--tw-border-opacity, 1));
 }
 
+.hover\:border-amber-600:hover{
+  --tw-border-opacity: 1;
+  border-color: rgb(217 119 6 / var(--tw-border-opacity, 1));
+}
+
+.hover\:border-blue-600:hover{
+  --tw-border-opacity: 1;
+  border-color: rgb(37 99 235 / var(--tw-border-opacity, 1));
+}
+
 .hover\:bg-amber-50:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(255 251 235 / var(--tw-bg-opacity, 1));
@@ -4394,6 +4440,16 @@ option, optgroup {
 .hover\:bg-white:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-amber-600:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(217 119 6 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-blue-700:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-\[\#0088cc\]:hover{
@@ -4574,6 +4630,16 @@ option, optgroup {
 .group:hover .group-hover\:text-white{
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.group:hover .group-hover\:text-amber-500{
+  --tw-text-opacity: 1;
+  color: rgb(245 158 11 / var(--tw-text-opacity, 1));
+}
+
+.group:hover .group-hover\:text-blue-500{
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
 .group:hover .group-hover\:opacity-100{
@@ -5080,6 +5146,16 @@ option, optgroup {
 .dark\:hover\:border-stone-700:hover:is(.dark *){
   --tw-border-opacity: 1;
   border-color: rgb(68 64 60 / var(--tw-border-opacity, 1));
+}
+
+.dark\:hover\:border-amber-500:hover:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(245 158 11 / var(--tw-border-opacity, 1));
+}
+
+.dark\:hover\:border-blue-500:hover:is(.dark *){
+  --tw-border-opacity: 1;
+  border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
 }
 
 .dark\:hover\:bg-amber-900\/20:hover:is(.dark *){

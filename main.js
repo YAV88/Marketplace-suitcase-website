@@ -1709,23 +1709,14 @@ window.toggleUrgentFilter = () => {
     const btn = document.getElementById('btn-cat-urgent'); 
     const subContainer = document.getElementById('sub-cats-container');
     
+    // Мы больше не переписываем className. Мы только добавляем или убираем класс 'active'. CSS сделает остальное!
     if (window.showUrgentOnly) {
-        if (btn) {
-            btn.classList.add('active', 'bg-red-500', 'text-white', 'border-red-500', 'shadow-md', 'scale-[1.02]');
-            btn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800/50', 'hover:scale-105');
-        }
+        if (btn) btn.classList.add('active');
         window.currentCategory = 'Все';
-        // СЕНЬОР-ФИКС: Бережно удаляем только классы активности, не стирая liquid-btn
-        document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.classList.remove('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
-            b.classList.add('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
-        });
+        document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => b.classList.remove('active'));
         if (subContainer) subContainer.classList.add('hidden');
     } else {
-        if (btn) {
-            btn.classList.remove('active', 'bg-red-500', 'text-white', 'border-red-500', 'shadow-md', 'scale-[1.02]');
-            btn.classList.add('bg-red-50', 'text-red-600', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800/50', 'hover:scale-105');
-        }
+        if (btn) btn.classList.remove('active');
     }
     window.fetchItems();
 };
@@ -2188,70 +2179,68 @@ window.selectAddType = (type) => {
     const title = document.getElementById('add-modal-title');
     const mapContainer = document.getElementById('add-map-container');
     
-    // Подключаем переводчик
     const t = window.t || (txt => txt);
 
     step1.classList.add('hidden');
     form.classList.remove('hidden');
     form.classList.add('flex');
     
-    document.getElementById('add-block-product').classList.add('hidden');
+    document.getElementById('add-block-product').classList.add('hidden', '!hidden');
     document.getElementById('add-block-product').classList.remove('flex');
-    document.getElementById('add-block-estate').classList.add('hidden');
+    document.getElementById('add-block-estate').classList.add('hidden', '!hidden');
     document.getElementById('add-block-estate').classList.remove('flex');
-    document.getElementById('add-block-job').classList.add('hidden');
+    document.getElementById('add-block-job').classList.add('hidden', '!hidden');
     document.getElementById('add-block-job').classList.remove('flex');
 
-    // СЕНЬОР-ФИКС: Динамическое перекрашивание всей формы под цвет категории
-    let color = 'brand-500';
-    let hoverColor = 'brand-600';
-    
-    if (type === 'estate') { color = 'blue-500'; hoverColor = 'blue-600'; }
-    if (type === 'job') { color = 'amber-500'; hoverColor = 'amber-600'; }
+    // Массив точных классов для Tailwind PurgeCSS (чтобы компилятор их не удалял)
+    const colorMap = {
+        'product': { border: 'focus-within:border-brand-500', caret: 'caret-brand-600', dropHover: 'hover:border-brand-600', dropHoverDark: 'dark:hover:border-brand-500', iconColor: 'group-hover:text-brand-500', btnBg: 'bg-brand-600', btnHover: 'hover:bg-brand-700', progress: 'bg-brand-500' },
+        'estate': { border: 'focus-within:border-blue-500', caret: 'caret-blue-600', dropHover: 'hover:border-blue-600', dropHoverDark: 'dark:hover:border-blue-500', iconColor: 'group-hover:text-blue-500', btnBg: 'bg-blue-600', btnHover: 'hover:bg-blue-700', progress: 'bg-blue-500' },
+        'job': { border: 'focus-within:border-amber-500', caret: 'caret-amber-600', dropHover: 'hover:border-amber-600', dropHoverDark: 'dark:hover:border-amber-500', iconColor: 'group-hover:text-amber-500', btnBg: 'bg-amber-500', btnHover: 'hover:bg-amber-600', progress: 'bg-amber-500' }
+    };
 
-    // 1. Меняем цвет обводок при фокусе
-    form.querySelectorAll('[class*="focus-within:border-"]').forEach(el => {
-        el.className = el.className.replace(/focus-within:border-\w+-\d+/g, `focus-within:border-${color}`);
-    });
-    
-    // 2. Меняем цвет мигающей каретки ввода текста
-    form.querySelectorAll('[class*="caret-"]').forEach(el => {
-        el.className = el.className.replace(/caret-\w+-\d+/g, `caret-${hoverColor}`);
-    });
+    const prevTheme = window.currentFormTheme || 'product';
+    window.currentFormTheme = type;
+    const cOld = colorMap[prevTheme];
+    const cNew = colorMap[type];
 
-    // 3. Меняем цвета в зоне загрузки фотографий
+    // Умная подмена классов формы
+    form.querySelectorAll(`.${cOld.border.replace(':', '\\:')}`).forEach(el => { el.classList.remove(cOld.border); el.classList.add(cNew.border); });
+    form.querySelectorAll(`.${cOld.caret.replace(':', '\\:')}`).forEach(el => { el.classList.remove(cOld.caret); el.classList.add(cNew.caret); });
+    
     const dropZone = document.getElementById('drop-zone');
     if (dropZone) {
-        dropZone.className = dropZone.className.replace(/hover:border-\w+-\d+/g, `hover:border-${hoverColor}`).replace(/dark:hover:border-\w+-\d+/g, `dark:hover:border-${color}`);
+        dropZone.classList.remove(cOld.dropHover, cOld.dropHoverDark);
+        dropZone.classList.add(cNew.dropHover, cNew.dropHoverDark);
         const icon = dropZone.querySelector('i');
-        if (icon) icon.className = icon.className.replace(/group-hover:text-\w+-\d+/g, `group-hover:text-${color}`);
-    }
-
-    // 4. Меняем цвет главной кнопки "Опубликовать"
-    const submitBtn = document.getElementById('add-submit-btn');
-    if (submitBtn) {
-        submitBtn.className = submitBtn.className
-            .replace(/bg-\w+-\d+/g, `bg-${type === 'job' ? 'amber-500' : hoverColor}`)
-            .replace(/hover:bg-\w+-\d+/g, `hover:bg-${type === 'job' ? 'amber-600' : hoverColor.replace('600', '700')}`);
-    }
-
-    // 5. Меняем цвет полосы загрузки
-    const progBar = document.getElementById('submit-progress-bar');
-    if (progBar) {
-        progBar.className = progBar.className.replace(/bg-\w+-\d+/g, `bg-${color}`);
+        if (icon) { icon.classList.remove(cOld.iconColor); icon.classList.add(cNew.iconColor); }
     }
     
-    // Открываем нужный блок
+    const submitBtn = document.getElementById('add-submit-btn');
+    if (submitBtn) {
+        submitBtn.classList.remove(cOld.btnBg, cOld.btnHover);
+        submitBtn.classList.add(cNew.btnBg, cNew.btnHover);
+    }
+    
+    const progBar = document.getElementById('submit-progress-bar');
+    if (progBar) {
+        progBar.classList.remove(cOld.progress);
+        progBar.classList.add(cNew.progress);
+    }
+
+    // Инициализация кастомных Dropdown (Вызываем после отображения нужного блока формы)
+    setTimeout(() => { if(typeof window.initCustomSelects === 'function') window.initCustomSelects(); }, 50);
+
     if(type === 'product') {
         title.innerText = t('modal_add_item');
-        document.getElementById('add-block-product').classList.remove('hidden');
+        document.getElementById('add-block-product').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-product').classList.add('flex');
         document.getElementById('item-category').required = true;
         mapContainer.classList.add('hidden');
         mapContainer.classList.remove('flex');
     } else if(type === 'estate') {
         title.innerText = t('modal_add_estate');
-        document.getElementById('add-block-estate').classList.remove('hidden');
+        document.getElementById('add-block-estate').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-estate').classList.add('flex');
         document.getElementById('item-category').required = false;
         mapContainer.classList.remove('hidden');
@@ -2259,7 +2248,7 @@ window.selectAddType = (type) => {
         window.initAddMap();
     } else if(type === 'job') {
         title.innerText = t('modal_add_job');
-        document.getElementById('add-block-job').classList.remove('hidden');
+        document.getElementById('add-block-job').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-job').classList.add('flex');
         document.getElementById('item-category').required = false;
         mapContainer.classList.remove('hidden');
@@ -2267,6 +2256,109 @@ window.selectAddType = (type) => {
         window.initAddMap();
     }
 };
+
+// ЗАДАЧА 3: Премиальные кастомные Dropdown вместо нативных <select>
+window.initCustomSelects = () => {
+    const formSelects = document.querySelectorAll('#add-form select');
+    formSelects.forEach(select => {
+        if (select.dataset.customized === 'true') return;
+        select.dataset.customized = 'true';
+        select.classList.add('hidden', '!hidden'); // Полностью прячем нативный селект
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative w-full z-40';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-full bg-transparent p-3 pr-10 font-medium text-base text-stone-900 dark:text-white outline-none flex items-center justify-between text-left h-[50px]';
+        
+        let selectedOpt = select.options[select.selectedIndex];
+        let labelSpan = document.createElement('span');
+        labelSpan.className = 'truncate pointer-events-none text-stone-500 dark:text-stone-400';
+        if (selectedOpt && selectedOpt.value !== "") {
+            labelSpan.innerText = selectedOpt.innerText;
+            labelSpan.classList.remove('text-stone-500', 'dark:text-stone-400');
+        } else {
+            labelSpan.innerText = selectedOpt ? selectedOpt.innerText : 'Выберите...';
+        }
+        
+        let icon = document.createElement('i');
+        icon.className = 'fa-solid fa-chevron-down text-sm text-stone-400 absolute right-3 pointer-events-none transition-transform duration-200';
+        
+        btn.appendChild(labelSpan);
+        btn.appendChild(icon);
+        wrapper.appendChild(btn);
+
+        const menu = document.createElement('div');
+        menu.className = 'absolute left-0 top-[calc(100%+4px)] w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-xl overflow-y-auto max-h-64 hidden z-50 py-1 custom-scrollbar flex flex-col origin-top transition-all duration-200 scale-95 opacity-0 pointer-events-none';
+        
+        const buildOption = (opt) => {
+            if (opt.disabled || opt.style.display === 'none') return;
+            const item = document.createElement('div');
+            item.className = 'px-4 py-2.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-brand-50 dark:hover:bg-brand-900/20 cursor-pointer transition-colors';
+            item.innerText = opt.innerText;
+            item.onclick = (e) => {
+                e.stopPropagation();
+                select.value = opt.value;
+                labelSpan.innerText = opt.innerText;
+                labelSpan.classList.remove('text-stone-500', 'dark:text-stone-400');
+                
+                menu.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
+                setTimeout(() => menu.classList.add('hidden'), 200);
+                icon.classList.remove('rotate-180');
+                
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            };
+            menu.appendChild(item);
+        };
+
+        Array.from(select.children).forEach(child => {
+            if (child.tagName === 'OPTGROUP') {
+                const grp = document.createElement('div');
+                grp.className = 'px-4 py-1.5 text-[10px] font-black text-stone-400 uppercase tracking-widest mt-2 border-b border-stone-100 dark:border-stone-700/50 pb-1';
+                grp.innerText = child.label;
+                menu.appendChild(grp);
+                Array.from(child.options).forEach(buildOption);
+            } else if (child.tagName === 'OPTION') {
+                buildOption(child);
+            }
+        });
+
+        wrapper.appendChild(menu);
+
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const isHidden = menu.classList.contains('hidden');
+            
+            // Закрываем все другие меню
+            document.querySelectorAll('.custom-select-menu').forEach(m => {
+                m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
+                setTimeout(() => m.classList.add('hidden'), 200);
+            });
+            document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    menu.classList.remove('scale-95', 'opacity-0', 'pointer-events-none');
+                    icon.classList.add('rotate-180');
+                });
+            }
+        };
+        menu.classList.add('custom-select-menu');
+        icon.classList.add('custom-select-icon');
+    });
+};
+
+document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select-menu').forEach(m => {
+        m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
+        setTimeout(() => m.classList.add('hidden'), 200);
+    });
+    document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
+});
 
 window.backToAddStep1 = () => {
     document.getElementById('add-step-1').classList.remove('hidden');
@@ -2581,12 +2673,15 @@ window.renderProfileTabs = async (forceRefresh = false) => {
 
     if (!grid) return;
 
-    // СЕНЬОР-ОПТИМИЗАЦИЯ: Если есть кэш (не старше 1 минуты) и мы не форсируем обновление,
+    // Если есть кэш (не старше 1 минуты) и мы не форсируем обновление,
     // отдаем готовый HTML моментально.
     if (!forceRefresh && window.profileTabCache[tab] && (Date.now() - window.profileTabCache[tab].time < 60000)) {
         grid.innerHTML = window.profileTabCache[tab].html;
         if (emptyState) emptyState.style.display = window.profileTabCache[tab].isEmpty ? 'flex' : 'none';
         grid.className = tab === 'reviews' ? 'flex flex-col gap-4 w-full max-w-2xl mx-auto mt-2' : `grid w-full items-stretch view-${window.currentViewMode || 'grid'}`;
+        
+        // Форсируем анимацию появления, когда карты достаются из кэша
+        if (typeof window.animateVisibleElements === 'function') setTimeout(() => window.animateVisibleElements(), 50);
         return;
     }
 
@@ -2708,18 +2803,10 @@ window.applyCondition = (val) => {
 
     if (val !== 'Все' && noConditionCats.some(c => window.currentCategory.startsWith(c))) {
         window.currentCategory = 'Все';
-
-        // СЕНЬОР-ФИКС: Бережное переключение классов без затирания жидкой кнопки
-        document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.classList.remove('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
-            b.classList.add('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
-        });
-
+        // Бережное переключение:
+        document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => b.classList.remove('active'));
         const allBtn = document.querySelector('#main-cats-container .cat-btn[data-cat="Все"]');
-        if (allBtn) {
-            allBtn.classList.remove('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
-            allBtn.classList.add('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
-        }
+        if (allBtn) allBtn.classList.add('active');
 
         const subContainer = document.getElementById('sub-cats-container');
         if (subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }

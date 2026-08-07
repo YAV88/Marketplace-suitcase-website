@@ -46,36 +46,14 @@ export const ItemsModule = {
         }
 
         const urgentBtn = document.getElementById('btn-cat-urgent');
-        if (urgentBtn) urgentBtn.classList.remove('active', 'bg-amber-100', 'border-amber-400', 'text-amber-700');
+        if (urgentBtn) urgentBtn.classList.remove('active');
 
-        document.querySelectorAll('.sidebar-cat-group').forEach(grp => {
-            const btn = grp.querySelector('button');
-            if (!btn) return;
-            
-            const grpCat = btn.innerText.trim();
-
-            if (cat.startsWith(grpCat) && cat !== 'Все') {
-                btn.classList.add('text-brand-600');
-                btn.classList.remove('text-stone-700', 'dark:text-stone-300');
-            } else {
-                btn.classList.remove('text-brand-600');
-                btn.classList.add('text-stone-700', 'dark:text-stone-300');
-            }
-            
-            const subWrap = grp.querySelector('.sidebar-sub-cats');
-            if (subWrap) {
-                subWrap.querySelectorAll('button').forEach(subBtn => {
-                    const isSubActive = window.currentCategory === (grpCat + ' - ' + subBtn.innerText.trim());
-                    if (isSubActive) {
-                        subBtn.classList.add('text-brand-600', 'font-bold');
-                        subBtn.classList.remove('text-stone-500', 'dark:text-stone-400');
-                    } else {
-                        subBtn.classList.remove('text-brand-600', 'font-bold');
-                        subBtn.classList.add('text-stone-500', 'dark:text-stone-400');
-                    }
-                });
-            }
+        document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
+            b.classList.remove('active');
         });
+        
+        const targetBtn = document.querySelector(`#main-cats-container .cat-btn[data-cat="${cat === 'Все' ? 'Все' : cat.split(' - ')[0]}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
 
         const allBtn = document.querySelector('#sidebar-categories > button');
         if (allBtn) {
