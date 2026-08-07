@@ -948,28 +948,39 @@ option, optgroup {
   }
 }
 
-.vip-card, #vip-items-grid .item-card {
+/* БАЗОВЫЙ СТИЛЬ VIP-КАРТЫ (в любой ленте) */
+
+.vip-card {
   background: var(--bg-surface) !important;
   border: 1.5px solid #F59E0B !important;
-  border-radius: 1rem !important;
+  border-radius: 1.25rem !important;
+  /* Универсальный радиус, как у обычных карт */
   padding: 0 !important;
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: translateZ(0) scale(1.02);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
 }
 
-/* СЕНЬОР-ФИКС: Жестко фиксируем золотой цвет рамки в темной теме */
-
-.dark .vip-card, .dark #vip-items-grid .item-card {
+.dark .vip-card {
   border-color: #F59E0B !important;
+}
+
+/* Радиус внутри специальной ТОП-сетки на мобилках делаем чуть меньше */
+
+#vip-items-grid .vip-card, #vip-items-grid .item-card {
+  border-radius: 1rem !important;
+}
+
+@media (min-width: 1024px) {
+  #vip-items-grid .vip-card, #vip-items-grid .item-card {
+    border-radius: 1.25rem !important;
+  }
 }
 
 .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved {
   color: #F59E0B !important;
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-
-/* СЕНЬОР-ФИКС: Прописываем стили hover ДЛЯ ОБЕИХ ТЕМ, чтобы зеленая тень базовой карты не перебивала золотую в Dark Mode */
 
 .vip-card:hover, #vip-items-grid .item-card:hover,
     .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
@@ -980,12 +991,38 @@ option, optgroup {
   z-index: 10;
 }
 
-/* СЕНЬОР-ФИКС: Идеальная математика внутренних углов. Убран margin: -1px */
+/* ==========================================
+       СЕНЬОР-ФИКС: ЮВЕЛИРНЫЕ УГЛЫ ФОТОГРАФИЙ
+       Вычитаем толщину рамки (1.5px), чтобы картинка не вылезала
+       ========================================== */
+
+/* 1. Режим GRID (Обычная лента - мобильные и ПК) */
+
+.view-grid .vip-card .card-img-wrap {
+  border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
+}
+
+/* 2. Режим LIST (Мобильный вид списка) */
+
+@media (max-width: 768px) {
+  .view-list .vip-card .card-img-wrap {
+    border-radius: calc(1.25rem - 1.5px) 0 0 calc(1.25rem - 1.5px) !important;
+  }
+}
+
+/* 3. Режим LIST (Десктопный вид списка) */
+
+@media (min-width: 1024px) {
+  .view-list .vip-card .card-img-wrap {
+    border-radius: calc(0.75rem - 1.5px) !important;
+  }
+}
+
+/* 4. Режим СПЕЦИАЛЬНОЙ ТОП-ЛЕНТЫ (Мобилка и ПК) */
 
 #vip-items-grid .card-img-wrap {
   height: 140px !important;
   min-height: 140px !important;
-  /* Внутренний радиус = Внешний радиус (1rem) минус толщина рамки (1.5px) */
   border-radius: calc(1rem - 1.5px) calc(1rem - 1.5px) 0 0 !important;
   border: none !important;
   margin: 0 !important;
@@ -998,6 +1035,16 @@ option, optgroup {
     min-height: 180px !important;
   }
 }
+
+@media (min-width: 1024px) {
+  #vip-items-grid .card-img-wrap {
+    height: 240px !important;
+    min-height: 240px !important;
+    border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
+  }
+}
+
+/* Скрытие лишних бейджей в ТОП-ленте */
 
 #vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child {
   display: none !important;
@@ -1026,18 +1073,6 @@ option, optgroup {
 
   #vip-items-grid .price-text {
     font-size: 1.2rem !important;
-  }
-
-  .vip-card, #vip-items-grid .item-card {
-    border-radius: 1.25rem !important;
-  }
-
-  /* Десктопный радиус картинки = 1.25rem - 1.5px */
-
-  #vip-items-grid .card-img-wrap {
-    height: 240px !important;
-    min-height: 240px !important;
-    border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
   }
 
   #vip-items-grid .card-body-wrap {
