@@ -1108,15 +1108,18 @@ export const ItemsModule = {
             const chatBtn = document.getElementById('btn-contact-seller'); 
 
             if (isOwner) {
-                // Динамический статус кнопки VIP
+                // Динамический статус кнопки VIP с огоньком
                 const isItemVip = item.is_highlighted || item.isHighlighted;
-                // Добавлен hover:bg-transparent, чтобы сплошной фон не блокировал жидкую волну при наведении
+                
                 const vipBtnClass = isItemVip 
                     ? 'liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700' 
                     : 'liquid-btn liquid-btn-amber group bg-amber-50 dark:bg-amber-900/20 hover:bg-transparent dark:hover:bg-transparent text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50';
                 
-                // Тематические названия и новые иконки для VIP
-                const vipIconClass = isItemVip ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' : 'fa-solid fa-crown text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
+                // Используем fa-fire-flame-curved оранжевого цвета, чтобы дизайн был консистентным
+                const vipIconClass = isItemVip 
+                    ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' 
+                    : 'fa-solid fa-fire-flame-curved text-orange-500 text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
+                
                 const vipBtnText = isItemVip ? 'Снять с витрины' : 'На витрину (VIP)';
 
                 if (ownerControls) {

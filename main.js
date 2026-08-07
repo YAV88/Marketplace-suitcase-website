@@ -3779,7 +3779,12 @@ window.toggleItemVip = async (itemId, btnElement) => {
             const vipBtnClass = isItemVip 
                 ? 'liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24' 
                 : 'liquid-btn liquid-btn-amber group bg-amber-50 dark:bg-amber-900/20 hover:bg-transparent dark:hover:bg-transparent text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24';
-            const vipIconClass = isItemVip ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' : 'fa-solid fa-crown text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
+            
+            // Огонек вместо короны при живом бесшовном обновлении
+            const vipIconClass = isItemVip 
+                ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' 
+                : 'fa-solid fa-fire-flame-curved text-orange-500 text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
+                
             const vipBtnText = isItemVip ? 'Снять с витрины' : 'На витрину (VIP)';
             
             btnElement.className = vipBtnClass;

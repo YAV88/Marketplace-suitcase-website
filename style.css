@@ -693,7 +693,7 @@ input[type="text"], input[type="number"], input[type="email"], input[type="passw
 input:focus, textarea:focus, select:focus {
   border-color: var(--color-brand-500) !important;
   outline: none !important;
-  box-shadow: 0 0 0 4px rgba(31, 182, 166, 0.15) !important;
+  box-shadow: none !important;
 }
 
 select {
@@ -703,6 +703,12 @@ select {
   background-color: transparent !important;
   background-image: none !important;
   cursor: pointer !important;
+}
+
+option, optgroup {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
 }
 
 .modal-overlay {
@@ -1396,12 +1402,12 @@ select {
   position: sticky;
 }
 
-.inset-0{
-  inset: 0px;
-}
-
 .-inset-\[2px\]{
   inset: -2px;
+}
+
+.inset-0{
+  inset: 0px;
 }
 
 .inset-y-0{
@@ -1977,12 +1983,12 @@ select {
   max-height: 90vh;
 }
 
-.max-h-full{
-  max-height: 100%;
-}
-
 .max-h-\[95dvh\]{
   max-height: 95dvh;
+}
+
+.max-h-full{
+  max-height: 100%;
 }
 
 .min-h-0{
@@ -2977,10 +2983,6 @@ select {
 .bg-stone-800{
   --tw-bg-opacity: 1;
   background-color: rgb(41 37 36 / var(--tw-bg-opacity, 1));
-}
-
-.bg-stone-800\/80{
-  background-color: rgb(41 37 36 / 0.8);
 }
 
 .bg-stone-900{
@@ -4853,6 +4855,10 @@ select {
   background-color: rgb(41 37 36 / 0.9);
 }
 
+.dark\:bg-stone-800\/95:is(.dark *){
+  background-color: rgb(41 37 36 / 0.95);
+}
+
 .dark\:bg-stone-900:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
@@ -4886,10 +4892,6 @@ select {
 .dark\:bg-white:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
-.dark\:bg-stone-800\/95:is(.dark *){
-  background-color: rgb(41 37 36 / 0.95);
 }
 
 .dark\:from-amber-900\/20:is(.dark *){
