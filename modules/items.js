@@ -171,10 +171,11 @@ export const ItemsModule = {
         else if (isAnimalEntity) condBadgeBase = '';
         else {
             if (i.condition === 'Новое') condBadgeBase = `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Новое')}</span>`;
-            else condBadgeBase = `<span class="bg-stone-800/80 backdrop-blur-md text-white text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Б/У')}</span>`;
+            // ЗАДАЧА 2: Делаем плашку Б/У максимально контрастной (Белая в светлой теме, Темная в темной)
+            else condBadgeBase = `<span class="bg-white/95 dark:bg-stone-800/95 backdrop-blur-md text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 text-[9px] font-black px-2 py-1 rounded shadow-sm tracking-widest uppercase">${t('Б/У')}</span>`;
         }
         const condBadgeImg = condBadgeBase ? `<div class="absolute top-2 left-2 z-20">${condBadgeBase}</div>` : '';
-
+        
         // ЗАДАЧА 1 и 2: Разделяем бейджи на две строки и скрываем на мобилках
         let deliveryBadges = '';
         if (i.delivery && i.delivery.includes('PostExpress')) deliveryBadges += `<span class="flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-300 shrink-0"><i class="fa-solid fa-box-open text-indigo-500"></i> PostExpress</span>`;
