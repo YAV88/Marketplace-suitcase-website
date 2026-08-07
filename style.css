@@ -958,6 +958,8 @@ option, optgroup {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
 }
 
+/* СЕНЬОР-ФИКС: Жестко фиксируем золотой цвет рамки в темной теме */
+
 .dark .vip-card, .dark #vip-items-grid .item-card {
   border-color: #F59E0B !important;
 }
@@ -967,7 +969,10 @@ option, optgroup {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.vip-card:hover, #vip-items-grid .item-card:hover {
+/* СЕНЬОР-ФИКС: Прописываем стили hover ДЛЯ ОБЕИХ ТЕМ, чтобы зеленая тень базовой карты не перебивала золотую в Dark Mode */
+
+.vip-card:hover, #vip-items-grid .item-card:hover,
+    .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover {
   transform: translateZ(0) translateY(-8px) scale(1.04) !important;
   border-color: #FCD34D !important;
   animation: none !important;

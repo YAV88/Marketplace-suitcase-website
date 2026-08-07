@@ -3309,26 +3309,47 @@ window.checkIncomingShareClick = async () => {
 const searchInputAtm = document.getElementById('main-search-input');
 const searchPhrases = ['iPhone 13 Pro', 'Кроссовки Nike', 'PlayStation 5', 'Велосипед', 'Квартира в Нови-Саде', 'Услуги электрика', 'Диван IKEA', 'MacBook Air'];
 let phraseIndex = 0;
+let placeholderTimer = null;
 
-setInterval(() => {
+window.updateSearchPlaceholder = (forceUpdate = false) => {
     if (searchInputAtm && document.activeElement !== searchInputAtm && !searchInputAtm.value) {
+        // Читаем актуальный язык напрямую из HTML, чтобы исключить рассинхрон
+        const currentLang = document.documentElement.lang || window.currentLang || 'ru';
+        
         let prefix = 'Например: ';
-        if (window.currentLang === 'en') prefix = 'For example: ';
-        if (window.currentLang === 'sr') prefix = 'Na primer: ';
+        if (currentLang === 'en') prefix = 'For example: ';
+        if (currentLang === 'sr') prefix = 'Na primer: ';
 
         let phrase = searchPhrases[phraseIndex];
-        if (window.currentLang === 'en') {
+        if (currentLang === 'en') {
             const enPhrases = { 'Кроссовки Nike': 'Nike sneakers', 'Велосипед': 'Bicycle', 'Квартира в Нови-Саде': 'Apartment in Novi Sad', 'Услуги электрика': 'Electrician services', 'Диван IKEA': 'IKEA Sofa' };
             phrase = enPhrases[phrase] || phrase;
-        } else if (window.currentLang === 'sr') {
+        } else if (currentLang === 'sr') {
             const srPhrases = { 'Кроссовки Nike': 'Nike patike', 'Велосипед': 'Bicikl', 'Квартира в Нови-Саде': 'Stan u Novom Sadu', 'Услуги электрика': 'Usluge električara', 'Диван IKEA': 'IKEA kauč' };
             phrase = srPhrases[phrase] || phrase;
         }
 
         searchInputAtm.setAttribute('placeholder', prefix + phrase);
-        phraseIndex = (phraseIndex + 1) % searchPhrases.length;
+        
+        // Если это принудительное обновление (при смене языка) - мы не переключаем фразу на следующую
+        if (!forceUpdate) {
+            phraseIndex = (phraseIndex + 1) % searchPhrases.length;
+        }
     }
-}, 3500);
+};
+
+// Запускаем таймер
+if (placeholderTimer) clearInterval(placeholderTimer);
+placeholderTimer = setInterval(() => window.updateSearchPlaceholder(), 3500);
+
+// Перехватываем функцию смены языка, чтобы заставить плейсхолдер перевестись МГНОВЕННО
+const originalChangeLanguage = window.changeLanguage;
+window.changeLanguage = (lang) => {
+    if (originalChangeLanguage) originalChangeLanguage(lang);
+    window.currentLang = lang;
+    document.documentElement.lang = lang; // Гарантируем смену системного языка
+    window.updateSearchPlaceholder(true); // Форсируем моментальное обновление текста поиска
+};
 
 // DRAG AND DROP ДЛЯ ФОТОГРАФИЙ
 document.addEventListener('DOMContentLoaded', () => {

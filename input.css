@@ -185,17 +185,25 @@
         border: 1.5px solid #F59E0B !important; 
         border-radius: 1rem !important; 
         padding: 0 !important; 
-        
         animation: vipPulseGlow 3s infinite ease-in-out !important;
         transform: translateZ(0) scale(1.02); 
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease !important;
     }
     
+    /* СЕНЬОР-ФИКС: Жестко фиксируем золотой цвет рамки в темной теме */
     .dark .vip-card, .dark #vip-items-grid .item-card { border-color: #F59E0B !important; }
 
     .vip-card h4 i.fa-fire-flame-curved, #vip-items-grid .item-card h4 i.fa-fire-flame-curved { color: #F59E0B !important; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    .vip-card:hover, #vip-items-grid .item-card:hover { transform: translateZ(0) translateY(-8px) scale(1.04) !important; border-color: #FCD34D !important; animation: none !important; box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important; z-index: 10; }
-
+    
+    /* СЕНЬОР-ФИКС: Прописываем стили hover ДЛЯ ОБЕИХ ТЕМ, чтобы зеленая тень базовой карты не перебивала золотую в Dark Mode */
+    .vip-card:hover, #vip-items-grid .item-card:hover,
+    .dark .vip-card:hover, .dark #vip-items-grid .item-card:hover { 
+        transform: translateZ(0) translateY(-8px) scale(1.04) !important; 
+        border-color: #FCD34D !important; 
+        animation: none !important; 
+        box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important; 
+        z-index: 10; 
+    }
     /* СЕНЬОР-ФИКС: Идеальная математика внутренних углов. Убран margin: -1px */
     #vip-items-grid .card-img-wrap { 
         height: 140px !important; min-height: 140px !important; 
