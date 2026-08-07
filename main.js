@@ -1704,17 +1704,28 @@ window.subcategoriesMap = {
 };
 
 window.toggleUrgentFilter = () => {
-    window.showUrgentOnly = !window.showUrgentOnly; window.displayedCount = 12;
-    const btn = document.getElementById('btn-cat-urgent'); const subContainer = document.getElementById('sub-cats-container');
+    window.showUrgentOnly = !window.showUrgentOnly; 
+    window.displayedCount = 12;
+    const btn = document.getElementById('btn-cat-urgent'); 
+    const subContainer = document.getElementById('sub-cats-container');
+    
     if (window.showUrgentOnly) {
-        if (btn) btn.className = "cat-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition hover:scale-105 bg-red-500 text-white border border-red-500 shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start";
+        if (btn) {
+            btn.classList.add('active', 'bg-red-500', 'text-white', 'border-red-500', 'shadow-md', 'scale-[1.02]');
+            btn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800/50', 'hover:scale-105');
+        }
         window.currentCategory = 'Все';
+        // СЕНЬОР-ФИКС: Бережно удаляем только классы активности, не стирая liquid-btn
         document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.className = "cat-btn px-5 py-2.5 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+            b.classList.remove('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
+            b.classList.add('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
         });
         if (subContainer) subContainer.classList.add('hidden');
     } else {
-        if (btn) btn.className = "cat-btn px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-semibold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+        if (btn) {
+            btn.classList.remove('active', 'bg-red-500', 'text-white', 'border-red-500', 'shadow-md', 'scale-[1.02]');
+            btn.classList.add('bg-red-50', 'text-red-600', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800/50', 'hover:scale-105');
+        }
     }
     window.fetchItems();
 };
@@ -2190,16 +2201,56 @@ window.selectAddType = (type) => {
     document.getElementById('add-block-estate').classList.remove('flex');
     document.getElementById('add-block-job').classList.add('hidden');
     document.getElementById('add-block-job').classList.remove('flex');
+
+    // СЕНЬОР-ФИКС: Динамическое перекрашивание всей формы под цвет категории
+    let color = 'brand-500';
+    let hoverColor = 'brand-600';
     
+    if (type === 'estate') { color = 'blue-500'; hoverColor = 'blue-600'; }
+    if (type === 'job') { color = 'amber-500'; hoverColor = 'amber-600'; }
+
+    // 1. Меняем цвет обводок при фокусе
+    form.querySelectorAll('[class*="focus-within:border-"]').forEach(el => {
+        el.className = el.className.replace(/focus-within:border-\w+-\d+/g, `focus-within:border-${color}`);
+    });
+    
+    // 2. Меняем цвет мигающей каретки ввода текста
+    form.querySelectorAll('[class*="caret-"]').forEach(el => {
+        el.className = el.className.replace(/caret-\w+-\d+/g, `caret-${hoverColor}`);
+    });
+
+    // 3. Меняем цвета в зоне загрузки фотографий
+    const dropZone = document.getElementById('drop-zone');
+    if (dropZone) {
+        dropZone.className = dropZone.className.replace(/hover:border-\w+-\d+/g, `hover:border-${hoverColor}`).replace(/dark:hover:border-\w+-\d+/g, `dark:hover:border-${color}`);
+        const icon = dropZone.querySelector('i');
+        if (icon) icon.className = icon.className.replace(/group-hover:text-\w+-\d+/g, `group-hover:text-${color}`);
+    }
+
+    // 4. Меняем цвет главной кнопки "Опубликовать"
+    const submitBtn = document.getElementById('add-submit-btn');
+    if (submitBtn) {
+        submitBtn.className = submitBtn.className
+            .replace(/bg-\w+-\d+/g, `bg-${type === 'job' ? 'amber-500' : hoverColor}`)
+            .replace(/hover:bg-\w+-\d+/g, `hover:bg-${type === 'job' ? 'amber-600' : hoverColor.replace('600', '700')}`);
+    }
+
+    // 5. Меняем цвет полосы загрузки
+    const progBar = document.getElementById('submit-progress-bar');
+    if (progBar) {
+        progBar.className = progBar.className.replace(/bg-\w+-\d+/g, `bg-${color}`);
+    }
+    
+    // Открываем нужный блок
     if(type === 'product') {
-        title.innerText = t('modal_add_item'); // ПЕРЕВОД ЗДЕСЬ
+        title.innerText = t('modal_add_item');
         document.getElementById('add-block-product').classList.remove('hidden');
         document.getElementById('add-block-product').classList.add('flex');
         document.getElementById('item-category').required = true;
         mapContainer.classList.add('hidden');
         mapContainer.classList.remove('flex');
     } else if(type === 'estate') {
-        title.innerText = t('modal_add_estate'); // ПЕРЕВОД ЗДЕСЬ
+        title.innerText = t('modal_add_estate');
         document.getElementById('add-block-estate').classList.remove('hidden');
         document.getElementById('add-block-estate').classList.add('flex');
         document.getElementById('item-category').required = false;
@@ -2207,7 +2258,7 @@ window.selectAddType = (type) => {
         mapContainer.classList.add('flex');
         window.initAddMap();
     } else if(type === 'job') {
-        title.innerText = t('modal_add_job'); // ПЕРЕВОД ЗДЕСЬ
+        title.innerText = t('modal_add_job');
         document.getElementById('add-block-job').classList.remove('hidden');
         document.getElementById('add-block-job').classList.add('flex');
         document.getElementById('item-category').required = false;
@@ -2653,27 +2704,27 @@ window.switchProfileTab = (tab) => { const searchInput = document.getElementById
 
 window.applyCondition = (val) => {
     window.filterCondition = val;
-
-    // Категории, у которых не бывает "Состояния"
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
 
-    // Если выбрали Б/У или Новое, а текущая категория "безусловная", сбрасываем ее
     if (val !== 'Все' && noConditionCats.some(c => window.currentCategory.startsWith(c))) {
         window.currentCategory = 'Все';
 
-        // Сбрасываем визуально активные кнопки в шапке
+        // СЕНЬОР-ФИКС: Бережное переключение классов без затирания жидкой кнопки
         document.querySelectorAll('#main-cats-container .cat-btn:not(#btn-cat-urgent)').forEach(b => {
-            b.className = "cat-btn px-5 py-2.5 bg-[#FDFBF7] dark:bg-stone-800 border border-[#D8CFC0] dark:border-stone-700 text-[#3E362E] dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:border-brand-400 hover:text-brand-600 rounded-xl font-bold text-sm transition-all hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start";
+            b.classList.remove('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
+            b.classList.add('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
         });
 
         const allBtn = document.querySelector('#main-cats-container .cat-btn[data-cat="Все"]');
-        if (allBtn) allBtn.className = "cat-btn active px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md bg-brand-600 text-white border border-brand-600 cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]";
+        if (allBtn) {
+            allBtn.classList.remove('bg-white', 'dark:bg-stone-800', 'border-stone-200', 'dark:border-stone-700', 'text-stone-700', 'dark:text-stone-300');
+            allBtn.classList.add('active', 'bg-brand-600', 'text-white', 'border-brand-600', 'shadow-md', 'scale-[1.02]');
+        }
 
         const subContainer = document.getElementById('sub-cats-container');
         if (subContainer) { subContainer.innerHTML = ''; subContainer.classList.add('hidden'); }
     }
 
-    // Прячем или показываем несовместимые кнопки в верхнем скролле
     document.querySelectorAll('#main-cats-container .cat-btn').forEach(b => {
         const catName = b.dataset.cat;
         if (noConditionCats.includes(catName)) {
@@ -2681,9 +2732,7 @@ window.applyCondition = (val) => {
         }
     });
 
-    // Перерисовываем сайдбар
     if (window.renderSidebarCategories) window.renderSidebarCategories();
-
     window.applyFilters();
 };
 
