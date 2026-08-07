@@ -2517,59 +2517,50 @@ window.switchProfileTab = async (tab) => {
     await window.renderProfileTabs();
 };
 
-// 2. Умная загрузка данных (с поддержкой отзывов и защитой сетки)
-window.renderProfileTabs = async () => {
+// Глобальный кэш для вкладок профиля (Lightning Fast UI)
+window.profileTabCache = {};
+
+// 2. Умная загрузка данных (с кэшированием)
+window.renderProfileTabs = async (forceRefresh = false) => {
     const grid = document.getElementById('profile-items-grid');
     const t = window.t || (txt => txt);
     const emptyState = document.getElementById('profile-empty');
     const searchInput = document.getElementById('profile-search-input');
+    const tab = window.currentProfileTab;
 
     if (!grid) return;
+
+    // СЕНЬОР-ОПТИМИЗАЦИЯ: Если есть кэш (не старше 1 минуты) и мы не форсируем обновление,
+    // отдаем готовый HTML моментально.
+    if (!forceRefresh && window.profileTabCache[tab] && (Date.now() - window.profileTabCache[tab].time < 60000)) {
+        grid.innerHTML = window.profileTabCache[tab].html;
+        if (emptyState) emptyState.style.display = window.profileTabCache[tab].isEmpty ? 'flex' : 'none';
+        grid.className = tab === 'reviews' ? 'flex flex-col gap-4 w-full max-w-2xl mx-auto mt-2' : `grid w-full items-stretch view-${window.currentViewMode || 'grid'}`;
+        return;
+    }
 
     grid.innerHTML = '<div class="col-span-full flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-3xl"></i></div>';
     if (emptyState) emptyState.style.display = 'none';
 
     try {
-        // ==========================================
-        // ЛОГИКА ДЛЯ НОВОЙ ВКЛАДКИ "ОТЗЫВЫ"
-        // ==========================================
-        if (window.currentProfileTab === 'reviews') {
-            // ИСПРАВЛЕНИЕ: Центрируем отзывы и не даем им растягиваться на весь экран (max-w-2xl mx-auto)
+        if (tab === 'reviews') {
             grid.className = 'flex flex-col gap-4 w-full max-w-2xl mx-auto mt-2'; 
-
-            const { data: reviews, error } = await window.supabase
-                .from('reviews')
-                .select('*')
-                .eq('seller_id', window.currentUser.id)
-                .order('created_at', { ascending: false });
-
+            const { data: reviews, error } = await window.supabase.from('reviews').select('*').eq('seller_id', window.currentUser.id).order('created_at', { ascending: false });
             if (error) throw error;
             grid.innerHTML = '';
 
             if (!reviews || reviews.length === 0) {
-                if (emptyState) {
-                    emptyState.style.display = 'flex';
-                    const span = emptyState.querySelector('span');
-                    if (span) span.innerText = 'У вас пока нет отзывов';
-                }
+                if (emptyState) { emptyState.style.display = 'flex'; emptyState.querySelector('span').innerText = 'У вас пока нет отзывов'; }
             } else {
-                // Подтягиваем аватарки авторов
                 const reviewerIds = [...new Set(reviews.map(r => r.reviewer_id).filter(Boolean))];
                 const usersMap = {};
                 if (reviewerIds.length > 0) {
-                    const { data: usersData } = await window.supabase
-                        .from('items')
-                        .select('user_id, author_name, author_avatar')
-                        .in('user_id', reviewerIds);
-                    if (usersData) {
-                        usersData.forEach(u => { usersMap[u.user_id] = { name: u.author_name, avatar: u.author_avatar }; });
-                    }
+                    // Ограничиваем тяжелый поиск по items 50 записями для скорости
+                    const { data: usersData } = await window.supabase.from('items').select('user_id, author_name, author_avatar').in('user_id', reviewerIds).limit(50);
+                    if (usersData) usersData.forEach(u => { usersMap[u.user_id] = { name: u.author_name, avatar: u.author_avatar }; });
                 }
 
-                // Считаем средний рейтинг
                 const avg = (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1);
-                
-                // ПРЕМИАЛЬНЫЙ ДИЗАЙН: Компактная плашка рейтинга на мобилках
                 let html = `
                 <div class="w-full flex flex-row items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 sm:p-6 rounded-xl sm:rounded-2xl border border-amber-200/60 dark:border-amber-800/50 mb-3 shadow-sm gap-2">
                     <span class="font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest text-[10px] sm:text-sm">${t('your_rating')}</span>
@@ -2579,7 +2570,6 @@ window.renderProfileTabs = async () => {
                     </div>
                 </div>`;
 
-                // Рендер карточек отзывов (чуть меньше отступов для мобилок)
                 html += reviews.map(r => {
                     const revInfo = usersMap[r.reviewer_id] || {};
                     const revName = escapeHtml(revInfo.name || 'Покупатель');
@@ -2593,77 +2583,56 @@ window.renderProfileTabs = async () => {
                         <div class="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-3 sm:mb-4">
                             <div class="flex items-center gap-3 min-w-0">
                                 ${revAvatar}
-                                <div>
-                                    <div class="font-black text-sm sm:text-base text-stone-900 dark:text-white truncate">${revName}</div>
-                                    <div class="text-[10px] sm:text-xs text-stone-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}</div>
-                                </div>
+                                <div><div class="font-black text-sm sm:text-base text-stone-900 dark:text-white truncate">${revName}</div><div class="text-[10px] sm:text-xs text-stone-400 mt-0.5">${new Date(r.created_at).toLocaleDateString()}</div></div>
                             </div>
                             <div class="flex gap-0.5 text-amber-500 text-[10px] sm:text-xs shrink-0 bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1.5 rounded-lg border border-amber-100 dark:border-amber-800/50">
                                 ${Array(r.rating || 5).fill('<i class="fa-solid fa-star"></i>').join('')}${Array(5 - (r.rating || 5)).fill('<i class="fa-regular fa-star text-stone-300 dark:text-stone-600"></i>').join('')}
                             </div>
                         </div>
-                        <div class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">${r.comment ? escapeHtml(r.comment) : '<i class="opacity-50">Покупатель не оставил комментарий</i>'}</div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">${r.comment ? escapeHtml(r.comment) : '<i class="opacity-50">Без комментариев</i>'}</div>
                     </div>`;
                 }).join('');
                 
                 grid.innerHTML = html;
             }
-            return; // Выходим, так как отзывы отрисованы
-        }
-
-        // ==========================================
-        // ЛОГИКА ДЛЯ "МОИХ ВЕЩЕЙ" И "СКЛАДА"
-        // ==========================================
-        
-        // ИСПРАВЛЕНИЕ: Жестко возвращаем классы 'grid' и 'w-full', чтобы сетка на ПК работала корректно
-        grid.className = `grid w-full items-stretch view-${window.currentViewMode || 'grid'}`;
-
-        let dataToRender = [];
-
-        if (window.currentProfileTab === 'saved') {
-            const { data: favs, error: favErr } = await window.supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
-            if (favErr) throw favErr;
-            if (favs && favs.length > 0) {
-                const savedIds = favs.map(f => f.item_id);
-                const { data, error } = await window.supabase.from('items').select('*').in('id', savedIds);
-                if (error) throw error;
-                dataToRender = data || [];
-            }
         } else {
-            if (window.currentUser) {
-                const { data, error } = await window.supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
-                if (error) throw error;
-                dataToRender = data || [];
-            }
-        }
+            grid.className = `grid w-full items-stretch view-${window.currentViewMode || 'grid'}`;
+            let dataToRender = [];
 
-        grid.innerHTML = '';
-
-        if (dataToRender.length === 0) {
-            if (emptyState) {
-                emptyState.style.display = 'flex';
-                const emptyText = emptyState.querySelector('span');
-                if (emptyText) emptyText.innerText = window.currentProfileTab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений');
+            if (tab === 'saved') {
+                const { data: favs, error: favErr } = await window.supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+                if (favErr) throw favErr;
+                if (favs && favs.length > 0) {
+                    const savedIds = favs.map(f => f.item_id);
+                    const { data, error } = await window.supabase.from('items').select('*').in('id', savedIds);
+                    if (error) throw error;
+                    dataToRender = data || [];
+                }
+            } else {
+                if (window.currentUser) {
+                    const { data, error } = await window.supabase.from('items').select('*').eq('user_id', window.currentUser.id).order('created_at', { ascending: false });
+                    if (error) throw error;
+                    dataToRender = data || [];
+                }
             }
-        } else {
-            const html = dataToRender
-                .map(item => window.mapItemData(item))
-                .filter(Boolean)
-                .map(mappedItem => {
+
+            grid.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                if (emptyState) { emptyState.style.display = 'flex'; const emptyText = emptyState.querySelector('span'); if (emptyText) emptyText.innerText = tab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений'); }
+            } else {
+                grid.innerHTML = dataToRender.map(item => window.mapItemData(item)).filter(Boolean).map(mappedItem => {
                     if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, false, true);
                     return ''; 
                 }).join('');
-            
-            grid.innerHTML = html;
-            
-            if (typeof window.animateVisibleElements === 'function') {
-                setTimeout(() => window.animateVisibleElements(), 50);
+                if (typeof window.animateVisibleElements === 'function') setTimeout(() => window.animateVisibleElements(), 50);
             }
         }
 
-        if (searchInput && searchInput.value && typeof window.filterProfileItems === 'function') {
-            window.filterProfileItems(searchInput, 'profile-items-grid');
-        }
+        // Сохраняем результат в кэш
+        window.profileTabCache[tab] = { html: grid.innerHTML, isEmpty: (emptyState && emptyState.style.display === 'flex'), time: Date.now() };
+
+        if (searchInput && searchInput.value && typeof window.filterProfileItems === 'function') window.filterProfileItems(searchInput, 'profile-items-grid');
 
     } catch (err) {
         console.error('Ошибка загрузки вкладок профиля:', err);
@@ -3836,35 +3805,3 @@ window.toggleItemVip = async (itemId, btnElement) => {
 window.promoteToVip = () => window.toggleItemVip(window.activeModalItemId, document.getElementById('btn-owner-vip'));
 window.highlightItem = window.promoteToVip;
 window.applyVipToItem = window.toggleItemVip;
-
-// --- АВТОМАТИЧЕСКАЯ СМЕНА КНОПКИ (В ТОП / УБРАТЬ ИЗ ТОПА) ---
-if (typeof window.openItemDetails === 'function' && !window.openItemDetails.isVipButtonPatched) {
-    const _origOpenItemForVip = window.openItemDetails;
-    window.openItemDetails = async (id) => {
-        await _origOpenItemForVip(id);
-        
-        const item = window.loadedItems.find(i => i.id === id);
-        const btnVip = document.getElementById('btn-owner-vip') || document.querySelector('[onclick*="promoteToVip"]') || document.querySelector('[onclick*="highlightItem"]');
-        
-        if (item && btnVip && window.currentUser && window.currentUser.id === (item.userId || item.user_id)) {
-            
-            btnVip.disabled = false; 
-            const t = window.t || (txt => txt);
-
-            // ВИЗУАЛЬНОЕ ОФОРМЛЕНИЕ ПРОИСХОДИТ ТОЛЬКО ЗДЕСЬ
-            if (item.isHighlighted) { 
-                btnVip.innerHTML = `<i class="fa-solid fa-arrow-down mr-1.5"></i> ${t('remove_from_vip')}`;
-                btnVip.className = "px-4 py-2.5 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center border border-transparent hover:border-red-200 dark:hover:border-red-800/50 shadow-sm";
-            } else { 
-                btnVip.innerHTML = `<i class="fa-solid fa-crown mr-1.5 text-white drop-shadow-md"></i> ${t('to_vip_block_7_days')}`;
-                btnVip.className = "px-4 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-xl font-bold text-sm transition-all duration-300 flex-1 flex items-center justify-center shadow-md hover:shadow-lg hover:-translate-y-0.5";
-            }
-            
-            btnVip.onclick = (e) => {
-                e.preventDefault();
-                window.toggleItemVip(item.id, btnVip);
-            };
-        }
-    };
-    window.openItemDetails.isVipButtonPatched = true;
-}

@@ -516,46 +516,41 @@ export const ItemsModule = {
                             if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
                         });
 
-                        // ЗАДАЧА 3: Умный таймер, не вызывающий перезагрузки и спама при смене вкладок
-                        window.vipCascadeSessionId = Date.now();
-                        const currentSessionId = window.vipCascadeSessionId;
+                        // СЕНЬОР-ФИКС: Единый глобальный таймер для VIP-ленты (Без крашей при смене вкладок)
+                        if (window.vipCascadeGlobalTimer) {
+                            clearInterval(window.vipCascadeGlobalTimer);
+                        }
 
                         if (window.vipPool.length > 10) {
-                            const slots = vipGrid.querySelectorAll('.vip-slot');
-                            slots.forEach((slotEl, index) => {
-                                const initialDelay = index * 700; 
+                            const slots = Array.from(vipGrid.querySelectorAll('.vip-slot'));
+                            let currentSlotIndex = 0;
+                            
+                            window.vipCascadeGlobalTimer = setInterval(() => {
+                                // Если вкладка неактивна - ничего не делаем, никаких фоновых очередей
+                                if (document.hidden) return;
                                 
-                                const loop = () => {
-                                    // Если лента была обновлена (например, сменили категорию) - убиваем старый цикл
-                                    if (window.vipCascadeSessionId !== currentSessionId) return;
-
-                                    // Выполняем подмену ТОЛЬКО если вкладка активна и пользователь не смотрит на карту
-                                    if (!document.hidden && !slotEl.matches(':hover') && !slotEl.matches(':active') && !slotEl.querySelector(':hover')) {
-                                        const displayedIds = Array.from(vipGrid.querySelectorAll('.item-card')).map(card => card.dataset.id);
-                                        const availableItems = window.vipPool.filter(item => !displayedIds.includes(item.id));
-
-                                        if (availableItems.length > 0) {
-                                            const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
-
-                                            slotEl.classList.add('opacity-0', 'scale-90', 'rotate-3');
-
-                                            setTimeout(() => {
-                                                if (window.vipCascadeSessionId !== currentSessionId) return;
-                                                slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
-                                                if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
-                                                
-                                                slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
-                                            }, 700); 
-                                        }
-                                    }
+                                const slotEl = slots[currentSlotIndex];
+                                if (slotEl && !slotEl.matches(':hover') && !slotEl.matches(':active') && !slotEl.querySelector(':hover')) {
+                                    const displayedIds = slots.map(s => s.querySelector('.item-card')?.dataset.id).filter(Boolean);
+                                    const availableItems = window.vipPool.filter(item => !displayedIds.includes(item.id));
                                     
-                                    // Рекурсивный безопасный вызов вместо setInterval
-                                    setTimeout(loop, 7000);
-                                };
+                                    if (availableItems.length > 0) {
+                                        const newItem = availableItems[Math.floor(Math.random() * availableItems.length)];
+                                        slotEl.classList.add('opacity-0', 'scale-90', 'rotate-3');
+                                        setTimeout(() => {
+                                            slotEl.innerHTML = ItemsModule.createCardHtml(newItem, true);
+                                            if (!window.loadedItems.find(i => i.id === newItem.id)) window.loadedItems.push(newItem);
+                                            slotEl.classList.remove('opacity-0', 'scale-90', 'rotate-3');
+                                        }, 700);
+                                    }
+                                }
                                 
-                                setTimeout(loop, initialDelay || 7000);
-                            });
+                                // Сдвигаем индекс к следующей карточке (Равномерный каскад)
+                                currentSlotIndex = (currentSlotIndex + 1) % slots.length;
+                                
+                            }, 700); // Таймер тикает раз в 700мс. В итоге каждая из 10 карт обновится ровно раз в 7 секунд!
                         }
+                        
                     } else {
                         window.vipCascadeSessionId = null;
                         if (vipSection) vipSection.classList.add('hidden');
