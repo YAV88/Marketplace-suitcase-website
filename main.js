@@ -3376,7 +3376,7 @@ window.updateSearchPlaceholder = (forceUpdate = false) => {
 if (placeholderTimer) clearInterval(placeholderTimer);
 placeholderTimer = setInterval(() => window.updateSearchPlaceholder(), 3500);
 
-// Перехватываем функцию смены языка, чтобы заставить плейсхолдер перевестись МГНОВЕННО
+// Глобальный перехватчик языка. Управляет переводами динамических модалок, плейсхолдерами и подсветкой кнопок
 const originalChangeLanguage = window.changeLanguage;
 window.changeLanguage = (lang) => {
     if (originalChangeLanguage) originalChangeLanguage(lang);
@@ -3384,12 +3384,58 @@ window.changeLanguage = (lang) => {
     document.documentElement.lang = lang; // Гарантируем смену системного языка
     window.updateSearchPlaceholder(true); // Форсируем моментальное обновление текста поиска
     
-    // Пересобираем кастомные списки при смене языка, чтобы UI подтянул новый перевод
+    // Жесткая фиксация цвета активной кнопки в мобильном меню
+    ['ru', 'sr', 'en'].forEach(l => {
+        const btn = document.getElementById(`mob-lang-${l}`);
+        if (btn) {
+            if (l === lang) {
+                btn.className = "py-2.5 bg-brand-600 text-white border border-brand-600 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer";
+            } else {
+                btn.className = "py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-sm font-bold hover:border-brand-500 shadow-sm transition-all cursor-pointer";
+            }
+        }
+    });
+    
     setTimeout(() => {
+        // Пересобираем кастомные списки (если они есть)
         if (typeof window.updateCustomSelectsTranslations === 'function') {
             window.updateCustomSelectsTranslations();
         }
-    }, 150); // Ждем, пока i18n обновит <option>
+        
+        // ЗАДАЧА 3: Восстанавливаем сбитый перевод в окне "Добавить товар"
+        const addTitle = document.getElementById('add-modal-title');
+        if (addTitle) {
+            const step1 = document.getElementById('add-step-1');
+            const t = window.t || (txt => txt);
+            
+            // Если открыт Шаг 1
+            if (step1 && !step1.classList.contains('hidden')) {
+                addTitle.innerText = lang === 'ru' ? 'Какую находку добавим?' : t('add_title');
+            } else {
+                // Если открыта форма (Шаг 2)
+                if (window.currentAddType === 'product') addTitle.innerText = lang === 'ru' ? 'Новая находка' : t('modal_add_item');
+                if (window.currentAddType === 'estate') addTitle.innerText = lang === 'ru' ? 'Объект недвижимости' : t('modal_add_estate');
+                if (window.currentAddType === 'job') addTitle.innerText = lang === 'ru' ? 'Новая вакансия' : t('modal_add_job');
+            }
+        }
+        
+        // Мгновенный перевод баннера доната (работает без словаря i18n)
+        const promoTitle = document.getElementById('promo-donate-title');
+        const promoBtn = document.getElementById('promo-donate-btn-text');
+        if (promoTitle && promoBtn) {
+            if (lang === 'ru') {
+                promoTitle.innerText = 'Поддержи проект и получи VIP-статус в подарок!';
+                promoBtn.innerText = 'Поддержать SVALKA';
+            } else if (lang === 'en') {
+                promoTitle.innerText = 'Support the project and get VIP status as a gift!';
+                promoBtn.innerText = 'Support SVALKA';
+            } else if (lang === 'sr') {
+                promoTitle.innerText = 'Podrži projekat i dobij VIP status na poklon!';
+                promoBtn.innerText = 'Podrži SVALKA';
+            }
+        }
+        
+    }, 150); // Ждем 150мс, пока библиотека локализации завершит свою работу
 };
 
 // Функция полной пересоборки списков для перевода
@@ -3400,14 +3446,11 @@ window.updateCustomSelectsTranslations = () => {
         if (select) {
             select.dataset.customized = 'false';
             select.classList.remove('hidden', '!hidden');
-            w.parentNode.insertBefore(select, w); // Возвращаем селект на место
+            w.parentNode.insertBefore(select, w); 
         }
-        w.remove(); // Уничтожаем старый кастомный UI
+        w.remove(); 
     });
-    // Заново инициализируем с новым языком
-    if (typeof window.initCustomSelects === 'function') {
-        window.initCustomSelects();
-    }
+    if (typeof window.initCustomSelects === 'function') window.initCustomSelects();
 };
 
 window.navigatePhoto = (direction, event) => {
