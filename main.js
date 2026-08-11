@@ -2194,9 +2194,9 @@ window.selectAddType = (type) => {
     document.getElementById('add-block-job').classList.remove('flex');
 
     const colorMap = {
-        'product': { border: 'focus-within:border-brand-500', caret: 'caret-brand-600', dropHover: 'hover:border-brand-600', dropHoverDark: 'dark:hover:border-brand-500', iconColor: 'group-hover:text-brand-500', btnBg: 'bg-brand-600', btnHover: 'hover:bg-brand-700', progress: 'bg-brand-500' },
-        'estate': { border: 'focus-within:border-blue-500', caret: 'caret-blue-600', dropHover: 'hover:border-blue-600', dropHoverDark: 'dark:hover:border-blue-500', iconColor: 'group-hover:text-blue-500', btnBg: 'bg-blue-600', btnHover: 'hover:bg-blue-700', progress: 'bg-blue-500' },
-        'job': { border: 'focus-within:border-amber-500', caret: 'caret-amber-600', dropHover: 'hover:border-amber-600', dropHoverDark: 'dark:hover:border-amber-500', iconColor: 'group-hover:text-amber-500', btnBg: 'bg-amber-500', btnHover: 'hover:bg-amber-600', progress: 'bg-amber-500' }
+        'product': { border: 'focus-within:border-brand-500', caret: 'caret-brand-600', dropHover: 'hover:border-brand-600', dropHoverDark: 'dark:hover:border-brand-500', iconColor: 'group-hover:text-brand-500', btnIcon: 'text-brand-500', progress: 'bg-brand-500', btnLiquid: 'liquid-btn-brand' },
+        'estate': { border: 'focus-within:border-blue-500', caret: 'caret-blue-600', dropHover: 'hover:border-blue-600', dropHoverDark: 'dark:hover:border-blue-500', iconColor: 'group-hover:text-blue-500', btnIcon: 'text-blue-500', progress: 'bg-blue-500', btnLiquid: 'liquid-btn-blue' },
+        'job': { border: 'focus-within:border-amber-500', caret: 'caret-amber-600', dropHover: 'hover:border-amber-600', dropHoverDark: 'dark:hover:border-amber-500', iconColor: 'group-hover:text-amber-500', btnIcon: 'text-amber-500', progress: 'bg-amber-500', btnLiquid: 'liquid-btn-amber' }
     };
 
     const prevTheme = window.currentFormTheme || 'product';
@@ -2217,8 +2217,13 @@ window.selectAddType = (type) => {
     
     const submitBtn = document.getElementById('add-submit-btn');
     if (submitBtn) {
-        submitBtn.classList.remove(cOld.btnBg, cOld.btnHover);
-        submitBtn.classList.add(cNew.btnBg, cNew.btnHover);
+        submitBtn.classList.remove(cOld.btnLiquid);
+        submitBtn.classList.add(cNew.btnLiquid);
+        const submitIcon = document.getElementById('add-submit-icon');
+        if(submitIcon) {
+            submitIcon.classList.remove(cOld.btnIcon);
+            submitIcon.classList.add(cNew.btnIcon);
+        }
     }
     
     const progBar = document.getElementById('submit-progress-bar');
@@ -2228,14 +2233,14 @@ window.selectAddType = (type) => {
     }
 
     if(type === 'product') {
-        title.innerText = t('modal_add_item');
+        title.innerText = window.currentLang === 'ru' ? 'Новая находка' : t('modal_add_item');
         document.getElementById('add-block-product').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-product').classList.add('flex');
         document.getElementById('item-category').required = true;
         mapContainer.classList.add('hidden');
         mapContainer.classList.remove('flex');
     } else if(type === 'estate') {
-        title.innerText = t('modal_add_estate');
+        title.innerText = window.currentLang === 'ru' ? 'Объект недвижимости' : t('modal_add_estate');
         document.getElementById('add-block-estate').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-estate').classList.add('flex');
         document.getElementById('item-category').required = false;
@@ -2243,7 +2248,7 @@ window.selectAddType = (type) => {
         mapContainer.classList.add('flex');
         window.initAddMap();
     } else if(type === 'job') {
-        title.innerText = t('modal_add_job');
+        title.innerText = window.currentLang === 'ru' ? 'Новая вакансия' : t('modal_add_job');
         document.getElementById('add-block-job').classList.remove('hidden', '!hidden');
         document.getElementById('add-block-job').classList.add('flex');
         document.getElementById('item-category').required = false;
@@ -2253,22 +2258,11 @@ window.selectAddType = (type) => {
     }
 };
 
-document.addEventListener('click', () => {
-    document.querySelectorAll('.custom-select-menu').forEach(m => {
-        m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-        setTimeout(() => {
-            m.classList.add('hidden');
-            m.parentElement.classList.remove('!z-[100]');
-        }, 200);
-    });
-    document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
-});
-
 window.backToAddStep1 = () => {
     document.getElementById('add-step-1').classList.remove('hidden');
     document.getElementById('add-form').classList.add('hidden');
     document.getElementById('add-form').classList.remove('flex');
-    document.getElementById('add-modal-title').innerText = 'Что публикуем?';
+    document.getElementById('add-modal-title').innerText = window.currentLang === 'ru' ? 'Какую находку добавим?' : 'Что публикуем?';
 };
 
 // ==========================================
@@ -3389,44 +3383,32 @@ window.changeLanguage = (lang) => {
     window.currentLang = lang;
     document.documentElement.lang = lang; // Гарантируем смену системного языка
     window.updateSearchPlaceholder(true); // Форсируем моментальное обновление текста поиска
+    
+    // Пересобираем кастомные списки при смене языка, чтобы UI подтянул новый перевод
+    setTimeout(() => {
+        if (typeof window.updateCustomSelectsTranslations === 'function') {
+            window.updateCustomSelectsTranslations();
+        }
+    }, 150); // Ждем, пока i18n обновит <option>
 };
 
-// DRAG AND DROP ДЛЯ ФОТОГРАФИЙ
-document.addEventListener('DOMContentLoaded', () => {
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-
-    if (dropZone && fileInput) {
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
+// Функция полной пересоборки списков для перевода
+window.updateCustomSelectsTranslations = () => {
+    const wrappers = document.querySelectorAll('.custom-select-wrapper');
+    wrappers.forEach(w => {
+        const select = w.querySelector('select');
+        if (select) {
+            select.dataset.customized = 'false';
+            select.classList.remove('hidden', '!hidden');
+            w.parentNode.insertBefore(select, w); // Возвращаем селект на место
         }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/20');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-900/20');
-            }, false);
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            // Искусственно создаем событие для функции previewPhotos
-            fileInput.files = files;
-            window.previewPhotos({ target: fileInput });
-        }, false);
+        w.remove(); // Уничтожаем старый кастомный UI
+    });
+    // Заново инициализируем с новым языком
+    if (typeof window.initCustomSelects === 'function') {
+        window.initCustomSelects();
     }
-});
+};
 
 window.navigatePhoto = (direction, event) => {
     if (event) event.stopPropagation();

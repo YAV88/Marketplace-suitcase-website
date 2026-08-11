@@ -896,11 +896,13 @@
                 
             </div>
             
-            <div class="p-6 bg-stone-50 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800">
-                <button id="btn-pay-plisio" onclick="window.payWithPlisio()"
-                    class="bg-emerald-500 hover:bg-emerald-600 text-white w-full py-4 rounded-2xl font-black text-base transition shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer border border-emerald-400 dark:border-emerald-600">
-                    <i class="fa-solid fa-wallet text-xl"></i> <span data-i18n="pro_pay_btn">PAY</span>
+            <div class="p-6 pt-4 shrink-0 border-t border-stone-200 dark:border-stone-800">
+                <button id="btn-pay-plisio" onclick="window.payWithPlisio()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm transition cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
+                    <i class="fa-solid fa-wallet text-brand-500 text-lg pointer-events-none"></i> <span data-i18n="pro_pay_btn" class="pointer-events-none">Оплатить PRO</span>
                 </button>
+                <div class="text-center text-[10px] text-stone-400 font-bold mt-3 uppercase tracking-widest" data-i18n="secure_payment">
+                    Защищенная оплата Crypto / Plisio
+                </div>
             </div>
         </div>
     </div>
@@ -1129,9 +1131,7 @@
             <button onclick="window.closeModal('add-modal')"
                 class="absolute top-6 right-6 text-stone-400 text-3xl hover:text-brand-600 transition cursor-pointer z-20"><i
                     class="fa-solid fa-xmark"></i></button>
-            <h2 id="add-modal-title"
-                class="text-2xl sm:text-3xl font-display font-black mb-6 uppercase text-stone-900 dark:text-white text-center w-full"
-                data-i18n="add_title">Что публикуем?</h2>
+            <h2 id="add-modal-title" class="text-2xl sm:text-3xl font-display font-black mb-6 uppercase text-stone-900 dark:text-white text-center w-full">Какую находку добавим?</h2>
 
             <div id="add-step-1" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <button type="button" onclick="window.selectAddType('product')"
@@ -1376,7 +1376,12 @@
                     </div>
                 </div>
 
-                <button type="submit" id="add-submit-btn" data-i18n="btn_publish_final" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center bg-brand-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer hover:bg-brand-700">Опубликовать</button>
+                <!-- Единый премиальный стиль кнопок -->
+                <button type="submit" id="add-submit-btn" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-3.5 mt-2 rounded-xl font-bold text-sm transition cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
+                    <i id="add-submit-icon" class="fa-solid fa-paper-plane text-brand-500 text-lg pointer-events-none"></i>
+                    <span data-i18n="btn_publish_final" class="pointer-events-none">Опубликовать</span>
+                </button>
+
             </form>
         </div>
     </div>
@@ -1887,15 +1892,15 @@
                     </div>
                 </div>
 
-                <div class="p-6 pt-4 shrink-0 border-t border-stone-200 dark:border-stone-800">
-                <!-- Кнопка переведена в дизайн-систему liquid-btn-brand, а текст переведен на русский -->
-                <button id="btn-pay-plisio" onclick="window.payWithPlisio()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-2 bg-brand-600 text-white py-3.5 rounded-xl font-black text-lg transition-all shadow-lg shadow-brand-500/30 cursor-pointer hover:bg-brand-700">
-                    <i class="fa-solid fa-wallet pointer-events-none"></i> <span data-i18n="pro_pay_btn" class="pointer-events-none">Оплатить PRO</span>
-                </button>
-                <div class="text-center text-[10px] text-stone-400 font-bold mt-3 uppercase tracking-widest" data-i18n="secure_payment">
-                    Защищенная оплата Crypto / Plisio
+                <div class="p-6 pt-4 shrink-0">
+                    <!-- ЗАДАЧА 1: Единый премиальный стиль кнопок -->
+                    <button onclick="window.initiateTokenPurchase()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm transition cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
+                        <i class="fa-solid fa-wallet text-brand-500 text-lg pointer-events-none"></i> <span data-i18n="btn_pay" class="pointer-events-none">Оплатить</span>
+                    </button>
+                    <div class="text-center text-[10px] text-stone-400 font-bold mt-3 uppercase tracking-widest" data-i18n="secure_payment">
+                        Защищенная оплата Crypto / Plisio
+                    </div>
                 </div>
-            </div>
                 
             </div>
         </div>
