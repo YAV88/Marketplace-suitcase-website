@@ -1374,13 +1374,14 @@ window.toggleMobileFilters = () => {
 window.toggleFilters = window.toggleMobileFilters;
 
 window.showToast = (msg, type = 'info') => {
-    // Совместимость со старым кодом
     if (type === true) type = 'error';
     if (type === false) type = 'info';
     
-    // Авто-перехват позитивных сообщений
-    const positiveWords = ['возвращением', 'успешно', 'поздравляем', 'опубликован', 'сохранен', 'готово'];
-    if (positiveWords.some(word => msg.toLowerCase().includes(word))) {
+    // Переводчик для всех системных уведомлений
+    const tMsgText = window.t ? window.t(msg) || msg : msg;
+    
+    const positiveWords = ['возвращением', 'успешно', 'поздравляем', 'опубликован', 'сохранен', 'готово', 'засчитан', 'добавлено'];
+    if (positiveWords.some(word => tMsgText.toLowerCase().includes(word))) {
         type = 'success';
     }
 
@@ -1388,29 +1389,27 @@ window.showToast = (msg, type = 'info') => {
     const tMsg = document.getElementById('toast-msg');
     const tIco = document.getElementById('toast-icon');
     
-    if (tMsg) tMsg.innerText = msg;
+    if (tMsg) tMsg.innerText = tMsgText;
     
     let bgClass = '', iconClass = '';
     
-    // ЗАДАЧА 2: Премиальный Glassmorphism с жестким контрастом
+    // Жесткий инвертированный контраст (Glassmorphism) для читаемости в любой теме
     if (type === 'error') {
-        bgClass = 'bg-red-500/95 dark:bg-red-600/95 text-white border border-red-400 dark:border-red-500 shadow-[0_10px_40px_rgba(239,68,68,0.3)] backdrop-blur-md';
+        bgClass = 'bg-red-500/95 text-white border border-red-400/50 shadow-[0_10px_40px_rgba(239,68,68,0.3)] backdrop-blur-md';
         iconClass = 'fa-circle-exclamation text-white';
     } else if (type === 'success') {
-        bgClass = 'bg-emerald-500/95 dark:bg-emerald-600/95 text-white border border-emerald-400 dark:border-emerald-500 shadow-[0_10px_40px_rgba(16,185,129,0.3)] backdrop-blur-md';
+        bgClass = 'bg-emerald-500/95 text-white border border-emerald-400/50 shadow-[0_10px_40px_rgba(16,185,129,0.3)] backdrop-blur-md';
         iconClass = 'fa-circle-check text-white';
     } else {
-        // Убрано со склада и прочая инфа. Жесткий контраст + рамка, чтобы не сливалось.
-        bgClass = 'bg-white/95 dark:bg-stone-800/95 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 shadow-xl backdrop-blur-md';
-        iconClass = 'fa-circle-info text-brand-500';
+        // Темный тост в светлой теме, светлый в темной
+        bgClass = 'bg-stone-900/95 dark:bg-white/95 text-white dark:text-stone-900 border border-stone-800 dark:border-white/50 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-md';
+        iconClass = 'fa-circle-info text-brand-400 dark:text-brand-500';
     }
     
     if (tIco) tIco.className = `fa-solid ${iconClass} text-lg`;
     
     if (t) {
-        // Анимация выезда снизу вверх с пружинистым эффектом
         t.className = `fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-full font-bold text-sm flex items-center gap-3 z-[9999] transition-all duration-400 pointer-events-none ${bgClass} opacity-100 transform translate-y-0 scale-100`;
-        
         setTimeout(() => {
             t.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
             t.classList.add('opacity-0', 'translate-y-4', 'scale-95');
@@ -2181,7 +2180,6 @@ window.selectAddType = (type) => {
     const form = document.getElementById('add-form');
     const title = document.getElementById('add-modal-title');
     const mapContainer = document.getElementById('add-map-container');
-    
     const t = window.t || (txt => txt);
 
     step1.classList.add('hidden');
@@ -2195,7 +2193,6 @@ window.selectAddType = (type) => {
     document.getElementById('add-block-job').classList.add('hidden', '!hidden');
     document.getElementById('add-block-job').classList.remove('flex');
 
-    // Массив точных классов для Tailwind PurgeCSS (чтобы компилятор их не удалял)
     const colorMap = {
         'product': { border: 'focus-within:border-brand-500', caret: 'caret-brand-600', dropHover: 'hover:border-brand-600', dropHoverDark: 'dark:hover:border-brand-500', iconColor: 'group-hover:text-brand-500', btnBg: 'bg-brand-600', btnHover: 'hover:bg-brand-700', progress: 'bg-brand-500' },
         'estate': { border: 'focus-within:border-blue-500', caret: 'caret-blue-600', dropHover: 'hover:border-blue-600', dropHoverDark: 'dark:hover:border-blue-500', iconColor: 'group-hover:text-blue-500', btnBg: 'bg-blue-600', btnHover: 'hover:bg-blue-700', progress: 'bg-blue-500' },
@@ -2207,7 +2204,6 @@ window.selectAddType = (type) => {
     const cOld = colorMap[prevTheme];
     const cNew = colorMap[type];
 
-    // Умная подмена классов формы
     form.querySelectorAll(`.${cOld.border.replace(':', '\\:')}`).forEach(el => { el.classList.remove(cOld.border); el.classList.add(cNew.border); });
     form.querySelectorAll(`.${cOld.caret.replace(':', '\\:')}`).forEach(el => { el.classList.remove(cOld.caret); el.classList.add(cNew.caret); });
     
@@ -2230,9 +2226,6 @@ window.selectAddType = (type) => {
         progBar.classList.remove(cOld.progress);
         progBar.classList.add(cNew.progress);
     }
-
-    // Инициализация кастомных Dropdown (Вызываем после отображения нужного блока формы)
-    setTimeout(() => { if(typeof window.initCustomSelects === 'function') window.initCustomSelects(); }, 50);
 
     if(type === 'product') {
         title.innerText = t('modal_add_item');
@@ -2258,112 +2251,6 @@ window.selectAddType = (type) => {
         mapContainer.classList.add('flex');
         window.initAddMap();
     }
-};
-
-// Премиальные кастомные Dropdown вместо нативных <select>
-window.initCustomSelects = () => {
-    const formSelects = document.querySelectorAll('#add-form select');
-    formSelects.forEach(select => {
-        if (select.dataset.customized === 'true') return;
-        select.dataset.customized = 'true';
-        select.classList.add('hidden', '!hidden');
-
-        const wrapper = document.createElement('div');
-        wrapper.className = 'relative w-full z-40 custom-select-wrapper transition-all';
-        select.parentNode.insertBefore(wrapper, select);
-        wrapper.appendChild(select);
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'w-full bg-transparent p-3 pr-10 font-medium text-base text-stone-900 dark:text-white outline-none flex items-center justify-between text-left h-[50px]';
-        
-        let selectedOpt = select.options[select.selectedIndex];
-        let labelSpan = document.createElement('span');
-        labelSpan.className = 'truncate pointer-events-none text-stone-500 dark:text-stone-400';
-        if (selectedOpt && selectedOpt.value !== "") {
-            labelSpan.innerText = selectedOpt.innerText;
-            labelSpan.classList.remove('text-stone-500', 'dark:text-stone-400');
-        } else {
-            labelSpan.innerText = selectedOpt ? selectedOpt.innerText : 'Выберите...';
-        }
-        
-        let icon = document.createElement('i');
-        icon.className = 'fa-solid fa-chevron-down text-sm text-stone-400 absolute right-3 pointer-events-none transition-transform duration-200';
-        
-        btn.appendChild(labelSpan);
-        btn.appendChild(icon);
-        wrapper.appendChild(btn);
-
-        const menu = document.createElement('div');
-        // СЕНЬОР-ФИКС: Menu style now matches the premium neutral look
-        menu.className = 'absolute left-0 top-[calc(100%+4px)] w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-xl overflow-y-auto max-h-64 hidden py-1 custom-scrollbar flex flex-col origin-top transition-all duration-200 scale-95 opacity-0 pointer-events-none';
-        
-        const buildOption = (opt) => {
-            if (opt.disabled || opt.style.display === 'none') return;
-            const item = document.createElement('div');
-            // СЕНЬОР-ФИКС: Neutral premium hover instead of hardcoded brand color
-            item.className = 'px-4 py-3 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 cursor-pointer transition-colors';
-            item.innerText = opt.innerText;
-            item.onclick = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                select.value = opt.value;
-                labelSpan.innerText = opt.innerText;
-                labelSpan.classList.remove('text-stone-500', 'dark:text-stone-400');
-                
-                menu.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    menu.classList.add('hidden');
-                    wrapper.classList.remove('!z-[100]'); // Reset Z-index
-                }, 200);
-                icon.classList.remove('rotate-180');
-                
-                select.dispatchEvent(new Event('change', { bubbles: true }));
-            };
-            menu.appendChild(item);
-        };
-
-        Array.from(select.children).forEach(child => {
-            if (child.tagName === 'OPTGROUP') {
-                const grp = document.createElement('div');
-                grp.className = 'px-4 py-1.5 text-[10px] font-black text-stone-400 uppercase tracking-widest mt-2 border-b border-stone-100 dark:border-stone-700/50 pb-1';
-                grp.innerText = child.label;
-                menu.appendChild(grp);
-                Array.from(child.options).forEach(buildOption);
-            } else if (child.tagName === 'OPTION') {
-                buildOption(child);
-            }
-        });
-
-        wrapper.appendChild(menu);
-
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            const isHidden = menu.classList.contains('hidden');
-            
-            // Закрываем все другие меню
-            document.querySelectorAll('.custom-select-menu').forEach(m => {
-                m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    m.classList.add('hidden');
-                    m.parentElement.classList.remove('!z-[100]'); // Reset Z-index
-                }, 200);
-            });
-            document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
-            
-            if (isHidden) {
-                wrapper.classList.add('!z-[100]'); // СЕНЬОР-ФИКС: Поднимаем z-index над всей модалкой
-                menu.classList.remove('hidden');
-                requestAnimationFrame(() => {
-                    menu.classList.remove('scale-95', 'opacity-0', 'pointer-events-none');
-                    icon.classList.add('rotate-180');
-                });
-            }
-        };
-        menu.classList.add('custom-select-menu');
-        icon.classList.add('custom-select-icon');
-    });
 };
 
 document.addEventListener('click', () => {
