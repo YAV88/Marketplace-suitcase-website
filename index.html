@@ -106,19 +106,19 @@
 
                 <!-- Кнопка смены темы -->
                 <button onclick="window.toggleDarkMode()"
-                    class="liquid-btn liquid-btn-gray hidden sm:flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 shadow-sm transition-all duration-200 cursor-pointer shrink-0">
-                    <i id="theme-icon" class="fa-solid fa-moon text-lg pointer-events-none"></i>
+                    class="liquid-btn liquid-btn-gray hidden sm:flex items-center justify-center w-11 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 shadow-sm transition-all duration-200 cursor-pointer shrink-0 hover:bg-stone-50 dark:hover:bg-stone-700">
+                    <i id="theme-icon" class="fa-solid fa-moon text-indigo-400 text-lg pointer-events-none"></i>
                 </button>
 
                 <!-- Переключатель языка -->
                 <div class="hidden sm:block relative z-[110] shrink-0" id="lang-dropdown-wrapper">
-                    <button onclick="window.toggleLangMenu(event)" class="liquid-btn liquid-btn-gray flex items-center justify-center gap-1.5 px-2.5 sm:px-3 h-10 sm:h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 cursor-pointer">
-                        <i class="fa-solid fa-globe text-brand-500 text-sm sm:text-base pointer-events-none"></i>
+                    <button onclick="window.toggleLangMenu(event)" class="liquid-btn liquid-btn-gray flex items-center justify-center gap-1.5 px-2.5 sm:px-3 h-10 sm:h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-700">
+                        <i class="fa-solid fa-globe text-indigo-500 text-sm sm:text-base pointer-events-none"></i>
                         <span id="lang-current" class="pointer-events-none">RU</span>
                         <i id="lang-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 pointer-events-none"></i>
                     </button>
                     
-                    <!-- Выпадающее меню языка (остается без изменений) -->
+                    <!-- Выпадающее меню языка -->
                     <div id="lang-dropdown" class="hidden absolute right-0 top-[calc(100%+8px)] w-40 z-[120]">
                         <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2 gap-1">
                             <button onclick="window.changeLanguage('ru'); window.toggleLangMenu(event);" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3 w-full cursor-pointer">
@@ -139,12 +139,13 @@
 
                 <!-- Кнопка ИНФО -->
                 <div class="hidden lg:flex relative shrink-0" id="info-dropdown-wrapper">
-                    <button onclick="window.toggleInfoMenu(event)" class="liquid-btn liquid-btn-gray flex items-center justify-center gap-1.5 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-sm shadow-sm transition-all duration-200 cursor-pointer">
+                    <button onclick="window.toggleInfoMenu(event)" class="liquid-btn liquid-btn-gray flex items-center justify-center gap-1.5 px-3 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm shadow-sm transition-all duration-200 cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-700">
+                        <i class="fa-solid fa-circle-info text-sky-500 text-sm pointer-events-none"></i>
                         <span data-i18n="nav_info" class="pointer-events-none">Инфо</span>
                         <i id="info-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200 pointer-events-none"></i>
                     </button>
                     
-                    <!-- Выпадающее меню ИНФО (остается без изменений) -->
+                    <!-- Выпадающее меню ИНФО -->
                     <div id="info-dropdown-menu" class="absolute right-0 top-[calc(100%+8px)] w-56 hidden z-[120]">
                         <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-stone-200/60 dark:border-stone-700/60 rounded-xl shadow-lg flex flex-col p-2 gap-1">
                             <a href="about.html" class="text-left px-3 py-2.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50/80 dark:hover:bg-stone-700/80 rounded-lg transition-colors flex items-center gap-3"><i class="fa-solid fa-circle-info text-stone-400 w-4 text-center"></i> <span data-i18n="nav_about">О проекте</span></a>
@@ -212,40 +213,43 @@
                 </script>
                 
                 <!-- Кнопка ВОЙТИ -->
-                <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')"
-                    class="liquid-btn liquid-btn-brand flex items-center justify-center px-4 sm:px-6 h-10 sm:h-11 rounded-xl bg-brand-600 text-white font-bold text-sm transition-all duration-200 cursor-pointer shadow-md shrink-0">Войти</button>
+                <button id="nav-login-btn" onclick="window.openModal('auth-modal')"
+                    class="liquid-btn liquid-btn-gray flex items-center justify-center gap-2 px-4 sm:px-6 h-10 sm:h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm transition-all duration-200 cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700 shrink-0">
+                    <i class="fa-solid fa-arrow-right-to-bracket text-brand-500 pointer-events-none"></i>
+                    <span data-i18n="btn_login" class="pointer-events-none">Войти</span>
+                </button>
 
                 <div id="nav-user-controls" class="hidden items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Кнопка чата -->
                     <button onclick="window.openChatListModal()" data-i18n-title="nav_messages" title="Сообщения"
-                        class="liquid-btn liquid-btn-gray hidden sm:flex relative items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 shadow-sm cursor-pointer">
-                        <i class="fa-regular fa-envelope text-base sm:text-lg pointer-events-none"></i>
+                        class="liquid-btn liquid-btn-gray hidden sm:flex relative items-center justify-center w-11 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 shadow-sm transition hover:bg-stone-50 dark:hover:bg-stone-700 cursor-pointer">
+                        <i class="fa-regular fa-envelope text-brand-500 text-base sm:text-lg pointer-events-none"></i>
                         <span id="nav-chat-badge" class="hidden absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-stone-900 animate-pulse pointer-events-none"></span>
                     </button>
                     
                     <!-- Кнопка профиля -->
                     <button onclick="window.openModal('profile-modal')" data-i18n-title="nav_profile" title="Профиль"
-                        class="liquid-btn liquid-btn-gray hidden lg:flex items-center justify-center w-11 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 shadow-sm cursor-pointer">
-                        <i class="fa-regular fa-user text-lg pointer-events-none"></i>
+                        class="liquid-btn liquid-btn-gray hidden lg:flex items-center justify-center w-11 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 shadow-sm transition hover:bg-stone-50 dark:hover:bg-stone-700 cursor-pointer">
+                        <i class="fa-regular fa-user text-blue-500 text-lg pointer-events-none"></i>
                     </button>
                 </div>
                 
                 <!-- Кнопка Пристроить Добро -->
                 <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" 
-                        class="liquid-btn liquid-btn-brand hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-600 text-white font-bold text-sm transition-all duration-300 hover:scale-105 cursor-pointer shrink-0 shadow-md">
-                        <i class="fa-solid fa-tag shrink-0 pointer-events-none"></i>
+                        class="liquid-btn liquid-btn-gray hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-sm transition-all duration-300 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer shrink-0 shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
+                        <i class="fa-solid fa-tag text-emerald-500 shrink-0 pointer-events-none"></i>
                         <span class="hidden xl:block truncate pointer-events-none" data-i18n="btn_publish">Пристроить добро</span>
                         <span class="block xl:hidden truncate pointer-events-none" data-i18n="btn_publish_mob">Продать</span>
                 </button>
 
                 <!-- Мобильные кнопки -->
                 <button onclick="window.toggleDarkMode()"
-                    class="liquid-btn liquid-btn-gray sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 transition-all duration-200 cursor-pointer shadow-sm shrink-0"><i
-                        class="fa-solid fa-moon text-base pointer-events-none"></i></button>
+                    class="liquid-btn liquid-btn-gray sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 transition-all duration-200 cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700 shrink-0"><i
+                        class="fa-solid fa-moon text-indigo-400 text-base pointer-events-none"></i></button>
                 
                 <button
-                    class="liquid-btn liquid-btn-gray lg:hidden flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 transition-all duration-200 cursor-pointer shadow-sm shrink-0"
-                    onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars text-base sm:text-lg pointer-events-none"></i></button>
+                    class="liquid-btn liquid-btn-gray lg:hidden flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 transition-all duration-200 cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700 shrink-0"
+                    onclick="window.toggleMobileMenu()"><i class="fa-solid fa-bars text-amber-500 text-base sm:text-lg pointer-events-none"></i></button>
             </div>
         </div>
     </nav>
@@ -1055,7 +1059,11 @@
                 </div>
 
                 <div class="mt-2">
-                    <button type="submit" id="auth-submit-btn" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center bg-brand-600 text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer hover:bg-brand-700">Зайти на Свалку</button>
+                    <!-- СЕНЬОР-ФИКС: Кнопка переведена в единый стиль с Google -->
+                    <button type="submit" id="auth-submit-btn" class="liquid-btn liquid-btn-gray w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm transition cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
+                        <i class="fa-solid fa-arrow-right-to-bracket text-brand-500 text-lg pointer-events-none"></i>
+                        <span class="pointer-events-none">Зайти на Свалку</span>
+                    </button>
                 </div>
 
                 <div class="flex items-center gap-3 my-2">

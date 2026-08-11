@@ -1496,8 +1496,9 @@ window.setAuthMode = mode => {
         if (tabR) tabR.className = "text-stone-900 dark:text-white border-b-2 border-stone-900 dark:border-white pb-1 transition cursor-pointer";
         if (tabL) tabL.className = "text-stone-400 border-b-2 border-transparent pb-1 transition cursor-pointer";
         
+        // СЕНЬОР-ФИКС: Обновляем только HTML-содержимое кнопки, оставляя иконку
         if (submitBtn) {
-            submitBtn.innerText = "Присоединиться";
+            submitBtn.innerHTML = '<i class="fa-solid fa-user-plus text-brand-500 text-lg pointer-events-none"></i> <span class="pointer-events-none">Присоединиться</span>';
             submitBtn.removeAttribute('data-i18n'); 
         }
         if (typeof window.renderRegistrationAvatars === 'function') window.renderRegistrationAvatars();
@@ -1508,8 +1509,9 @@ window.setAuthMode = mode => {
         if (tabL) tabL.className = "text-stone-900 dark:text-white border-b-2 border-stone-900 dark:border-white pb-1 transition cursor-pointer";
         if (tabR) tabR.className = "text-stone-400 border-b-2 border-transparent pb-1 transition cursor-pointer";
         
+        // СЕНЬОР-ФИКС: Обновляем только HTML-содержимое кнопки, оставляя иконку
         if (submitBtn) {
-            submitBtn.innerText = "Зайти на Свалку";
+            submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket text-brand-500 text-lg pointer-events-none"></i> <span class="pointer-events-none">Зайти на Свалку</span>';
             submitBtn.removeAttribute('data-i18n');
         }
     }
