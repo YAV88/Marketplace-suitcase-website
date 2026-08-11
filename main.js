@@ -1487,34 +1487,27 @@ window.setAuthMode = mode => {
     const confirmInput = document.getElementById('auth-password-confirm');
     const tabL = document.getElementById('tab-login');
     const tabR = document.getElementById('tab-register');
-    
-    // Добавлено: Находим кнопку формы по правильному ID
     const submitBtn = document.getElementById('auth-submit-btn');
 
     if (mode === 'register') {
         if (fields) { fields.classList.remove('hidden'); fields.classList.add('flex'); }
         if (confirmCont) { confirmCont.classList.remove('hidden'); confirmCont.classList.add('block'); }
         if (confirmInput) confirmInput.required = true;
-        if (tabR) tabR.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-        if (tabL) tabL.className = "text-stone-400 pb-1 transition cursor-pointer";
+        if (tabR) tabR.className = "text-stone-900 dark:text-white border-b-2 border-stone-900 dark:border-white pb-1 transition cursor-pointer";
+        if (tabL) tabL.className = "text-stone-400 border-b-2 border-transparent pb-1 transition cursor-pointer";
         
-        // Тематическое название для регистрации
         if (submitBtn) {
             submitBtn.innerText = "Присоединиться";
-            submitBtn.removeAttribute('data-i18n'); // Отключаем словарь для этой кнопки
+            submitBtn.removeAttribute('data-i18n'); 
         }
-
-        if (typeof window.renderRegistrationAvatars === 'function') {
-            window.renderRegistrationAvatars();
-        }
+        if (typeof window.renderRegistrationAvatars === 'function') window.renderRegistrationAvatars();
     } else {
         if (fields) { fields.classList.add('hidden'); fields.classList.remove('flex'); }
         if (confirmCont) { confirmCont.classList.add('hidden'); confirmCont.classList.remove('block'); }
         if (confirmInput) confirmInput.required = false;
-        if (tabL) tabL.className = "text-brand-600 border-b-2 border-brand-600 pb-1 transition cursor-pointer";
-        if (tabR) tabR.className = "text-stone-400 pb-1 transition cursor-pointer";
+        if (tabL) tabL.className = "text-stone-900 dark:text-white border-b-2 border-stone-900 dark:border-white pb-1 transition cursor-pointer";
+        if (tabR) tabR.className = "text-stone-400 border-b-2 border-transparent pb-1 transition cursor-pointer";
         
-        // Тематическое название для входа
         if (submitBtn) {
             submitBtn.innerText = "Зайти на Свалку";
             submitBtn.removeAttribute('data-i18n');
@@ -2265,16 +2258,16 @@ window.selectAddType = (type) => {
     }
 };
 
-// ЗАДАЧА 3: Премиальные кастомные Dropdown вместо нативных <select>
+// Премиальные кастомные Dropdown вместо нативных <select>
 window.initCustomSelects = () => {
     const formSelects = document.querySelectorAll('#add-form select');
     formSelects.forEach(select => {
         if (select.dataset.customized === 'true') return;
         select.dataset.customized = 'true';
-        select.classList.add('hidden', '!hidden'); // Полностью прячем нативный селект
+        select.classList.add('hidden', '!hidden');
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'relative w-full z-40';
+        wrapper.className = 'relative w-full z-40 custom-select-wrapper transition-all';
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
 
@@ -2300,21 +2293,27 @@ window.initCustomSelects = () => {
         wrapper.appendChild(btn);
 
         const menu = document.createElement('div');
-        menu.className = 'absolute left-0 top-[calc(100%+4px)] w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-xl overflow-y-auto max-h-64 hidden z-50 py-1 custom-scrollbar flex flex-col origin-top transition-all duration-200 scale-95 opacity-0 pointer-events-none';
+        // СЕНЬОР-ФИКС: Menu style now matches the premium neutral look
+        menu.className = 'absolute left-0 top-[calc(100%+4px)] w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-xl overflow-y-auto max-h-64 hidden py-1 custom-scrollbar flex flex-col origin-top transition-all duration-200 scale-95 opacity-0 pointer-events-none';
         
         const buildOption = (opt) => {
             if (opt.disabled || opt.style.display === 'none') return;
             const item = document.createElement('div');
-            item.className = 'px-4 py-2.5 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-brand-50 dark:hover:bg-brand-900/20 cursor-pointer transition-colors';
+            // СЕНЬОР-ФИКС: Neutral premium hover instead of hardcoded brand color
+            item.className = 'px-4 py-3 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 cursor-pointer transition-colors';
             item.innerText = opt.innerText;
             item.onclick = (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 select.value = opt.value;
                 labelSpan.innerText = opt.innerText;
                 labelSpan.classList.remove('text-stone-500', 'dark:text-stone-400');
                 
                 menu.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-                setTimeout(() => menu.classList.add('hidden'), 200);
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                    wrapper.classList.remove('!z-[100]'); // Reset Z-index
+                }, 200);
                 icon.classList.remove('rotate-180');
                 
                 select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -2338,16 +2337,21 @@ window.initCustomSelects = () => {
 
         btn.onclick = (e) => {
             e.stopPropagation();
+            e.preventDefault();
             const isHidden = menu.classList.contains('hidden');
             
             // Закрываем все другие меню
             document.querySelectorAll('.custom-select-menu').forEach(m => {
                 m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-                setTimeout(() => m.classList.add('hidden'), 200);
+                setTimeout(() => {
+                    m.classList.add('hidden');
+                    m.parentElement.classList.remove('!z-[100]'); // Reset Z-index
+                }, 200);
             });
             document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
             
             if (isHidden) {
+                wrapper.classList.add('!z-[100]'); // СЕНЬОР-ФИКС: Поднимаем z-index над всей модалкой
                 menu.classList.remove('hidden');
                 requestAnimationFrame(() => {
                     menu.classList.remove('scale-95', 'opacity-0', 'pointer-events-none');
@@ -2363,7 +2367,10 @@ window.initCustomSelects = () => {
 document.addEventListener('click', () => {
     document.querySelectorAll('.custom-select-menu').forEach(m => {
         m.classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-        setTimeout(() => m.classList.add('hidden'), 200);
+        setTimeout(() => {
+            m.classList.add('hidden');
+            m.parentElement.classList.remove('!z-[100]');
+        }, 200);
     });
     document.querySelectorAll('.custom-select-icon').forEach(i => i.classList.remove('rotate-180'));
 });
