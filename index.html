@@ -50,13 +50,6 @@
             -webkit-overflow-scrolling: touch;
         }
         
-        /* Отключаем браузерный фон при автозаполнении и вводе для поля чата */
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active,
-        textarea:-webkit-autofill, textarea:-webkit-autofill:hover, textarea:-webkit-autofill:focus, textarea:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
-        
         /* Фикс для мобильных карточек в профиле (чтобы кнопки управления не обрезались) */
         @media (max-width: 640px) {
             #profile-items-grid > div {
@@ -220,7 +213,7 @@
                 
                 <!-- Кнопка ВОЙТИ -->
                 <button id="nav-login-btn" data-i18n="btn_login" onclick="window.openModal('auth-modal')"
-                    class="liquid-btn liquid-btn-primary flex items-center justify-center px-4 sm:px-6 h-10 sm:h-11 rounded-xl font-bold text-sm transition-all duration-200 cursor-pointer shadow-sm shrink-0">Войти</button>
+                    class="liquid-btn liquid-btn-brand flex items-center justify-center px-4 sm:px-6 h-10 sm:h-11 rounded-xl bg-brand-600 text-white font-bold text-sm transition-all duration-200 cursor-pointer shadow-md shrink-0">Войти</button>
 
                 <div id="nav-user-controls" class="hidden items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Кнопка чата -->
@@ -239,7 +232,7 @@
                 
                 <!-- Кнопка Пристроить Добро -->
                 <button id="btn-header-add" onclick="window.checkAuthAndOpenAddModal()" 
-                        class="liquid-btn liquid-btn-primary hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl font-black transition-all duration-300 hover:scale-105 cursor-pointer shrink-0 shadow-md">
+                        class="liquid-btn liquid-btn-brand hidden md:flex items-center justify-center gap-2 w-40 xl:w-64 h-11 rounded-xl bg-brand-600 text-white font-bold text-sm transition-all duration-300 hover:scale-105 cursor-pointer shrink-0 shadow-md">
                         <i class="fa-solid fa-tag shrink-0 pointer-events-none"></i>
                         <span class="hidden xl:block truncate pointer-events-none" data-i18n="btn_publish">Пристроить добро</span>
                         <span class="block xl:hidden truncate pointer-events-none" data-i18n="btn_publish_mob">Продать</span>
@@ -1028,40 +1021,41 @@
                 <button onclick="window.setAuthMode('register')" id="tab-register" class="text-stone-400 border-b-2 border-transparent pb-1 transition cursor-pointer" data-i18n="auth_tab_reg">Регистрация</button>
             </div>
             
-            <form id="auth-form" class="flex flex-col gap-3 text-left" onsubmit="window.submitAuth(event);">
-                <div id="auth-name-field" class="hidden flex-col gap-3">
-                    <input type="text" id="auth-name" data-i18n="auth_name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
-                    <div class="bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700">
+            <form id="auth-form" class="flex flex-col gap-4 text-left" onsubmit="window.submitAuth(event);">
+                
+                <div id="auth-name-field" class="hidden flex-col gap-4">
+                    <input type="text" id="auth-name" data-i18n="auth_name" placeholder="Ваше Имя" class="w-full bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-3.5 rounded-xl font-bold text-sm outline-none focus:border-brand-500 cursor-text caret-brand-600 text-stone-900 dark:text-white transition-colors">
+                    <div class="bg-stone-50 dark:bg-stone-800/50 p-3 sm:p-4 rounded-xl border border-stone-200 dark:border-stone-700">
                         <label class="text-sm font-bold text-stone-500 mb-2 block" data-i18n="auth_avatar">Выберите аватар</label>
                         <div class="flex flex-wrap justify-center gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1" id="avatar-grid"></div>
                     </div>
                 </div>
                 
                 <div class="flex flex-col gap-2">
-                    <input type="email" id="auth-email" placeholder="Email" oninput="this.value = this.value.replace(/[А-Яа-яЁё\s]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required list="email-domains">
+                    <input type="email" id="auth-email" placeholder="Email" oninput="this.value = this.value.replace(/[А-Яа-яЁё\s]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-3.5 rounded-xl font-bold text-sm outline-none focus:border-brand-500 cursor-text caret-brand-600 text-stone-900 dark:text-white transition-colors" required list="email-domains">
                     <datalist id="email-domains">
                         <option value="@gmail.com"></option><option value="@mail.ru"></option><option value="@yandex.ru"></option><option value="@bk.ru"></option>
                     </datalist>
-                    <div class="flex flex-wrap gap-2 px-1">
+                    <div class="flex flex-wrap gap-2 px-1 mt-1">
                         <button type="button" onclick="window.appendEmailDomain('@gmail.com')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@gmail.com</button>
                         <button type="button" onclick="window.appendEmailDomain('@mail.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@mail.ru</button>
                         <button type="button" onclick="window.appendEmailDomain('@yandex.ru')" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition bg-stone-50 hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2 py-1 rounded-lg cursor-pointer shadow-sm">@yandex.ru</button>
                     </div>
                 </div>
                 
-                <div>
-                    <input type="password" id="auth-password" data-i18n="auth_pass" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white" required>
-                    <div id="auth-password-confirm-container" class="hidden mt-3">
-                        <input type="password" id="auth-password-confirm" data-i18n="auth_pass_conf" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800 p-3 sm:p-4 rounded-xl border dark:border-stone-700 font-medium text-base outline-none cursor-text caret-brand-600 text-stone-900 dark:text-white">
+                <div class="flex flex-col gap-2">
+                    <input type="password" id="auth-password" data-i18n="auth_pass" placeholder="Пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-3.5 rounded-xl font-bold text-sm outline-none focus:border-brand-500 cursor-text caret-brand-600 text-stone-900 dark:text-white transition-colors" required>
+                    <div id="auth-password-confirm-container" class="hidden mt-2">
+                        <input type="password" id="auth-password-confirm" data-i18n="auth_pass_conf" placeholder="Повторите пароль" oninput="this.value = this.value.replace(/[А-Яа-яЁё]/g, '')" class="w-full bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-3.5 rounded-xl font-bold text-sm outline-none focus:border-brand-500 cursor-text caret-brand-600 text-stone-900 dark:text-white transition-colors">
                     </div>
-                    <div class="flex justify-between items-center mt-2 px-1">
-                        <p class="text-xs text-stone-400 font-medium" id="auth-hint" data-i18n="auth_hint">Мин. 8 символов</p>
+                    <div class="flex justify-between items-center px-1 mt-1">
+                        <p class="text-[11px] text-stone-400 font-bold uppercase tracking-widest" id="auth-hint" data-i18n="auth_hint">Мин. 8 символов</p>
                         <button type="button" onclick="window.forgotPassword()" class="text-xs font-bold text-stone-500 hover:text-brand-600 transition cursor-pointer" data-i18n="auth_forgot">Забыли пароль?</button>
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    <button type="submit" id="auth-submit-btn" class="liquid-btn liquid-btn-primary w-full py-4 rounded-2xl font-black text-lg transition-all shadow-lg cursor-pointer">Зайти на Свалку</button>
+                <div class="mt-2">
+                    <button type="submit" id="auth-submit-btn" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center bg-brand-600 text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer hover:bg-brand-700">Зайти на Свалку</button>
                 </div>
 
                 <div class="flex items-center gap-3 my-2">
@@ -1070,7 +1064,7 @@
                     <div class="flex-1 h-px bg-stone-200 dark:bg-stone-700"></div>
                 </div>
                 
-                <button type="button" onclick="window.loginWithProvider('google')" class="liquid-btn liquid-btn-gray w-full flex items-center justify-center gap-3 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 py-3.5 rounded-2xl hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer shadow-sm">
+                <button type="button" onclick="window.loginWithProvider('google')" class="liquid-btn liquid-btn-gray w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 py-3.5 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition cursor-pointer shadow-sm">
                     <i class="fa-brands fa-google text-red-500 text-lg pointer-events-none"></i>
                     <span class="font-bold text-sm text-stone-700 dark:text-stone-300 pointer-events-none">Продолжить через Google</span>
                 </button>
