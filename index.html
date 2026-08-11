@@ -499,8 +499,8 @@
             <!-- ВЕРХНИЙ РЯД: Главное, Услуги, Недвижимость, Бизнес -->
             <div class="flex flex-nowrap overflow-x-auto items-center gap-2 sm:gap-3 pb-2 sm:pb-0 custom-scrollbar snap-x">
                 <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn liquid-btn active px-5 py-2.5 rounded-xl font-bold text-sm shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]" data-i18n="cat_all">Все</button>
-                <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn liquid-btn liquid-btn-red px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-crown mr-1"></i> <span data-i18n="cat_top">ТОП</span></button>
-                
+                <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn liquid-btn liquid-btn-red px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-fire-flame-curved mr-1"></i> <span data-i18n="cat_top">ТОП</span></button>
+
                 <div class="w-px h-6 bg-stone-300 dark:bg-stone-700 shrink-0 mx-1"></div>
                 
                 <button data-cat="Жилье" onclick="window.filterByCategory('Жилье', event)" class="cat-btn liquid-btn px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-building mr-1.5 text-blue-500"></i> <span data-i18n="cat_home">Недвижимость</span></button>
@@ -540,23 +540,23 @@
             </div>
         </div>
 
-        <!-- Премиальный темный PRO-баннер -->
-        <div class="mb-8 sm:mb-10 rounded-[2rem] bg-stone-900 dark:bg-stone-800 p-6 text-white flex flex-col sm:flex-row items-center justify-between shadow-xl hover:shadow-2xl transition-all cursor-pointer gap-5 group border border-stone-800 dark:border-stone-700 overflow-hidden relative" onclick="window.openModal('crypto-modal')">
-            <div class="absolute -right-10 -top-10 text-amber-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none"><i class="fa-solid fa-crown"></i></div>
+        <!-- Премиальный PRO-баннер с огнем и полным охватом ширины -->
+        <div id="pro-banner" class="mb-8 sm:mb-10 rounded-[2rem] bg-stone-900 dark:bg-stone-800 p-6 text-white flex flex-col sm:flex-row items-center justify-between shadow-xl hover:shadow-2xl transition-all cursor-pointer gap-5 group border border-stone-800 dark:border-stone-700 overflow-hidden relative" onclick="window.openModal('crypto-modal')">
+            <div class="absolute -right-10 -top-10 text-orange-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none"><i class="fa-solid fa-fire-flame-curved"></i></div>
             
             <div class="flex items-center gap-4 sm:gap-5 w-full sm:w-auto relative z-10">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_15px_rgba(245,158,11,0.5)]">
-                    <i class="fa-solid fa-crown text-2xl drop-shadow-md"></i>
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+                    <i class="fa-solid fa-fire-flame-curved text-2xl drop-shadow-md"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-amber-500 text-stone-900 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
+                        <span class="bg-orange-500 text-stone-900 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
                     </div>
                     <span class="font-bold text-sm sm:text-base text-stone-300 group-hover:text-white transition-colors" data-i18n="vip_promo">Получи VIP-статус и продавай вещи быстрее!</span>
                 </div>
             </div>
-            <button class="liquid-btn liquid-btn-amber bg-amber-500 text-stone-900 px-8 py-3.5 rounded-xl font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-md shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 group-hover:shadow-lg relative z-10">
-                <span data-i18n="btn_connect">Подключить</span> <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+            <button class="liquid-btn liquid-btn-amber bg-orange-500 text-stone-900 px-8 py-3.5 rounded-xl font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-md shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 group-hover:shadow-lg relative z-10">
+                <span data-i18n="btn_connect" class="pointer-events-none">Подключить</span> <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1 pointer-events-none"></i>
             </button>
         </div>
 
@@ -831,19 +831,17 @@
                 class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 dark:hover:text-white transition text-2xl z-20 drop-shadow-sm"><i
                     class="fa-solid fa-xmark"></i></button>
 
-            <div
-                class="p-8 pb-6 text-center bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 relative overflow-hidden">
-                <div
-                    class="absolute -right-4 -top-4 text-amber-500/20 dark:text-amber-500/10 text-9xl rotate-12 drop-shadow-sm">
-                    <i class="fa-solid fa-crown"></i></div>
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white mb-4 relative shadow-[0_10px_20px_-5px_rgba(245,158,11,0.5)] border border-amber-300 dark:border-amber-600">
-                    <i class="fa-solid fa-crown text-3xl drop-shadow-md"></i>
+            <div class="p-8 pb-6 text-center bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-orange-500/20 dark:text-orange-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none">
+                    <i class="fa-solid fa-fire-flame-curved"></i></div>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-white mb-4 relative shadow-[0_10px_20px_-5px_rgba(249,115,22,0.5)] border border-orange-300 dark:border-orange-600">
+                    <i class="fa-solid fa-fire-flame-curved text-3xl drop-shadow-md"></i>
                 </div>
                 <h2 class="text-2xl font-display font-black text-stone-900 dark:text-white relative">SVALKA <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">PRO</span>
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>
                 </h2>
             </div>
+            
             <div class="p-8 space-y-6 overflow-y-auto custom-scrollbar">
                 <div class="space-y-4">
                     <div
@@ -1378,7 +1376,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="add-submit-btn" data-i18n="btn_publish_final" class="bg-brand-600 text-white py-5 mt-2 rounded-xl font-bold text-lg shadow-lg transition-all duration-300 cursor-pointer">Опубликовать</button>
+                <button type="submit" id="add-submit-btn" data-i18n="btn_publish_final" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center bg-brand-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer hover:bg-brand-700">Опубликовать</button>
             </form>
         </div>
     </div>
@@ -1830,21 +1828,19 @@
                     <!-- ПАКЕТ 15 ТОКЕНОВ (ХИТ) -->
                     <label class="group relative flex items-center justify-between p-4 rounded-2xl border-2 border-stone-200 dark:border-stone-700 cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
                         <input type="radio" name="token_package" value="15" data-price="12$" class="hidden peer" checked>
-                        <!-- Плашка Выгода вынесена на передний план (z-20) -->
-                        <div class="absolute -top-3 right-4 bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm z-20" data-i18n="tokens_save">Выгода 20%</div>
-                        <!-- Идеальная рамка по контуру: -inset-[2px] -->
-                        <div class="absolute -inset-[2px] rounded-2xl border-2 border-transparent peer-checked:border-amber-500 pointer-events-none transition-colors z-0"></div>
+                        <div class="absolute -top-3 right-4 bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm z-20" data-i18n="tokens_save">Выгода 20%</div>
+                        <div class="absolute -inset-[2px] rounded-2xl border-2 border-transparent peer-checked:border-orange-500 pointer-events-none transition-colors z-0"></div>
                         
                         <div class="flex items-center gap-4 relative z-10">
-                            <div class="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-crown"></i>
+                            <div class="w-12 h-12 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-fire-flame-curved"></i>
                             </div>
                             <div>
                                 <div class="text-lg font-black text-stone-900 dark:text-white leading-tight">15 <span data-i18n="tokens_word">токенов</span></div>
                                 <div class="text-xs font-bold text-stone-500" data-i18n="tokens_hit">Хит продаж</div>
                             </div>
                         </div>
-                        <div class="text-xl font-black text-amber-500 relative z-10">12$</div>
+                        <div class="text-xl font-black text-orange-500 relative z-10">12$</div>
                     </label>
                     
                     <!-- ПАКЕТ 30 ТОКЕНОВ -->
@@ -1891,15 +1887,15 @@
                     </div>
                 </div>
 
-                <div class="p-6 pt-4 shrink-0">
-                    <!-- СЕНЬОР-ФИКС: Кнопка переведена в дизайн-систему liquid-btn для 100% читаемости -->
-                    <button onclick="window.initiateTokenPurchase()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-2 bg-brand-600 text-white py-4 rounded-xl font-black text-lg transition-all shadow-lg shadow-brand-500/30 cursor-pointer">
-                        <i class="fa-solid fa-wallet pointer-events-none"></i> <span data-i18n="btn_pay" class="pointer-events-none">Оплатить</span>
-                    </button>
-                    <div class="text-center text-[10px] text-stone-400 font-bold mt-3 uppercase tracking-widest" data-i18n="secure_payment">
-                        Защищенная оплата Crypto / Plisio
-                    </div>
+                <div class="p-6 pt-4 shrink-0 border-t border-stone-200 dark:border-stone-800">
+                <!-- Кнопка переведена в дизайн-систему liquid-btn-brand, а текст переведен на русский -->
+                <button id="btn-pay-plisio" onclick="window.payWithPlisio()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-2 bg-brand-600 text-white py-3.5 rounded-xl font-black text-lg transition-all shadow-lg shadow-brand-500/30 cursor-pointer hover:bg-brand-700">
+                    <i class="fa-solid fa-wallet pointer-events-none"></i> <span data-i18n="pro_pay_btn" class="pointer-events-none">Оплатить PRO</span>
+                </button>
+                <div class="text-center text-[10px] text-stone-400 font-bold mt-3 uppercase tracking-widest" data-i18n="secure_payment">
+                    Защищенная оплата Crypto / Plisio
                 </div>
+            </div>
                 
             </div>
         </div>

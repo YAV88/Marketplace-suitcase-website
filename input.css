@@ -332,7 +332,10 @@
         .container, .max-w-[1400px] { padding-left: 3rem !important; padding-right: 3rem !important; } 
         main { display: grid !important; grid-template-columns: 280px minmax(0, 1fr) !important; align-items: start; gap: 0 2.5rem !important; }
         main > * { grid-column: 2 / -1 !important; }
-        main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, main > div.bg-gradient-to-r { grid-column: 1 / -1 !important; }
+        
+        /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
+        main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, #pro-banner { grid-column: 1 / -1 !important; }
+        
         #vip-section { width: 100% !important; margin: 0 !important; }
         #vip-section > div { padding-left: 0 !important; padding-right: 0 !important; }
         #filter-panel-wrapper { grid-column: 1 / 2 !important; grid-row: 7 / 20 !important; position: sticky !important; top: 100px !important; height: calc(100vh - 120px) !important; display: block !important; overflow-y: auto !important; box-shadow: none !important; background: transparent !important; transform: none !important; padding-top: 0.5rem !important; }
