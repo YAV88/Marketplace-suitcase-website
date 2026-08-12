@@ -49,22 +49,8 @@
             overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
         }
-        
-        /* Фикс для мобильных карточек в профиле (чтобы кнопки управления не обрезались) */
-        @media (max-width: 640px) {
-            #profile-items-grid > div {
-                height: auto !important;
-                min-height: 150px;
-            }
-            #profile-items-grid > div .overflow-hidden {
-                overflow: visible !important;
-            }
-            /* Заставляем контейнер с кнопками переносить их на новые строки */
-            #profile-items-grid .flex {
-                flex-wrap: wrap;
-            }
-        }    
     </style>
+
 </head>
 
 <body class="antialiased relative z-0 pb-[70px] lg:pb-0 overflow-x-hidden max-w-full min-h-[100dvh]">
@@ -541,24 +527,26 @@
             </div>
         </div>
 
-        <!-- Премиальный PRO-баннер с копирайтингом формата "Донат" -->
-        <div id="pro-banner" class="mb-8 sm:mb-10 rounded-[2rem] bg-stone-900 dark:bg-stone-800 p-6 text-white flex flex-col sm:flex-row items-center justify-between shadow-xl hover:shadow-2xl transition-all cursor-pointer gap-5 group border border-stone-800 dark:border-stone-700 overflow-hidden relative" onclick="window.openModal('crypto-modal')">
-            <div class="absolute -right-10 -top-10 text-orange-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        <!-- Гармоничный и дружелюбный баннер поддержки (донат) -->
+        <div id="pro-banner" class="mb-8 sm:mb-10 rounded-[2rem] bg-white dark:bg-stone-800/40 p-6 flex flex-col sm:flex-row items-center justify-between shadow-sm hover:shadow-md transition-all cursor-pointer gap-5 group border border-stone-200 dark:border-stone-700 overflow-hidden relative" onclick="window.openModal('crypto-modal')">
+            <div class="absolute -right-10 -top-10 text-rose-500/5 dark:text-rose-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none transition-transform group-hover:scale-110 duration-500"><i class="fa-solid fa-heart"></i></div>
             
             <div class="flex items-center gap-4 sm:gap-5 w-full sm:w-auto relative z-10">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_15px_rgba(249,115,22,0.5)]">
-                    <i class="fa-solid fa-fire-flame-curved text-2xl drop-shadow-md"></i>
+                <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm border border-rose-100 dark:border-rose-800/50">
+                    <i class="fa-solid fa-heart text-2xl drop-shadow-sm"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-orange-500 text-stone-900 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
+                        <span class="bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center gap-1 border border-stone-800 dark:border-stone-200">
+                            <span class="text-white dark:text-stone-900">SVALKA</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>
+                        </span>
                     </div>
-                    <!-- Идентификаторы для динамического перевода из JS -->
-                    <span id="promo-donate-title" class="font-bold text-sm sm:text-base text-stone-300 group-hover:text-white transition-colors">Поддержи проект и получи VIP-статус в подарок!</span>
+                    <span id="promo-donate-title" class="font-bold text-sm sm:text-base text-stone-800 dark:text-stone-200 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Поддержи проект и получи VIP-статус в подарок!</span>
                 </div>
             </div>
-            <button class="liquid-btn liquid-btn-amber bg-orange-500 text-stone-900 px-8 py-3.5 rounded-xl font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-md shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 group-hover:shadow-lg relative z-10">
-                <i class="fa-solid fa-heart pointer-events-none text-red-500 mr-1 drop-shadow-sm"></i>
+            <button class="liquid-btn liquid-btn-red bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-sm shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 relative z-10 hover:bg-white dark:hover:bg-stone-700/80">
+                <i class="fa-solid fa-heart pointer-events-none text-rose-500 mr-1"></i>
                 <span id="promo-donate-btn-text" class="pointer-events-none">Поддержать SVALKA</span> 
             </button>
         </div>
@@ -900,6 +888,7 @@
             </div>
             
             <div class="p-6 pt-4 shrink-0 border-t border-stone-200 dark:border-stone-800">
+                <!-- Единый премиальный стиль кнопок -->
                 <button id="btn-pay-plisio" onclick="window.payWithPlisio()" class="liquid-btn liquid-btn-brand w-full flex items-center justify-center gap-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 py-3.5 rounded-xl font-bold text-sm transition cursor-pointer shadow-sm hover:bg-stone-50 dark:hover:bg-stone-700">
                     <i class="fa-solid fa-wallet text-brand-500 text-lg pointer-events-none"></i> <span data-i18n="pro_pay_btn" class="pointer-events-none">Оплатить PRO</span>
                 </button>
@@ -1407,7 +1396,7 @@
                             <h2 id="profile-name" class="text-base sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">
                                 Гость
                             </h2>
-                            <span id="profile-pro-badge" class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
+                            <span id="profile-pro-badge" class="hidden"></span>
                             
                             <div class="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-2">
                                 <button id="btn-edit-profile" onclick="window.openEditProfile()" class="hidden items-center justify-center w-8 h-8 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-500 hover:text-brand-600 shadow-sm transition-all shrink-0" data-i18n-title="btn_edit_profile" title="Редактировать профиль">
@@ -1422,29 +1411,30 @@
                     </div>
                 </div>
 
-                <!-- ПЛАШКИ ОПЛАТ (Компактные, не растягиваются, выровнены по тексту) -->
-                <div id="profile-economy-section" class="hidden flex-row flex-wrap items-center gap-2 sm:gap-3 mt-1 pl-[68px] sm:pl-[80px]">
+                <!-- ПЛАШКИ ОПЛАТ -->
+                <div id="profile-economy-section" class="hidden flex-col sm:flex-row w-full gap-3 mt-4">
                     
-                    <!-- Плашка PRO -->
-                    <div class="flex items-center justify-between bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 px-3 rounded-lg shadow-sm gap-3">
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-id-badge text-stone-400 text-xs shrink-0"></i>
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2.5 px-4 rounded-xl gap-4 flex-1 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-md bg-stone-200/50 dark:bg-stone-700/50 flex items-center justify-center text-stone-500 shrink-0">
+                                <i class="fa-solid fa-id-badge text-xs"></i>
+                            </div>
                             <span id="profile-account-status" class="text-sm font-black text-stone-700 dark:text-stone-300">Базовый</span>
                         </div>
-                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="bg-brand-500 text-white font-bold text-xs px-4 py-1.5 rounded-lg hover:bg-brand-400 transition-colors shadow-sm" data-i18n="profile_buy_pro">Купить PRO</button>
+                        <button id="profile-buy-pro-btn" onclick="window.openModal('crypto-modal');" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 py-2 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="profile_buy_pro">Купить PRO</button>
                     </div>
                     
-                    <!-- Плашка Токенов -->
-                    <div class="flex items-center justify-between bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-1.5 px-3 rounded-lg shadow-sm gap-3">
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-bolt text-brand-500 text-xs shrink-0"></i>
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2.5 px-4 rounded-xl gap-4 flex-1 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 shrink-0">
+                                <i class="fa-solid fa-bolt text-xs"></i>
+                            </div>
                             <span id="profile-vip-tokens" class="text-sm font-black text-stone-900 dark:text-white">0 шт.</span>
                         </div>
-                        <button onclick="window.closeModal('profile-modal'); window.openTokenPurchaseModal();" class="bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-white font-bold text-xs px-4 py-1.5 rounded-lg hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors shadow-sm" data-i18n="btn_buy_more">Докупить</button>
+                        <button onclick="window.openTokenPurchaseModal();" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 py-2 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="btn_buy_more">Докупить</button>
                     </div>
 
                 </div>
-            </div>
 
             <div
                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b dark:border-stone-800 px-4 sm:px-6 pt-1 gap-3 sm:gap-0 pb-2 sm:pb-0">
@@ -1468,9 +1458,7 @@
 
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
                 <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid gap-4 sm:gap-6"></div>
-                <div id="profile-empty"
-                    class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg"
-                    style="display: none;">
+                <div id="profile-empty" class="w-full h-full min-h-[300px] flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span
                         data-i18n="profile_empty">Пусто</span>
                 </div>
@@ -1632,7 +1620,7 @@
                             <h2 id="seller-name"
                                 class="text-lg sm:text-xl font-display font-black text-stone-900 dark:text-white truncate">
                                 Продавец</h2>
-                            <span id="seller-pro-badge"
+                            <span id="seller-pro-badge" class="hidden"></span>
                                 class="hidden bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0">VIP</span>
                         </div>
                         <div id="seller-rating-container" class="flex items-center gap-1 text-sm mb-1 hidden"></div>
