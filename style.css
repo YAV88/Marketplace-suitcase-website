@@ -719,9 +719,9 @@ option, optgroup {
 }
 
 .modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .modal-content {
@@ -862,7 +862,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 .item-card {
   cursor: pointer !important;
-  /* Обязательно для работы event delegation в iOS Safari */
+  /* Обязательно для кликов в iOS Safari */
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
@@ -871,8 +871,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  /* CSS-анимация появления вместо глючного JS Observer */
+  /* СЕНЬОР-ФИКС: Принудительная CSS-анимация появления. Карточки больше никогда не застрянут прозрачными! */
+  opacity: 0;
   animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
