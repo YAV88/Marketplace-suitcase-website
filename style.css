@@ -741,13 +741,16 @@ option, optgroup {
   position: relative;
   overflow: hidden;
   z-index: 1;
+  /* ЗАДАЧА 2: Аппаратное ускорение. Жестко фиксирует overflow:hidden в Safari и iOS, обрезая любые вылезающие уголки */
+  transform: translateZ(0);
   transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
 }
 
 .liquid-btn::before {
   content: '';
   position: absolute;
-  top: 150%;
+  /* ЗАДАЧА 2: Опускаем волну глубже (было 150%), чтобы она гарантированно не торчала до наведения */
+  top: 250%;
   left: -25%;
   width: 150%;
   height: 150%;
@@ -2869,6 +2872,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   border-color: rgb(255 255 255 / 0.4);
 }
 
+.border-rose-100{
+  --tw-border-opacity: 1;
+  border-color: rgb(255 228 230 / var(--tw-border-opacity, 1));
+}
+
 .bg-\[\#0088cc\]{
   --tw-bg-opacity: 1;
   background-color: rgb(0 136 204 / var(--tw-bg-opacity, 1));
@@ -3112,6 +3120,16 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 .bg-white\/95{
   background-color: rgb(255 255 255 / 0.95);
+}
+
+.bg-rose-50{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 241 242 / var(--tw-bg-opacity, 1));
+}
+
+.bg-rose-500{
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 63 94 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-br{
@@ -3832,6 +3850,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .text-white{
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.text-rose-500\/5{
+  color: rgb(244 63 94 / 0.05);
 }
 
 .antialiased{
@@ -4643,6 +4665,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.group:hover .group-hover\:text-rose-600{
+  --tw-text-opacity: 1;
+  color: rgb(225 29 72 / var(--tw-text-opacity, 1));
+}
+
 .group:hover .group-hover\:opacity-100{
   opacity: 1;
 }
@@ -4874,6 +4901,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   border-color: rgb(255 255 255 / 0.5);
 }
 
+.dark\:border-rose-800\/50:is(.dark *){
+  border-color: rgb(159 18 57 / 0.5);
+}
+
 .dark\:bg-\[\#1c1917\]:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
@@ -5014,6 +5045,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   background-color: rgb(255 255 255 / 0.95);
 }
 
+.dark\:bg-rose-900\/30:is(.dark *){
+  background-color: rgb(136 19 55 / 0.3);
+}
+
 .dark\:from-amber-900\/20:is(.dark *){
   --tw-gradient-from: rgb(120 53 15 / 0.2) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(120 53 15 / 0) var(--tw-gradient-to-position);
@@ -5130,6 +5165,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.dark\:text-rose-500\/10:is(.dark *){
+  color: rgb(244 63 94 / 0.1);
+}
+
 .dark\:placeholder-stone-500:is(.dark *)::-moz-placeholder{
   --tw-placeholder-opacity: 1;
   color: rgb(120 113 108 / var(--tw-placeholder-opacity, 1));
@@ -5231,6 +5270,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .dark\:focus\:bg-stone-900:focus:is(.dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(28 25 23 / var(--tw-bg-opacity, 1));
+}
+
+.group:hover .dark\:group-hover\:text-rose-400:is(.dark *){
+  --tw-text-opacity: 1;
+  color: rgb(251 113 133 / var(--tw-text-opacity, 1));
 }
 
 @media (min-width: 640px){
