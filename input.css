@@ -66,10 +66,8 @@
     option, optgroup { background-color: var(--bg-surface) !important; color: var(--text-primary) !important; font-weight: 600; }
 
     /* ==========================================
-       МОДАЛЬНЫЕ ОКНА
-       Удален transform из .modal-overlay для предотвращения
-       бага невидимости окон (схлопывание слоев WebKit)
-       при использовании backdrop-blur и position: fixed.
+       НАДЕЖНЫЕ МОДАЛЬНЫЕ ОКНА
+       Тотально очищены от 3D-трансформаций и will-change для защиты от багов iOS Safari
        ========================================== */
     .modal-overlay { 
         opacity: 0; 
@@ -87,7 +85,6 @@
     .modal-content { 
         transform: scale(0.95) translateY(15px); 
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-        will-change: transform;
     }
     
     .modal-overlay.active .modal-content { 
@@ -101,14 +98,13 @@
         position: relative;
         overflow: hidden;
         z-index: 1;
-        /* Аппаратное ускорение фиксирует overflow:hidden в Safari/iOS, обрезая артефакты анимации */
+        /* Аппаратное ускорение тут безопасно: фиксирует overflow:hidden и спасает углы от заливки */
         transform: translateZ(0); 
         transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
     }
     .liquid-btn::before {
         content: '';
         position: absolute;
-        /* Опускаем волну глубже, чтобы края не были видны до наведения */
         top: 250%; 
         left: -25%;
         width: 150%;
@@ -130,9 +126,7 @@
     .cat-btn.active.liquid-btn-red { background-color: #EF4444 !important; border-color: #EF4444 !important; }
     .cat-btn.active::before { display: none; }
     
-    /* ==========================================
-       Блокировка системных цветов автозаполнения браузеров
-       ========================================== */
+    /* Блокировка системных цветов автозаполнения браузеров */
     input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, textarea:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
         -webkit-text-fill-color: var(--text-primary) !important;
@@ -165,21 +159,20 @@
        БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
        ========================================== */
     .item-card {
-        cursor: pointer !important; /* Обязательно для корректной работы событий клика в iOS Safari */
+        cursor: pointer !important; 
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
         
-        /* Карточка по умолчанию видима, анимация навешивается через JS (класс .is-animating) */
         transform: translateY(0);
-        will-change: transform, opacity;
+        /* will-change удален для предотвращения мерцаний и пропаданий в WebKit */
         
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
     }
     
-    /* Класс анимации, добавляемый через JS при скролле */
+    /* Анимация при скролле */
     .item-card.is-animating {
         animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
