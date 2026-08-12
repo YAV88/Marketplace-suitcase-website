@@ -3477,14 +3477,16 @@ window.changeLanguage = (lang) => {
     document.documentElement.lang = lang; // Гарантируем смену системного языка
     window.updateSearchPlaceholder(true); // Форсируем моментальное обновление текста поиска
     
-    // Жесткая фиксация цвета активной кнопки в мобильном меню
+    // Плавная анимация кнопок языка в мобильном меню (эффект iOS Segmented Control)
     ['ru', 'sr', 'en'].forEach(l => {
         const btn = document.getElementById(`mob-lang-${l}`);
         if (btn) {
             if (l === lang) {
-                btn.className = "py-2.5 bg-brand-600 text-white border border-brand-600 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer";
+                // Активная кнопка: заливка фирменным цветом, тень, эффект выпуклости
+                btn.className = "relative z-10 py-2.5 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer text-white bg-brand-500 shadow-md transform scale-[1.02]";
             } else {
-                btn.className = "py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-sm font-bold hover:border-brand-500 shadow-sm transition-all cursor-pointer";
+                // Неактивная кнопка: прозрачный фон, мягкий hover
+                btn.className = "relative z-10 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white bg-transparent hover:bg-stone-200/50 dark:hover:bg-stone-700/50 transform scale-100 shadow-none";
             }
         }
     });

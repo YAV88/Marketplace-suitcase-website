@@ -77,15 +77,14 @@
             class="relative z-10 container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-wrap lg:flex-nowrap justify-between items-center gap-2 lg:gap-6 transition-all duration-300">
 
             <!-- Логотип: Скетч-робот SVALKA -->
-            <!-- СЕНЬОР-ФИКС: Нативный тег <a> для поддержки открытия в новой вкладке (колесиком мыши) -->
             <a href="/" onclick="if(event.button === 0 && !event.ctrlKey && !event.metaKey) { event.preventDefault(); window.goHome(); }" class="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0 outline-none">
                 <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/SVALKA.logo1.png" 
                      alt="SVALKA Logo" 
                      fetchpriority="high" 
                      decoding="async" 
-                     class="h-12 sm:h-16 w-auto object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3">
+                     class="h-12 sm:h-16 w-auto object-contain drop-shadow-sm transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6">
                 <div class="flex items-center gap-1 pt-1">
-                    <span class="text-2xl sm:text-4xl font-display font-black tracking-tighter text-stone-900 dark:text-white group-hover:text-brand-600 transition-colors duration-300">SVALKA</span>
+                    <span class="text-2xl sm:text-4xl font-display font-black tracking-tighter text-stone-900 dark:text-white group-hover:text-brand-500 transition-colors duration-300">SVALKA</span>
                 </div>
             </a>
 
@@ -261,11 +260,18 @@
         
         <!-- HEADER -->
         <div class="p-4 pt-12 sm:pt-4 border-b border-stone-100 dark:border-stone-800 flex justify-between items-center bg-white dark:bg-stone-900 shrink-0 shadow-sm z-10">
-            <a href="/" onclick="if(event.button === 0 && !event.ctrlKey && !event.metaKey) { event.preventDefault(); window.goHome(); window.toggleMobileMenu(); }" class="flex items-center gap-2 pt-1 outline-none cursor-pointer pl-2">
-                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter">SVALKA</span>
-                <!-- СЕНЬОР-ФИКС: Бейдж BETA удален -->
+            <!-- СЕНЬОР-ФИКС: Логотип и название идентичны главной странице -->
+            <a href="/" onclick="if(event.button === 0 && !event.ctrlKey && !event.metaKey) { event.preventDefault(); window.goHome(); window.toggleMobileMenu(); }" class="flex items-center gap-2 group cursor-pointer shrink-0 outline-none">
+                <img src="https://jeinonooelndbtjalnwa.supabase.co/storage/v1/object/public/assets/SVALKA.logo1.png" 
+                     alt="SVALKA Logo" 
+                     loading="lazy" 
+                     decoding="async" 
+                     class="h-12 w-auto object-contain drop-shadow-sm transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6">
+                <div class="flex items-center gap-1 pt-1">
+                    <span class="text-2xl font-display font-black tracking-tighter text-stone-900 dark:text-white group-hover:text-brand-500 transition-colors duration-300">SVALKA</span>
+                </div>
             </a>
-            <button onclick="window.toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-brand-600 transition cursor-pointer">
+            <button onclick="window.toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors cursor-pointer">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
@@ -327,10 +333,10 @@
             <div class="flex flex-col gap-2">
                 <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest pl-3" data-i18n="lang_settings">Язык / Language</span>
                 <div class="bg-stone-100 dark:bg-stone-800/60 p-1.5 rounded-2xl border border-stone-200/60 dark:border-stone-700 shadow-inner">
-                    <div class="grid grid-cols-3 gap-1.5">
-                        <button id="mob-lang-ru" onclick="window.changeLanguage('ru')" class="py-2.5 bg-brand-600 text-white border border-brand-600 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer">RU</button>
-                        <button id="mob-lang-sr" onclick="window.changeLanguage('sr')" class="py-2.5 bg-transparent text-stone-600 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 rounded-xl text-sm font-bold transition-all cursor-pointer">SR</button>
-                        <button id="mob-lang-en" onclick="window.changeLanguage('en')" class="py-2.5 bg-transparent text-stone-600 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 rounded-xl text-sm font-bold transition-all cursor-pointer">EN</button>
+                    <div class="grid grid-cols-3 gap-1.5 relative">
+                        <button id="mob-lang-ru" onclick="window.changeLanguage('ru')" class="relative z-10 py-2.5 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer text-white bg-brand-500 shadow-md transform scale-[1.02]">RU</button>
+                        <button id="mob-lang-sr" onclick="window.changeLanguage('sr')" class="relative z-10 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white bg-transparent hover:bg-stone-200/50 dark:hover:bg-stone-700/50 transform scale-100 shadow-none">SR</button>
+                        <button id="mob-lang-en" onclick="window.changeLanguage('en')" class="relative z-10 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white bg-transparent hover:bg-stone-200/50 dark:hover:bg-stone-700/50 transform scale-100 shadow-none">EN</button>
                     </div>
                 </div>
             </div>
@@ -738,11 +744,12 @@
                      alt="SVALKA Footer" 
                      loading="lazy" 
                      decoding="async" 
-                     class="h-14 w-auto object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3 grayscale group-hover:grayscale-0">
-                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter pt-1">SVALKA</span>
+                     class="h-14 w-auto object-contain drop-shadow-sm transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-6 grayscale group-hover:grayscale-0">
+                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter pt-1 group-hover:text-brand-500 transition-colors duration-300">SVALKA</span>
             </a>
-            <div
-                class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
+
+            <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
+                
                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-4">
                     <a href="about.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_about">О
                         проекте</a>
