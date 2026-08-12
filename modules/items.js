@@ -1011,18 +1011,21 @@ export const ItemsModule = {
                 ]).then(([profileRes, reviewsRes]) => {
                     let badgesHtml = '';
                     
-                    // 1. Проверка VIP
-                    const t = window.t || (txt => txt);
-                    const statusHtml = item.isHighlighted ?
-                        `<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shrink-0 neon-glow">${t('VIP ПРОДАВЕЦ')}</span>` :
-                        `<span class="shrink-0 font-medium">${t('Продавец SVALKA')}</span>`;
+                    // СЕНЬОР-ФИКС: Проверка реального PRO-статуса продавца
+                    const isPro = profileRes.data && window.checkRealVipStatus ? window.checkRealVipStatus(profileRes.data) : false;
                     
-                    // 2. Проверка Верификации
+                    if (isPro) {
+                        badgesHtml += `<span class="bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 border border-orange-600 mr-2">SVALKA PRO</span>`;
+                    } else {
+                        badgesHtml += `<span class="shrink-0 font-medium mr-2">Продавец SVALKA</span>`;
+                    }
+                    
+                    // Проверка Верификации
                     if (profileRes.data && profileRes.data.is_verified) {
-                        badgesHtml += `<span class="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0 flex items-center gap-1 border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-shield-check"></i> Проверен</span> `;
+                        badgesHtml += `<span class="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest shrink-0 flex items-center gap-1 border border-blue-200 dark:border-blue-800 mr-2"><i class="fa-solid fa-shield-check"></i> Проверен</span>`;
                     }
 
-                    // 3. Рейтинг
+                    // Рейтинг
                     const reviewsData = reviewsRes.data;
                     if (reviewsData && reviewsData.length > 0) {
                         const avg = (reviewsData.reduce((sum, r) => sum + (r.rating || 5), 0) / reviewsData.length).toFixed(1);

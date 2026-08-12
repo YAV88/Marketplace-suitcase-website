@@ -489,7 +489,8 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
                     .filter(Boolean)
                     .map(mappedItem => {
                         if (typeof window.createCardHtml === 'function') {
-                            return window.createCardHtml(mappedItem, false, true);
+                            // Передаем реальный VIP статус (mappedItem.isHighlighted)
+                            return window.createCardHtml(mappedItem, mappedItem.isHighlighted, true);
                         }
                         return ''; 
                     }).join('');
@@ -1111,12 +1112,16 @@ window.openModal = async id => {
                         const proUntilDate = new Date(data.pro_until);
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
-                        const t = window.t || (txt => txt);
-                        statusText.innerText = t('pro_active_days').replace('{days}', diffDays);
-                        statusText.className = 'text-sm font-black text-amber-500';
+                        
+                        // СЕНЬОР-ФИКС: Премиальный дизайн статуса с мини-бейджем дней
+                        let daysText = 'дн.';
+                        if (window.currentLang === 'en') daysText = 'days';
+                        if (window.currentLang === 'sr') daysText = 'dana';
+                        
+                        statusText.innerHTML = `SVALKA PRO <span class="bg-stone-100 dark:bg-stone-800 text-stone-500 px-2 py-0.5 rounded-md text-[10px] font-bold ml-1 border border-stone-200 dark:border-stone-700">еще ${diffDays} ${daysText}</span>`;
+                        statusText.className = 'text-sm font-black text-orange-500 flex items-center';
                         proBtn.classList.add('hidden');
                         
-                        // Показываем бейдж у себя в профиле
                         if (proBadge) { 
                             proBadge.classList.remove('hidden'); 
                             proBadge.className = "bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 ml-2"; 
@@ -1126,7 +1131,7 @@ window.openModal = async id => {
                         statusText.innerText = t('Базовый'); 
                         statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
-                        if (proBadge) proBadge.classList.add('hidden'); // Прячем, если VIP кончился
+                        if (proBadge) proBadge.classList.add('hidden');
                     }
                 } 
             } catch(e) {
@@ -2692,7 +2697,8 @@ window.renderProfileTabs = async (forceRefresh = false) => {
                 if (emptyState) { emptyState.style.display = 'flex'; const emptyText = emptyState.querySelector('span'); if (emptyText) emptyText.innerText = tab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений'); }
             } else {
                 grid.innerHTML = dataToRender.map(item => window.mapItemData(item)).filter(Boolean).map(mappedItem => {
-                    if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, false, true);
+                    // Передаем реальный VIP статус карточки
+                    if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, mappedItem.isHighlighted, true);
                     return ''; 
                 }).join('');
                 if (typeof window.animateVisibleElements === 'function') setTimeout(() => window.animateVisibleElements(), 50);
