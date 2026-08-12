@@ -97,60 +97,52 @@ window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
 
 window.openTokenPurchaseModal = () => {
     window.openModal('token-purchase-modal');
-    
-    const radioButtons = document.querySelectorAll('input[name="token_package"]');
-    const totalSpan = document.getElementById('token-purchase-total');
-    
-    radioButtons.forEach(radio => {
-        radio.replaceWith(radio.cloneNode(true));
-    });
-    
-    document.querySelectorAll('input[name="token_package"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            if (e.target.checked) totalSpan.innerText = e.target.dataset.price;
-        });
-    });
 };
 
 // ==========================================
 // SHOPIFY-STYLE: КАСКАДНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
 // ==========================================
 window.animateVisibleElements = () => {
-    // Используем таймер для создания "волны" (Stagger effect)
     let staggerDelay = 0;
     let resetTimer = null;
 
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Если карточка попала в экран, отписываемся от нее навсегда (чтобы не пропадала при скролле вверх)
                 obs.unobserve(entry.target);
                 
-                // Добавляем задержку для каждой следующей карточки в текущем батче
+                // Добавляем класс анимации с задержкой (эффект волны)
                 setTimeout(() => {
-                    // Используем requestAnimationFrame для синхронизации с частотой кадров монитора
                     requestAnimationFrame(() => {
-                        entry.target.classList.add('is-visible');
+                        // Сначала прячем карточку (opacity 0 из keyframes), затем запускаем анимацию
+                        entry.target.style.opacity = '0';
+                        entry.target.classList.add('is-animating');
+                        
+                        // Когда анимация закончится, убираем opacity: 0 (чтобы не моргало)
+                        setTimeout(() => {
+                            entry.target.style.opacity = '';
+                        }, 600);
                     });
                 }, staggerDelay);
 
-                staggerDelay += 75; // Каждая следующая карточка появится на 75мс позже
+                staggerDelay += 75;
 
-                // Сбрасываем задержку, когда пачка карточек отрендерилась
                 if (resetTimer) clearTimeout(resetTimer);
-                resetTimer = setTimeout(() => {
-                    staggerDelay = 0;
-                }, 100); 
+                resetTimer = setTimeout(() => { staggerDelay = 0; }, 100); 
             }
         });
     }, { 
         threshold: 0.05, 
-        rootMargin: '0px 0px -50px 0px' // Начинаем анимацию чуть до того, как карточка полностью появится
+        rootMargin: '0px 0px 50px 0px' 
     });
 
-    // Ищем все карточки, которые еще не появились, и вешаем на них обсервер
-    const elements = document.querySelectorAll('.item-card:not(.is-visible)');
-    elements.forEach(el => observer.observe(el));
+    // Ищем карточки без класса анимации
+    const elements = document.querySelectorAll('.item-card:not(.is-animating)');
+    // Изначально делаем их прозрачными перед скроллом, чтобы избежать рывков
+    elements.forEach(el => {
+        el.style.opacity = '0';
+        observer.observe(el);
+    });
 };
 
 // Закрываем меню при клике в пустую область
@@ -453,10 +445,11 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
     if (loader) loader.style.display = 'flex';
 
     try {
-        // Параллельно грузим товары и отзывы из БД
-        const [itemsRes, reviewsRes] = await Promise.all([
+        // Параллельно грузим товары, отзывы и ПРОФИЛЬ (чтобы узнать VIP статус)
+        const [itemsRes, reviewsRes, profileRes] = await Promise.all([
             supabase.from('items').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-            supabase.from('reviews').select('*').eq('seller_id', userId).order('created_at', { ascending: false })
+            supabase.from('reviews').select('*').eq('seller_id', userId).order('created_at', { ascending: false }),
+            supabase.from('profiles').select('pro_until, is_verified').eq('id', userId).maybeSingle()
         ]);
 
         if (itemsRes.error) throw itemsRes.error;
@@ -466,27 +459,41 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         const reviews = reviewsRes.data || [];
         if (loader) loader.style.display = 'none';
 
+        // Включаем VIP бейдж, если продавец купил PRO
+        const proBadge = document.getElementById('seller-pro-badge');
+        const isPro = profileRes.data ? window.checkRealVipStatus(profileRes.data) : false;
+        
+        // Единый премиальный стиль бейджа
+        if (isPro && proBadge) {
+            proBadge.classList.remove('hidden');
+            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200";
+            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
+        } else if (proBadge) {
+            proBadge.classList.add('hidden');
+        }
+
         // ОТРИСОВКА ТОВАРОВ
         document.getElementById('seller-stats').innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items.length}`;
         if (items.length > 0) {
             if (grid) {
-                // ИСПРАВЛЕНИЕ 1: Правильно мапим данные перед генерацией HTML
+                // Правильно мапим данные перед генерацией HTML
                 grid.innerHTML = items
                     .map(item => window.mapItemData(item))
                     .filter(Boolean)
                     .map(mappedItem => {
                         if (typeof window.createCardHtml === 'function') {
-                            return window.createCardHtml(mappedItem, false, true);
+                            // Передаем реальный VIP статус (mappedItem.isHighlighted)
+                            return window.createCardHtml(mappedItem, mappedItem.isHighlighted, true);
                         }
                         return ''; 
                     }).join('');
                 
-                // ИСПРАВЛЕНИЕ 2: Применяем классы сетки/списка и убираем жесткий style
+                // Применяем классы сетки/списка и убираем жесткий style
                 grid.style.display = ''; 
                 grid.classList.remove('view-grid', 'view-list', 'hidden');
                 grid.classList.add(`view-${window.currentViewMode || 'grid'}`);
                 
-                // ИСПРАВЛЕНИЕ 3: Запускаем анимацию проявления
+                // Запускаем анимацию проявления
                 if (typeof window.animateVisibleElements === 'function') {
                     setTimeout(() => window.animateVisibleElements(), 50);
                 }
@@ -495,7 +502,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
             if (empty) empty.style.display = 'flex';
         }
 
-        // --- НОВАЯ ЛОГИКА: ПОДТЯГИВАЕМ ИМЕНА И АВАТАРЫ ПОКУПАТЕЛЕЙ ---
+        // --- ПОДТЯГИВАЕМ ИМЕНА И АВАТАРЫ ПОКУПАТЕЛЕЙ ---
         const reviewerIds = [...new Set(reviews.map(r => r.reviewer_id).filter(Boolean))];
         const usersMap = {};
 
@@ -1080,6 +1087,7 @@ window.openModal = async id => {
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
             const tokensEl = document.getElementById('profile-vip-tokens'); 
+            const proBadge = document.getElementById('profile-pro-badge'); // Находим бейдж
             
             if (statusText) statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-stone-400"></i>';
             
@@ -1097,15 +1105,31 @@ window.openModal = async id => {
                         const proUntilDate = new Date(data.pro_until);
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
-                        const t = window.t || (txt => txt);
-                        statusText.innerText = t('pro_active_days').replace('{days}', diffDays);
-                        statusText.className = 'text-sm font-black text-amber-500';
+                        
+                        let daysText = 'дн.';
+                        if (window.currentLang === 'en') daysText = 'days';
+                        if (window.currentLang === 'sr') daysText = 'dana';
+                        
+                        // Нейтральный мини-бейдж дней, не нарушающий цветовую иерархию
+                        statusText.innerHTML = `
+                            <span class="text-stone-900 dark:text-white">SVALKA</span> 
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>
+                            <span class="ml-2 px-1.5 py-0.5 bg-stone-200/50 dark:bg-stone-700/50 text-stone-600 dark:text-stone-300 text-[9px] font-black rounded border border-stone-300/50 dark:border-stone-600/50 uppercase tracking-widest">${diffDays} ${daysText}</span>
+                        `;
+                        statusText.className = 'text-sm font-black flex items-center';
                         proBtn.classList.add('hidden');
+                        
+                        if (proBadge) { 
+                            proBadge.classList.remove('hidden'); 
+                            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"; 
+                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
+                        }
                     } else {
                         const t = window.t || (txt => txt);
-                        statusText.innerText = t('Базовый'); 
-                        statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
+                        statusText.innerHTML = `<span class="text-stone-700 dark:text-stone-300">${t('Базовый')}</span>`; 
+                        statusText.className = 'text-sm font-black flex items-center';
                         proBtn.classList.remove('hidden');
+                        if (proBadge) proBadge.classList.add('hidden');
                     }
                 } 
             } catch(e) {
@@ -2671,7 +2695,8 @@ window.renderProfileTabs = async (forceRefresh = false) => {
                 if (emptyState) { emptyState.style.display = 'flex'; const emptyText = emptyState.querySelector('span'); if (emptyText) emptyText.innerText = tab === 'saved' ? window.t('Склад пуст') : window.t('У вас пока нет объявлений'); }
             } else {
                 grid.innerHTML = dataToRender.map(item => window.mapItemData(item)).filter(Boolean).map(mappedItem => {
-                    if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, false, true);
+                    // Передаем реальный VIP статус карточки
+                    if (typeof window.createCardHtml === 'function') return window.createCardHtml(mappedItem, mappedItem.isHighlighted, true);
                     return ''; 
                 }).join('');
                 if (typeof window.animateVisibleElements === 'function') setTimeout(() => window.animateVisibleElements(), 50);
@@ -3313,6 +3338,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth < 640 && typeof window.setViewMode === 'function') {
         window.setViewMode('list');
     }
+
+    // ==========================================
+    // СЕНЬОР-ФИКС: ГЛОБАЛЬНЫЙ МЕНЕДЖЕР ГЕО-КАРТ (Leaflet)
+    // Решает проблему "Серых квадратов" и невидимых карт внутри модальных окон
+    // ==========================================
+    const mapFixObserver = new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+            if (m.type === 'attributes' && m.attributeName === 'class') {
+                const target = m.target;
+                // Если модальное окно только что получило класс 'active'
+                if (target.classList.contains('active') && target.classList.contains('modal-overlay')) {
+                    // Ждем 300мс (пока закончится CSS анимация выезда окна)
+                    setTimeout(() => {
+                        // Ищем все контейнеры с картами внутри этого окна
+                        const maps = target.querySelectorAll('.leaflet-container');
+                        maps.forEach(mapEl => {
+                            if (window.L && mapEl._leaflet_id) {
+                                // Достаем объект карты и принудительно перерисовываем её размеры
+                                const mapObj = window.L.DomUtil.get(mapEl)._leaflet_map;
+                                if (mapObj) mapObj.invalidateSize();
+                            }
+                        });
+                        
+                        // Резервное дергание глобальных объектов карт (на всякий случай)
+                        if (window.addMapObj) window.addMapObj.invalidateSize();
+                        if (window.viewMapObj) window.viewMapObj.invalidateSize();
+                    }, 300);
+                }
+            }
+        });
+    });
+
+    // Вешаем "прослушку" на все модальные окна на странице
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        mapFixObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
 });
 
 // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
