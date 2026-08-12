@@ -97,19 +97,6 @@ window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
 
 window.openTokenPurchaseModal = () => {
     window.openModal('token-purchase-modal');
-    
-    const radioButtons = document.querySelectorAll('input[name="token_package"]');
-    const totalSpan = document.getElementById('token-purchase-total');
-    
-    radioButtons.forEach(radio => {
-        radio.replaceWith(radio.cloneNode(true));
-    });
-    
-    document.querySelectorAll('input[name="token_package"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            if (e.target.checked) totalSpan.innerText = e.target.dataset.price;
-        });
-    });
 };
 
 // ==========================================
@@ -1118,11 +1105,11 @@ window.openModal = async id => {
                         if (window.currentLang === 'en') daysText = 'days';
                         if (window.currentLang === 'sr') daysText = 'dana';
                         
-                        // Элегантное отображение оставшихся дней с правильным градиентом
+                        // Нейтральный мини-бейдж дней, не нарушающий цветовую иерархию
                         statusText.innerHTML = `
                             <span class="text-stone-900 dark:text-white">SVALKA</span> 
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>
-                            <span class="ml-2 px-2 py-0.5 bg-orange-100/50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black rounded-md border border-orange-200 dark:border-orange-500/20 uppercase tracking-widest">${diffDays} ${daysText}</span>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>
+                            <span class="ml-2 px-1.5 py-0.5 bg-stone-200/50 dark:bg-stone-700/50 text-stone-600 dark:text-stone-300 text-[9px] font-black rounded border border-stone-300/50 dark:border-stone-600/50 uppercase tracking-widest">${diffDays} ${daysText}</span>
                         `;
                         statusText.className = 'text-sm font-black flex items-center';
                         proBtn.classList.add('hidden');

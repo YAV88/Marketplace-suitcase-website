@@ -49,22 +49,8 @@
             overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
         }
-        
-        /* Фикс для мобильных карточек в профиле (чтобы кнопки управления не обрезались) */
-        @media (max-width: 640px) {
-            #profile-items-grid > div {
-                height: auto !important;
-                min-height: 150px;
-            }
-            #profile-items-grid > div .overflow-hidden {
-                overflow: visible !important;
-            }
-            /* Заставляем контейнер с кнопками переносить их на новые строки */
-            #profile-items-grid .flex {
-                flex-wrap: wrap;
-            }
-        }    
     </style>
+
 </head>
 
 <body class="antialiased relative z-0 pb-[70px] lg:pb-0 overflow-x-hidden max-w-full min-h-[100dvh]">
@@ -1426,28 +1412,26 @@
                 </div>
 
                 <!-- ПЛАШКИ ОПЛАТ -->
-                <div id="profile-economy-section" class="hidden flex-row flex-wrap items-center gap-3 mt-2 pl-[68px] sm:pl-[80px]">
+                <div id="profile-economy-section" class="hidden flex-col sm:flex-row w-full gap-3 mt-4">
                     
-                    <!-- Плашка PRO -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2 px-3 rounded-xl gap-4 flex-1 sm:flex-none transition-colors">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2.5 px-4 rounded-xl gap-4 flex-1 shadow-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-md bg-stone-200/50 dark:bg-stone-700/50 flex items-center justify-center text-stone-500 shrink-0">
-                                <i class="fa-solid fa-id-badge text-[10px]"></i>
+                            <div class="w-7 h-7 rounded-md bg-stone-200/50 dark:bg-stone-700/50 flex items-center justify-center text-stone-500 shrink-0">
+                                <i class="fa-solid fa-id-badge text-xs"></i>
                             </div>
                             <span id="profile-account-status" class="text-sm font-black text-stone-700 dark:text-stone-300">Базовый</span>
                         </div>
-                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-white font-bold text-[11px] px-3 py-1.5 rounded-lg hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors shadow-sm uppercase tracking-wider cursor-pointer" data-i18n="profile_buy_pro">Купить PRO</button>
+                        <button id="profile-buy-pro-btn" onclick="window.openModal('crypto-modal');" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 py-2 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="profile_buy_pro">Купить PRO</button>
                     </div>
                     
-                    <!-- Плашка Токенов -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2 px-3 rounded-xl gap-4 flex-1 sm:flex-none transition-colors">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-2.5 px-4 rounded-xl gap-4 flex-1 shadow-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 shrink-0">
-                                <i class="fa-solid fa-bolt text-[10px]"></i>
+                            <div class="w-7 h-7 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 shrink-0">
+                                <i class="fa-solid fa-bolt text-xs"></i>
                             </div>
                             <span id="profile-vip-tokens" class="text-sm font-black text-stone-900 dark:text-white">0 шт.</span>
                         </div>
-                        <button onclick="window.closeModal('profile-modal'); window.openTokenPurchaseModal();" class="bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-white font-bold text-[11px] px-3 py-1.5 rounded-lg hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors shadow-sm uppercase tracking-wider cursor-pointer" data-i18n="btn_buy_more">Докупить</button>
+                        <button onclick="window.openTokenPurchaseModal();" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 py-2 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="btn_buy_more">Докупить</button>
                     </div>
 
                 </div>
@@ -1474,9 +1458,7 @@
 
             <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar relative">
                 <div id="profile-items-grid" class="grid items-stretch view-grid modal-grid gap-4 sm:gap-6"></div>
-                <div id="profile-empty"
-                    class="absolute inset-0 flex flex-col items-center justify-center text-stone-400 font-bold text-lg"
-                    style="display: none;">
+                <div id="profile-empty" class="w-full h-full min-h-[300px] flex flex-col items-center justify-center text-stone-400 font-bold text-lg" style="display: none;">
                     <i class="fa-solid fa-box-open text-6xl mb-3 opacity-30"></i> <span
                         data-i18n="profile_empty">Пусто</span>
                 </div>
