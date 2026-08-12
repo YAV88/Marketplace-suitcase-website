@@ -137,27 +137,35 @@
     .dark .liquid-btn-black:hover { color: #ffffff !important; }
     .dark .liquid-btn-black:hover i { color: #ffffff !important; }
 
-    @keyframes cardFadeUp {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    /* БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ */
+    /* ==========================================
+       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
+       ========================================== */
     .item-card {
         cursor: pointer !important; /* Обязательно для работы event delegation в iOS Safari */
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
         
-        /* CSS-анимация появления вместо глючного JS Observer */
-        animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0; 
+        transform: translateY(40px);
+        visibility: visible !important; /* Оставляем visible, чтобы IntersectionObserver ее видел */
+        will-change: opacity, transform;
         
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+        /* Плавная инерционная анимация (Срабатывает при добавлении класса .is-visible) */
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
     }
+    
+    /* Состояние, когда карточка попала в экран (добавляется через main.js) */
+    .item-card.is-visible {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
 
     .item-card:hover {
+        /* При ховере поднимаем от 0 (так как is-visible ставит 0) */
         transform: translateY(-6px) !important;
         box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
         border-color: rgba(31, 182, 166, 0.3) !important;
