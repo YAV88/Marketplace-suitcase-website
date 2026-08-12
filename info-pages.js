@@ -16,7 +16,7 @@ window.i18n = {
         // Privacy
         'priv_title_1': 'Защита', 'priv_title_2': 'данных', 'priv_desc': 'Мы собираем только ту информацию, которая действительно необходима для работы маркетплейса.', 'priv_1_title': '1. Какую информацию мы собираем', 'priv_1_desc': 'Нам нужен только ваш <strong>адрес электронной почты</strong>. Никаких паспортных данных или трекеров.', 'priv_2_title': '2. Приватность переписок', 'priv_2_desc': 'Сообщения в чатах хранятся в защищенном виде. Никто, кроме вас и собеседника, не имеет к ним доступа.', 'priv_3_title': '3. Передача третьим лицам', 'priv_3_desc': 'Ваши данные никогда не будут переданы, проданы или подарены сторонним компаниям.',
         // Terms
-        'terms_title_1': 'Условия', 'terms_title_2': 'использования', 'terms_desc': 'Используя маркетплейс SVALKA, вы соглашаетесь с нижеперечисленными правилами.', 'term_1_title': '1. Статус платформы', 'term_1_desc': 'SVALKA предоставляет исключительно техническую возможность размещать информацию. Мы не проверяем личные договоренности.', 'term_2_title': '2. Отказ от ответственности', 'term_2_1': 'Платформа не выступает в роли стороны сделки или посредника.', 'term_2_2': 'Мы не несем финансовой ответственности за качество вещей или безопасность встреч.', 'term_2_3': 'Все взаиморасчеты пользователи осуществляют самостоятельно на свой риск.', 'term_3_title': '3. Продвижение и платные функции', 'term_3_desc': 'Приобретение токенов видимости производится добровольно. Услуга считается оказанной сразу после транзакции, средства возврату не подлежат.'
+        'terms_title_1': 'Условия', 'terms_title_2': 'использования', 'terms_desc': 'Используя маркетплейс SVALKA, вы соглашаетесь с нижеперечисленными правилами. Пожалуйста, внимательно ознакомьтесь с ними.', 'term_1_title': '1. Статус платформы', 'term_1_desc': 'SVALKA предоставляет исключительно техническую возможность продавцам размещать информацию о своих товарах, а покупателям — находить эту информацию и связываться с продавцами. Платформа не контролирует и не проверяет личные договоренности пользователей.', 'term_2_title': '2. Отказ от ответственности', 'term_2_1': 'Платформа не выступает в роли стороны сделки, посредника, гаранта или организатора купли-продажи.', 'term_2_2': 'Мы не несем финансовой или юридической ответственности за качество передаваемых вещей, их работоспособность или безопасность встреч.', 'term_2_3': 'Все взаиморасчеты покупатели и продавцы осуществляют самостоятельно во время личной встречи на свой собственный страх и риск.', 'term_3_title': '3. Продвижение и платные функции', 'term_3_desc': 'Приобретение токенов видимости объявлений (Bump/VIP) или получение расширенного статуса PRO производится пользователями на добровольной основе. Так как активация данных опций происходит в системе в автоматическом режиме сразу после подтверждения транзакции, услуга считается оказанной в полном объеме, и потраченные средства возврату не подлежат.'
     },
     en: {
         'page_contacts': 'SVALKA — Contacts', 'page_faq': 'SVALKA — Help / FAQ', 'page_about': 'SVALKA — About', 'page_rules': 'SVALKA — Rules', 'page_security': 'SVALKA — Security', 'page_privacy': 'SVALKA — Privacy', 'page_terms': 'SVALKA — Terms',
@@ -34,7 +34,7 @@ window.i18n = {
         // Privacy
         'priv_title_1': 'Data', 'priv_title_2': 'Protection', 'priv_desc': 'We collect only the information that is truly necessary for the marketplace to work.', 'priv_1_title': '1. What information we collect', 'priv_1_desc': 'We only need your <strong>email address</strong>. No ID data or trackers.', 'priv_2_title': '2. Chat privacy', 'priv_2_desc': 'Messages in chats are securely stored. No one but you and your interlocutor has access to them.', 'priv_3_title': '3. Transfer to third parties', 'priv_3_desc': 'Your data will never be transferred or sold to third-party companies.',
         // Terms
-        'terms_title_1': 'Terms', 'terms_title_2': 'of Use', 'terms_desc': 'By using SVALKA marketplace, you agree to the rules below.', 'term_1_title': '1. Platform status', 'term_1_desc': 'SVALKA provides only technical capabilities. We do not verify personal agreements.', 'term_2_title': '2. Disclaimer', 'term_2_1': 'The platform is not a party to the deal or a mediator.', 'term_2_2': 'We hold no financial responsibility for the quality of items or meeting safety.', 'term_2_3': 'Users carry out all settlements independently at their own risk.', 'term_3_title': '3. Paid features', 'term_3_desc': 'Purchasing promotion tokens is voluntary. The service is considered fully provided upon transaction, funds are non-refundable.'
+        'terms_title_1': 'Terms', 'terms_title_2': 'of Use', 'terms_desc': 'By using SVALKA marketplace, you agree to the rules below. Please read them carefully.', 'term_1_title': '1. Platform status', 'term_1_desc': 'SVALKA provides only technical capabilities for sellers to post information and for buyers to find it. We do not verify personal agreements.', 'term_2_title': '2. Disclaimer', 'term_2_1': 'The platform is not a party to the deal, a guarantor, or a mediator.', 'term_2_2': 'We hold no financial or legal responsibility for the quality of items or meeting safety.', 'term_2_3': 'Users carry out all settlements independently during a personal meeting at their own risk.', 'term_3_title': '3. Paid features', 'term_3_desc': 'Purchasing promotion tokens (Bump/VIP) or getting PRO status is voluntary. Since activation occurs automatically immediately after the transaction, the service is considered fully provided and funds are non-refundable.'
     },
     sr: {
         'page_contacts': 'SVALKA — Kontakti', 'page_faq': 'SVALKA — Pomoć / FAQ', 'page_about': 'SVALKA — O projektu', 'page_rules': 'SVALKA — Pravila', 'page_security': 'SVALKA — Bezbednost', 'page_privacy': 'SVALKA — Privatnost', 'page_terms': 'SVALKA — Uslovi',
@@ -52,50 +52,114 @@ window.i18n = {
         // Privacy
         'priv_title_1': 'Zaštita', 'priv_title_2': 'Podataka', 'priv_desc': 'Prikupljamo samo neophodne informacije za rad marketplace-a.', 'priv_1_title': '1. Šta prikupljamo', 'priv_1_desc': 'Potrebna nam je samo vaša <strong>email adresa</strong>. Bez pasoša i trackera.', 'priv_2_title': '2. Privatnost prepiske', 'priv_2_desc': 'Poruke u četovima su bezbedne. Niko osim vas i sagovornika nema pristup.', 'priv_3_title': '3. Treća lica', 'priv_3_desc': 'Vaši podaci se nikada ne prodaju niti prosleđuju.',
         // Terms
-        'terms_title_1': 'Uslovi', 'terms_title_2': 'Korišćenja', 'terms_desc': 'Korišćenjem SVALKA marketplace-a pristajete na dole navedena pravila.', 'term_1_title': '1. Status platforme', 'term_1_desc': 'SVALKA pruža samo tehničke mogućnosti. Ne proveravamo lične dogovore.', 'term_2_title': '2. Odricanje od odgovornosti', 'term_2_1': 'Platforma nije strana u poslu.', 'term_2_2': 'Ne snosimo finansijsku odgovornost za kvalitet stvari ili bezbednost.', 'term_2_3': 'Sva plaćanja korisnici obavljaju na sopstveni rizik.', 'term_3_title': '3. Plaćene funkcije', 'term_3_desc': 'Kupovina promocije je dobrovoljna. Usluga je pružena odmah, povraćaja nema.'
+        'terms_title_1': 'Uslovi', 'terms_title_2': 'Korišćenja', 'terms_desc': 'Korišćenjem SVALKA marketplace-a pristajete na dole navedena pravila. Molimo pročitajte ih pažljivo.', 'term_1_title': '1. Status platforme', 'term_1_desc': 'SVALKA pruža samo tehničke mogućnosti. Ne proveravamo lične dogovore.', 'term_2_title': '2. Odricanje od odgovornosti', 'term_2_1': 'Platforma nije strana u poslu, garant ili posrednik.', 'term_2_2': 'Ne snosimo finansijsku odgovornost za kvalitet stvari ili bezbednost susreta.', 'term_2_3': 'Sva plaćanja korisnici obavljaju samostalno na sopstveni rizik.', 'term_3_title': '3. Plaćene funkcije', 'term_3_desc': 'Kupovina promocije (Bump/VIP) je dobrovoljna. Usluga je pružena odmah nakon transakcije, sredstva se ne vraćaju.'
     }
 };
 
 window.t = (key) => { return window.i18n[window.currentLang][key] || key; };
 
+// СЕНЬОР-ФИКС: Единая логика смены языка и перевода
 window.changeLanguage = (lang) => {
     window.currentLang = lang;
     localStorage.setItem('svalka_lang', lang);
 
-    // Обновляем спан внутри переключателя
     const currentLangSpan = document.getElementById('lang-current');
     if (currentLangSpan) currentLangSpan.innerText = lang.toUpperCase();
 
-    // Подменяем все размеченные тексты
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (window.i18n[lang] && window.i18n[lang][key]) {
             el.innerHTML = window.i18n[lang][key];
         }
     });
+    
+    // Закрываем меню после выбора
+    const menu = document.getElementById('lang-dropdown');
+    const icon = document.getElementById('lang-dropdown-icon');
+    if (menu) {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+    }
+    if (icon) icon.classList.remove('rotate-180');
 };
 
-// МАГИЯ ПАМЯТИ: Загружаем язык из кэша при старте
-document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('svalka_lang') || 'ru';
-    window.currentLang = savedLang;
-    window.changeLanguage(savedLang);
+// СЕНЬОР-ФИКС: Открытие меню строго по клику
+window.toggleLangMenu = (e) => {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('lang-dropdown');
+    const icon = document.getElementById('lang-dropdown-icon');
+    if (!menu) return;
+
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        menu.classList.add('flex');
+        if (icon) icon.classList.add('rotate-180');
+    } else {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+        if (icon) icon.classList.remove('rotate-180');
+    }
+};
+
+// Закрываем меню при клике в пустоту
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('lang-dropdown');
+    const icon = document.getElementById('lang-dropdown-icon');
+    const wrapper = document.getElementById('lang-dropdown-wrapper');
+    if (menu && wrapper && !wrapper.contains(e.target)) {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+        if (icon) icon.classList.remove('rotate-180');
+    }
 });
 
-// Управление темой (светлая/тёмная)
+// СЕНЬОР-ФИКС: Плавная анимация смены темы
+window.updateThemeIcon = (isDark) => {
+    const icon = document.getElementById('theme-icon');
+    if (!icon) return;
+    icon.style.transform = 'rotate(-180deg) scale(0.5)';
+    icon.style.opacity = '0';
+    setTimeout(() => {
+        icon.className = isDark 
+            ? 'fa-solid fa-sun text-amber-500 text-lg pointer-events-none transition-all duration-300' 
+            : 'fa-solid fa-moon text-indigo-400 text-lg pointer-events-none transition-all duration-300';
+        icon.style.transform = 'rotate(0deg) scale(1)';
+        icon.style.opacity = '1';
+    }, 150);
+};
+
 window.togglePageTheme = () => {
     const html = document.documentElement;
     const isDark = !html.classList.contains('dark');
     html.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    const icon = document.getElementById('theme-icon');
-    if (icon) icon.className = isDark ? 'fa-solid fa-sun text-amber-500 text-sm' : 'fa-solid fa-moon text-stone-500 dark:text-stone-400 text-sm';
+    window.updateThemeIcon(isDark);
 };
 
+// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-    else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+    let isDark = false;
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        isDark = true;
+    } else if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+    } else {
+        const hour = new Date().getHours();
+        if (hour >= 19 || hour < 7) {
+            document.documentElement.classList.add('dark');
+            isDark = true;
+        }
+    }
+    
     const icon = document.getElementById('theme-icon');
-    if (icon) icon.className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun text-amber-500 text-sm' : 'fa-solid fa-moon text-stone-500 dark:text-stone-400 text-sm';
+    if (icon) {
+        icon.className = isDark 
+            ? 'fa-solid fa-sun text-amber-500 text-lg pointer-events-none transition-all duration-300' 
+            : 'fa-solid fa-moon text-indigo-400 text-lg pointer-events-none transition-all duration-300';
+    }
+
+    const savedLang = localStorage.getItem('svalka_lang') || 'ru';
+    window.changeLanguage(savedLang);
 });

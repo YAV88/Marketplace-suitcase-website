@@ -1,39 +1,42 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title data-i18n="page_security">SVALKA — Безопасность</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' } } } } }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
-        body { font-family: 'Inter', sans-serif; } h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-    </style>
+    <!-- СЕНЬОР-ФИКС: Обязательно меняй data-i18n на каждой странице (page_about, page_faq и т.д.) -->
+    <title data-i18n="page_about">SVALKA</title>
+    
+    <!-- СЕНЬОР-ФИКС: Больше никаких CDN! Подключаем глобальный стиль сайта -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tektur:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-950 transition-colors min-h-screen">
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-3xl mx-auto relative z-10">
         
-        <div class="flex items-center justify-between mb-6 sm:mb-10">
-            <a href="index.html" class="inline-flex items-center gap-2.5 bg-white dark:bg-stone-900 px-4 py-2 sm:px-5 sm:py-3 rounded-2xl border border-stone-200/60 dark:border-stone-800 text-sm font-bold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all active:scale-95">
-                <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="nav_home_back">На главную</span>
+        <!-- ЕДИНАЯ ПРЕМИАЛЬНАЯ ШАПКА -->
+        <div class="flex items-center justify-between mb-6 sm:mb-10 pb-4">
+            <a href="index.html" class="liquid-btn liquid-btn-gray flex items-center justify-center gap-2.5 px-5 h-11 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-sm font-bold text-stone-700 dark:text-stone-300 shadow-sm cursor-pointer">
+                <i class="fa-solid fa-arrow-left text-xs pointer-events-none"></i> <span data-i18n="nav_home_back" class="pointer-events-none">На главную</span>
             </a>
+            
             <div class="flex items-center gap-3">
-                <div class="relative group z-[110]" id="lang-dropdown-wrapper">
-                    <button class="flex items-center gap-2 px-3 h-11 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-all cursor-pointer text-sm font-bold text-stone-700 dark:text-stone-300 active:scale-95">
-                        <i class="fa-solid fa-globe text-brand-500"></i> <span id="lang-current">RU</span> <i class="fa-solid fa-chevron-down text-[10px] text-stone-500"></i>
+                <div class="relative z-[110]" id="lang-dropdown-wrapper">
+                    <button onclick="window.toggleLangMenu(event)" class="liquid-btn liquid-btn-gray flex items-center gap-2 px-3 h-11 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm cursor-pointer text-sm font-bold text-stone-700 dark:text-stone-300">
+                        <i class="fa-solid fa-globe text-brand-500 pointer-events-none"></i> 
+                        <span id="lang-current" class="pointer-events-none">RU</span> 
+                        <i id="lang-dropdown-icon" class="fa-solid fa-chevron-down text-[10px] text-stone-500 transition-transform duration-200 pointer-events-none"></i>
                     </button>
-                    <div class="absolute right-0 mt-2 w-36 bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[120] overflow-hidden">
-                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Русский <span class="text-[10px] text-stone-400">RU</span></button>
-                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">Srpski <span class="text-[10px] text-stone-400">SR</span></button>
-                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-4 py-3 border-t border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition-colors font-bold text-sm text-stone-700 dark:text-stone-200 flex items-center justify-between">English <span class="text-[10px] text-stone-400">EN</span></button>
+                    <!-- Выпадающее меню языка (открывается по клику) -->
+                    <div id="lang-dropdown" class="absolute right-0 mt-2 w-36 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-lg hidden flex-col z-[120] p-1.5 gap-1">
+                        <button onclick="window.changeLanguage('ru')" class="w-full text-left px-3 py-2.5 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-lg transition-colors font-bold text-sm text-stone-700 dark:text-stone-300 flex items-center justify-between cursor-pointer">Русский <span class="text-[10px] font-black text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">RU</span></button>
+                        <button onclick="window.changeLanguage('sr')" class="w-full text-left px-3 py-2.5 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-lg transition-colors font-bold text-sm text-stone-700 dark:text-stone-300 flex items-center justify-between cursor-pointer">Srpski <span class="text-[10px] font-black text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">SR</span></button>
+                        <button onclick="window.changeLanguage('en')" class="w-full text-left px-3 py-2.5 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-lg transition-colors font-bold text-sm text-stone-700 dark:text-stone-300 flex items-center justify-between cursor-pointer">English <span class="text-[10px] font-black text-stone-400 bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">EN</span></button>
                     </div>
                 </div>
-                <button onclick="togglePageTheme()" class="bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:text-brand-500 dark:hover:text-brand-400 w-11 h-11 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-sm flex items-center justify-center transition-all active:scale-95">
-                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+
+                <button onclick="window.togglePageTheme()" class="liquid-btn liquid-btn-gray flex items-center justify-center w-11 h-11 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm cursor-pointer">
+                    <i id="theme-icon" class="fa-solid fa-moon text-indigo-400 text-lg pointer-events-none transition-all duration-300"></i>
                 </button>
             </div>
         </div>
