@@ -1114,24 +1114,28 @@ window.openModal = async id => {
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
                         
-                        // СЕНЬОР-ФИКС: Премиальный дизайн статуса с мини-бейджем дней
                         let daysText = 'дн.';
                         if (window.currentLang === 'en') daysText = 'days';
                         if (window.currentLang === 'sr') daysText = 'dana';
                         
-                        statusText.innerHTML = `SVALKA PRO <span class="bg-stone-100 dark:bg-stone-800 text-stone-500 px-2 py-0.5 rounded-md text-[10px] font-bold ml-1 border border-stone-200 dark:border-stone-700">еще ${diffDays} ${daysText}</span>`;
-                        statusText.className = 'text-sm font-black text-orange-500 flex items-center';
+                        // Элегантное отображение оставшихся дней с правильным градиентом
+                        statusText.innerHTML = `
+                            <span class="text-stone-900 dark:text-white">SVALKA</span> 
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>
+                            <span class="ml-2 px-2 py-0.5 bg-orange-100/50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black rounded-md border border-orange-200 dark:border-orange-500/20 uppercase tracking-widest">${diffDays} ${daysText}</span>
+                        `;
+                        statusText.className = 'text-sm font-black flex items-center';
                         proBtn.classList.add('hidden');
                         
                         if (proBadge) { 
                             proBadge.classList.remove('hidden'); 
                             proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"; 
-                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
+                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
                         }
                     } else {
                         const t = window.t || (txt => txt);
-                        statusText.innerText = t('Базовый'); 
-                        statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
+                        statusText.innerHTML = `<span class="text-stone-700 dark:text-stone-300">${t('Базовый')}</span>`; 
+                        statusText.className = 'text-sm font-black flex items-center';
                         proBtn.classList.remove('hidden');
                         if (proBadge) proBadge.classList.add('hidden');
                     }
