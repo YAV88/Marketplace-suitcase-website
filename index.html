@@ -258,116 +258,137 @@
     </nav>
 
     <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white dark:bg-stone-900 lg:hidden flex flex-col transform translate-x-full transition-transform duration-300">
-        <div class="p-5 pt-12 sm:pt-5 border-b border-stone-200 dark:border-stone-800 flex justify-between items-center bg-stone-50 dark:bg-stone-800/50 shrink-0">
-            <a href="/" onclick="if(event.button === 0 && !event.ctrlKey && !event.metaKey) { event.preventDefault(); window.goHome(); window.toggleMobileMenu(); }" class="flex items-center gap-1 pt-1 outline-none cursor-pointer">
-                <span class="text-2xl font-display font-black text-stone-900 dark:text-white tracking-tighter">SVALKA</span>
-                <span class="bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full shadow-sm tracking-widest relative -top-2">BETA</span>
+        
+        <!-- HEADER -->
+        <div class="p-4 pt-12 sm:pt-4 border-b border-stone-100 dark:border-stone-800 flex justify-between items-center bg-white dark:bg-stone-900 shrink-0 shadow-sm z-10">
+            <a href="/" onclick="if(event.button === 0 && !event.ctrlKey && !event.metaKey) { event.preventDefault(); window.goHome(); window.toggleMobileMenu(); }" class="flex items-center gap-2 pt-1 outline-none cursor-pointer pl-2">
+                <span class="text-3xl font-display font-black text-stone-900 dark:text-white tracking-tighter">SVALKA</span>
+                <!-- СЕНЬОР-ФИКС: Бейдж BETA удален -->
             </a>
-            <button onclick="window.toggleMobileMenu()"
-                class="text-3xl text-stone-400 hover:text-brand-600 p-2 transition cursor-pointer"><i
-                    class="fa-solid fa-xmark"></i></button>
+            <button onclick="window.toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-brand-600 transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
         </div>
 
-        <div class="p-6 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
+        <!-- BODY -->
+        <div class="p-4 sm:p-5 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar bg-stone-50/50 dark:bg-stone-900/50">
 
-            <div class="font-bold text-lg flex flex-col gap-6">
+            <!-- ГРУППА 1: Профиль и Авторизация -->
+            <div class="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-sm overflow-hidden flex flex-col">
+                
+                <!-- Неавторизованный стейт -->
+                <button id="mob-nav-login" onclick="window.toggleMobileMenu(); window.openModal('auth-modal');" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors cursor-pointer text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 shrink-0">
+                            <i class="fa-solid fa-arrow-right-to-bracket text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-base text-stone-900 dark:text-white" data-i18n="btn_login">Войти в аккаунт</div>
+                            <div class="text-xs text-stone-500 font-medium mt-0.5">Синхронизация и чаты</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-sm"></i>
+                </button>
 
-                <div class="bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 shadow-sm mb-2">
-                    <div class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2 pl-1">Язык / Language</div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <!-- Добавлены ID и зафиксирован активный стиль для RU по умолчанию -->
+                <!-- Авторизованный стейт -->
+                <div id="mob-user-controls" class="hidden flex-col w-full divide-y divide-stone-100 dark:divide-stone-700/50">
+                    <button onclick="window.toggleMobileMenu(); window.openModal('profile-modal');" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors cursor-pointer text-left">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                                <i class="fa-regular fa-user text-lg"></i>
+                            </div>
+                            <span class="font-bold text-base text-stone-900 dark:text-white" data-i18n="nav_profile">Мой Профиль</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-sm"></i>
+                    </button>
+                    
+                    <button onclick="window.toggleMobileMenu(); window.openChatListModal();" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors cursor-pointer text-left">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                                <i class="fa-regular fa-envelope text-lg"></i>
+                            </div>
+                            <span class="font-bold text-base text-stone-900 dark:text-white" data-i18n="nav_messages">Сообщения</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-sm"></i>
+                    </button>
+                    
+                    <button onclick="window.toggleMobileMenu(); window.logout();" class="w-full flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors cursor-pointer text-left group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-red-500 group-hover:bg-red-100 dark:group-hover:bg-red-900/50 transition-colors shrink-0">
+                                <i class="fa-solid fa-right-from-bracket text-lg pl-1"></i>
+                            </div>
+                            <span class="font-bold text-base text-red-500" data-i18n="nav_logout">Выйти</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ГРУППА 2: Настройки (Язык) -->
+            <div class="flex flex-col gap-2">
+                <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest pl-3" data-i18n="lang_settings">Язык / Language</span>
+                <div class="bg-stone-100 dark:bg-stone-800/60 p-1.5 rounded-2xl border border-stone-200/60 dark:border-stone-700 shadow-inner">
+                    <div class="grid grid-cols-3 gap-1.5">
                         <button id="mob-lang-ru" onclick="window.changeLanguage('ru')" class="py-2.5 bg-brand-600 text-white border border-brand-600 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer">RU</button>
-                        <button id="mob-lang-sr" onclick="window.changeLanguage('sr')" class="py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-sm font-bold hover:border-brand-500 shadow-sm transition-all cursor-pointer">SR</button>
-                        <button id="mob-lang-en" onclick="window.changeLanguage('en')" class="py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-sm font-bold hover:border-brand-500 shadow-sm transition-all cursor-pointer">EN</button>
+                        <button id="mob-lang-sr" onclick="window.changeLanguage('sr')" class="py-2.5 bg-transparent text-stone-600 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 rounded-xl text-sm font-bold transition-all cursor-pointer">SR</button>
+                        <button id="mob-lang-en" onclick="window.changeLanguage('en')" class="py-2.5 bg-transparent text-stone-600 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 rounded-xl text-sm font-bold transition-all cursor-pointer">EN</button>
                     </div>
                 </div>
+            </div>
 
-                <button id="mob-nav-login" onclick="window.openModal('auth-modal');"
-                    class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i
-                        class="fa-solid fa-arrow-right-to-bracket text-brand-600 w-6"></i> <span
-                        data-i18n="btn_login">Войти</span></button>
-
-                <div id="mob-user-controls" class="hidden flex-col gap-6 w-full">
-                    <button onclick="window.openModal('profile-modal');"
-                        class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i
-                            class="fa-regular fa-user text-brand-600 w-6"></i> <span data-i18n="nav_profile">Профиль</span></button>
-                    <button onclick="window.openChatListModal();"
-                        class="text-stone-900 dark:text-white flex items-center gap-3 cursor-pointer hover:text-brand-600 transition-colors"><i
-                            class="fa-regular fa-envelope text-brand-600 w-6"></i> <span data-i18n="nav_messages">Сообщения</span></button>
-                    <button onclick="window.logout();"
-                        class="text-red-500 hover:text-red-400 transition flex items-center gap-3 cursor-pointer"><i
-                            class="fa-solid fa-right-from-bracket w-6"></i> <span data-i18n="nav_logout">Выйти</span></button>
+            <!-- ГРУППА 3: Ссылки (Инфо) -->
+            <div class="flex flex-col gap-2 mt-2">
+                <span class="text-[10px] font-black text-stone-400 dark:text-stone-500 uppercase tracking-widest pl-3" data-i18n="info_section">Информация</span>
+                <div class="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-sm overflow-hidden flex flex-col divide-y divide-stone-100 dark:divide-stone-700/50">
+                    <a href="about.html" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-info w-6 text-center text-stone-400 text-lg"></i> 
+                            <span class="text-stone-700 dark:text-stone-300 font-bold text-sm" data-i18n="nav_about">О проекте</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    </a>
+                    <a href="rules.html" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-list-check w-6 text-center text-stone-400 text-lg"></i> 
+                            <span class="text-stone-700 dark:text-stone-300 font-bold text-sm" data-i18n="nav_rules">Правила</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    </a>
+                    <a href="security.html" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-user-shield w-6 text-center text-stone-400 text-lg"></i> 
+                            <span class="text-stone-700 dark:text-stone-300 font-bold text-sm" data-i18n="nav_security">Безопасность</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    </a>
+                    <a href="faq.html" class="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-question w-6 text-center text-stone-400 text-lg"></i> 
+                            <span class="text-stone-700 dark:text-stone-300 font-bold text-sm" data-i18n="nav_faq">Помощь / FAQ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    </a>
                 </div>
             </div>
 
-            <div class="border-t border-stone-200 dark:border-stone-800 w-full my-2"></div>
-
-            <div class="flex flex-col gap-4">
-                <div class="grid grid-cols-2 gap-3 w-full">
-                    <a href="about.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-sm shrink-0">
-                            <i class="fa-solid fa-circle-info"></i></div>
-                        <span class="truncate" data-i18n="nav_about">О проекте</span>
-                    </a>
-                    <a href="rules.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500 text-sm shrink-0">
-                            <i class="fa-solid fa-list-check"></i></div>
-                        <span class="truncate" data-i18n="nav_rules">Правила</span>
-                    </a>
-                    <a href="security.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500 text-sm shrink-0">
-                            <i class="fa-solid fa-user-shield"></i></div>
-                        <span class="truncate" data-i18n="nav_security">Безопасность</span>
-                    </a>
-                    <a href="faq.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-sm shrink-0">
-                            <i class="fa-solid fa-circle-question"></i></div>
-                        <span class="truncate" data-i18n="nav_faq">FAQ</span>
-                    </a>
-                    <a href="privacy.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-sm shrink-0">
-                            <i class="fa-solid fa-shield-halved"></i></div>
-                        <span class="truncate" data-i18n="nav_privacy">Политика</span>
-                    </a>
-                    <a href="terms.html"
-                        class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3 text-xs sm:text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-stone-500/10 flex items-center justify-center text-stone-500 text-sm shrink-0">
-                            <i class="fa-solid fa-file-contract"></i></div>
-                        <span class="truncate" data-i18n="nav_terms">Условия</span>
-                    </a>
-                </div>
-
-                <a href="contacts.html"
-                    class="flex items-center gap-3 bg-stone-50 dark:bg-stone-800/40 border border-stone-200/60 dark:border-stone-800/80 rounded-2xl p-3.5 text-sm font-bold text-stone-700 dark:text-stone-300 hover:border-brand-500/50 hover:bg-white dark:hover:bg-stone-800 transition-all active:scale-95 shadow-sm mt-2">
-                    <div
-                        class="w-8 h-8 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 text-sm shrink-0">
-                        <i class="fa-solid fa-envelope"></i></div>
-                    <span data-i18n="footer_support">Служба поддержки</span>
+            <!-- ГРУППА 4: Документы и Поддержка -->
+            <div class="flex flex-col gap-4 mt-2">
+                <a href="contacts.html" class="w-full flex items-center justify-center gap-2 p-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl hover:border-brand-500 transition-colors font-bold text-sm text-stone-700 dark:text-stone-300 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-headset text-brand-500 text-lg"></i> <span data-i18n="footer_support">Служба поддержки</span>
                 </a>
+                
+                <div class="flex items-center justify-center gap-5 text-xs font-bold text-stone-400">
+                    <a href="privacy.html" class="hover:text-brand-500 transition-colors" data-i18n="nav_privacy">Политика</a>
+                    <span class="w-1 h-1 rounded-full bg-stone-300 dark:bg-stone-600"></span>
+                    <a href="terms.html" class="hover:text-brand-500 transition-colors" data-i18n="nav_terms">Условия</a>
+                </div>
             </div>
 
-            <div class="mt-auto pt-8 flex flex-col items-center gap-4">
+            <div class="mt-auto pt-4 pb-2 flex flex-col items-center gap-4">
                 <div class="flex gap-4">
-                    <a href="#"
-                        class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#E1306C] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i
-                            class="fa-brands fa-instagram text-xl"></i></a>
-                    <a href="#"
-                        class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 hover:text-[#0088cc] hover:bg-stone-200 dark:hover:bg-stone-700 transition shadow-sm"><i
-                            class="fa-brands fa-telegram text-xl"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-white dark:bg-stone-800 border border-stone-100 dark:border-stone-700 flex items-center justify-center text-stone-400 hover:text-[#E1306C] hover:border-[#E1306C] transition-colors shadow-sm"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-white dark:bg-stone-800 border border-stone-100 dark:border-stone-700 flex items-center justify-center text-stone-400 hover:text-[#0088cc] hover:border-[#0088cc] transition-colors shadow-sm"><i class="fa-brands fa-telegram text-xl"></i></a>
                 </div>
-                <p class="text-[10px] font-black text-stone-300 dark:text-stone-600 uppercase tracking-widest text-center mt-2"
-                    data-i18n="footer_rights">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
+                <p class="text-[9px] font-black text-stone-300 dark:text-stone-600 uppercase tracking-widest text-center" data-i18n="footer_rights">© 2026 SVALKA. ВСЕ ПРАВА ЗАЩИЩЕНЫ.</p>
             </div>
 
         </div>
