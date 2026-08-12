@@ -103,46 +103,41 @@ window.openTokenPurchaseModal = () => {
 // SHOPIFY-STYLE: КАСКАДНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
 // ==========================================
 window.animateVisibleElements = () => {
+    // Используем таймер для создания "волны" (Stagger effect)
     let staggerDelay = 0;
     let resetTimer = null;
 
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
+                // Если карточка попала в экран, отписываемся от нее навсегда (чтобы не пропадала при скролле вверх)
                 obs.unobserve(entry.target);
                 
-                // Добавляем класс анимации с задержкой (эффект волны)
+                // Добавляем задержку для каждой следующей карточки в текущем батче
                 setTimeout(() => {
+                    // Используем requestAnimationFrame для синхронизации с частотой кадров монитора
                     requestAnimationFrame(() => {
-                        // Сначала прячем карточку (opacity 0 из keyframes), затем запускаем анимацию
-                        entry.target.style.opacity = '0';
-                        entry.target.classList.add('is-animating');
-                        
-                        // Когда анимация закончится, убираем opacity: 0 (чтобы не моргало)
-                        setTimeout(() => {
-                            entry.target.style.opacity = '';
-                        }, 600);
+                        entry.target.classList.add('is-visible');
                     });
                 }, staggerDelay);
 
-                staggerDelay += 75;
+                staggerDelay += 75; // Каждая следующая карточка появится на 75мс позже
 
+                // Сбрасываем задержку, когда пачка карточек отрендерилась
                 if (resetTimer) clearTimeout(resetTimer);
-                resetTimer = setTimeout(() => { staggerDelay = 0; }, 100); 
+                resetTimer = setTimeout(() => {
+                    staggerDelay = 0;
+                }, 100); 
             }
         });
     }, { 
         threshold: 0.05, 
-        rootMargin: '0px 0px 50px 0px' 
+        rootMargin: '0px 0px -50px 0px' // Начинаем анимацию чуть до того, как карточка полностью появится
     });
 
-    // Ищем карточки без класса анимации
-    const elements = document.querySelectorAll('.item-card:not(.is-animating)');
-    // Изначально делаем их прозрачными перед скроллом, чтобы избежать рывков
-    elements.forEach(el => {
-        el.style.opacity = '0';
-        observer.observe(el);
-    });
+    // Ищем все карточки, которые еще не появились, и вешаем на них обсервер
+    const elements = document.querySelectorAll('.item-card:not(.is-visible)');
+    elements.forEach(el => observer.observe(el));
 };
 
 // Закрываем меню при клике в пустую область
@@ -3338,42 +3333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth < 640 && typeof window.setViewMode === 'function') {
         window.setViewMode('list');
     }
-
-    // ==========================================
-    // СЕНЬОР-ФИКС: ГЛОБАЛЬНЫЙ МЕНЕДЖЕР ГЕО-КАРТ (Leaflet)
-    // Решает проблему "Серых квадратов" и невидимых карт внутри модальных окон
-    // ==========================================
-    const mapFixObserver = new MutationObserver((mutations) => {
-        mutations.forEach(m => {
-            if (m.type === 'attributes' && m.attributeName === 'class') {
-                const target = m.target;
-                // Если модальное окно только что получило класс 'active'
-                if (target.classList.contains('active') && target.classList.contains('modal-overlay')) {
-                    // Ждем 300мс (пока закончится CSS анимация выезда окна)
-                    setTimeout(() => {
-                        // Ищем все контейнеры с картами внутри этого окна
-                        const maps = target.querySelectorAll('.leaflet-container');
-                        maps.forEach(mapEl => {
-                            if (window.L && mapEl._leaflet_id) {
-                                // Достаем объект карты и принудительно перерисовываем её размеры
-                                const mapObj = window.L.DomUtil.get(mapEl)._leaflet_map;
-                                if (mapObj) mapObj.invalidateSize();
-                            }
-                        });
-                        
-                        // Резервное дергание глобальных объектов карт (на всякий случай)
-                        if (window.addMapObj) window.addMapObj.invalidateSize();
-                        if (window.viewMapObj) window.viewMapObj.invalidateSize();
-                    }, 300);
-                }
-            }
-        });
-    });
-
-    // Вешаем "прослушку" на все модальные окна на странице
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-        mapFixObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
-    });
 });
 
 // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
