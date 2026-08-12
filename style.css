@@ -711,28 +711,31 @@ option, optgroup {
   font-weight: 600;
 }
 
+/* ==========================================
+       МОДАЛЬНЫЕ ОКНА (Аппаратное ускорение)
+       ========================================== */
+
 .modal-overlay {
-  /* СЕНЬОР-ФИКС: Мягкое скрытие окон. Карта внутри продолжает существовать и знать свои размеры */
-  opacity: 0;
-  pointer-events: none;
-  position: fixed;
-  z-index: -1;
-  /* Прячем под все элементы, чтобы не перехватывало клики */
-  transition: opacity 0.3s ease, z-index 0s 0.3s;
-  /* z-index меняется после затухания */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
 }
 
 .modal-overlay.active {
   opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: auto !important;
-  z-index: 9999;
-  /* Вытаскиваем наверх */
-  transition: opacity 0.3s ease, z-index 0s;
+  /* Форсируем отрисовку слоя видеокартой, лечит баг невидимых окон в мобильных браузерах */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .modal-content {
   transform: scale(0.95) translateY(15px);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* На всякий случай фиксируем непрозрачность самого контента */
+  opacity: 1 !important;
 }
 
 .modal-overlay.active .modal-content {
