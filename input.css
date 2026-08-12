@@ -65,31 +65,10 @@
     select { appearance: none !important; background-color: transparent !important; background-image: none !important; cursor: pointer !important; }
     option, optgroup { background-color: var(--bg-surface) !important; color: var(--text-primary) !important; font-weight: 600; }
 
-    /* ==========================================
-       НАДЕЖНЫЕ МОДАЛЬНЫЕ ОКНА
-       Тотально очищены от 3D-трансформаций и will-change для защиты от багов iOS Safari
-       ========================================== */
-    .modal-overlay { 
-        opacity: 0; 
-        visibility: hidden; 
-        pointer-events: none; 
-        transition: opacity 0.3s ease, visibility 0.3s ease; 
-    }
-    
-    .modal-overlay.active { 
-        opacity: 1 !important; 
-        visibility: visible !important; 
-        pointer-events: auto !important; 
-    }
-    
-    .modal-content { 
-        transform: scale(0.95) translateY(15px); 
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-    }
-    
-    .modal-overlay.active .modal-content { 
-        transform: scale(1) translateY(0); 
-    }
+    .modal-overlay { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
+    .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-content { transform: scale(0.95) translateY(15px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 
     /* ==========================================
        УНИВЕРСАЛЬНЫЕ КНОПКИ LIQUID WAVE
@@ -98,13 +77,14 @@
         position: relative;
         overflow: hidden;
         z-index: 1;
-        /* Аппаратное ускорение тут безопасно: фиксирует overflow:hidden и спасает углы от заливки */
+        /* ЗАДАЧА 2: Аппаратное ускорение. Жестко фиксирует overflow:hidden в Safari и iOS, обрезая любые вылезающие уголки */
         transform: translateZ(0); 
         transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
     }
     .liquid-btn::before {
         content: '';
         position: absolute;
+        /* ЗАДАЧА 2: Опускаем волну глубже (было 150%), чтобы она гарантированно не торчала до наведения */
         top: 250%; 
         left: -25%;
         width: 150%;
@@ -126,7 +106,9 @@
     .cat-btn.active.liquid-btn-red { background-color: #EF4444 !important; border-color: #EF4444 !important; }
     .cat-btn.active::before { display: none; }
     
-    /* Блокировка системных цветов автозаполнения браузеров */
+    /* ==========================================
+       Блокировка системных цветов автозаполнения браузеров
+       ========================================== */
     input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, textarea:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
         -webkit-text-fill-color: var(--text-primary) !important;
@@ -155,31 +137,24 @@
     .dark .liquid-btn-black:hover { color: #ffffff !important; }
     .dark .liquid-btn-black:hover i { color: #ffffff !important; }
 
-    /* ==========================================
-       БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
-       ========================================== */
+    @keyframes cardFadeUp {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ */
     .item-card {
-        cursor: pointer !important; 
+        cursor: pointer !important; /* Обязательно для работы event delegation в iOS Safari */
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
         
-        transform: translateY(0);
-        /* will-change удален для предотвращения мерцаний и пропаданий в WebKit */
+        /* CSS-анимация появления вместо глючного JS Observer */
+        animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
-    }
-    
-    /* Анимация при скролле */
-    .item-card.is-animating {
-        animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes cardFadeUp {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
     }
 
     .item-card:hover {
@@ -202,7 +177,7 @@
     .view-grid .body-badges { display: none !important; }
 
     /* ==========================================
-       VIP ТОП-ЛЕНТА
+       VIP ТОП-ЛЕНТА (АДАПТИВНАЯ МАТЕМАТИКА И ИДЕАЛЬНЫЕ УГЛЫ)
        ========================================== */
     #vip-items-grid { 
         padding: 0.5rem 0 1.5rem 0 !important; 
@@ -217,10 +192,11 @@
         100% { box-shadow: 0 0 8px 0px rgba(245, 158, 11, 0.15); } 
     }
 
+    /* БАЗОВЫЙ СТИЛЬ VIP-КАРТЫ (в любой ленте) */
     .vip-card { 
         background: var(--bg-surface) !important;
         border: 1.5px solid #F59E0B !important; 
-        border-radius: 1.25rem !important; 
+        border-radius: 1.25rem !important; /* Универсальный радиус, как у обычных карт */
         padding: 0 !important; 
         animation: vipPulseGlow 3s infinite ease-in-out !important;
         transform: translateZ(0) scale(1.02); 
@@ -228,6 +204,7 @@
     }
     .dark .vip-card { border-color: #F59E0B !important; }
 
+    /* Радиус внутри специальной ТОП-сетки на мобилках делаем чуть меньше */
     #vip-items-grid .vip-card, #vip-items-grid .item-card { border-radius: 1rem !important; }
     @media (min-width: 1024px) {
         #vip-items-grid .vip-card, #vip-items-grid .item-card { border-radius: 1.25rem !important; }
@@ -243,22 +220,31 @@
         box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.5), 0 0 30px 10px rgba(245, 158, 11, 0.25) !important; 
         z-index: 10; 
     }
-    
+
+    /* ==========================================
+       СЕНЬОР-ФИКС: ЮВЕЛИРНЫЕ УГЛЫ ФОТОГРАФИЙ
+       Вычитаем толщину рамки (1.5px), чтобы картинка не вылезала
+       ========================================== */
+       
+    /* 1. Режим GRID (Обычная лента - мобильные и ПК) */
     .view-grid .vip-card .card-img-wrap { 
         border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
     }
     
+    /* 2. Режим LIST (Мобильный вид списка) */
     @media (max-width: 768px) {
         .view-list .vip-card .card-img-wrap {
             border-radius: calc(1.25rem - 1.5px) 0 0 calc(1.25rem - 1.5px) !important;
         }
     }
+    /* 3. Режим LIST (Десктопный вид списка) */
     @media (min-width: 1024px) {
         .view-list .vip-card .card-img-wrap {
             border-radius: calc(0.75rem - 1.5px) !important;
         }
     }
 
+    /* 4. Режим СПЕЦИАЛЬНОЙ ТОП-ЛЕНТЫ (Мобилка и ПК) */
     #vip-items-grid .card-img-wrap { 
         height: 140px !important; min-height: 140px !important; 
         border-radius: calc(1rem - 1.5px) calc(1rem - 1.5px) 0 0 !important; 
@@ -272,6 +258,7 @@
         } 
     }
 
+    /* Скрытие лишних бейджей в ТОП-ленте */
     #vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child { display: none !important; }
     
     #vip-items-grid .card-body-wrap { padding: 0.5rem !important; justify-content: center !important; }
@@ -287,7 +274,7 @@
     }
 
     /* ==========================================
-       РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
+       ПРЕМИАЛЬНЫЙ РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
        ========================================== */
     @media (min-width: 1024px) {
         #item-details-modal-content { max-width: 1152px !important; } 
@@ -342,6 +329,7 @@
         main { display: grid !important; grid-template-columns: 280px minmax(0, 1fr) !important; align-items: start; gap: 0 2.5rem !important; }
         main > * { grid-column: 2 / -1 !important; }
         
+        /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
         main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, #pro-banner { grid-column: 1 / -1 !important; }
         
         #vip-section { width: 100% !important; margin: 0 !important; }
