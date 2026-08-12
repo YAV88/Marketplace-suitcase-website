@@ -3894,7 +3894,7 @@ window.handleSearch = (event) => {
 };
 
 // ==========================================
-// ПАТЧ: БЕСШОВНАЯ ЛОГИКА ДОБАВЛЕНИЯ И УДАЛЕНИЯ ИЗ ТОПА
+// БЕСШОВНАЯ ЛОГИКА УПРАВЛЕНИЯ VIP (Lightning Fast)
 // ==========================================
 window.toggleItemVip = async (itemId, btnElement) => {
     if (!window.currentUser) return;
@@ -3908,12 +3908,13 @@ window.toggleItemVip = async (itemId, btnElement) => {
     }
 
     try {
-        // 1. УМНАЯ ПРОВЕРКА PRO-СТАТУСА
-        let isPro = window.currentUserData && window.currentUserData.is_pro;
-        if (!isPro) {
+        // 1. УМНАЯ ПРОВЕРКА PRO-СТАТУСА (С кэшированием)
+        let isPro = false;
+        if (window.currentUserData && typeof window.currentUserData.is_pro !== 'undefined') {
+            isPro = window.currentUserData.is_pro;
+        } else {
             const { data } = await supabase.from('profiles').select('pro_until').eq('id', window.currentUser.id).single();
             isPro = window.checkRealVipStatus ? window.checkRealVipStatus(data) : false;
-            
             if (!window.currentUserData) window.currentUserData = {};
             window.currentUserData.is_pro = isPro;
         }
@@ -3927,12 +3928,14 @@ window.toggleItemVip = async (itemId, btnElement) => {
         }
 
         // 3. ФОНОВЫЕ ЗАПРОСЫ К БАЗЕ ДАННЫХ
+        let newVipStatus = false;
         if (item.isHighlighted) {
             // СНИМАЕМ С ВИТРИНЫ
             const { error } = await supabase.from('items').update({ highlighted_until: null }).eq('id', itemId);
             if (error) throw error;
             window.showToast("Слот освобожден! Товар снят с витрины.");
             item.isHighlighted = false; 
+            newVipStatus = false;
         } else {
             // ДОБАВЛЯЕМ НА ВИТРИНУ
             const { data, error } = await window.supabase.rpc('apply_vip_to_item', { target_item_id: itemId });
@@ -3941,6 +3944,7 @@ window.toggleItemVip = async (itemId, btnElement) => {
             if (data === 'success') {
                 window.showToast('Товар успешно размещен на VIP-витрине!');
                 item.isHighlighted = true; 
+                newVipStatus = true;
             } else if (data === 'not_pro') {
                 window.showToast('Для размещения требуется SVALKA PRO.', true);
                 if (btnElement) btnElement.innerHTML = originalText;
@@ -3952,30 +3956,49 @@ window.toggleItemVip = async (itemId, btnElement) => {
             }
         }
 
-        // 4. БЕСШОВНОЕ ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ КНОПКИ (Без закрытия окна!)
+        // 4. БЕСШОВНОЕ ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ КНОПКИ УПРАВЛЕНИЯ
         if (btnElement) {
-            const isItemVip = item.isHighlighted;
-            const vipBtnClass = isItemVip 
+            const vipBtnClass = newVipStatus 
                 ? 'liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24' 
                 : 'liquid-btn liquid-btn-amber group bg-amber-50 dark:bg-amber-900/20 hover:bg-transparent dark:hover:bg-transparent text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24';
             
-            // Огонек вместо короны при живом бесшовном обновлении
-            const vipIconClass = isItemVip 
+            const vipIconClass = newVipStatus 
                 ? 'fa-solid fa-arrow-down text-xl pointer-events-none opacity-50 group-hover:text-white transition-colors duration-300' 
                 : 'fa-solid fa-fire-flame-curved text-orange-500 text-xl pointer-events-none group-hover:text-white transition-colors duration-300';
                 
-            const vipBtnText = isItemVip ? 'Снять с витрины' : 'На витрину (VIP)';
-            
             btnElement.className = vipBtnClass;
             btnElement.innerHTML = `
                 <i class="${vipIconClass}"></i>
-                <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">${vipBtnText}</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">${newVipStatus ? 'Снять с витрины' : 'На витрину (VIP)'}</span>
             `;
         }
 
-        // Тихо обновляем ленту на фоне, чтобы изменения применились снаружи
-        if (window.fetchItems) window.fetchItems(false);
-        if (window.renderProfileTabs) window.renderProfileTabs();
+        // 5. ХИРУРГИЧЕСКОЕ ОБНОВЛЕНИЕ DOM (Без тяжелой перерисовки всего сайта!)
+        const cardElements = document.querySelectorAll(`.item-card[data-id="${itemId}"]`);
+        cardElements.forEach(card => {
+            const titleWrap = card.querySelector('h4');
+            if (newVipStatus) {
+                // Добавляем премиальную рамку
+                card.classList.remove('border-stone-200', 'dark:border-stone-800');
+                card.classList.add('vip-card', 'border-2', 'border-amber-400/60', 'dark:border-amber-500/60', 'shadow-xl', 'shadow-amber-500/20');
+                // Добавляем огонек в название
+                if (titleWrap && !titleWrap.querySelector('.fa-fire-flame-curved')) {
+                    titleWrap.insertAdjacentHTML('afterbegin', '<span class="inline-block mr-2" title="ТОП Находка"><i class="fa-solid fa-fire-flame-curved text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse"></i></span>');
+                }
+            } else {
+                // Снимаем премиальную рамку
+                card.classList.remove('vip-card', 'border-2', 'border-amber-400/60', 'dark:border-amber-500/60', 'shadow-xl', 'shadow-amber-500/20');
+                card.classList.add('border-stone-200', 'dark:border-stone-800');
+                // Убираем огонек
+                if (titleWrap) {
+                    const crown = titleWrap.querySelector('span[title="ТОП Находка"]');
+                    if (crown) crown.remove();
+                }
+            }
+        });
+
+        // Мягко обновляем саму VIP-ленту, если она открыта
+        if (typeof window.refreshVipOnly === 'function') window.refreshVipOnly();
         
     } catch (e) {
         console.error("VIP Toggle Error:", e);
@@ -3991,10 +4014,17 @@ window.highlightItem = window.promoteToVip;
 window.applyVipToItem = window.toggleItemVip;
 
 // ==========================================
-// БЕСШОВНОЕ ОБНОВЛЕНИЕ VIP-ЛЕНТЫ
-// Запрашивает только ТОП-ленту при возвращении во вкладку, без полной перезагрузки сайта
+// БЕСШОВНОЕ ОБНОВЛЕНИЕ VIP-ЛЕНТЫ ПРИ ФОКУСЕ
 // ==========================================
+let isVipRefreshing = false; // Защита от спама запросами (Race Condition)
+
 window.refreshVipOnly = async () => {
+    if (isVipRefreshing || window.showUrgentOnly) return;
+    const vipGrid = document.getElementById('vip-items-grid');
+    if (!vipGrid) return;
+    
+    isVipRefreshing = true;
+
     try {
         const { data } = await supabase.from('items')
             .select('*')
@@ -4002,11 +4032,9 @@ window.refreshVipOnly = async () => {
             .gt('highlighted_until', new Date().toISOString())
             .limit(40);
             
-        if (data && data.length > 0 && !window.showUrgentOnly) {
-            const vipGrid = document.getElementById('vip-items-grid');
-            if (!vipGrid) return;
-            
+        if (data && data.length > 0) {
             let vipItems = data.map(window.mapItemData).filter(Boolean);
+            
             if (vipItems.length > 0 && vipItems.length < 10) {
                 const originalVips = [...vipItems];
                 while (vipItems.length < 10) vipItems.push(...originalVips);
@@ -4016,7 +4044,7 @@ window.refreshVipOnly = async () => {
             window.vipPool = vipItems.sort(() => 0.5 - Math.random());
             const initialVips = window.vipPool.slice(0, 10);
             
-            // Тихо обновляем HTML ТОП-карточек
+            // Если отрисовщик карточек доступен - мягко меняем HTML
             if (typeof window.createCardHtml === 'function' || typeof ItemsModule !== 'undefined') {
                 const htmlBuilder = window.createCardHtml || ItemsModule.createCardHtml;
                 vipGrid.innerHTML = initialVips.map((i, idx) => `
@@ -4032,14 +4060,15 @@ window.refreshVipOnly = async () => {
         }
     } catch (e) {
         console.error("VIP Refresh Error:", e);
+    } finally {
+        isVipRefreshing = false;
     }
 };
 
-// Слушаем возвращение во вкладку браузера (Tab Focus)
+// Мягкое прослушивание фокуса вкладки
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        // Вызываем мягкое обновление только VIP-ленты
-        if (typeof window.refreshVipOnly === 'function') window.refreshVipOnly();
+    if (!document.hidden && typeof window.refreshVipOnly === 'function') {
+        window.refreshVipOnly();
     }
 });
 // ==========================================
