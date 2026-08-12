@@ -69,26 +69,24 @@
        МОДАЛЬНЫЕ ОКНА (Аппаратное ускорение)
        ========================================== */
     .modal-overlay { 
-        opacity: 0 !important; 
-        visibility: hidden !important; 
-        pointer-events: none !important; 
-        transition: opacity 0.3s ease, visibility 0.3s ease !important; 
+        opacity: 0; 
+        visibility: hidden; 
+        pointer-events: none; 
+        /* СЕНЬОР-ФИКС: Аппаратный слой создается ЗАРАНЕЕ. Это предотвращает баг "невидимого окна" при быстрой отрисовке в Safari/iOS */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        transition: opacity 0.3s ease, visibility 0.3s ease; 
     }
     
     .modal-overlay.active { 
         opacity: 1 !important; 
         visibility: visible !important; 
         pointer-events: auto !important; 
-        /* Форсируем отрисовку слоя видеокартой, лечит баг невидимых окон в мобильных браузерах */
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
     }
     
     .modal-content { 
         transform: scale(0.95) translateY(15px); 
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-        /* На всякий случай фиксируем непрозрачность самого контента */
-        opacity: 1 !important; 
     }
     
     .modal-overlay.active .modal-content { 
