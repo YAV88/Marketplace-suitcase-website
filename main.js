@@ -599,7 +599,7 @@ window.switchSellerTab = (tabName) => {
     const tabReviews = document.getElementById('tab-seller-reviews');
 
     if (tabName === 'items') {
-        // Жестко перекрашиваем активную вкладку
+        // Перекрашиваем активную вкладку
         if (tabItems) {
             tabItems.classList.add('text-brand-600', 'border-brand-600');
             tabItems.classList.remove('text-stone-500', 'border-transparent', 'dark:text-stone-400');
@@ -609,18 +609,18 @@ window.switchSellerTab = (tabName) => {
             tabReviews.classList.add('text-stone-500', 'border-transparent', 'dark:text-stone-400');
         }
 
-        if (listRev) { listRev.style.display = 'none'; listRev.classList.add('hidden'); }
-        if (search) { search.style.display = 'block'; search.classList.remove('hidden'); }
+        if (listRev) { listRev.style.display = 'none'; listRev.classList.add('hidden', '!hidden'); }
+        if (search) { search.style.display = 'block'; search.classList.remove('hidden', '!hidden'); }
 
         if (grid && grid.innerHTML.trim() !== '') {
-            grid.style.display = ''; grid.classList.remove('hidden');
-            if (empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
+            grid.style.display = ''; grid.classList.remove('hidden', '!hidden');
+            if (empty) { empty.style.display = 'none'; empty.classList.add('hidden', '!hidden'); }
         } else {
-            if (grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
-            if (empty) { empty.style.display = 'flex'; empty.classList.remove('hidden'); }
+            if (grid) { grid.style.display = 'none'; grid.classList.add('hidden', '!hidden'); }
+            if (empty) { empty.style.display = 'flex'; empty.classList.remove('hidden', '!hidden'); }
         }
     } else {
-        // Жестко перекрашиваем активную вкладку
+        // Перекрашиваем активную вкладку
         if (tabReviews) {
             tabReviews.classList.add('text-brand-600', 'border-brand-600');
             tabReviews.classList.remove('text-stone-500', 'border-transparent', 'dark:text-stone-400');
@@ -630,11 +630,12 @@ window.switchSellerTab = (tabName) => {
             tabItems.classList.add('text-stone-500', 'border-transparent', 'dark:text-stone-400');
         }
 
-        if (grid) { grid.style.display = 'none'; grid.classList.add('hidden'); }
-        if (empty) { empty.style.display = 'none'; empty.classList.add('hidden'); }
-        if (search) { search.style.display = 'none'; search.classList.add('hidden'); }
+        // Жестко добавляем !hidden, чтобы перебить !important из CSS-сетки
+        if (grid) { grid.style.display = 'none'; grid.classList.add('hidden', '!hidden'); }
+        if (empty) { empty.style.display = 'none'; empty.classList.add('hidden', '!hidden'); }
+        if (search) { search.style.display = 'none'; search.classList.add('hidden', '!hidden'); }
 
-        if (listRev) { listRev.classList.remove('hidden'); listRev.style.display = 'flex'; }
+        if (listRev) { listRev.classList.remove('hidden', '!hidden'); listRev.style.display = 'flex'; }
     }
 };
 
@@ -2511,20 +2512,24 @@ window.previewPhotos = async (e) => {
                 // 1. Сначала отрисовываем оригинальную фотографию (сжатую)
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // 2. СРАЗУ НАКЛАДЫВАЕМ ВОДЯНОЙ ЗНАК SVALKA
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Белый цвет, 40% прозрачности
-                ctx.font = `bold ${Math.floor(width / 10)}px Montserrat, sans-serif`; // Размер текста зависит от размера фото
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                // 2. СРАЗУ НАКЛАДЫВАЕМ ВОДЯНОЙ ЗНАК SVALKA (Премиальный, еле заметный)
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; // 25% прозрачности (почти невидимый)
+                const fontSize = Math.max(14, Math.floor(width / 35)); // Очень маленький аккуратный шрифт
+                ctx.font = `bold ${fontSize}px Montserrat, sans-serif`;
                 
-                // Добавляем темную тень, чтобы белый текст читался даже на белом фоне
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-                ctx.shadowBlur = 12;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
+                // Выравниваем по правому нижнему краю
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
                 
-                // Печатаем текст ровно по центру фотографии
-                ctx.fillText('SVALKA.TRADE', width / 2, height / 2);
+                // Очень легкая тень, чтобы вотермарк не пропадал на чисто белых фото, но не "грязнил" кадр
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+                
+                // Печатаем текст с отступом 3% от края
+                const margin = Math.floor(width * 0.03);
+                ctx.fillText('SVALKA.TRADE', width - margin, height - margin);
 
                 // 3. Сохраняем готовую картинку в предпросмотр (уже с водяным знаком)
                 window.tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8)); 
