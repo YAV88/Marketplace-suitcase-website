@@ -471,10 +471,11 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         const proBadge = document.getElementById('seller-pro-badge');
         const isPro = profileRes.data ? window.checkRealVipStatus(profileRes.data) : false;
         
+        // Единый премиальный стиль бейджа
         if (isPro && proBadge) {
             proBadge.classList.remove('hidden');
-            // Применяем новый "огненный" премиум-дизайн
-            proBadge.className = "bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 ml-2";
+            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200";
+            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
         } else if (proBadge) {
             proBadge.classList.add('hidden');
         }
@@ -1124,7 +1125,8 @@ window.openModal = async id => {
                         
                         if (proBadge) { 
                             proBadge.classList.remove('hidden'); 
-                            proBadge.className = "bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 ml-2"; 
+                            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"; 
+                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
                         }
                     } else {
                         const t = window.t || (txt => txt);
