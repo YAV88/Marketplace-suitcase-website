@@ -3333,6 +3333,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth < 640 && typeof window.setViewMode === 'function') {
         window.setViewMode('list');
     }
+
+    // ==========================================
+    // СЕНЬОР-ФИКС: ГЛОБАЛЬНЫЙ МЕНЕДЖЕР ГЕО-КАРТ (Leaflet)
+    // Решает проблему "Серых квадратов" и невидимых карт внутри модальных окон
+    // ==========================================
+    const mapFixObserver = new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+            if (m.type === 'attributes' && m.attributeName === 'class') {
+                const target = m.target;
+                // Если модальное окно только что получило класс 'active'
+                if (target.classList.contains('active') && target.classList.contains('modal-overlay')) {
+                    // Ждем 300мс (пока закончится CSS анимация выезда окна)
+                    setTimeout(() => {
+                        // Ищем все контейнеры с картами внутри этого окна
+                        const maps = target.querySelectorAll('.leaflet-container');
+                        maps.forEach(mapEl => {
+                            if (window.L && mapEl._leaflet_id) {
+                                // Достаем объект карты и принудительно перерисовываем её размеры
+                                const mapObj = window.L.DomUtil.get(mapEl)._leaflet_map;
+                                if (mapObj) mapObj.invalidateSize();
+                            }
+                        });
+                        
+                        // Резервное дергание глобальных объектов карт (на всякий случай)
+                        if (window.addMapObj) window.addMapObj.invalidateSize();
+                        if (window.viewMapObj) window.viewMapObj.invalidateSize();
+                    }, 300);
+                }
+            }
+        });
+    });
+
+    // Вешаем "прослушку" на все модальные окна на странице
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        mapFixObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
 });
 
 // --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
