@@ -711,6 +711,11 @@ option, optgroup {
   font-weight: 600;
 }
 
+/* ==========================================
+       НАДЕЖНЫЕ МОДАЛЬНЫЕ ОКНА
+       Тотально очищены от 3D-трансформаций и will-change для защиты от багов iOS Safari
+       ========================================== */
+
 .modal-overlay {
   opacity: 0;
   visibility: hidden;
@@ -719,9 +724,9 @@ option, optgroup {
 }
 
 .modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .modal-content {
@@ -741,7 +746,7 @@ option, optgroup {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  /* ЗАДАЧА 2: Аппаратное ускорение. Жестко фиксирует overflow:hidden в Safari и iOS, обрезая любые вылезающие уголки */
+  /* Аппаратное ускорение тут безопасно: фиксирует overflow:hidden и спасает углы от заливки */
   transform: translateZ(0);
   transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, background-color 0.4s ease !important;
 }
@@ -749,7 +754,6 @@ option, optgroup {
 .liquid-btn::before {
   content: '';
   position: absolute;
-  /* ЗАДАЧА 2: Опускаем волну глубже (было 150%), чтобы она гарантированно не торчала до наведения */
   top: 250%;
   left: -25%;
   width: 150%;
@@ -792,9 +796,7 @@ option, optgroup {
   display: none;
 }
 
-/* ==========================================
-       Блокировка системных цветов автозаполнения браузеров
-       ========================================== */
+/* Блокировка системных цветов автозаполнения браузеров */
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, textarea:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
@@ -851,6 +853,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
        ========================================== */
 
 .item-card {
+  cursor: pointer !important;
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
@@ -859,28 +862,32 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  /* СЕНЬОР-ФИКС: Изначально карточка скрыта и опущена вниз */
-  opacity: 0;
-  transform: translateY(40px);
-  visibility: visible !important;
-  /* Оставляем visible, чтобы IntersectionObserver ее видел */
-  will-change: opacity, transform;
-  /* Плавная инерционная анимация (Срабатывает при добавлении класса .is-visible) */
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
-                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+  transform: translateY(0);
+  /* will-change удален для предотвращения мерцаний и пропаданий в WebKit */
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
 }
 
-/* Состояние, когда карточка попала в экран (добавляется через main.js) */
+/* Анимация при скролле */
 
-.item-card.is-visible {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
+.item-card.is-animating {
+  animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .item-card:hover {
-  /* При ховере поднимаем от 0 (так как is-visible ставит 0) */
   transform: translateY(-6px) !important;
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -5px rgba(0, 0, 0, 0.04) !important;
   border-color: rgba(31, 182, 166, 0.3) !important;
@@ -938,7 +945,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 
 /* ==========================================
-       VIP ТОП-ЛЕНТА (АДАПТИВНАЯ МАТЕМАТИКА И ИДЕАЛЬНЫЕ УГЛЫ)
+       VIP ТОП-ЛЕНТА
        ========================================== */
 
 #vip-items-grid {
@@ -973,13 +980,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   }
 }
 
-/* БАЗОВЫЙ СТИЛЬ VIP-КАРТЫ (в любой ленте) */
-
 .vip-card {
   background: var(--bg-surface) !important;
   border: 1.5px solid #F59E0B !important;
   border-radius: 1.25rem !important;
-  /* Универсальный радиус, как у обычных карт */
   padding: 0 !important;
   animation: vipPulseGlow 3s infinite ease-in-out !important;
   transform: translateZ(0) scale(1.02);
@@ -989,8 +993,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .dark .vip-card {
   border-color: #F59E0B !important;
 }
-
-/* Радиус внутри специальной ТОП-сетки на мобилках делаем чуть меньше */
 
 #vip-items-grid .vip-card, #vip-items-grid .item-card {
   border-radius: 1rem !important;
@@ -1016,18 +1018,9 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   z-index: 10;
 }
 
-/* ==========================================
-       СЕНЬОР-ФИКС: ЮВЕЛИРНЫЕ УГЛЫ ФОТОГРАФИЙ
-       Вычитаем толщину рамки (1.5px), чтобы картинка не вылезала
-       ========================================== */
-
-/* 1. Режим GRID (Обычная лента - мобильные и ПК) */
-
 .view-grid .vip-card .card-img-wrap {
   border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
 }
-
-/* 2. Режим LIST (Мобильный вид списка) */
 
 @media (max-width: 768px) {
   .view-list .vip-card .card-img-wrap {
@@ -1035,15 +1028,11 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   }
 }
 
-/* 3. Режим LIST (Десктопный вид списка) */
-
 @media (min-width: 1024px) {
   .view-list .vip-card .card-img-wrap {
     border-radius: calc(0.75rem - 1.5px) !important;
   }
 }
-
-/* 4. Режим СПЕЦИАЛЬНОЙ ТОП-ЛЕНТЫ (Мобилка и ПК) */
 
 #vip-items-grid .card-img-wrap {
   height: 140px !important;
@@ -1068,8 +1057,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     border-radius: calc(1.25rem - 1.5px) calc(1.25rem - 1.5px) 0 0 !important;
   }
 }
-
-/* Скрытие лишних бейджей в ТОП-ленте */
 
 #vip-items-grid .body-badges, #vip-items-grid .img-badges, #vip-items-grid .view-list-col-2 > div:last-child {
   display: none !important;
@@ -1114,7 +1101,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 
 /* ==========================================
-       ПРЕМИАЛЬНЫЙ РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
+       РАЗМЕР ОКНА ТОВАРА (ДЕСКТОП)
        ========================================== */
 
 @media (min-width: 1024px) {
@@ -1353,8 +1340,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     grid-column: 2 / -1 !important;
   }
 
-  /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
-
   main > div:first-child, main > div#mobile-filter-backdrop, #main-cats-container, #sub-cats-container, #vip-section, #pro-banner {
     grid-column: 1 / -1 !important;
   }
@@ -1427,8 +1412,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     padding-left: 3rem !important;
     padding-right: 3rem !important;
   }
-
-  /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
 }
 
 .sr-only{
@@ -4225,10 +4208,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       padding-right: 3rem !important;
     }
 
-    /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
-
-    /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
-
     .sm\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
@@ -4238,8 +4217,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 @media (min-width: 768px){
   @media (min-width: 1024px) {
-    /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
-
     .md\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
@@ -4249,8 +4226,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 @media (min-width: 1024px){
   @media (min-width: 1024px) {
-    /* СЕНЬОР-ФИКС: Мы заменили старый класс bg-gradient-to-r на #pro-banner. Теперь реклама снова тянется на весь экран! */
-
     .lg\:flex.justify-center.mt-10.mb-6 {
       grid-column: 2 / 3 !important;
       grid-row: 10 !important;
