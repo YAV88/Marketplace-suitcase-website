@@ -453,10 +453,11 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
     if (loader) loader.style.display = 'flex';
 
     try {
-        // Параллельно грузим товары и отзывы из БД
-        const [itemsRes, reviewsRes] = await Promise.all([
+        // Параллельно грузим товары, отзывы и ПРОФИЛЬ (чтобы узнать VIP статус)
+        const [itemsRes, reviewsRes, profileRes] = await Promise.all([
             supabase.from('items').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-            supabase.from('reviews').select('*').eq('seller_id', userId).order('created_at', { ascending: false })
+            supabase.from('reviews').select('*').eq('seller_id', userId).order('created_at', { ascending: false }),
+            supabase.from('profiles').select('pro_until, is_verified').eq('id', userId).maybeSingle()
         ]);
 
         if (itemsRes.error) throw itemsRes.error;
@@ -466,11 +467,23 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         const reviews = reviewsRes.data || [];
         if (loader) loader.style.display = 'none';
 
+        // Включаем VIP бейдж, если продавец купил PRO
+        const proBadge = document.getElementById('seller-pro-badge');
+        const isPro = profileRes.data ? window.checkRealVipStatus(profileRes.data) : false;
+        
+        if (isPro && proBadge) {
+            proBadge.classList.remove('hidden');
+            // Применяем новый "огненный" премиум-дизайн
+            proBadge.className = "bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 ml-2";
+        } else if (proBadge) {
+            proBadge.classList.add('hidden');
+        }
+
         // ОТРИСОВКА ТОВАРОВ
         document.getElementById('seller-stats').innerHTML = `<span data-i18n="seller_ads">${window.t ? window.t('seller_ads') : 'Объявлений:'}</span> ${items.length}`;
         if (items.length > 0) {
             if (grid) {
-                // ИСПРАВЛЕНИЕ 1: Правильно мапим данные перед генерацией HTML
+                // Правильно мапим данные перед генерацией HTML
                 grid.innerHTML = items
                     .map(item => window.mapItemData(item))
                     .filter(Boolean)
@@ -481,12 +494,12 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
                         return ''; 
                     }).join('');
                 
-                // ИСПРАВЛЕНИЕ 2: Применяем классы сетки/списка и убираем жесткий style
+                // Применяем классы сетки/списка и убираем жесткий style
                 grid.style.display = ''; 
                 grid.classList.remove('view-grid', 'view-list', 'hidden');
                 grid.classList.add(`view-${window.currentViewMode || 'grid'}`);
                 
-                // ИСПРАВЛЕНИЕ 3: Запускаем анимацию проявления
+                // Запускаем анимацию проявления
                 if (typeof window.animateVisibleElements === 'function') {
                     setTimeout(() => window.animateVisibleElements(), 50);
                 }
@@ -495,7 +508,7 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
             if (empty) empty.style.display = 'flex';
         }
 
-        // --- НОВАЯ ЛОГИКА: ПОДТЯГИВАЕМ ИМЕНА И АВАТАРЫ ПОКУПАТЕЛЕЙ ---
+        // --- ПОДТЯГИВАЕМ ИМЕНА И АВАТАРЫ ПОКУПАТЕЛЕЙ ---
         const reviewerIds = [...new Set(reviews.map(r => r.reviewer_id).filter(Boolean))];
         const usersMap = {};
 
@@ -1080,6 +1093,7 @@ window.openModal = async id => {
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
             const tokensEl = document.getElementById('profile-vip-tokens'); 
+            const proBadge = document.getElementById('profile-pro-badge'); // Находим бейдж
             
             if (statusText) statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-stone-400"></i>';
             
@@ -1101,11 +1115,18 @@ window.openModal = async id => {
                         statusText.innerText = t('pro_active_days').replace('{days}', diffDays);
                         statusText.className = 'text-sm font-black text-amber-500';
                         proBtn.classList.add('hidden');
+                        
+                        // Показываем бейдж у себя в профиле
+                        if (proBadge) { 
+                            proBadge.classList.remove('hidden'); 
+                            proBadge.className = "bg-orange-500 text-stone-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm tracking-widest uppercase shrink-0 ml-2"; 
+                        }
                     } else {
                         const t = window.t || (txt => txt);
                         statusText.innerText = t('Базовый'); 
                         statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
+                        if (proBadge) proBadge.classList.add('hidden'); // Прячем, если VIP кончился
                     }
                 } 
             } catch(e) {
