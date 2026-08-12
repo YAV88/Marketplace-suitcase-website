@@ -499,7 +499,7 @@
             
             <!-- ВЕРХНИЙ РЯД: Главное, Услуги, Недвижимость, Бизнес -->
             <div class="flex flex-nowrap overflow-x-auto items-center gap-2 sm:gap-3 pb-2 sm:pb-0 custom-scrollbar snap-x">
-                <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn liquid-btn active px-5 py-2.5 rounded-xl font-bold text-sm shadow-md cursor-pointer whitespace-nowrap shrink-0 snap-start scale-[1.02]" data-i18n="cat_all">Все</button>
+                <button data-cat="Все" onclick="window.filterByCategory('Все', event)" class="cat-btn liquid-btn active px-5 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl font-bold text-sm transition hover:shadow-sm hover:-translate-y-0.5 cursor-pointer whitespace-nowrap shrink-0 snap-start shadow-md scale-[1.02]" data-i18n="cat_all">Все</button>
                 <button id="btn-cat-urgent" onclick="window.toggleUrgentFilter()" class="cat-btn liquid-btn liquid-btn-red px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/50 rounded-xl font-bold text-sm transition hover:scale-105 cursor-pointer whitespace-nowrap shrink-0 snap-start"><i class="fa-solid fa-fire-flame-curved mr-1"></i> <span data-i18n="cat_top">ТОП</span></button>
 
                 <div class="w-px h-6 bg-stone-300 dark:bg-stone-700 shrink-0 mx-1"></div>
@@ -1429,26 +1429,28 @@
                 <div id="profile-economy-section" class="hidden flex-col sm:flex-row w-full gap-3 mt-4">
                     
                     <!-- Плашка PRO -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 flex-1 shadow-sm transition-colors h-16">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 w-full sm:w-[260px] shadow-sm transition-colors h-16">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-md bg-stone-200/50 dark:bg-stone-700/50 flex items-center justify-center text-stone-500 shrink-0">
                                 <i class="fa-solid fa-id-badge text-sm"></i>
                             </div>
                             <span id="profile-account-status" class="text-sm font-black text-stone-700 dark:text-stone-300 leading-tight">Базовый</span>
                         </div>
-                        <button id="profile-buy-pro-btn" onclick="window.closeModal('profile-modal'); window.openModal('crypto-modal');" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 h-9 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="profile_buy_pro">Купить PRO</button>
+                        <button id="profile-buy-pro-btn" onclick="window.openModal('crypto-modal');" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 h-9 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="profile_buy_pro">Купить PRO</button>
                     </div>
                     
                     <!-- Плашка Токенов -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 flex-1 shadow-sm transition-colors h-16">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 w-full sm:w-[260px] shadow-sm transition-colors h-16">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 shrink-0">
                                 <i class="fa-solid fa-bolt text-sm"></i>
                             </div>
                             <span id="profile-vip-tokens" class="text-sm font-black text-stone-900 dark:text-white leading-tight">0 шт.</span>
                         </div>
-                        <button onclick="window.closeModal('profile-modal'); window.openTokenPurchaseModal();" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 h-9 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="btn_buy_more">Докупить</button>
+                        <button onclick="window.openTokenPurchaseModal();" class="liquid-btn liquid-btn-gray bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 font-bold text-xs px-4 h-9 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-700 transition shadow-sm cursor-pointer whitespace-nowrap shrink-0" data-i18n="btn_buy_more">Докупить</button>
                     </div>
+
+                </div>
 
                 </div>
 

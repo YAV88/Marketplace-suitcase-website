@@ -2719,11 +2719,34 @@ window.renderProfileTabs = async (forceRefresh = false) => {
 };
 
 window.filterProfileItems = (input, gridId) => {
-    const term = input.value.toLowerCase().trim(); const grid = document.getElementById(gridId); if (!grid) return;
-    const cards = grid.querySelectorAll('.item-card'); let hasVisible = false;
-    cards.forEach(card => { const title = card.querySelector('h4').innerText.toLowerCase(); if (title.includes(term)) { card.style.display = 'flex'; hasVisible = true; } else { card.style.display = 'none'; } });
+    const term = input.value.toLowerCase().trim(); 
+    const grid = document.getElementById(gridId); 
+    if (!grid) return;
+    
+    const cards = grid.querySelectorAll('.item-card'); 
+    let hasVisible = false;
+    
+    // Используем setProperty с 'important', чтобы перебить display: flex !important из CSS
+    cards.forEach(card => { 
+        const title = card.querySelector('h4').innerText.toLowerCase(); 
+        if (title.includes(term)) { 
+            card.style.setProperty('display', 'flex', 'important'); 
+            hasVisible = true; 
+        } else { 
+            card.style.setProperty('display', 'none', 'important'); 
+        } 
+    });
+    
     const emptyState = document.getElementById(gridId.replace('-grid', '-empty'));
-    if (emptyState) { if (!hasVisible && cards.length > 0) { emptyState.style.display = 'flex'; emptyState.querySelector('span').innerText = 'Ничего не найдено'; } else if (cards.length > 0) { emptyState.style.display = 'none'; } }
+    if (emptyState) { 
+        if (!hasVisible && cards.length > 0) { 
+            emptyState.style.setProperty('display', 'flex', 'important'); 
+            const span = emptyState.querySelector('span');
+            if (span) span.innerText = 'Ничего не найдено'; 
+        } else if (cards.length > 0) { 
+            emptyState.style.setProperty('display', 'none', 'important'); 
+        } 
+    }
 };
 
 const originalSwitchTab = window.switchProfileTab;
@@ -3966,3 +3989,57 @@ window.toggleItemVip = async (itemId, btnElement) => {
 window.promoteToVip = () => window.toggleItemVip(window.activeModalItemId, document.getElementById('btn-owner-vip'));
 window.highlightItem = window.promoteToVip;
 window.applyVipToItem = window.toggleItemVip;
+
+// ==========================================
+// БЕСШОВНОЕ ОБНОВЛЕНИЕ VIP-ЛЕНТЫ
+// Запрашивает только ТОП-ленту при возвращении во вкладку, без полной перезагрузки сайта
+// ==========================================
+window.refreshVipOnly = async () => {
+    try {
+        const { data } = await supabase.from('items')
+            .select('*')
+            .neq('status', 'sold')
+            .gt('highlighted_until', new Date().toISOString())
+            .limit(40);
+            
+        if (data && data.length > 0 && !window.showUrgentOnly) {
+            const vipGrid = document.getElementById('vip-items-grid');
+            if (!vipGrid) return;
+            
+            let vipItems = data.map(window.mapItemData).filter(Boolean);
+            if (vipItems.length > 0 && vipItems.length < 10) {
+                const originalVips = [...vipItems];
+                while (vipItems.length < 10) vipItems.push(...originalVips);
+                vipItems = vipItems.slice(0, 10);
+            }
+            
+            window.vipPool = vipItems.sort(() => 0.5 - Math.random());
+            const initialVips = window.vipPool.slice(0, 10);
+            
+            // Тихо обновляем HTML ТОП-карточек
+            if (typeof window.createCardHtml === 'function' || typeof ItemsModule !== 'undefined') {
+                const htmlBuilder = window.createCardHtml || ItemsModule.createCardHtml;
+                vipGrid.innerHTML = initialVips.map((i, idx) => `
+                    <div class="vip-slot transition-all duration-700 h-full flex transform-gpu w-full ${idx >= 8 ? 'hidden lg:flex' : ''}" data-slot="${idx}">
+                        ${htmlBuilder(i, true)}
+                    </div>
+                `).join('');
+            }
+            
+            initialVips.forEach(v => { 
+                if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
+            });
+        }
+    } catch (e) {
+        console.error("VIP Refresh Error:", e);
+    }
+};
+
+// Слушаем возвращение во вкладку браузера (Tab Focus)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        // Вызываем мягкое обновление только VIP-ленты
+        if (typeof window.refreshVipOnly === 'function') window.refreshVipOnly();
+    }
+});
+// ==========================================
