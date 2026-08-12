@@ -463,11 +463,10 @@ window.openSellerProfile = async (userId, sellerName, sellerAvatar) => {
         const proBadge = document.getElementById('seller-pro-badge');
         const isPro = profileRes.data ? window.checkRealVipStatus(profileRes.data) : false;
         
-        // Единый премиальный стиль бейджа
         if (isPro && proBadge) {
             proBadge.classList.remove('hidden');
-            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200";
-            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
+            proBadge.className = "bg-stone-900 dark:bg-stone-800 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-700 dark:border-stone-600";
+            proBadge.innerHTML = '<span class="text-white drop-shadow-sm">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
         } else if (proBadge) {
             proBadge.classList.add('hidden');
         }
@@ -1084,6 +1083,12 @@ window.openModal = async id => {
         }
 
         if (id === 'profile-modal' && window.currentUser) {
+            // Фиксируем высоту обеих плашек экономики (PRO и Токены), чтобы они были строго одинаковыми
+            const ecoSection = document.getElementById('profile-economy-section');
+            if (ecoSection) {
+                ecoSection.querySelectorAll('div.flex-1').forEach(card => card.classList.add('h-16'));
+            }
+            
             const statusText = document.getElementById('profile-account-status');
             const proBtn = document.getElementById('profile-buy-pro-btn');
             const tokensEl = document.getElementById('profile-vip-tokens'); 
@@ -1121,8 +1126,8 @@ window.openModal = async id => {
                         
                         if (proBadge) { 
                             proBadge.classList.remove('hidden'); 
-                            proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"; 
-                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
+                            proBadge.className = "bg-stone-900 dark:bg-stone-800 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-700 dark:border-stone-600"; 
+                            proBadge.innerHTML = '<span class="text-white drop-shadow-sm">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
                         }
                     } else {
                         const t = window.t || (txt => txt);
@@ -1418,16 +1423,15 @@ window.showToast = (msg, type = 'info') => {
     
     let bgClass = '', iconClass = '';
     
-    // Жесткий инвертированный контраст (Glassmorphism) для читаемости в любой теме
+    // Читаемые и контрастные цвета во всех темах
     if (type === 'error') {
-        bgClass = 'bg-red-500/95 text-white border border-red-400/50 shadow-[0_10px_40px_rgba(239,68,68,0.3)] backdrop-blur-md';
+        bgClass = 'bg-red-600 text-white shadow-lg shadow-red-500/30 border border-red-500';
         iconClass = 'fa-circle-exclamation text-white';
     } else if (type === 'success') {
-        bgClass = 'bg-emerald-500/95 text-white border border-emerald-400/50 shadow-[0_10px_40px_rgba(16,185,129,0.3)] backdrop-blur-md';
+        bgClass = 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-500';
         iconClass = 'fa-circle-check text-white';
     } else {
-        // Темный тост в светлой теме, светлый в темной
-        bgClass = 'bg-stone-900/95 dark:bg-white/95 text-white dark:text-stone-900 border border-stone-800 dark:border-white/50 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-md';
+        bgClass = 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-lg shadow-black/20 border border-stone-800 dark:border-stone-200';
         iconClass = 'fa-circle-info text-brand-400 dark:text-brand-500';
     }
     
@@ -3232,9 +3236,9 @@ window.updateAllShareTimers = () => {
                     const modalBtn = document.getElementById('btn-owner-share');
                     if (modalBtn && !modalBtn.disabled) {
                         modalBtn.disabled = true;
-                        modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70";
+                        modalBtn.className = "group flex flex-col items-center justify-center p-4 bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 border border-stone-200 dark:border-stone-700 rounded-2xl cursor-not-allowed opacity-70 h-24";
                     }
-                    if (modalBtn) modalBtn.innerHTML = `<i class="fa-solid fa-clock text-lg mb-1"></i><span class="text-xs font-bold">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
+                    if (modalBtn) modalBtn.innerHTML = `<i class="fa-solid fa-clock text-xl mb-1"></i><span class="text-[11px] font-bold uppercase tracking-wider mt-1">Ожидание</span><span class="text-[9px] mt-0.5">${timeStr}</span>`;
                 }
 
                 // Обновляем кнопку в карточке (ищем ее только если товар на таймере)
@@ -3247,13 +3251,13 @@ window.updateAllShareTimers = () => {
                     cardBtn.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> ${timeStr}`;
                 }
             } else {
-                // Если таймер истек, активируем кнопки (один раз)
+                // Если таймер истек, активируем кнопки
                 if (window.activeModalItemId === item.id) {
                     const modalBtn = document.getElementById('btn-owner-share');
                     if (modalBtn && modalBtn.disabled) {
                         modalBtn.disabled = false;
-                        modalBtn.className = "group flex flex-col items-center justify-center p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 rounded-2xl hover:bg-brand-100 hover:border-brand-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all relative overflow-hidden cursor-pointer";
-                        modalBtn.innerHTML = `<div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div><i class="fa-solid fa-share-nodes text-lg mb-1 group-hover:scale-110 transition-transform"></i><span class="text-xs font-bold">Репост</span><span class="text-[9px] opacity-70 mt-0.5 transition-colors">+ Поднятие</span>`;
+                        modalBtn.className = "liquid-btn liquid-btn-brand group bg-brand-50 dark:bg-brand-900/20 hover:bg-transparent dark:hover:bg-transparent text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24 relative overflow-hidden";
+                        modalBtn.innerHTML = `<div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div><i class="fa-solid fa-share-nodes text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i><span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">Репост</span>`;
                     }
                 }
                 const cardBtn = document.getElementById(`bump-btn-card-${item.id}`);

@@ -1015,7 +1015,7 @@ export const ItemsModule = {
                     const isPro = profileRes.data && window.checkRealVipStatus ? window.checkRealVipStatus(profileRes.data) : false;
                     
                     if (isPro) {
-                        badgesHtml += `<span class="bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 mr-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"><span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span></span>`;
+                        badgesHtml += `<span class="bg-stone-900 dark:bg-stone-800 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 mr-2 flex items-center gap-1 border border-stone-700 dark:border-stone-600"><span class="text-white">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span></span>`;
                     } else {
                         badgesHtml += `<span class="shrink-0 font-medium mr-2">Продавец SVALKA</span>`;
                     }
@@ -1105,14 +1105,21 @@ export const ItemsModule = {
 
                 if (ownerControls) {
                     ownerControls.classList.remove('hidden');
+                    ownerControls.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8'; // Сетка под 7 кнопок
                     
-                    // Перерисовываем кнопки с прозрачным фоном по ховеру (group-hover:text-white для иконок и текста)
                     ownerControls.innerHTML = `
                         <button id="btn-owner-edit" data-action="edit-item" data-id="${item.id}" class="liquid-btn liquid-btn-gray group bg-stone-100 dark:bg-stone-800 hover:bg-transparent dark:hover:bg-transparent text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
                             <i class="fa-solid fa-pen text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
                             <span class="text-[11px] font-bold uppercase tracking-wider pointer-events-none group-hover:text-white transition-colors duration-300" data-i18n="btn_edit">Изменить</span>
                         </button>
                         
+                        <!-- ВОЗВРАЩЕННАЯ КНОПКА ЕЖЕДНЕВНОГО РЕПОСТА -->
+                        <button id="btn-owner-share" onclick="window.bumpViaShare()" class="liquid-btn liquid-btn-brand group bg-brand-50 dark:bg-brand-900/20 hover:bg-transparent dark:hover:bg-transparent text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">Доступно</div>
+                            <i class="fa-solid fa-share-nodes text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300">Репост</span>
+                        </button>
+
                         <button id="btn-owner-bump" onclick="window.bumpItem()" class="liquid-btn liquid-btn-brand group bg-brand-50 dark:bg-brand-900/20 hover:bg-transparent dark:hover:bg-transparent text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800/50 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 cursor-pointer transition h-24">
                             <i class="fa-solid fa-arrow-up text-xl pointer-events-none group-hover:text-white transition-colors duration-300"></i>
                             <span class="text-[11px] font-bold uppercase tracking-wider text-center pointer-events-none group-hover:text-white transition-colors duration-300" id="btn-owner-bump-text" data-i18n="btn_bump">В ТОП</span>
