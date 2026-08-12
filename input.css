@@ -141,11 +141,11 @@
        БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ
        ========================================== */
     .item-card {
-        cursor: pointer !important; /* Обязательно для работы event delegation в iOS Safari */
         display: flex !important; flex-direction: column !important; height: 100% !important;
         border-radius: 1.25rem !important; border: 1px solid var(--border-soft) !important; background: var(--bg-surface) !important; 
         padding: 0 !important; overflow: hidden;
         
+        /* СЕНЬОР-ФИКС: Изначально карточка скрыта и опущена вниз */
         opacity: 0; 
         transform: translateY(40px);
         visibility: visible !important; /* Оставляем visible, чтобы IntersectionObserver ее видел */

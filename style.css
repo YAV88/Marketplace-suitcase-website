@@ -851,8 +851,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
        ========================================== */
 
 .item-card {
-  cursor: pointer !important;
-  /* Обязательно для работы event delegation в iOS Safari */
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
@@ -861,6 +859,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
+  /* СЕНЬОР-ФИКС: Изначально карточка скрыта и опущена вниз */
   opacity: 0;
   transform: translateY(40px);
   visibility: visible !important;
