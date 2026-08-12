@@ -103,41 +103,46 @@ window.openTokenPurchaseModal = () => {
 // SHOPIFY-STYLE: КАСКАДНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
 // ==========================================
 window.animateVisibleElements = () => {
-    // Используем таймер для создания "волны" (Stagger effect)
     let staggerDelay = 0;
     let resetTimer = null;
 
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Если карточка попала в экран, отписываемся от нее навсегда (чтобы не пропадала при скролле вверх)
                 obs.unobserve(entry.target);
                 
-                // Добавляем задержку для каждой следующей карточки в текущем батче
+                // Добавляем класс анимации с задержкой (эффект волны)
                 setTimeout(() => {
-                    // Используем requestAnimationFrame для синхронизации с частотой кадров монитора
                     requestAnimationFrame(() => {
-                        entry.target.classList.add('is-visible');
+                        // Сначала прячем карточку (opacity 0 из keyframes), затем запускаем анимацию
+                        entry.target.style.opacity = '0';
+                        entry.target.classList.add('is-animating');
+                        
+                        // Когда анимация закончится, убираем opacity: 0 (чтобы не моргало)
+                        setTimeout(() => {
+                            entry.target.style.opacity = '';
+                        }, 600);
                     });
                 }, staggerDelay);
 
-                staggerDelay += 75; // Каждая следующая карточка появится на 75мс позже
+                staggerDelay += 75;
 
-                // Сбрасываем задержку, когда пачка карточек отрендерилась
                 if (resetTimer) clearTimeout(resetTimer);
-                resetTimer = setTimeout(() => {
-                    staggerDelay = 0;
-                }, 100); 
+                resetTimer = setTimeout(() => { staggerDelay = 0; }, 100); 
             }
         });
     }, { 
         threshold: 0.05, 
-        rootMargin: '0px 0px -50px 0px' // Начинаем анимацию чуть до того, как карточка полностью появится
+        rootMargin: '0px 0px 50px 0px' 
     });
 
-    // Ищем все карточки, которые еще не появились, и вешаем на них обсервер
-    const elements = document.querySelectorAll('.item-card:not(.is-visible)');
-    elements.forEach(el => observer.observe(el));
+    // Ищем карточки без класса анимации
+    const elements = document.querySelectorAll('.item-card:not(.is-animating)');
+    // Изначально делаем их прозрачными перед скроллом, чтобы избежать рывков
+    elements.forEach(el => {
+        el.style.opacity = '0';
+        observer.observe(el);
+    });
 };
 
 // Закрываем меню при клике в пустую область

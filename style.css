@@ -712,16 +712,22 @@ option, optgroup {
 }
 
 .modal-overlay {
+  /* СЕНЬОР-ФИКС: Мягкое скрытие окон. Карта внутри продолжает существовать и знать свои размеры */
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: fixed;
+  z-index: -1;
+  /* Прячем под все элементы, чтобы не перехватывало клики */
+  transition: opacity 0.3s ease, z-index 0s 0.3s;
+  /* z-index меняется после затухания */
 }
 
 .modal-overlay.active {
   opacity: 1 !important;
-  visibility: visible !important;
   pointer-events: auto !important;
+  z-index: 9999;
+  /* Вытаскиваем наверх */
+  transition: opacity 0.3s ease, z-index 0s;
 }
 
 .modal-content {
@@ -846,18 +852,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   color: #ffffff !important;
 }
 
-@keyframes cardFadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* БАЗОВЫЕ КАРТОЧКИ ОБЫЧНОЙ ЛЕНТЫ */
 
 .item-card {
@@ -871,13 +865,30 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   background: var(--bg-surface) !important;
   padding: 0 !important;
   overflow: hidden;
-  /* СЕНЬОР-ФИКС: Принудительная CSS-анимация появления. Карточки больше никогда не застрянут прозрачными! */
-  opacity: 0;
-  animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* СЕНЬОР-ФИКС: Карточка по умолчанию не прозрачная. Анимация будет навешиваться только через класс .is-animating */
+  transform: translateY(0);
   will-change: transform, opacity;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                     border-color 0.3s ease !important;
+}
+
+/* Класс анимации, который добавит JS */
+
+.item-card.is-animating {
+  animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .item-card:hover {
