@@ -97,6 +97,19 @@ window.initiateTokenPurchase = PaymentsModule.initiateTokenPurchase;
 
 window.openTokenPurchaseModal = () => {
     window.openModal('token-purchase-modal');
+    
+    const radioButtons = document.querySelectorAll('input[name="token_package"]');
+    const totalSpan = document.getElementById('token-purchase-total');
+    
+    radioButtons.forEach(radio => {
+        radio.replaceWith(radio.cloneNode(true));
+    });
+    
+    document.querySelectorAll('input[name="token_package"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) totalSpan.innerText = e.target.dataset.price;
+        });
+    });
 };
 
 // ==========================================
@@ -1101,28 +1114,24 @@ window.openModal = async id => {
                         const today = new Date();
                         const diffDays = Math.ceil((proUntilDate - today) / (1000 * 60 * 60 * 24)); 
                         
+                        // СЕНЬОР-ФИКС: Премиальный дизайн статуса с мини-бейджем дней
                         let daysText = 'дн.';
                         if (window.currentLang === 'en') daysText = 'days';
                         if (window.currentLang === 'sr') daysText = 'dana';
                         
-                        // Нейтральный мини-бейдж дней, не нарушающий цветовую иерархию
-                        statusText.innerHTML = `
-                            <span class="text-stone-900 dark:text-white">SVALKA</span> 
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>
-                            <span class="ml-2 px-1.5 py-0.5 bg-stone-200/50 dark:bg-stone-700/50 text-stone-600 dark:text-stone-300 text-[9px] font-black rounded border border-stone-300/50 dark:border-stone-600/50 uppercase tracking-widest">${diffDays} ${daysText}</span>
-                        `;
-                        statusText.className = 'text-sm font-black flex items-center';
+                        statusText.innerHTML = `SVALKA PRO <span class="bg-stone-100 dark:bg-stone-800 text-stone-500 px-2 py-0.5 rounded-md text-[10px] font-bold ml-1 border border-stone-200 dark:border-stone-700">еще ${diffDays} ${daysText}</span>`;
+                        statusText.className = 'text-sm font-black text-orange-500 flex items-center';
                         proBtn.classList.add('hidden');
                         
                         if (proBadge) { 
                             proBadge.classList.remove('hidden'); 
                             proBadge.className = "bg-stone-900 dark:bg-white px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shadow-sm shrink-0 ml-2 flex items-center gap-1 border border-stone-800 dark:border-stone-200"; 
-                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 drop-shadow-sm">PRO</span>';
+                            proBadge.innerHTML = '<span class="text-white dark:text-stone-900">SVALKA</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PRO</span>';
                         }
                     } else {
                         const t = window.t || (txt => txt);
-                        statusText.innerHTML = `<span class="text-stone-700 dark:text-stone-300">${t('Базовый')}</span>`; 
-                        statusText.className = 'text-sm font-black flex items-center';
+                        statusText.innerText = t('Базовый'); 
+                        statusText.className = 'text-sm font-black text-stone-700 dark:text-stone-300';
                         proBtn.classList.remove('hidden');
                         if (proBadge) proBadge.classList.add('hidden');
                     }
