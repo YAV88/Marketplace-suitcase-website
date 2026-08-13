@@ -2795,12 +2795,12 @@ setTimeout(window.renderCustomCategorySelect, 200);
 
 // --- ПРОФЕССИОНАЛЬНЫЕ ФИЛЬТРЫ (Авито-стиль) ---
 
-// 1. Отрисовка Категорий
+// 1. Отрисовка Категорий (СЕНЬОР-ФИКС: заменен цвет с 600 на 500)
 window.renderSidebarCategories = () => {
     const container = document.getElementById('sidebar-categories');
     if (!container || !window.subcategoriesMap) return;
 
-    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t('Все категории')}</button>`;
+    let html = `<button onclick="window.filterByCategory('Все', event)" class="text-left w-full py-1.5 text-sm font-bold ${window.currentCategory === 'Все' ? 'text-brand-500' : 'text-stone-700 dark:text-stone-300 hover:text-brand-500'} transition-colors">${window.t('Все категории')}</button>`;
     const noConditionCats = ['Услуги', 'Работа', 'Жилье', 'Животные'];
 
     for (const [mainCat, subs] of Object.entries(window.subcategoriesMap)) {
@@ -2809,13 +2809,13 @@ window.renderSidebarCategories = () => {
         html += `
         <div class="sidebar-cat-group mt-1">
             <div class="flex items-center justify-between group cursor-pointer" onclick="window.toggleSidebarCat(this)">
-                <button onclick="window.filterByCategory('${mainCat}', event, true)" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-600' : 'text-stone-700 dark:text-stone-300 hover:text-brand-600'} transition-colors">${window.t(mainCat)}</button>
+                <button onclick="window.filterByCategory('${mainCat}', event, true)" class="text-left flex-1 py-1.5 text-sm font-bold ${isActiveMain ? 'text-brand-500' : 'text-stone-700 dark:text-stone-300 hover:text-brand-500'} transition-colors">${window.t(mainCat)}</button>
                 <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-300 ${isActiveMain ? 'rotate-180' : ''}"></i>
             </div>
             <div class="sidebar-sub-cats pl-3 border-l-2 border-brand-500/20 ml-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300 ease-in-out ${isActiveMain ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}">`;
         subs.forEach(sub => {
             const fullCat = `${sub.prefix || mainCat} - ${sub.val}`;
-            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-600 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-600'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
+            html += `<button onclick="window.filterByCategory('${fullCat}', event, true)" class="text-left py-1 text-sm font-medium ${window.currentCategory === fullCat ? 'text-brand-500 font-bold' : 'text-stone-500 dark:text-stone-400 hover:text-brand-500'} transition-colors">${window.t(sub.label || sub.val)}</button>`;
         });
         html += `</div></div>`;
     }
@@ -2836,7 +2836,7 @@ window.renderSidebarCities = () => {
             <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all shrink-0">
                 <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
             </div>
-            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${window.t(city)}</span>
+            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-500 transition-colors">${window.t(city)}</span>
         </label>
     `}).join('');
 };
@@ -2860,7 +2860,7 @@ window.renderCustomRadios = (id, name, options, currentVal, callbackName) => {
             <div class="w-5 h-5 rounded border-2 border-stone-300 dark:border-stone-600 peer-checked:bg-brand-500 peer-checked:border-brand-500 flex items-center justify-center transition-all">
                 <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
             </div>
-            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition-colors">${opt.label}</span>
+            <span class="text-sm font-bold text-stone-700 dark:text-stone-300 group-hover:text-brand-500 transition-colors">${opt.label}</span>
         </label>
     `).join('');
 };

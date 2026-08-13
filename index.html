@@ -427,7 +427,7 @@
             
             <div class="flex justify-between items-center lg:hidden p-5 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 sticky top-0 z-10">
                 <h3 class="font-black text-xl text-stone-900 dark:text-white" data-i18n="filter_btn">Фильтры</h3>
-                <button onclick="window.toggleMobileFilters()" class="text-stone-400 hover:text-brand-600 text-2xl w-8 h-8 flex items-center justify-center cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="window.toggleMobileFilters()" class="text-stone-400 hover:text-brand-500 text-2xl w-8 h-8 flex items-center justify-center cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div id="filter-panel" class="p-5 lg:p-0">
@@ -484,7 +484,7 @@
                                     <input type="checkbox" value="Наличные"
                                         class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span
-                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-500 transition flex items-center gap-2">
                                         <i class="fa-solid fa-money-bill-wave text-emerald-500 w-4 text-center"></i>
                                         <span data-i18n="pay_cash">Наличные</span>
                                     </span>
@@ -493,7 +493,7 @@
                                     <input type="checkbox" value="Перевод на карту"
                                         class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span
-                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-500 transition flex items-center gap-2">
                                         <i class="fa-regular fa-credit-card text-indigo-500 w-4 text-center"></i> 
                                         <span data-i18n="pay_card">Перевод на карту</span>
                                     </span>
@@ -502,7 +502,7 @@
                                     <input type="checkbox" value="Криптоперевод"
                                         class="filter-payment w-5 h-5 accent-brand-500 rounded">
                                     <span
-                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-600 transition flex items-center gap-2">
+                                        class="font-bold text-sm text-stone-700 dark:text-stone-300 group-hover:text-brand-500 transition flex items-center gap-2">
                                         <i class="fa-brands fa-bitcoin text-emerald-600 w-4 text-center"></i> <span
                                             data-i18n="pay_crypto">Криптоперевод</span>
                                     </span>
@@ -517,7 +517,7 @@
                             data-i18n="btn_reset">Сбросить</button>
                         <button type="button"
                             onclick="if(window.innerWidth < 1024 && typeof window.toggleMobileFilters === 'function') window.toggleMobileFilters();"
-                            class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors mt-4 block lg:hidden shadow-sm"
+                            class="w-full py-3 bg-brand-500 text-white rounded-xl font-bold text-sm hover:bg-brand-600 transition-colors mt-4 block lg:hidden shadow-sm"
                             data-i18n="btn_show_results">Показать находки</button>
                     </div>
                 </div>
@@ -770,18 +770,22 @@
             <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-stone-500 dark:text-stone-400 font-bold text-sm">
                 
                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-4">
-                    <a href="about.html" class="hover:text-brand-600 transition cursor-pointer" data-i18n="nav_about">О
-                        проекте</a>
-                    <a href="rules.html" class="hover:text-brand-600 transition cursor-pointer"
-                        data-i18n="nav_rules">Правила</a>
-                    <a href="security.html" class="hover:text-brand-600 transition cursor-pointer"
-                        data-i18n="nav_security">Безопасность</a>
-                    <a href="faq.html" class="hover:text-brand-600 transition cursor-pointer"
-                        data-i18n="nav_faq">FAQ</a>
-                    <a href="privacy.html" class="hover:text-brand-600 transition cursor-pointer"
-                        data-i18n="nav_privacy">Политика</a>
-                    <a href="terms.html" class="hover:text-brand-600 transition cursor-pointer"
-                        data-i18n="nav_terms">Условия</a>
+                    <a href="about.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_about">О проекте</a>
+                    <a href="rules.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_rules">Правила</a>
+                    <a href="security.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_security">Безопасность</a>
+                    <a href="faq.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_faq">FAQ</a>
+                    <a href="privacy.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_privacy">Политика</a>
+                    <a href="terms.html" class="hover:text-brand-500 transition cursor-pointer" data-i18n="nav_terms">Условия</a>
+                </div>
+
+                <div class="hidden sm:block w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-700 mx-2"></div>
+
+                <div class="flex items-center gap-2 mt-2 sm:mt-0">
+                    <span data-i18n="footer_support">Поддержка:</span>
+                    <a href="contacts.html"
+                        class="text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition cursor-pointer bg-brand-50 dark:bg-brand-900/30 px-3 py-1.5 rounded-lg border border-brand-100 dark:border-brand-800/50 shadow-sm">
+                        <i class="fa-regular fa-envelope mr-1"></i> <span data-i18n="nav_contacts">Контакты</span>
+                    </a>
                 </div>
 
                 <div class="hidden sm:block w-1.5 h-1.5 rounded-full bg-stone-300 dark:bg-stone-700 mx-2"></div>
@@ -801,13 +805,13 @@
         <nav class="lg:hidden fixed bottom-0 left-0 right-0 border-t border-stone-200 dark:border-stone-800 z-[100] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)] backdrop-blur-md">
             <div class="flex justify-between items-center h-[60px] px-2 relative gap-1">
                 <button onclick="window.goHome();"
-                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
+                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-500 transition cursor-pointer min-w-0">
                     <i class="fa-solid fa-house text-xl mb-1"></i>
                     <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_home">Главная</span>
                 </button>
                 <button
                     onclick="if(!window.currentUser) { window.openModal('auth-modal'); window.showToast('Войдите в аккаунт', true); } else { window.switchProfileTab('saved'); window.openModal('profile-modal'); }"
-                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
+                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-500 transition cursor-pointer min-w-0">
                     <i class="fa-solid fa-box-open text-xl mb-1"></i>
                     <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_saved">Склад</span>
                 </button>
@@ -818,7 +822,7 @@
                     </button>
                 </div>
                 <button onclick="window.openChatListModal()"
-                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer relative min-w-0">
+                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-500 transition cursor-pointer relative min-w-0">
                     <div class="relative">
                         <i class="fa-solid fa-comment-dots text-xl mb-1"></i>
                         <span id="nav-chat-badge"
@@ -827,7 +831,7 @@
                     <span class="text-[10px] font-bold truncate max-w-full" data-i18n="bot_nav_chat">Чат</span>
                 </button>
                 <button onclick="window.openModal('profile-modal')"
-                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-600 transition cursor-pointer min-w-0">
+                    class="flex flex-col items-center justify-center flex-1 h-full text-stone-400 hover:text-brand-500 transition cursor-pointer min-w-0">
                     <i class="fa-solid fa-user text-xl mb-1"></i>
                     <span class="text-[10px] font-bold truncate max-w-full" data-i18n="nav_profile">Профиль</span>
                 </button>
@@ -1849,7 +1853,7 @@
         </div>
     </div>
 
-    <button id="floating-filter-btn" onclick="window.toggleMobileFilters()" class="lg:hidden fixed left-0 top-[40%] z-[90] bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 border-l-0 text-brand-600 px-3 py-4 rounded-r-2xl shadow-[5px_0_15px_rgba(0,0,0,0.08)] flex flex-col items-center gap-2 hover:bg-stone-50 dark:hover:bg-stone-700 transition-transform duration-300 -translate-x-full">
+    <button id="floating-filter-btn" onclick="window.toggleMobileFilters()" class="lg:hidden fixed left-0 top-[40%] z-[90] bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 border-l-0 text-brand-500 px-3 py-4 rounded-r-2xl shadow-[5px_0_15px_rgba(0,0,0,0.08)] flex flex-col items-center gap-2 hover:bg-stone-50 dark:hover:bg-stone-700 transition-transform duration-300 -translate-x-full">
         <i class="fa-solid fa-sliders text-xl"></i>
     </button>
     
