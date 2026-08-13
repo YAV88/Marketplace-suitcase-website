@@ -1925,6 +1925,74 @@ window.mapItemData = function (i) {
     } catch (err) { return null; }
 }
 
+// ==========================================
+// ГЛОБАЛЬНАЯ СИНХРОНИЗАЦИЯ СКЛАДА
+// Автоматически загружает избранные товары при входе и обновлении страницы
+// ==========================================
+window.syncUserFavorites = async () => {
+    if (!window.currentUser) {
+        window.userFavorites = new Set();
+        return;
+    }
+    try {
+        // Получаем все ID сохраненных товаров из БД
+        const { data, error } = await supabase.from('favorites').select('item_id').eq('user_id', window.currentUser.id);
+        if (error) throw error;
+        
+        if (data) {
+            // Синхронизируем глобальный стейт
+            window.userFavorites = new Set(data.map(f => f.item_id));
+            
+            // Проходимся по всем отрендеренным карточкам в ленте и применяем правильный стиль
+            document.querySelectorAll('.item-card').forEach(card => {
+                const id = card.dataset.id;
+                if (!id) return;
+                
+                const isLiked = window.userFavorites.has(id);
+                const icon = card.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
+                const btn = card.querySelector('.card-fav-btn button, .absolute.z-\\[60\\] button');
+                
+                if (icon) {
+                    icon.className = isLiked 
+                        ? 'fa-solid text-brand-500 fa-box drop-shadow-sm pointer-events-none scale-110 transition-transform' 
+                        : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm pointer-events-none';
+                }
+                if (btn && typeof window.t === 'function') {
+                    btn.title = isLiked ? window.t("Убрать со склада") : window.t("Добавить на склад");
+                }
+            });
+
+            // Обновляем кнопку в модальном окне товара, если оно сейчас открыто
+            if (window.activeModalItemId) {
+                const modalFavBtn = document.getElementById('modal-fav-btn');
+                const modalFavIcon = document.querySelector('#modal-fav-btn i');
+                if (modalFavBtn && modalFavIcon) {
+                    const isLiked = window.userFavorites.has(window.activeModalItemId);
+                    modalFavIcon.className = isLiked 
+                        ? 'fa-solid text-brand-500 fa-box drop-shadow-sm transition-transform scale-110' 
+                        : 'fa-solid text-stone-400 fa-box-open drop-shadow-sm transition-transform';
+                    
+                    if (typeof window.t === 'function') {
+                        modalFavBtn.title = isLiked ? window.t("Убрать со склада") : window.t("Добавить на склад");
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Ошибка загрузки склада:", e);
+    }
+};
+
+// Подписываемся на состояние сессии Supabase (Сработает и при обновлении страницы, и при логине)
+supabase.auth.onAuthStateChange((event, session) => {
+    if (session && session.user) {
+        window.currentUser = session.user;
+        window.syncUserFavorites();
+    } else {
+        window.userFavorites = new Set();
+    }
+});
+
 // === НЕЗАВИСИМАЯ КНОПКА "В ИЗБРАННОЕ" ДЛЯ КАРТОЧЕК ===
 window.toggleFavoriteCard = async (id, btnEl) => {
     if (!window.currentUser) {
@@ -2681,6 +2749,10 @@ window.renderProfileTabs = async (forceRefresh = false) => {
                 if (favErr) throw favErr;
                 if (favs && favs.length > 0) {
                     const savedIds = favs.map(f => f.item_id);
+                    
+                    // Дополнительно обновляем глобальный Set при посещении склада
+                    window.userFavorites = new Set(savedIds); 
+                    
                     const { data, error } = await window.supabase.from('items').select('*').in('id', savedIds);
                     if (error) throw error;
                     dataToRender = data || [];
