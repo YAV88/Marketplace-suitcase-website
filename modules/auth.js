@@ -10,13 +10,50 @@ const DISPOSABLE_DOMAINS = [
 
 export const AuthModule = {
     checkUserSession: async () => {
+        // 1. СИНХРОННАЯ ПОДПИСКА (Выполняется мгновенно, ДО любых await)
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            
+            // Перехват перехода по ссылке сброса пароля
+            if (event === 'PASSWORD_RECOVERY') {
+                setTimeout(() => {
+                    if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
+                    if (typeof window.openModal === 'function') window.openModal('reset-password-modal');
+                }, 300); // Даем модальному менеджеру время на инициализацию
+                return;
+            }
+
+            // Защита: Auto-Logout, если аккаунт удален в админке
+            if (session && session.user) {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (error || !user) {
+                    await supabase.auth.signOut();
+                    window.currentUser = null;
+                    if (window.userFavorites) window.userFavorites.clear();
+                    if (typeof window.closeModal === 'function') {
+                        window.closeModal('profile-modal');
+                        window.closeModal('edit-profile-modal');
+                    }
+                    if (typeof window.showToast === 'function') window.showToast("Ваш аккаунт был удален или сессия истекла", true);
+                    return;
+                }
+            }
+            AuthModule.handleAuthChange(session);
+        });
+
+        // 2. БРОНЕБОЙНЫЙ ФОЛЛБЕК: Проверяем URL напрямую
+        // На случай, если редиректы браузера сбили событие Supabase
+        if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
+            setTimeout(() => {
+                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
+                if (typeof window.openModal === 'function') window.openModal('reset-password-modal');
+            }, 300);
+        }
+
+        // 3. Обычная загрузка сессии
         try {
             const { data: { session }, error } = await supabase.auth.getSession();
             if (error) throw error;
             await AuthModule.handleAuthChange(session);
-            supabase.auth.onAuthStateChange((event, session) => {
-                AuthModule.handleAuthChange(session);
-            });
         } catch (err) { console.error("Ошибка сессии:", err); }
     },
 
@@ -223,5 +260,46 @@ export const AuthModule = {
             await supabase.auth.signOut();
             window.location.reload();
         } catch (err) { console.error("Ошибка при выходе:", err); }
+    }
+};
+
+// ==========================================
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ (Привязка к window для HTML)
+// ==========================================
+
+window.saveNewPassword = async (event) => {
+    event.preventDefault();
+    const btn = document.getElementById('save-new-password-btn');
+    const input = document.getElementById('new-password-input');
+    if (!input || !btn) return;
+    
+    const password = input.value;
+
+    if (!password || password.length < 6) {
+        if (typeof window.showToast === 'function') window.showToast("Пароль должен быть не менее 6 символов", true);
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Сохранение...';
+
+    try {
+        // Supabase знает, кого обновлять, так как в URL есть токен восстановления
+        const { error } = await supabase.auth.updateUser({ password: password });
+        if (error) throw error;
+
+        if (typeof window.showToast === 'function') window.showToast("Пароль успешно изменен!", "success");
+        if (typeof window.closeModal === 'function') window.closeModal('reset-password-modal');
+        
+        // Очищаем адресную строку от технических токенов Supabase (чтобы было красиво)
+        history.replaceState(null, document.title, window.location.pathname);
+        
+    } catch (err) {
+        console.error(err);
+        if (typeof window.showToast === 'function') window.showToast("Ошибка: " + err.message, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 };
