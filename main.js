@@ -1984,12 +1984,34 @@ window.syncUserFavorites = async () => {
 };
 
 // Подписываемся на состояние сессии Supabase (Сработает и при обновлении страницы, и при логине)
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
     if (session && session.user) {
-        window.currentUser = session.user;
-        window.syncUserFavorites();
+        // СЕНЬОР-ФИКС: Активная проверка, не был ли удален пользователь в админке Supabase
+        // auth.getUser() принудительно сверяется с сервером, а не просто читает локальный кэш
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error || !user) {
+            console.warn("Сессия недействительна или пользователь удален:", error);
+            await supabase.auth.signOut();
+            window.currentUser = null;
+            if (window.userFavorites) window.userFavorites.clear();
+            
+            // Если у пользователя открыт профиль или настройки - жестко закрываем их
+            if (typeof window.closeModal === 'function') {
+                window.closeModal('profile-modal');
+                window.closeModal('edit-profile-modal');
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast("Ваш аккаунт был удален или сессия истекла", true);
+            }
+            return;
+        }
+
+        window.currentUser = user;
+        if (typeof window.syncUserFavorites === 'function') window.syncUserFavorites();
     } else {
-        window.userFavorites = new Set();
+        window.currentUser = null;
+        if (window.userFavorites) window.userFavorites.clear();
     }
 });
 

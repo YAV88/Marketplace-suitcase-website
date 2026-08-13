@@ -571,29 +571,37 @@
             </div>
         </div>
 
-        <!-- Гармоничный и дружелюбный баннер поддержки (донат) -->
-        <div id="pro-banner" class="mb-8 sm:mb-10 rounded-[2rem] bg-white dark:bg-stone-800/40 p-6 flex flex-col sm:flex-row items-center justify-between shadow-sm hover:shadow-md transition-all cursor-pointer gap-5 group border border-stone-200 dark:border-stone-700 overflow-hidden relative" onclick="window.openModal('crypto-modal')">
-            <!-- Фоновая иконка на заднем плане -->
-            <div class="absolute -right-10 -top-10 text-rose-500/5 dark:text-rose-500/10 text-9xl rotate-12 drop-shadow-sm pointer-events-none transition-transform group-hover:scale-110 duration-500"><i class="fa-solid fa-heart"></i></div>
+        <!-- Премиальный PRO-баннер -->
+        <div id="pro-banner" class="mb-8 sm:mb-10 rounded-[2rem] bg-stone-900 dark:bg-black p-[2px] flex flex-col sm:flex-row items-center shadow-xl hover:shadow-2xl transition-all cursor-pointer group relative overflow-hidden" onclick="window.openModal('crypto-modal')">
             
-            <div class="flex items-center gap-4 sm:gap-5 w-full sm:w-auto relative z-10">
-                <div class="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm border border-rose-100 dark:border-rose-800/50">
-                    <i class="fa-solid fa-heart text-2xl drop-shadow-sm"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm">SVALKA PRO</span>
+            <!-- Анимированная градиентная подсветка рамки (вспыхивает при наведении) -->
+            <div class="absolute inset-0 bg-gradient-to-r from-orange-400 via-rose-500 to-brand-500 opacity-30 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+            <div class="w-full bg-stone-900 dark:bg-stone-900/95 backdrop-blur-md rounded-[1.85rem] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10 overflow-hidden">
+                
+                <!-- Фоновая иконка (Абстрактная корона) -->
+                <div class="absolute -right-6 -top-6 text-white/5 text-[10rem] rotate-12 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-6 duration-700"><i class="fa-solid fa-crown"></i></div>
+
+                <div class="flex items-center gap-5 sm:gap-6 w-full sm:w-auto relative z-10">
+                    <!-- Иконка молнии с неоновой тенью -->
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_20px_rgba(249,115,22,0.4)] group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                        <i class="fa-solid fa-bolt text-2xl sm:text-3xl drop-shadow-md"></i>
                     </div>
-                    <!-- Идентификаторы для динамического перевода из JS -->
-                    <span id="promo-donate-title" class="font-bold text-sm sm:text-base text-stone-800 dark:text-stone-200 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">Поддержи проект и получи VIP-статус в подарок!</span>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="bg-white/10 border border-white/20 text-white px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-widest shadow-sm backdrop-blur-md">SVALKA PRO</span>
+                            <span class="text-orange-400 text-[10px] font-bold uppercase tracking-wider animate-pulse">Premium</span>
+                        </div>
+                        <!-- Идентификаторы для динамического перевода из JS -->
+                        <span id="promo-donate-title" class="font-black text-base sm:text-lg text-white group-hover:text-orange-300 transition-colors duration-300 block leading-tight">Поддержи проект и получи VIP-статус в подарок!</span>
+                    </div>
                 </div>
+
+                <button class="w-full sm:w-auto px-8 py-4 rounded-xl font-black text-sm text-stone-900 bg-white hover:bg-stone-100 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] shrink-0 flex items-center justify-center gap-2 relative z-10 duration-300">
+                    <span id="promo-donate-btn-text" class="pointer-events-none uppercase tracking-wide">Поддержать SVALKA</span>
+                    <i class="fa-solid fa-arrow-right pointer-events-none text-stone-400 group-hover:text-stone-900 transition-colors"></i>
+                </button>
             </div>
-            
-            <!-- Кнопка приведена к единому прозрачному стилю, как в шапке и формах -->
-            <button class="liquid-btn liquid-btn-red bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-sm shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 relative z-10 hover:bg-white dark:hover:bg-stone-700/80">
-                <i class="fa-solid fa-heart pointer-events-none text-rose-500 mr-1"></i>
-                <span id="promo-donate-btn-text" class="pointer-events-none">Поддержать SVALKA</span> 
-            </button>
         </div>
 
         <div id="fresh-ads-section" class="w-full">
