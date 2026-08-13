@@ -723,30 +723,49 @@ window.sendChatMessage = async () => {
     const input = document.getElementById('chat-input-field');
     const text = input.value.trim();
     if (!text) return;
+    
+    // Возвращаем поле к исходному размеру
     input.value = '';
+    input.style.height = '';
 
     const container = document.getElementById('chat-messages');
     if (container.querySelector('.text-center')) {
         container.innerHTML = '';
     }
 
-    // БЕЗОПАСНАЯ ВСТАВКА: Создаем элементы через DOM API для защиты от XSS
+    // Дизайн исходящего сообщения (Бабл с хвостиком)
     const tempMsgId = `temp-msg-${Date.now()}`;
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'flex items-end justify-end gap-2 w-full mt-2 opacity-50 transition-opacity';
-    msgDiv.id = tempMsgId;
-    const innerDiv = document.createElement('div');
-    innerDiv.className = 'bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm text-base font-medium max-w-[85%] break-words';
-    innerDiv.textContent = text; // Используем textContent для безопасной вставки текста
-    msgDiv.appendChild(innerDiv);
-    container.appendChild(msgDiv);
-    container.scrollTop = container.scrollHeight;
+    const msgWrapper = document.createElement('div');
+    msgWrapper.className = 'flex flex-col items-end w-full mt-2 opacity-60 transition-all duration-300 transform translate-y-2';
+    msgWrapper.id = tempMsgId;
+    
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'bg-brand-500 text-white px-4 py-2.5 rounded-2xl rounded-br-[4px] shadow-sm text-[15px] font-medium max-w-[85%] break-words leading-relaxed';
+    bubbleDiv.textContent = text; 
+    
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'text-[10px] text-stone-400 font-bold mt-1 mr-1 flex items-center gap-1';
+    timeDiv.innerHTML = 'Отправка... <i class="fa-regular fa-clock"></i>';
+
+    msgWrapper.appendChild(bubbleDiv);
+    msgWrapper.appendChild(timeDiv);
+    container.appendChild(msgWrapper);
+    
+    // Плавная анимация прокрутки вниз
+    requestAnimationFrame(() => {
+        msgWrapper.classList.remove('translate-y-2');
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    });
 
     try {
         const { error } = await supabase.from('messages').insert([{ chat_id: window.currentChatId, sender_id: window.currentUser.id, text: text }]);
         if (error) throw error;
         const sentMsg = document.getElementById(tempMsgId);
-        if (sentMsg) { sentMsg.classList.remove('opacity-50'); sentMsg.removeAttribute('id'); }
+        if (sentMsg) { 
+            sentMsg.classList.remove('opacity-60'); 
+            sentMsg.removeAttribute('id'); 
+            timeDiv.innerHTML = 'Только что <i class="fa-solid fa-check text-brand-500"></i>';
+        }
     } catch (e) { window.showToast("Ошибка отправки", true); }
 };
 

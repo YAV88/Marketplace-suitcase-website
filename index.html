@@ -1035,53 +1035,40 @@
         </div>
     </div>
 
-    <div id="chat-modal"
-        class="modal-overlay fixed inset-0 flex items-center justify-center p-4 bg-black/80 md:backdrop-blur-sm z-[100]">
-        <div
-            class="modal-content bg-white dark:bg-stone-900 w-full max-w-lg lg:max-w-5xl h-[600px] lg:h-[85vh] max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative border dark:border-stone-800 overflow-hidden">
-            <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50 shrink-0">
-                <div class="flex justify-between items-start mb-3 gap-2">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <button onclick="window.closeModal('chat-modal'); window.openChatListModal();"
-                            class="text-stone-400 hover:text-brand-600 transition text-xl cursor-pointer flex items-center justify-center p-1 -ml-1 shrink-0"><i
-                                class="fa-solid fa-arrow-left"></i></button>
-                        <div class="flex flex-wrap items-center gap-1.5 min-w-0">
-                            <span id="chat-role-badge"
-                                class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white shrink-0">РОЛЬ</span>
-                            <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-400 min-w-0">
-                                <i class="fa-solid fa-user text-xs shrink-0"></i>
-                                <span id="chat-author-name"
-                                    class="font-bold text-sm truncate max-w-[100px] sm:max-w-[200px]">Собеседник</span>
-                            </div>
-                        </div>
+    <!-- Модальное окно чата -->
+    <div id="chat-modal" class="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[200] hidden items-end sm:items-center justify-center sm:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-[#f5f5f4] dark:bg-[#1c1917] w-full max-w-2xl sm:rounded-[2rem] rounded-t-[2rem] h-[90vh] sm:h-[80vh] flex flex-col shadow-2xl relative transform translate-y-full sm:scale-95 transition-transform duration-300 overflow-hidden" id="chat-modal-content">
+            
+            <!-- Шапка чата -->
+            <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 p-3 sm:p-4 flex items-center gap-4 shrink-0 z-10 shadow-sm">
+                <button onclick="window.closeModal('chat-modal')" class="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                
+                <img id="chat-item-img" src="" class="w-12 h-12 rounded-xl object-cover border border-stone-200 dark:border-stone-700 shadow-sm shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span id="chat-role-badge" class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest text-white bg-brand-500 shadow-sm">РОЛЬ</span>
+                        <span id="chat-author-name" class="text-xs font-bold text-stone-500 truncate">Собеседник</span>
                     </div>
-                    <button onclick="window.closeModal('chat-modal')"
-                        class="text-stone-400 hover:text-brand-600 transition text-2xl w-8 h-8 cursor-pointer flex items-center justify-center -mr-2 -mt-2 shrink-0"><i
-                            class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-brand-500 transition shadow-sm"
-                    onclick="window.chatReturnContext = { id: window.currentChatId, itemId: window.currentChatItemId, isSellerStr: window.currentChatIsSeller, name: window.currentChatInterlocutor }; window.closeModal('chat-modal'); window.openItemDetails(window.currentChatItemId)">
-                    <img id="chat-item-img" src="" class="w-12 h-12 rounded-lg object-cover bg-stone-100 shrink-0">
-                    <div class="flex-1 overflow-hidden">
-                        <div id="chat-item-title" class="font-black text-sm text-stone-900 dark:text-white truncate">
-                            Загрузка...</div>
-                        <div id="chat-item-price" class="font-bold text-brand-600 text-sm mt-0.5"></div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-stone-300 mr-2"></i>
+                    <h3 id="chat-item-title" class="font-black text-sm text-stone-900 dark:text-white truncate">Название товара</h3>
+                    <p id="chat-item-price" class="text-xs font-bold text-brand-600 dark:text-brand-400 truncate">0 RSD</p>
                 </div>
             </div>
-            <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-stone-900 flex flex-col gap-4 custom-scrollbar min-h-0"
-                id="chat-messages"></div>
-            <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                <form onsubmit="event.preventDefault(); window.sendChatMessage();"
-                    class="flex items-center gap-3 bg-white dark:bg-stone-900 p-2 rounded-2xl focus-within:ring-2 focus-within:ring-brand-500 transition-all">
+
+            <!-- Зона сообщений -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-1 custom-scrollbar scroll-smooth">
+                <div class="flex justify-center mt-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-brand-500"></i></div>
+            </div>
+
+            <!-- Зона ввода -->
+            <div class="bg-white dark:bg-stone-900 p-3 sm:p-4 border-t border-stone-200 dark:border-stone-800 shrink-0 pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_20px_rgba(0,0,0,0.2)]">
+                <form onsubmit="event.preventDefault(); window.sendChatMessage();" class="flex items-end gap-2 bg-stone-100 dark:bg-stone-800 p-1.5 rounded-3xl border border-stone-200 dark:border-stone-700 focus-within:border-brand-500 dark:focus-within:border-brand-500 transition-colors shadow-inner">
+                    <textarea id="chat-input-field" rows="1" placeholder="Напишите сообщение..." class="flex-1 bg-transparent border-none outline-none resize-none text-sm font-medium text-stone-900 dark:text-white px-4 py-2.5 max-h-32 custom-scrollbar" oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 120) + 'px';"></textarea>
                     
-                    <input type="text" id="chat-input-field" data-i18n="chat_ph" placeholder="Написать сообщение..."
-                        class="flex-1 bg-transparent border-none outline-none focus:outline-none px-4 py-2 text-base font-medium text-stone-900 dark:text-white caret-brand-600">
-                        
-                    <button type="submit"
-                            class="w-12 h-12 shrink-0 bg-brand-600 text-white rounded-full flex items-center justify-center hover:bg-brand-700 transition shadow-md cursor-pointer">
-                        <i class="fa-solid fa-paper-plane text-lg -ml-0.5"></i>
+                    <button type="submit" class="w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition shadow-md shrink-0 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed mb-0.5 mr-0.5">
+                        <i class="fa-solid fa-paper-plane text-sm ml-0.5 relative top-[1px]"></i>
                     </button>
                 </form>
             </div>
