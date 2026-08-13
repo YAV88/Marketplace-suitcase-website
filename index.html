@@ -597,25 +597,31 @@
         </div>
 
         <div id="fresh-ads-section" class="w-full">
-            <div class="flex justify-between items-center mb-4 pl-1">
+            <!-- Адаптивная шапка ленты. На мобилках (flex-col) элементы переносятся, на ПК (sm:flex-row) стоят в линию -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pl-1 gap-3 sm:gap-0 w-full">
+                
+                <!-- Заголовок -->
                 <div class="flex items-center gap-3">
-                    <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl"></i>
-                    <h4 id="main-feed-title" class="font-black text-xl text-stone-500" data-i18n="fresh_title">Свежие
-                        объявления</h4>
+                    <i id="main-feed-icon" class="fa-regular fa-clock text-stone-400 text-2xl shrink-0"></i>
+                    <h4 id="main-feed-title" class="font-black text-xl text-stone-500 truncate" data-i18n="fresh_title">Свежие объявления</h4>
                 </div>
-                <div class="flex items-center gap-2">
-                    <!-- Адаптивный блок сортировки для ПК и мобилок -->
-                    <div class="relative" id="custom-sort-wrapper">
+
+                <!-- Элементы управления -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                    
+                    <div class="relative flex-1 sm:flex-none" id="custom-sort-wrapper">
                         <button id="custom-sort-btn" onclick="window.toggleSortMenu()"
-                            class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 h-9 font-bold text-xs text-stone-700 dark:text-stone-300 outline-none cursor-pointer transition-all hover:border-brand-500 shadow-sm active:scale-95">
-                            <i class="fa-solid fa-arrow-down-short-wide text-brand-500 text-xs"></i>
-                            <span id="custom-sort-label" data-i18n="sort_new">Сначала новые</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200" id="custom-sort-icon"></i>
+                            class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 h-9 font-bold text-xs text-stone-700 dark:text-stone-300 outline-none cursor-pointer transition-all hover:border-brand-500 shadow-sm active:scale-95 w-full sm:w-[165px]">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <i class="fa-solid fa-arrow-down-short-wide text-brand-500 text-xs shrink-0"></i>
+                                <span id="custom-sort-label" data-i18n="sort_new" class="truncate">Сначала новые</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200 shrink-0" id="custom-sort-icon"></i>
                         </button>
 
                         <!-- Выпадающее меню с авто-переводом -->
                         <div id="custom-sort-menu"
-                            class="absolute right-0 top-full mt-1.5 w-48 bg-white/95 dark:bg-stone-800/95 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 rounded-xl shadow-xl overflow-hidden hidden z-50 p-1 flex-col gap-0.5">
+                            class="absolute left-0 sm:right-0 sm:left-auto top-full mt-1.5 w-full sm:w-56 bg-white/95 dark:bg-stone-800/95 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 rounded-xl shadow-xl overflow-hidden hidden z-50 p-1 flex-col gap-0.5">
                             <button onclick="window.selectSort('new')" id="sort-opt-new"
                                 class="sort-opt-btn w-full text-left px-3 py-2 text-xs font-bold rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/80 transition-colors flex items-center justify-between cursor-pointer bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400">
                                 <span class="flex items-center gap-2"><i class="fa-regular fa-clock text-stone-400 w-4 text-center"></i><span data-i18n="sort_new">Сначала новые</span></span>
@@ -646,14 +652,13 @@
                         </select>
                     </div>
 
-                    <div
-                        class="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700 shrink-0 h-9">
+                    <div class="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-xl border border-stone-200 dark:border-stone-700 shrink-0 h-9 shadow-sm">
                         <button id="btn-view-grid" onclick="window.setViewMode('grid')"
-                            class="h-full px-3 rounded-md bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer flex items-center justify-center">
+                            class="h-full px-3 rounded-lg bg-white dark:bg-stone-600 shadow-sm text-brand-600 dark:text-brand-400 transition cursor-pointer flex items-center justify-center">
                             <i class="fa-solid fa-table-cells-large text-sm"></i>
                         </button>
                         <button id="btn-view-list" onclick="window.setViewMode('list')"
-                            class="h-full px-3 rounded-md text-stone-400 hover:text-brand-600 transition cursor-pointer flex items-center justify-center">
+                            class="h-full px-3 rounded-lg text-stone-400 hover:text-brand-600 transition cursor-pointer flex items-center justify-center">
                             <i class="fa-solid fa-list text-sm"></i>
                         </button>
                     </div>
