@@ -1,6 +1,13 @@
 import { supabase } from '../config.js';
 import { safeImageUrl, renderSafeAvatar } from './security.js';
 
+// 1. Создаем черный список самых популярных одноразовых почт (Blacklist)
+const DISPOSABLE_DOMAINS = [
+    'mailinator.com', '10minutemail.com', 'tempmail.com', 'guerrillamail.com', 
+    'yopmail.com', 'throwawaymail.com', 'dropmail.me', 'getnada.com', 
+    'fakemail.net', 'trashmail.com', 'temp-mail.org', 'tempmail.net'
+];
+
 export const AuthModule = {
     checkUserSession: async () => {
         try {
@@ -112,9 +119,21 @@ export const AuthModule = {
 
         if (!emailEl || !passwordEl || !btn) return;
 
-        const email = emailEl.value.trim();
+        // Приводим email к нижнему регистру для надежности
+        const email = emailEl.value.trim().toLowerCase();
         const password = passwordEl.value;
         const originalText = btn.innerHTML;
+
+        // СЕНЬОР-ЛОГИКА: 1. Проверка на одноразовую почту
+        if (email) {
+            const emailDomain = email.split('@')[1];
+            if (emailDomain && DISPOSABLE_DOMAINS.includes(emailDomain)) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast("Использование временных почт запрещено правилами SVALKA", true);
+                }
+                return; // Останавливаем регистрацию
+            }
+        }
 
         let name = '';
         let avatarUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${email}`;
@@ -141,35 +160,58 @@ export const AuthModule = {
         }
         
         try {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Обработка...';
             btn.disabled = true;
 
             if (isRegister) {
+                // СЕНЬОР-ЛОГИКА: 2. Регистрация и перехват дубликатов
                 const { error } = await supabase.auth.signUp({ 
                     email, 
                     password,
-                    // Сохраняем имя и аватар жестко в мету аккаунта
                     options: { data: { name: name, full_name: name, avatar_url: avatarUrl } }
                 });
-                if (error) throw error;
-                if (typeof window.showToast === 'function') window.showToast('Успешная регистрация! Проверьте почту.', 'success');
-                setTimeout(() => window.location.reload(), 1500); 
+                
+                if (error) {
+                    // Если почта уже есть в базе, Supabase вернет ошибку "User already registered" (или статус 400)
+                    if (error.message.includes('already registered') || error.status === 400) {
+                        throw new Error("Эта электронная почта уже используется. Пожалуйста, войдите в аккаунт.");
+                    }
+                    throw error;
+                }
+
+                // При регистрации не делаем reload страницы, чтобы пользователь точно увидел это уведомление
+                if (typeof window.showToast === 'function') window.showToast("Письмо с подтверждением отправлено на вашу почту!", "success");
+                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
+
             } else {
+                // Логика входа (Login)
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                if (typeof window.showToast === 'function') window.showToast('С возвращением!', 'success');
+                if (error) {
+                    if (error.message.includes('Invalid login credentials')) {
+                         throw new Error("Неверный email или пароль");
+                    }
+                    throw error;
+                }
+                
+                if (typeof window.showToast === 'function') window.showToast('С возвращением на SVALKA!', 'success');
+                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
                 setTimeout(() => window.location.reload(), 1000); 
             }
             
-            if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
         } catch (err) {
+            console.error("Auth Error:", err);
             let errorMsg = err.message;
-            if (errorMsg.includes('Invalid login credentials')) errorMsg = 'Неверный email или пароль';
-            if (errorMsg.includes('already registered')) errorMsg = 'Пользователь с таким email уже существует';
-            if (errorMsg.includes('Password should be at least')) errorMsg = 'Пароль должен быть не менее 6 символов';
             
-            if (typeof window.showToast === 'function') window.showToast(errorMsg, 'error');
-            else alert("Ошибка: " + errorMsg);
+            if (errorMsg.includes('Password should be at least')) {
+                errorMsg = 'Пароль должен быть не менее 6 символов';
+            }
+            
+            // Выводим понятную ошибку пользователю
+            if (typeof window.showToast === 'function') {
+                window.showToast(errorMsg, 'error');
+            } else {
+                alert("Ошибка: " + errorMsg);
+            }
         } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;
