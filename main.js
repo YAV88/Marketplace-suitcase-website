@@ -2899,29 +2899,52 @@ window.initSidebar = () => {
     window.renderCustomRadios('currency-radios-wrap', 'curr', [{ val: 'Все', label: window.t('Любая') }, { val: 'RSD', label: 'RSD (' + window.t('Динары') + ')' }, { val: 'EUR', label: 'EUR (' + window.t('Евро') + ')' }], window.filterCurrency, 'applyCurrency');
 };
 
-// --- ЛОГИКА КАСТОМНОЙ СОРТИРОВКИ ---
 window.toggleSortMenu = () => {
     const menu = document.getElementById('custom-sort-menu');
     const icon = document.getElementById('custom-sort-icon');
-    if (menu) menu.classList.toggle('hidden');
+    if (menu) {
+        menu.classList.toggle('hidden');
+        menu.classList.toggle('flex');
+    }
     if (icon) icon.classList.toggle('rotate-180');
 };
 
-window.selectSort = (val, label) => {
-    document.getElementById('custom-sort-label').innerText = label;
-    document.getElementById('sort-select').value = val;
+window.selectSort = (val) => {
+    const labelEl = document.getElementById('custom-sort-label');
+    const sortSelect = document.getElementById('sort-select');
+
+    if (sortSelect) sortSelect.value = val;
+    window.currentSortMode = val;
+
+    // Привязываем правильный атрибут перевода без хардкода текста
+    if (labelEl) {
+        labelEl.setAttribute('data-i18n', `sort_${val}`);
+        const t = window.t || (txt => txt);
+        labelEl.innerText = t(`sort_${val}`);
+    }
+
+    // Подсвечиваем выбранный пункт в меню
+    document.querySelectorAll('.sort-opt-btn').forEach(btn => {
+        const check = btn.querySelector('.check-icon');
+        if (btn.id === `sort-opt-${val}`) {
+            btn.classList.add('bg-brand-50', 'dark:bg-brand-900/30', 'text-brand-600', 'dark:text-brand-400');
+            if (check) check.classList.remove('hidden');
+        } else {
+            btn.classList.remove('bg-brand-50', 'dark:bg-brand-900/30', 'text-brand-600', 'dark:text-brand-400');
+            if (check) check.classList.add('hidden');
+        }
+    });
+
     window.toggleSortMenu();
-    if (window.handleSort) window.handleSort(); // Запускаем фильтрацию
+    if (window.handleSort) window.handleSort();
 };
 
-// Закрываем меню сортировки при клике в любое другое место экрана
-document.addEventListener('click', (e) => {
-    const wrapper = document.getElementById('custom-sort-wrapper');
-    if (wrapper && !wrapper.contains(e.target)) {
-        document.getElementById('custom-sort-menu')?.classList.add('hidden');
-        document.getElementById('custom-sort-icon')?.classList.remove('rotate-180');
-    }
-});
+window.handleSort = () => {
+    const el = document.getElementById('sort-select');
+    if (el) window.currentSortMode = el.value;
+    window.displayedCount = 12;
+    if (typeof window.fetchItems === 'function') window.fetchItems(false);
+};
 
 setTimeout(window.initSidebar, 200);
 window.fetchItems();

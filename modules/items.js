@@ -348,8 +348,14 @@ export const ItemsModule = {
                     q = q.gt('highlighted_until', new Date().toISOString());
                 }
 
+                // 1. Порядок сортировки в SQL запросе
+                if (window.currentSortMode === 'popular') {
+                    q = q.order('views', { ascending: false });
+                } else if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp') {
+                    q = q.order('created_at', { ascending: false }); // По умолчанию 'new'
+                }
+
                 if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp' && !needsJsPriceFilter) {
-                    q = q.order('created_at', { ascending: false });
                     q = q.limit(window.displayedCount + 1);
                 }
 
@@ -372,16 +378,21 @@ export const ItemsModule = {
                     vipData = filterByPrice(vipData);
                 }
 
-                if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp') {
+                // 2. Сортировка в JS с учетом мультивалютности и популярности
+                if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp' || window.currentSortMode === 'popular') {
                     const getPriceForSort = (item) => {
                         const p = Number(item.price) || 0;
                         return item.currency === 'EUR' ? p * 117 : p;
                     };
-                    const sortFn = window.currentSortMode === 'cheap'
-                        ? (a, b) => getPriceForSort(a) - getPriceForSort(b)
-                        : (a, b) => getPriceForSort(b) - getPriceForSort(a);
-
-                    itemsData.sort(sortFn);
+                    
+                    if (window.currentSortMode === 'cheap') {
+                        itemsData.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
+                    } else if (window.currentSortMode === 'exp') {
+                        itemsData.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
+                    } else if (window.currentSortMode === 'popular') {
+                        // Дублируем сортировку по просмотрам в JS на случай, если сработал фильтр цены
+                        itemsData.sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+                    }
                 }
 
                 if (window.currentSortMode === 'cheap' || window.currentSortMode === 'exp' || needsJsPriceFilter) {
@@ -435,6 +446,8 @@ export const ItemsModule = {
                     filtered.sort((a, b) => getPriceForSort(a) - getPriceForSort(b));
                 } else if (window.currentSortMode === 'exp') {
                     filtered.sort((a, b) => getPriceForSort(b) - getPriceForSort(a));
+                } else if (window.currentSortMode === 'popular') {
+                    filtered.sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
                 }
 
                 vipRes.data = filtered.filter(i => i.is_highlighted).slice(0, 6);

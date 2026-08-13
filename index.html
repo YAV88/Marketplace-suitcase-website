@@ -604,31 +604,45 @@
                         объявления</h4>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="relative hidden md:block" id="custom-sort-wrapper">
+                    <!-- Адаптивный блок сортировки для ПК и мобилок -->
+                    <div class="relative" id="custom-sort-wrapper">
                         <button id="custom-sort-btn" onclick="window.toggleSortMenu()"
-                            class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg pl-3 pr-2 h-9 font-bold text-xs text-stone-600 dark:text-stone-300 outline-none cursor-pointer transition-colors hover:border-brand-500 w-[130px]">
-                            <span id="custom-sort-label" data-i18n="sort_new">Новые</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200"
-                                id="custom-sort-icon"></i>
+                            class="flex items-center justify-between gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 h-9 font-bold text-xs text-stone-700 dark:text-stone-300 outline-none cursor-pointer transition-all hover:border-brand-500 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-arrow-down-short-wide text-brand-500 text-xs"></i>
+                            <span id="custom-sort-label" data-i18n="sort_new">Сначала новые</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200" id="custom-sort-icon"></i>
                         </button>
 
+                        <!-- Выпадающее меню с авто-переводом -->
                         <div id="custom-sort-menu"
-                            class="absolute right-0 top-full mt-1 w-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg shadow-lg overflow-hidden hidden z-50 py-1" style="display: none;">
-                            <button onclick="window.selectSort('new', 'Новые')"
-                                class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
-                                data-i18n="sort_new">Новые</button>
-                            <button onclick="window.selectSort('cheap', 'Дешевые')"
-                                class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
-                                data-i18n="sort_cheap">Дешевые</button>
-                            <button onclick="window.selectSort('exp', 'Дорогие')"
-                                class="w-full text-left px-3 py-2 text-xs font-bold text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
-                                data-i18n="sort_exp">Дорогие</button>
+                            class="absolute right-0 top-full mt-1.5 w-48 bg-white/95 dark:bg-stone-800/95 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 rounded-xl shadow-xl overflow-hidden hidden z-50 p-1 flex-col gap-0.5">
+                            <button onclick="window.selectSort('new')" id="sort-opt-new"
+                                class="sort-opt-btn w-full text-left px-3 py-2 text-xs font-bold rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/80 transition-colors flex items-center justify-between cursor-pointer bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400">
+                                <span class="flex items-center gap-2"><i class="fa-regular fa-clock text-stone-400 w-4 text-center"></i><span data-i18n="sort_new">Сначала новые</span></span>
+                                <i class="fa-solid fa-check text-brand-500 text-xs check-icon"></i>
+                            </button>
+                            <button onclick="window.selectSort('cheap')" id="sort-opt-cheap"
+                                class="sort-opt-btn w-full text-left px-3 py-2 text-xs font-bold rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/80 transition-colors flex items-center justify-between cursor-pointer">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-arrow-down-1-9 text-stone-400 w-4 text-center"></i><span data-i18n="sort_cheap">Сначала дешевые</span></span>
+                                <i class="fa-solid fa-check text-brand-500 text-xs check-icon hidden"></i>
+                            </button>
+                            <button onclick="window.selectSort('exp')" id="sort-opt-exp"
+                                class="sort-opt-btn w-full text-left px-3 py-2 text-xs font-bold rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/80 transition-colors flex items-center justify-between cursor-pointer">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-arrow-up-9-1 text-stone-400 w-4 text-center"></i><span data-i18n="sort_exp">Сначала дорогие</span></span>
+                                <i class="fa-solid fa-check text-brand-500 text-xs check-icon hidden"></i>
+                            </button>
+                            <button onclick="window.selectSort('popular')" id="sort-opt-popular"
+                                class="sort-opt-btn w-full text-left px-3 py-2 text-xs font-bold rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700/80 transition-colors flex items-center justify-between cursor-pointer">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-fire text-amber-500 w-4 text-center"></i><span data-i18n="sort_popular">По популярности</span></span>
+                                <i class="fa-solid fa-check text-brand-500 text-xs check-icon hidden"></i>
+                            </button>
                         </div>
 
                         <select id="sort-select" class="hidden">
                             <option value="new" data-i18n="sort_new">Сначала новые</option>
                             <option value="cheap" data-i18n="sort_cheap">Сначала дешевые</option>
                             <option value="exp" data-i18n="sort_exp">Сначала дорогие</option>
+                            <option value="popular" data-i18n="sort_popular">По популярности</option>
                         </select>
                     </div>
 
