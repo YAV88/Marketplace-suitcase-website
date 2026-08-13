@@ -2004,9 +2004,16 @@ window.syncUserFavorites = async () => {
 
 // Подписываемся на состояние сессии Supabase (Сработает и при обновлении страницы, и при логине)
 supabase.auth.onAuthStateChange(async (event, session) => {
+    
+    // Перехват перехода по ссылке из письма сброса пароля
+    if (event === 'PASSWORD_RECOVERY') {
+        if (typeof window.closeModal === 'function') window.closeModal('auth-modal'); // Прячем окно входа
+        if (typeof window.openModal === 'function') window.openModal('reset-password-modal'); // Показываем окно нового пароля
+        return;
+    }
+
     if (session && session.user) {
-        // СЕНЬОР-ФИКС: Активная проверка, не был ли удален пользователь в админке Supabase
-        // auth.getUser() принудительно сверяется с сервером, а не просто читает локальный кэш
+        // Активная проверка, не был ли удален пользователь в админке Supabase
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error || !user) {
@@ -2015,7 +2022,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
             window.currentUser = null;
             if (window.userFavorites) window.userFavorites.clear();
             
-            // Если у пользователя открыт профиль или настройки - жестко закрываем их
             if (typeof window.closeModal === 'function') {
                 window.closeModal('profile-modal');
                 window.closeModal('edit-profile-modal');
@@ -2034,6 +2040,42 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
 });
 
+// Функция сохранения нового пароля
+window.saveNewPassword = async (event) => {
+    event.preventDefault();
+    const btn = document.getElementById('save-new-password-btn');
+    const input = document.getElementById('new-password-input');
+    const password = input.value;
+
+    if (!password || password.length < 6) {
+        if (typeof window.showToast === 'function') window.showToast("Пароль должен быть не менее 6 символов", true);
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Сохранение...';
+
+    try {
+        // Supabase обновит пароль для пользователя, который только что перешел по ссылке восстановления
+        const { error } = await supabase.auth.updateUser({ password: password });
+        if (error) throw error;
+
+        if (typeof window.showToast === 'function') window.showToast("Пароль успешно изменен!", "success");
+        if (typeof window.closeModal === 'function') window.closeModal('reset-password-modal');
+        
+        // Очищаем URL от хэш-токенов Supabase, чтобы ссылка стала красивой
+        history.replaceState(null, document.title, window.location.pathname);
+        
+    } catch (err) {
+        console.error(err);
+        if (typeof window.showToast === 'function') window.showToast("Ошибка: " + err.message, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
 // === НЕЗАВИСИМАЯ КНОПКА "В ИЗБРАННОЕ" ДЛЯ КАРТОЧЕК ===
 window.toggleFavoriteCard = async (id, btnEl) => {
     if (!window.currentUser) {
@@ -2045,7 +2087,7 @@ window.toggleFavoriteCard = async (id, btnEl) => {
     if (!window.userFavorites) window.userFavorites = new Set();
     const isLiked = window.userFavorites.has(id);
     
-    // СЕНЬОР-ФИКС: Мгновенно сбрасываем кэш склада, чтобы при переходе туда подтянулись свежие данные!
+    // Мгновенно сбрасываем кэш склада, чтобы при переходе туда подтянулись свежие данные!
     if (window.profileTabCache) delete window.profileTabCache['saved'];
     
     // 1. Обновляем счетчики везде (querySelectorAll, так как карточек может быть несколько на экране)
@@ -2067,7 +2109,7 @@ window.toggleFavoriteCard = async (id, btnEl) => {
         setTimeout(() => valEl.classList.remove('scale-125', 'text-brand-600'), 200);
     });
     
-    // 2. СЕНЬОР-ФИКС: Находим ВСЕ кнопки-коробки для этого товара (в ленте, в ТОПе, в профиле)
+    // 2. Находим ВСЕ кнопки-коробки для этого товара (в ленте, в ТОПе, в профиле)
     const cardBtnWrappers = document.querySelectorAll(`.item-card[data-id="${id}"]`);
     cardBtnWrappers.forEach(wrapper => {
         const icon = wrapper.querySelector('.card-fav-btn i, .absolute.z-\\[60\\] i, .img-badges button i');
