@@ -39,15 +39,24 @@
         
         <div class="bg-white dark:bg-stone-900 p-2 sm:p-6 rounded-[2rem] shadow-sm border border-stone-200 dark:border-stone-800 min-h-[500px] flex flex-col transition-colors">
             
-            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
-                <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-xl w-full md:w-max shrink-0 overflow-x-auto custom-scrollbar border border-stone-200 dark:border-stone-700">
-                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-box-open text-brand-500"></i> Товары</button>
-                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-users text-indigo-500"></i> Пользователи</button>
-                    <button onclick="switchTab('reports')" id="tab-reports" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-dumpster-fire text-red-500"></i> Жалобы</button>
-                    <button onclick="switchTab('pro_requests')" id="tab-pro" class="flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0"><i class="fa-solid fa-crown text-amber-500"></i> PRO-заявки</button>
+            <div class="flex flex-col lg:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
+                <!-- СЕНЬОР-ФИКС: Вкладки со счетчиками -->
+                <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-xl w-full lg:w-max shrink-0 overflow-x-auto custom-scrollbar border border-stone-200 dark:border-stone-700">
+                    <button onclick="switchTab('items')" id="tab-items" class="flex-1 lg:flex-none px-5 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fa-solid fa-box-open text-brand-500"></i> Товары <span id="count-items" class="bg-stone-200 dark:bg-stone-600 px-2 py-0.5 rounded-md text-[10px]">0</span>
+                    </button>
+                    <button onclick="switchTab('users')" id="tab-users" class="flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fa-solid fa-users text-indigo-500"></i> Юзеры <span id="count-users" class="bg-stone-200 dark:bg-stone-800 px-2 py-0.5 rounded-md text-[10px]">0</span>
+                    </button>
+                    <button onclick="switchTab('reports')" id="tab-reports" class="flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fa-solid fa-dumpster-fire text-red-500"></i> Жалобы <span id="count-reports" class="bg-stone-200 dark:bg-stone-800 px-2 py-0.5 rounded-md text-[10px]">0</span>
+                    </button>
+                    <button onclick="switchTab('pro_requests')" id="tab-pro" class="flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fa-solid fa-crown text-amber-500"></i> PRO-заявки <span id="count-pro" class="bg-stone-200 dark:bg-stone-800 px-2 py-0.5 rounded-md text-[10px]">0</span>
+                    </button>
                 </div>
                 
-                <div class="flex gap-2 w-full md:w-auto">
+                <div class="flex gap-2 w-full lg:w-auto">
                     <select id="admin-category-filter" onchange="renderList()" class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition cursor-pointer max-w-[150px]">
                         <option value="">Все категории</option>
                         <option value="Одежда">Одежда</option> <option value="Электроника">Электроника</option> <option value="Интерьер">Интерьер</option>
@@ -55,9 +64,10 @@
                         <option value="Работа">Работа</option> <option value="Бизнес">Бизнес</option> <option value="Детям">Детям</option>
                     </select>
 
-                    <div class="relative flex-1 md:w-64 shrink-0">
+                    <div class="relative flex-1 lg:w-64 shrink-0">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
-                        <input type="text" id="admin-search" oninput="renderList()" placeholder="Поиск товаров..." class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-11 pr-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition shadow-inner">
+                        <!-- СЕНЬОР-ФИКС: Заменили oninput="renderList()" на handleAdminSearch() для дебаунса -->
+                        <input type="text" id="admin-search" oninput="handleAdminSearch()" placeholder="Поиск товаров..." class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-11 pr-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition shadow-inner">
                     </div>
                 </div>
             </div>
@@ -95,6 +105,13 @@
 
         let adminState = { items: [], profiles: [], reports: [], proRequests: [], currentTab: 'items', isLoading: true };
 
+        // Debounce для быстрого и плавного поиска
+        let searchTimer;
+        window.handleAdminSearch = () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(renderList, 300);
+        };
+
         async function initAdminPanel() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return showError("Доступ запрещен. Вы не вошли в аккаунт!");
@@ -111,7 +128,6 @@
 
         async function loadData() {
             try {
-                // ДОБАВИЛИ ЗАГРУЗКУ ЗАЯВОК PRO
                 const [itemsRes, profilesRes, reportsRes, proRes] = await Promise.all([
                     supabaseClient.from('items').select('*').order('created_at', { ascending: false }),
                     supabaseClient.rpc('get_all_users_for_admin'),
@@ -121,14 +137,19 @@
 
                 if (itemsRes.error) throw itemsRes.error;
                 if (profilesRes.error) throw profilesRes.error;
-                if (reportsRes.error && reportsRes.error.code !== '42P01') throw reportsRes.error;
-                if (proRes.error && proRes.error.code !== '42P01') throw proRes.error;
 
                 adminState.items = itemsRes.data || [];
                 adminState.profiles = profilesRes.data || [];
                 adminState.reports = reportsRes.data || [];
                 adminState.proRequests = proRes.data || [];
                 adminState.isLoading = false;
+
+                // Обновляем бейджи со счетчиками
+                document.getElementById('count-items').innerText = adminState.items.length;
+                document.getElementById('count-users').innerText = adminState.profiles.length;
+                document.getElementById('count-reports').innerText = adminState.reports.length;
+                document.getElementById('count-pro').innerText = adminState.proRequests.length;
+
                 renderList();
             } catch (e) { showError(`Ошибка: ${e.message}`); }
         }
@@ -229,7 +250,7 @@
                         : '';
 
                     list.insertAdjacentHTML('beforeend', `
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border ${isDuplicate ? 'border-red-300 dark:border-red-800' : 'border-stone-200 dark:border-stone-700'} rounded-xl hover:border-stone-300 transition gap-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border ${isDuplicate ? 'border-red-300 dark:border-red-800' : 'border-stone-200 dark:border-stone-700'} rounded-xl hover:border-stone-300 transition gap-4 shadow-sm">
                             <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
                                 <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200 dark:border-stone-700">
                                 <div class="overflow-hidden">
@@ -244,9 +265,15 @@
                                     <div class="text-sm font-bold text-brand-600 dark:text-brand-400 mt-0.5">${item.price} ${item.currency}</div>
                                 </div>
                             </div>
-                            <button onclick="deleteItem('${item.id}', this)" class="w-full sm:w-auto bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white px-5 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shrink-0">
-                                <i class="fa-solid fa-trash"></i> Удалить
-                            </button>
+                            <div class="flex flex-row gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
+                                <!-- СЕНЬОР-ФИКС: Кнопка редактирования -->
+                                <button onclick="openEditModal('${item.id}')" class="flex-1 sm:flex-none bg-white dark:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-600 hover:border-brand-500 hover:text-brand-600 px-4 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                                    <i class="fa-solid fa-pen"></i> Ред.
+                                </button>
+                                <button onclick="deleteItem('${item.id}', this)" class="flex-1 sm:flex-none bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 hover:bg-red-500 hover:text-white px-4 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                                    <i class="fa-solid fa-trash"></i> Удалить
+                                </button>
+                            </div>
                         </div>
                     `);
                 });
@@ -268,6 +295,8 @@
                     const phoneDisplay = user.phone ? `<span class="bg-stone-100 dark:bg-stone-700 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-600"><i class="fa-solid fa-phone text-stone-400 text-[10px] mr-1"></i>${user.phone}</span>` : '';
                     
                     const isBanned = user.is_banned;
+                    const isVerified = user.is_verified || false;
+                    const verifiedBadge = isVerified ? `<i class="fa-solid fa-circle-check text-blue-500 ml-1" title="Верифицирован"></i>` : '';
                     const cardClass = isBanned ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900 opacity-75" : "bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700";
                     const statusBadge = isBanned ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase ml-2">ЗАБЛОКИРОВАН</span>` : '';
                     const banInfo = isBanned ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-bold">Причина: ${user.ban_reason || 'Не указана'}</div>` : '';
@@ -283,7 +312,7 @@
                                 </div>
                                 <div class="overflow-hidden w-full">
                                     <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center gap-2 mb-1">
-                                        ${user.full_name || 'Без имени'} 
+                                        ${user.full_name || 'Без имени'} ${verifiedBadge} 
                                         ${isPro ? `<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest flex items-center gap-1">VIP ${proTimer}</span>` : ''}
                                         ${statusBadge}
                                     </div>
@@ -301,6 +330,12 @@
                                     <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mx-1" title="Токены поднятий">BUMP</span>
                                     <input type="number" id="bump-${user.id}" value="${user.bump_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-amber-200 dark:border-amber-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
                                 </div>
+
+                                <!-- Кнопка выдачи галочки -->
+                                <button onclick="toggleVerification('${user.id}', ${isVerified}, this)" class="w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm ${isVerified ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-stone-200 dark:hover:bg-stone-700' : 'bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-blue-500 hover:text-white'}" title="${isVerified ? 'Снять верификацию' : 'Выдать галочку верификации'}">
+                                    <i class="fa-solid fa-shield-check"></i>
+                                </button>
+
                                 <div class="flex items-center gap-1 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-1 border border-purple-100 dark:border-purple-800/50">
                                     <span class="text-[10px] font-bold text-purple-600 uppercase tracking-widest mx-1" title="VIP токены">VIP</span>
                                     <input type="number" id="vip-${user.id}" value="${user.vip_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-purple-200 dark:border-purple-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
@@ -700,7 +735,117 @@
             renderList(); }
         }
 
+        // --- ЛОГИКА РЕДАКТИРОВАНИЯ ---
+        window.openEditModal = (itemId) => {
+            const item = adminState.items.find(i => i.id === itemId);
+            if (!item) return;
+            
+            document.getElementById('edit-item-id').value = item.id;
+            document.getElementById('edit-item-title').value = item.title || '';
+            document.getElementById('edit-item-price').value = item.price || 0;
+            document.getElementById('edit-item-category').value = item.category || '';
+            
+            const modal = document.getElementById('admin-edit-modal');
+            const content = document.getElementById('admin-edit-modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            });
+        };
+
+        window.closeEditModal = () => {
+            const modal = document.getElementById('admin-edit-modal');
+            const content = document.getElementById('admin-edit-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+
+        window.saveItemChanges = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('edit-submit-btn');
+            const id = document.getElementById('edit-item-id').value;
+            const title = document.getElementById('edit-item-title').value.trim();
+            const price = parseFloat(document.getElementById('edit-item-price').value);
+            const category = document.getElementById('edit-item-category').value.trim();
+            
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Сохраняем...';
+            
+            try {
+                const { error } = await supabaseClient.from('items').update({ title, price, category }).eq('id', id);
+                if (error) throw error;
+                
+                const item = adminState.items.find(i => i.id === id);
+                if (item) { item.title = title; item.price = price; item.category = category; }
+                
+                closeEditModal();
+                renderList();
+            } catch (err) { alert('Ошибка: ' + err.message); } 
+            finally { btn.disabled = false; btn.innerHTML = originalHtml; }
+        };
+
+        // --- ЛОГИКА ВЕРИФИКАЦИИ ПОЛЬЗОВАТЕЛЕЙ ---
+        window.toggleVerification = async (userId, currentStatus, btn) => {
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                const newStatus = !currentStatus;
+                const { error } = await supabaseClient.from('profiles').update({ is_verified: newStatus }).eq('id', userId);
+                if (error) throw error;
+                
+                const user = adminState.profiles.find(p => p.id === userId);
+                if (user) user.is_verified = newStatus;
+                
+                renderList();
+            } catch (e) { alert('Ошибка: ' + e.message); btn.disabled = false; btn.innerHTML = originalHtml; }
+        };
+
         initAdminPanel();
     </script>
+
+    <!-- СЕНЬОР-ФИКС: Модальное окно быстрого редактирования -->
+    <div id="admin-edit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-stone-200 dark:border-stone-800 relative transform scale-95 transition-transform duration-300" id="admin-edit-modal-content">
+            <button onclick="closeEditModal()" class="absolute top-5 right-5 text-stone-400 hover:text-red-500 transition text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-black mb-5 text-stone-900 dark:text-white"><i class="fa-solid fa-pen text-brand-500 mr-2"></i> Редактирование</h2>
+            
+            <form id="edit-item-form" onsubmit="saveItemChanges(event)" class="flex flex-col gap-4">
+                <input type="hidden" id="edit-item-id">
+                
+                <div>
+                    <label class="text-xs font-bold text-stone-500 uppercase tracking-widest block mb-1.5 pl-1">Название</label>
+                    <input type="text" id="edit-item-title" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-stone-900 dark:text-white font-medium transition-colors" required>
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="text-xs font-bold text-stone-500 uppercase tracking-widest block mb-1.5 pl-1">Цена</label>
+                        <input type="number" id="edit-item-price" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-stone-900 dark:text-white font-medium transition-colors" required>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-xs font-bold text-stone-500 uppercase tracking-widest block mb-1.5 pl-1">Категория</label>
+                        <!-- Используем текстовое поле, чтобы не сломать сложную структуру подкатегорий (Напр. 'Одежда - Обувь') -->
+                        <input type="text" id="edit-item-category" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-stone-900 dark:text-white font-medium transition-colors" required>
+                    </div>
+                </div>
+                
+                <button type="submit" id="edit-submit-btn" class="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95 mt-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Сохранить изменения
+                </button>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
