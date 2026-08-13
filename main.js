@@ -2916,14 +2916,12 @@ window.selectSort = (val) => {
     if (sortSelect) sortSelect.value = val;
     window.currentSortMode = val;
 
-    // Привязываем правильный атрибут перевода без хардкода текста
     if (labelEl) {
         labelEl.setAttribute('data-i18n', `sort_${val}`);
         const t = window.t || (txt => txt);
         labelEl.innerText = t(`sort_${val}`);
     }
 
-    // Подсвечиваем выбранный пункт в меню
     document.querySelectorAll('.sort-opt-btn').forEach(btn => {
         const check = btn.querySelector('.check-icon');
         if (btn.id === `sort-opt-${val}`) {
@@ -2946,26 +2944,16 @@ window.handleSort = () => {
     if (typeof window.fetchItems === 'function') window.fetchItems(false);
 };
 
-setTimeout(window.initSidebar, 200);
-window.fetchItems();
-const urlParams = new URLSearchParams(window.location.search);
-const itemIdFromUrl = urlParams.get('item'); if (itemIdFromUrl) window.openItemDetails(itemIdFromUrl);
-
-window.addEventListener('popstate', () => {
-    const params = new URLSearchParams(window.location.search);
-    const item = params.get('item');
-    if (item) {
-        window.openItemDetails(item);
-    } else {
-        // Если нажали "Назад" на главную — жестко закрываем весь стек окон
-        if (window.modalStack) {
-            window.modalStack.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.classList.remove('active'); el.style.display = ''; }
-            });
-            window.modalStack = [];
-        }
-        document.body.classList.remove('modal-open');
+// Закрываем меню сортировки при клике в любое другое место экрана
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('custom-sort-wrapper');
+    const menu = document.getElementById('custom-sort-menu');
+    const icon = document.getElementById('custom-sort-icon');
+    
+    if (wrapper && !wrapper.contains(e.target) && menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex'); 
+        if (icon) icon.classList.remove('rotate-180');
     }
 });
 

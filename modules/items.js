@@ -355,6 +355,13 @@ export const ItemsModule = {
                     q = q.order('created_at', { ascending: false }); // По умолчанию 'new'
                 }
 
+                // 1. Порядок сортировки в SQL запросе
+                if (window.currentSortMode === 'popular') {
+                    q = q.order('views', { ascending: false });
+                } else if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp') {
+                    q = q.order('created_at', { ascending: false }); // По умолчанию 'new'
+                }
+
                 if (window.currentSortMode !== 'cheap' && window.currentSortMode !== 'exp' && !needsJsPriceFilter) {
                     q = q.limit(window.displayedCount + 1);
                 }
