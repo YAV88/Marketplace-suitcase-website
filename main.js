@@ -927,9 +927,10 @@ window.openChatListModal = async (silentLoad = false) => {
             const safeInterlocutorName = escapeHtml(interlocutorName);
             const safeItemTitle = escapeHtml(chat.item_title || window.t('Товар удален'));
 
+            // Бейджи с поддержкой темной темы
             const roleBadge = isSeller
-                ? `<span class="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200">${window.t('Вы продаете')}</span>`
-                : `<span class="bg-brand-50 text-brand-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-brand-100">${window.t('Вы покупаете')}</span>`;
+                ? `<span class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200 dark:border-amber-800/50">${window.t('Вы продаете')}</span>`
+                : `<span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-emerald-200 dark:border-emerald-800/50">${window.t('Вы покупаете')}</span>`;
 
             // Данные передаются через data-* атрибуты (экранированные), а не через инлайновый onclick с интерполяцией —
             // это устраняет риск как HTML-, так и JS-инъекции через имя собеседника/ID
