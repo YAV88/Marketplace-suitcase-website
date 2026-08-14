@@ -1485,10 +1485,10 @@
                 </div>
 
                 <!-- ПЛАШКИ ОПЛАТ -->
-                <div id="profile-economy-section" class="hidden flex-col sm:flex-row w-full gap-3 mt-4">
+                <div id="profile-economy-section" class="hidden flex-col sm:flex-row sm:flex-wrap w-full gap-3 mt-4">
                     
                     <!-- Плашка PRO -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 flex-1 shadow-sm transition-colors h-16">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 sm:gap-6 w-full sm:w-auto sm:min-w-[260px] shadow-sm transition-colors h-16">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-md bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 shrink-0">
                                 <i class="fa-solid fa-id-badge text-sm drop-shadow-sm"></i>
@@ -1499,14 +1499,15 @@
                     </div>
                     
                     <!-- Плашка Токенов -->
-                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 flex-1 shadow-sm transition-colors h-16">
+                    <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 px-4 rounded-xl gap-4 sm:gap-6 w-full sm:w-auto sm:min-w-[260px] shadow-sm transition-colors h-16">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 shrink-0">
                                 <i class="fa-solid fa-bolt text-sm drop-shadow-sm"></i>
                             </div>
                             <span id="profile-vip-tokens" class="text-sm font-black text-stone-900 dark:text-white leading-tight">0 шт.</span>
                         </div>
-                        <button onclick="window.openTokenPurchaseModal()" class="bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-bold text-xs px-4 h-9 rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0 border border-stone-800 dark:border-stone-200" data-i18n="btn_buy_more">Докупить</button>
+                        <!-- СЕНЬОР-ФИКС: Кнопка стала янтарной для логической связи с токенами-молниями -->
+                        <button onclick="window.openTokenPurchaseModal()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 h-9 rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0 border border-amber-600/50" data-i18n="btn_buy_more">Докупить</button>
                     </div>
 
                 </div>

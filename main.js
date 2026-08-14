@@ -930,25 +930,24 @@ window.openChatListModal = async (silentLoad = false) => {
             const safeInterlocutorName = escapeHtml(interlocutorName);
             const safeItemTitle = escapeHtml(chat.item_title || window.t('Товар удален'));
 
-            // Бейджи с поддержкой темной темы
+            // Бейджи с увеличенным шрифтом для ПК
             const roleBadge = isSeller
-                ? `<span class="bg-indigo-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПРОДАЖА') : 'ПРОДАЖА'}</span>`
-                : `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПОКУПКА') : 'ПОКУПКА'}</span>`;
+                ? `<span class="bg-indigo-500 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:py-1 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПРОДАЖА') : 'ПРОДАЖА'}</span>`
+                : `<span class="bg-emerald-500 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 sm:py-1 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПОКУПКА') : 'ПОКУПКА'}</span>`;
 
-            // Данные передаются через data-* атрибуты (экранированные), а не через инлайновый onclick с интерполяцией —
-            // это устраняет риск как HTML-, так и JS-инъекции через имя собеседника/ID
+            // Добавлены адаптивные классы sm:text-base, sm:w-20, sm:p-6 для идеального вида на больших экранах
             html += `
-            <div data-action="open-existing-chat" data-chat-id="${escapeHtml(chat.chat_id)}" data-item-id="${escapeHtml(chat.item_id)}" data-is-seller="${isSeller}" data-name="${safeInterlocutorName}" class="flex items-center gap-4 p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
-                <img src="${itemImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+            <div data-action="open-existing-chat" data-chat-id="${escapeHtml(chat.chat_id)}" data-item-id="${escapeHtml(chat.item_id)}" data-is-seller="${isSeller}" data-name="${safeInterlocutorName}" class="flex items-center gap-4 sm:gap-6 p-4 sm:p-6 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/80 transition cursor-pointer">
+                <img src="${itemImg}" class="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl object-cover shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
                 <div class="flex-1 overflow-hidden text-left">
-                    <div class="flex items-center gap-2 mb-1">
+                    <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-1.5">
                         ${roleBadge}
-                        <h4 class="font-bold text-sm text-stone-900 dark:text-white truncate">${safeItemTitle}</h4>
+                        <h4 class="font-bold text-sm sm:text-base md:text-lg text-stone-900 dark:text-white truncate">${safeItemTitle}</h4>
                     </div>
-                    <p class="text-[11px] text-stone-500 font-bold mb-0.5 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> ${window.t('Собеседник:')} <span class="text-stone-800 dark:text-stone-200">${safeInterlocutorName}</span></p>
-                    <p class="text-sm ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${safeLastMsg}</p>
+                    <p class="text-[11px] sm:text-sm text-stone-500 font-bold mb-0.5 sm:mb-1 truncate"><i class="fa-solid fa-user-circle mr-1 text-stone-400"></i> ${window.t('Собеседник:')} <span class="text-stone-800 dark:text-stone-200">${safeInterlocutorName}</span></p>
+                    <p class="text-sm sm:text-base ${unreadCount > 0 ? 'text-stone-900 dark:text-white font-bold' : 'text-stone-500 font-medium'} truncate">${safeLastMsg}</p>
                 </div>
-                ${unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] font-black rounded-full px-1.5 min-w-[18px] h-[18px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : ''}
+                ${unreadCount > 0 ? `<div class="bg-red-500 text-white text-[10px] sm:text-xs font-black rounded-full px-1.5 sm:px-2 min-w-[18px] sm:min-w-[24px] h-[18px] sm:h-[24px] flex items-center justify-center shrink-0 shadow-sm">${unreadCount}</div>` : ''}
             </div>`;
         });
 
