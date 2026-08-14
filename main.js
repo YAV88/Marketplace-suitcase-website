@@ -3152,35 +3152,41 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// --- УМНЫЕ СВАЙПЫ ПАЛЬЦЕМ (Только для фото) ---
+// ==========================================
+// СЕНЬОР-ФИКС: УМНЫЕ СВАЙПЫ (Только для лайтбокса)
+// Карусель внутри карточки теперь листается нативно (через CSS scroll-snap)
+// ==========================================
 let touchStartX = 0;
 let touchStartY = 0;
 let touchEndX = 0;
 let touchEndY = 0;
 
-// Вешаем свайп только на контейнер с фото, чтобы не мешать скроллить текст описания
-const imgContainer = document.getElementById('modal-img-container');
-if (imgContainer) {
-    imgContainer.addEventListener('touchstart', (e) => {
+const lightboxEl = document.getElementById('lightbox');
+if (lightboxEl) {
+    lightboxEl.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
-    imgContainer.addEventListener('touchend', (e) => {
+    lightboxEl.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
 
         const diffX = touchStartX - touchEndX;
         const diffY = touchStartY - touchEndY;
 
-        // Проверяем: это действительно жест "влево-вправо", а не прокрутка "вниз-вверх"?
+        // Определяем направление: горизонтальное или вертикальное
         if (Math.abs(diffX) > Math.abs(diffY)) {
-            const swipeThreshold = 40; // Чувствительность в пикселях
-
+            const swipeThreshold = 40; // Чувствительность
             if (diffX > swipeThreshold) {
-                window.navigateItem(1); // Свайп влево -> следующий
+                window.lightboxNext(e); // Свайп влево -> следующая фотка
             } else if (diffX < -swipeThreshold) {
-                window.navigateItem(-1); // Свайп вправо -> предыдущий
+                window.lightboxPrev(e); // Свайп вправо -> предыдущая фотка
+            }
+        } else {
+            // Премиум-фишка: Свайп вниз закрывает Лайтбокс
+            if (diffY < -60) {
+                window.closeModal('lightbox');
             }
         }
     }, { passive: true });

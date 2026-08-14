@@ -695,8 +695,9 @@ export const ItemsModule = {
                         thumbsContainer.classList.remove('hidden');
                     }
 
-                    if (btnPrev) btnPrev.classList.replace('hidden', 'md:flex');
-                    if (btnNext) btnNext.classList.replace('hidden', 'md:flex');
+                    // Показываем кнопки только на ПК
+                    if (btnPrev) btnPrev.style.display = 'flex';
+                    if (btnNext) btnNext.style.display = 'flex';
 
                     // Синхронизация карусели и миниатюр при скролле
                     let isScrolling;
@@ -726,8 +727,9 @@ export const ItemsModule = {
                 } else {
                     if (counterEl) counterEl.classList.add('hidden');
                     if (thumbsContainer) { thumbsContainer.innerHTML = ''; thumbsContainer.classList.add('hidden'); }
-                    if (btnPrev) btnPrev.classList.replace('md:flex', 'hidden');
-                    if (btnNext) btnNext.classList.replace('md:flex', 'hidden');
+                    
+                    if (btnPrev) btnPrev.style.display = 'none';
+                    if (btnNext) btnNext.style.display = 'none';
                 }
             }
 

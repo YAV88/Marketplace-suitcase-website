@@ -879,18 +879,20 @@
         </div>
     </div>
 
-    <div id="lightbox"
-        class="modal-overlay fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black/95 z-[200]"
-        onclick="window.closeModal('lightbox')">
+    <!-- Лайтбокс -->
+    <div id="lightbox" class="modal-overlay fixed inset-0 flex items-center justify-center p-0 bg-black/95 z-[200]" onclick="window.closeModal('lightbox')">
         <button id="lightbox-prev"
-            class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer"
-            onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
-        <img id="lightbox-img" src="" class="w-full h-full object-contain rounded-lg" onclick="event.stopPropagation()">
+            class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 text-white w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md text-xl sm:text-3xl hover:scale-110 transition z-50 cursor-pointer shadow-lg border border-white/20"
+            onclick="window.lightboxPrev(event)"><i class="fa-solid fa-chevron-left -ml-1"></i></button>
+        
+        <img id="lightbox-img" src="" class="w-full h-full object-contain sm:rounded-lg" onclick="event.stopPropagation()">
+        
         <button id="lightbox-next"
-            class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-white text-4xl md:text-5xl hover:scale-110 transition z-50 hidden cursor-pointer"
-            onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
+            class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 text-white w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md text-xl sm:text-3xl hover:scale-110 transition z-50 cursor-pointer shadow-lg border border-white/20"
+            onclick="window.lightboxNext(event)"><i class="fa-solid fa-chevron-right -mr-1"></i></button>
+            
         <button
-            class="absolute top-6 right-6 text-white text-3xl md:text-4xl hover:scale-110 transition z-50 cursor-pointer"
+            class="absolute top-4 sm:top-6 right-4 sm:right-6 text-white w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md text-xl sm:text-2xl hover:scale-110 transition z-50 cursor-pointer shadow-lg border border-white/20"
             onclick="window.closeModal('lightbox')"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
@@ -1548,11 +1550,12 @@
 
     <div id="item-modal" class="modal-overlay fixed inset-0 z-[99] bg-black/80 md:backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 transition-opacity duration-300">
         
-        <button onclick="window.navigateItem(-1, event)" class="fixed left-2 sm:left-6 top-1/2 -translate-y-1/2 z-[100] w-10 h-10 sm:w-14 sm:h-14 bg-white/80 dark:bg-stone-900/80 backdrop-blur shadow-xl border border-stone-200 dark:border-stone-700 rounded-full flex items-center justify-center text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+        <!-- Кнопки навигации по товарам скрыты на мобилках -->
+        <button onclick="window.navigateItem(-1, event)" class="hidden sm:flex fixed left-2 sm:left-6 top-1/2 -translate-y-1/2 z-[100] w-10 h-10 sm:w-14 sm:h-14 bg-white/80 dark:bg-stone-900/80 backdrop-blur shadow-xl border border-stone-200 dark:border-stone-700 rounded-full items-center justify-center text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:scale-110 active:scale-95 transition-all cursor-pointer">
             <i class="fa-solid fa-chevron-left text-lg sm:text-2xl -ml-0.5"></i>
         </button>
         
-        <button onclick="window.navigateItem(1, event)" class="fixed right-2 sm:right-6 top-1/2 -translate-y-1/2 z-[100] w-10 h-10 sm:w-14 sm:h-14 bg-white/80 dark:bg-stone-900/80 backdrop-blur shadow-xl border border-stone-200 dark:border-stone-700 rounded-full flex items-center justify-center text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+        <button onclick="window.navigateItem(1, event)" class="hidden sm:flex fixed right-2 sm:right-6 top-1/2 -translate-y-1/2 z-[100] w-10 h-10 sm:w-14 sm:h-14 bg-white/80 dark:bg-stone-900/80 backdrop-blur shadow-xl border border-stone-200 dark:border-stone-700 rounded-full items-center justify-center text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:scale-110 active:scale-95 transition-all cursor-pointer">
             <i class="fa-solid fa-chevron-right text-lg sm:text-2xl -mr-0.5"></i>
         </button>
 
@@ -1586,8 +1589,10 @@
                     <div id="modal-img-container" class="relative rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800 shadow-inner h-[300px] md:h-[450px] w-full group flex items-center justify-center shrink-0">
                         <div id="modal-photo-counter" class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-xs font-bold hidden shadow-sm"></div>
                         <div id="modal-carousel" class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scroll-smooth transform-gpu will-change-transform" style="scrollbar-width: none; -ms-overflow-style: none;"></div>
-                        <button id="modal-prev-photo" onclick="window.navigatePhoto(-1, event)" class="hidden absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
-                        <button id="modal-next-photo" onclick="window.navigatePhoto(1, event)" class="hidden absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
+                        <!-- На мобильных нативный плавный свайп -->
+                        <button id="modal-prev-photo" onclick="window.navigatePhoto(-1, event)" class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-left -ml-0.5"></i></button>
+                        <button id="modal-next-photo" onclick="window.navigatePhoto(1, event)" class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white items-center justify-center backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"><i class="fa-solid fa-chevron-right -mr-0.5"></i></button>
+
                     </div>
                     <div id="modal-thumbnails-container" class="flex gap-2 mt-3 overflow-x-auto custom-scrollbar pb-2 hidden shrink-0"></div>
                 </div>
