@@ -843,8 +843,11 @@ window.openChatModal = async () => {
     window.currentChatItemId = item.id;
 
     const badge = document.getElementById('chat-role-badge');
-    if (badge) { badge.innerText = "ПОКУПКА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-emerald-500"; }
-
+    if (badge) { 
+        badge.innerText = window.t ? window.t("ПОКУПКА") : "ПОКУПКА"; 
+        badge.className = "bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent"; 
+    }
+    
     document.getElementById('chat-author-name').innerText = item.authorName || "Продавец";
     document.getElementById('chat-item-title').innerText = item.title;
     document.getElementById('chat-item-price').innerText = `${item.price || 0} ${item.currency || 'RSD'}`;
@@ -929,8 +932,8 @@ window.openChatListModal = async (silentLoad = false) => {
 
             // Бейджи с поддержкой темной темы
             const roleBadge = isSeller
-                ? `<span class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-amber-200 dark:border-amber-800/50">${window.t('Вы продаете')}</span>`
-                : `<span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase border border-emerald-200 dark:border-emerald-800/50">${window.t('Вы покупаете')}</span>`;
+                ? `<span class="bg-indigo-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПРОДАЖА') : 'ПРОДАЖА'}</span>`
+                : `<span class="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent">${window.t ? window.t('ПОКУПКА') : 'ПОКУПКА'}</span>`;
 
             // Данные передаются через data-* атрибуты (экранированные), а не через инлайновый onclick с интерполяцией —
             // это устраняет риск как HTML-, так и JS-инъекции через имя собеседника/ID
@@ -968,9 +971,11 @@ window.openExistingChat = async (chatId, itemId, isSellerStr, interlocutorName) 
     const badge = document.getElementById('chat-role-badge');
     if (badge) {
         if (isSeller) {
-            badge.innerText = "ПРОДАЖА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-indigo-500";
+            badge.innerText = window.t ? window.t("ПРОДАЖА") : "ПРОДАЖА"; 
+            badge.className = "bg-indigo-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent";
         } else {
-            badge.innerText = "ПОКУПКА"; badge.className = "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-white bg-emerald-500";
+            badge.innerText = window.t ? window.t("ПОКУПКА") : "ПОКУПКА"; 
+            badge.className = "bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm shrink-0 border border-transparent";
         }
     }
 
