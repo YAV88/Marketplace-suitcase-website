@@ -40,7 +40,6 @@
         <div class="bg-white dark:bg-stone-900 p-2 sm:p-6 rounded-[2rem] shadow-sm border border-stone-200 dark:border-stone-800 min-h-[500px] flex flex-col transition-colors">
             
             <div class="flex flex-col lg:flex-row justify-between gap-4 mb-6 p-2 sm:p-0">
-                <!-- СЕНЬОР-ФИКС: Вкладки со счетчиками -->
                 <div class="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-xl w-full lg:w-max shrink-0 overflow-x-auto custom-scrollbar border border-stone-200 dark:border-stone-700">
                     <button onclick="switchTab('items')" id="tab-items" class="flex-1 lg:flex-none px-5 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0">
                         <i class="fa-solid fa-box-open text-brand-500"></i> Товары <span id="count-items" class="bg-stone-200 dark:bg-stone-600 px-2 py-0.5 rounded-md text-[10px]">0</span>
@@ -57,6 +56,11 @@
                 </div>
                 
                 <div class="flex gap-2 w-full lg:w-auto">
+                    <!-- СЕНЬОР-ФИКС: Кнопка массовой рассылки (показывается только на вкладке пользователей) -->
+                    <button id="admin-broadcast-btn" onclick="adminBroadcastMessage()" class="hidden bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-3 rounded-xl font-bold text-sm transition items-center justify-center gap-2 shadow-sm shrink-0 whitespace-nowrap">
+                        <i class="fa-solid fa-bullhorn"></i> Рассылка
+                    </button>
+
                     <select id="admin-category-filter" onchange="renderList()" class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition cursor-pointer max-w-[150px]">
                         <option value="">Все категории</option>
                         <option value="Одежда">Одежда</option> <option value="Электроника">Электроника</option> <option value="Интерьер">Интерьер</option>
@@ -66,7 +70,6 @@
 
                     <div class="relative flex-1 lg:w-64 shrink-0">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
-                        <!-- СЕНЬОР-ФИКС: Заменили oninput="renderList()" на handleAdminSearch() для дебаунса -->
                         <input type="text" id="admin-search" oninput="handleAdminSearch()" placeholder="Поиск товаров..." class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl pl-11 pr-4 py-3 text-sm font-medium outline-none focus:border-brand-500 text-stone-900 dark:text-white transition shadow-inner">
                     </div>
                 </div>
@@ -98,14 +101,12 @@
         }
         initTheme();
 
-        // КЛЮЧИ SUPABASE
         const supabaseUrl = 'https://jeinonooelndbtjalnwa.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplaW5vbm9vZWxuZGJ0amFsbndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjUwNDMsImV4cCI6MjA5MjIwMTA0M30.3g4TS3XSnnZujgXmyxSIy3d9SbiX7BSUOreq3LPH6gI';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let adminState = { items: [], profiles: [], reports: [], proRequests: [], currentTab: 'items', isLoading: true };
 
-        // Debounce для быстрого и плавного поиска
         let searchTimer;
         window.handleAdminSearch = () => {
             clearTimeout(searchTimer);
@@ -144,11 +145,11 @@
                 adminState.proRequests = proRes.data || [];
                 adminState.isLoading = false;
 
-                // Обновляем бейджи со счетчиками
+                // СЕНЬОР-ФИКС: Счетчик PRO теперь считает ТОЛЬКО новые заявки, а не все подряд
                 document.getElementById('count-items').innerText = adminState.items.length;
                 document.getElementById('count-users').innerText = adminState.profiles.length;
                 document.getElementById('count-reports').innerText = adminState.reports.length;
-                document.getElementById('count-pro').innerText = adminState.proRequests.length;
+                document.getElementById('count-pro').innerText = adminState.proRequests.filter(r => r.status === 'pending').length;
 
                 renderList();
             } catch (e) { showError(`Ошибка: ${e.message}`); }
@@ -159,9 +160,10 @@
             const tabs = ['items', 'users', 'reports', 'pro'];
             const searchInput = document.getElementById('admin-search');
             const catFilter = document.getElementById('admin-category-filter');
+            const broadcastBtn = document.getElementById('admin-broadcast-btn');
             
-            const activeClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0";
-            const inactiveClass = "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0";
+            const activeClass = "flex-1 lg:flex-none px-5 py-2.5 rounded-lg bg-white dark:bg-stone-700 shadow-sm font-bold text-sm text-stone-900 dark:text-white transition flex items-center justify-center gap-2 shrink-0";
+            const inactiveClass = "flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-stone-500 dark:text-stone-400 font-bold text-sm hover:text-stone-900 dark:hover:text-white transition flex items-center justify-center gap-2 shrink-0";
             
             tabs.forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
@@ -171,19 +173,21 @@
             if (tab === 'items') {
                 searchInput.placeholder = "Поиск товаров...";
                 catFilter.style.display = "block"; 
+                broadcastBtn.style.display = 'none';
             } else if (tab === 'users') {
-                searchInput.placeholder = "Поиск по email или ID...";
+                searchInput.placeholder = "Поиск по email или имени...";
                 catFilter.style.display = "none"; catFilter.value = ""; 
+                broadcastBtn.style.display = 'flex'; // Показываем кнопку рассылки
             } else {
                 searchInput.placeholder = "Поиск...";
                 catFilter.style.display = "none"; catFilter.value = ""; 
+                broadcastBtn.style.display = 'none';
             }
             
             searchInput.value = '';
             renderList();
         }
 
-        // --- ФУНКЦИИ ДЛЯ ПЕРЕХОДОВ И ДУБЛИКАТОВ ---
         window.findUser = function(userId) {
             document.getElementById('admin-search').value = userId;
             switchTab('users');
@@ -195,16 +199,6 @@
             switchTab('items');
         };
 
-        window.showDuplicateInfo = function(origId) {
-            const orig = adminState.items.find(i => i.id === origId);
-            if (!orig) return;
-            const origDate = new Date(orig.created_at).toLocaleString('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'});
-            const text = `ОРИГИНАЛЬНЫЙ ТОВАР:\nНазвание: ${orig.title}\nСоздан: ${origDate}\nЦена: ${orig.price} ${orig.currency}\n\nСКОПИРУЙТЕ ID НИЖЕ И ВСТАВЬТЕ В ПОИСК:`;
-            prompt(text, orig.id);
-        };
-        // ------------------------------------------
-
-        // Вспомогательная функция для подсчета оставшегося времени
         function getTimeLeft(dateStr) {
             if (!dateStr) return '';
             const diff = new Date(dateStr) - new Date();
@@ -222,11 +216,14 @@
             const catFilter = document.getElementById('admin-category-filter').value;
             list.innerHTML = '';
 
+            // СЕНЬОР-ФИКС: SVG заглушка для сломанных картинок
+            const defaultImage = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%3E%3Cg%20transform%3D%22translate(320%2C%20220)%20scale(0.3)%22%20fill%3D%22%23a8a29e%22%3E%3Cpath%20d%3D%22M512%20144v288c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V144c0-26.5%2021.5-48%2048-48h88l12.3-32.9c7-18.7%2024.9-31.1%2044.9-31.1h125.5c20%200%2037.9%2012.4%2044.9%2031.1L376%2096h88c26.5%200%2048%2021.5%2048%2048zM256%20424c70.7%200%20128-57.3%20128-128s-57.3-128-128-128-128%2057.3-128%20128%2057.3%20128%20128%20128z%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22400%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22800%22%20fill%3D%22%23a8a29e%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%3E%D0%9D%D0%95%D0%A2%20%D0%A4%D0%9E%D0%A2%D0%9E%3C%2Ftext%3E%3C%2Fsvg%3E";
+
             if (adminState.currentTab === 'items') {
                 const filteredItems = adminState.items.filter(item => {
                     const matchSearch = (item.title || '').toLowerCase().includes(searchTerm) || 
                                         item.id.toLowerCase().includes(searchTerm) ||
-                                        (item.user_id || '').toLowerCase().includes(searchTerm); // Разрешаем поиск по ID пользователя
+                                        (item.user_id || '').toLowerCase().includes(searchTerm);
                     const matchCat = catFilter === "" || (item.category && item.category.startsWith(catFilter));
                     return matchSearch && matchCat;
                 });
@@ -234,17 +231,16 @@
                 if (filteredItems.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-30 block"></i>Товары не найдены</div>';
                 
                 filteredItems.forEach(item => {
-                    const imgUrl = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://via.placeholder.com/150');
+                    let imgUrl = defaultImage;
+                    if (Array.isArray(item.images) && item.images.length > 0 && item.images[0]) { imgUrl = item.images[0]; } 
+                    else if (item.image_url) { imgUrl = item.image_url; }
+
                     const isVIP = item.highlighted_until ? new Date(item.highlighted_until) > new Date() : false;
                     const timeLeftHtml = isVIP ? `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] ml-2 animate-pulse">${getTimeLeft(item.highlighted_until)}</span>` : '';
                     
-                    // БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ
-                    const duplicateItem = adminState.items.find(i => i.user_id === item.user_id && i.id !== item.id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
-                    // --- БЕЗОПАСНАЯ ЛОГИКА ДУБЛИКАТОВ (Умная группировка) ---
                     const duplicates = adminState.items.filter(i => i.user_id === item.user_id && (i.title || '').toLowerCase() === (item.title || '').toLowerCase());
                     const isDuplicate = duplicates.length > 1;
 
-                    // Если дублей больше 1, показываем кнопку. Сохраняем title в data-атрибут, чтобы не сломать кавычки.
                     const dupBadge = isDuplicate 
                         ? `<button data-title="${(item.title || '').replace(/"/g, '&quot;')}" onclick="document.getElementById('admin-search').value = this.dataset.title; renderList();" class="bg-red-100 text-red-600 border border-red-200 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ml-2 shadow-sm cursor-pointer hover:bg-red-200 hover:scale-105 transition" title="Отфильтровать и показать копии">📦 ${duplicates.length} копий</button>` 
                         : '';
@@ -252,12 +248,14 @@
                     list.insertAdjacentHTML('beforeend', `
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-stone-50 dark:bg-stone-800 border ${isDuplicate ? 'border-red-300 dark:border-red-800' : 'border-stone-200 dark:border-stone-700'} rounded-xl hover:border-stone-300 transition gap-4 shadow-sm">
                             <div class="flex items-center gap-4 overflow-hidden w-full sm:w-auto">
-                                <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200 dark:border-stone-700">
+                                <img src="${imgUrl}" class="w-14 h-14 rounded-lg object-cover shrink-0 border border-stone-200 dark:border-stone-700 bg-stone-200">
                                 <div class="overflow-hidden">
                                     <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center">
                                         ${isVIP ? '<i class="fa-solid fa-crown text-amber-500 mr-1"></i>' : ''}
                                         ${item.title || 'Без названия'} ${timeLeftHtml} ${dupBadge}
                                     </div>
+                                    <!-- СЕНЬОР-ФИКС: Добавлен ID товара, который можно легко скопировать -->
+                                    <div class="text-[10px] text-stone-400 font-mono mt-0.5 select-all bg-stone-100 dark:bg-stone-900 w-max px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">ID: ${item.id}</div>
                                     <div class="text-xs text-stone-500 font-bold mt-1">
                                         <span class="bg-stone-200 dark:bg-stone-700 px-2 py-0.5 rounded text-[10px] text-stone-600 dark:text-stone-300 mr-1">${item.category || 'Другое'}</span> 
                                         Автор: <span onclick="findUser('${item.user_id}')" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 hover:underline cursor-pointer" title="Посмотреть профиль пользователя">${item.author_name}</span>
@@ -266,7 +264,6 @@
                                 </div>
                             </div>
                             <div class="flex flex-row gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
-                                <!-- СЕНЬОР-ФИКС: Кнопка редактирования -->
                                 <button onclick="openEditModal('${item.id}')" class="flex-1 sm:flex-none bg-white dark:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-600 hover:border-brand-500 hover:text-brand-600 px-4 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 shadow-sm">
                                     <i class="fa-solid fa-pen"></i> Ред.
                                 </button>
@@ -288,7 +285,7 @@
                 if (filteredUsers.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-users text-4xl mb-3 opacity-30 block"></i>Пользователи не найдены</div>';
 
                 filteredUsers.forEach(user => {
-                    const avatarUrl = user.avatar_url || 'https://via.placeholder.com/150';
+                    const avatarUrl = user.avatar_url || defaultImage;
                     const isPro = user.pro_until ? new Date(user.pro_until) > new Date() : false;
                     const itemsCount = adminState.items.filter(i => i.user_id === user.id).length;
                     const regDate = new Date(user.created_at).toLocaleDateString('ru-RU');
@@ -301,7 +298,6 @@
                     const statusBadge = isBanned ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase ml-2">ЗАБЛОКИРОВАН</span>` : '';
                     const banInfo = isBanned ? `<div class="text-xs text-red-600 dark:text-red-400 mt-1 font-bold">Причина: ${user.ban_reason || 'Не указана'}</div>` : '';
                     
-                    // Таймер PRO для пользователя
                     const proTimer = isPro ? `<span class="text-amber-600 text-[10px] ml-1">(${getTimeLeft(user.pro_until)})</span>` : '';
 
                     list.insertAdjacentHTML('beforeend', `
@@ -316,6 +312,8 @@
                                         ${isPro ? `<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest flex items-center gap-1">VIP ${proTimer}</span>` : ''}
                                         ${statusBadge}
                                     </div>
+                                    <!-- СЕНЬОР-ФИКС: Добавлен ID юзера -->
+                                    <div class="text-[10px] text-stone-400 font-mono mt-0.5 mb-1 select-all bg-stone-100 dark:bg-stone-900 w-max px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">ID: ${user.id}</div>
                                     <div class="flex flex-wrap gap-2 text-xs text-stone-500 font-bold items-center mb-1">
                                         <span><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</span>
                                         ${phoneDisplay}
@@ -326,12 +324,17 @@
                             </div>
                             
                             <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 bg-stone-50 dark:bg-stone-900/50 p-2 rounded-xl border border-stone-100 dark:border-stone-800">
+                                
+                                <!-- СЕНЬОР-ФИКС: Кнопка написать сообщение пользователю -->
+                                <button onclick="adminMessageToUser('${user.id}', this)" class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-500 hover:text-white px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm" title="Написать предупреждение в чат">
+                                    <i class="fa-solid fa-comment-dots mr-1.5"></i> Написать
+                                </button>
+
                                 <div class="flex items-center gap-1 bg-amber-50 dark:bg-amber-900/20 rounded-lg p-1 border border-amber-100 dark:border-amber-800/50">
                                     <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mx-1" title="Токены поднятий">BUMP</span>
                                     <input type="number" id="bump-${user.id}" value="${user.bump_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-amber-200 dark:border-amber-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
                                 </div>
 
-                                <!-- Кнопка выдачи галочки -->
                                 <button onclick="toggleVerification('${user.id}', ${isVerified}, this)" class="w-9 h-9 rounded-lg transition flex items-center justify-center shadow-sm ${isVerified ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-stone-200 dark:hover:bg-stone-700' : 'bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-blue-500 hover:text-white'}" title="${isVerified ? 'Снять верификацию' : 'Выдать галочку верификации'}">
                                     <i class="fa-solid fa-shield-check"></i>
                                 </button>
@@ -341,7 +344,7 @@
                                     <input type="number" id="vip-${user.id}" value="${user.vip_tokens || 0}" class="w-14 bg-white dark:bg-stone-800 border border-purple-200 dark:border-purple-700 rounded p-1 text-center text-sm font-bold text-stone-700 dark:text-stone-300 outline-none">
                                 </div>
                                 <button onclick="updateTokens('${user.id}', this)" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 hover:bg-brand-500 hover:text-white px-3 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition shadow-sm" title="Сохранить токены">
-                                    <i class="fa-solid fa-floppy-disk mr-1"></i> Сохранить
+                                    <i class="fa-solid fa-floppy-disk"></i>
                                 </button>
                                 <div class="h-6 w-px bg-stone-200 dark:bg-stone-700 hidden sm:block"></div>
                                 <button onclick="togglePro('${user.id}', ${isPro}, this)" class="flex-1 sm:flex-none ${isPro ? 'bg-amber-100 text-amber-600 hover:bg-stone-200 dark:bg-amber-900/30' : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400 hover:bg-amber-500 hover:text-white'} px-4 py-2 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2">
@@ -413,7 +416,6 @@
                     `);
                 });
             } else if (adminState.currentTab === 'pro_requests') {
-                // НОВАЯ ЛОГИКА ДЛЯ ЗАЯВОК НА PRO
                 const pendingRequests = adminState.proRequests.filter(r => r.status === 'pending');
                 
                 if (pendingRequests.length === 0) return list.innerHTML = '<div class="text-center py-20 text-stone-400 font-bold"><i class="fa-solid fa-crown text-4xl mb-3 opacity-30 block"></i>Новых заявок на PRO нет</div>';
@@ -441,13 +443,133 @@
             }
         }
 
+        // ==========================================
+        // СЕНЬОР-ФИКС: Функции написания сообщений
+        // ==========================================
+        window.adminMessageToUser = async (userId, btn) => {
+            const text = prompt("Введите текст предупреждения/сообщения для пользователя:");
+            if (!text) return;
+            
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                const { data: { user: adminUser } } = await supabaseClient.auth.getUser();
+                
+                // Пытаемся найти любой существующий чат между нами
+                let { data: chat } = await supabaseClient.from('chats')
+                    .select('id')
+                    .or(`and(buyer_id.eq.${adminUser.id},seller_id.eq.${userId}),and(buyer_id.eq.${userId},seller_id.eq.${adminUser.id})`)
+                    .limit(1)
+                    .maybeSingle();
+                    
+                let chatId;
+                if (chat) {
+                    chatId = chat.id;
+                } else {
+                    // Создаем новый чат, привязываясь к первому попавшемуся товару юзера (или любому, если товаров нет)
+                    const userItem = adminState.items.find(i => i.user_id === userId);
+                    const fallbackItemId = userItem ? userItem.id : (adminState.items[0]?.id || null);
+                    
+                    const { data: newChat, error } = await supabaseClient.from('chats')
+                        .insert([{ buyer_id: adminUser.id, seller_id: userId, item_id: fallbackItemId }])
+                        .select().single();
+                        
+                    if (error) throw error;
+                    chatId = newChat.id;
+                }
+                
+                const { error: msgError } = await supabaseClient.from('messages').insert([{
+                    chat_id: chatId,
+                    sender_id: adminUser.id,
+                    text: "⚠️ СООБЩЕНИЕ ОТ МОДЕРАТОРА:\n\n" + text
+                }]);
+                if (msgError) throw msgError;
+                
+                alert("Предупреждение успешно отправлено!");
+            } catch (e) {
+                alert("Ошибка отправки: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        };
+
+        window.adminBroadcastMessage = async () => {
+            const text = prompt("Введите текст массовой рассылки для ВСЕХ пользователей:");
+            if (!text) return;
+            
+            const usersCount = adminState.profiles.length;
+            if (!confirm(`Вы уверены, что хотите отправить это сообщение ${usersCount} пользователям? Это может занять несколько секунд.`)) return;
+            
+            const btn = document.getElementById('admin-broadcast-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Отправка...';
+            
+            try {
+                const { data: { user: adminUser } } = await supabaseClient.auth.getUser();
+                let successCount = 0;
+                
+                // Фильтруем себя, чтобы не слать письмо самому себе
+                const targets = adminState.profiles.filter(p => p.id !== adminUser.id);
+                
+                // Отправляем пачками по 5, чтобы не словить лимиты базы данных (Rate Limits)
+                for (let i = 0; i < targets.length; i += 5) {
+                    const chunk = targets.slice(i, i + 5);
+                    const promises = chunk.map(async (u) => {
+                        try {
+                            let { data: chat } = await supabaseClient.from('chats')
+                                .select('id')
+                                .or(`and(buyer_id.eq.${adminUser.id},seller_id.eq.${u.id}),and(buyer_id.eq.${u.id},seller_id.eq.${adminUser.id})`)
+                                .limit(1)
+                                .maybeSingle();
+                                
+                            let chatId;
+                            if (chat) {
+                                chatId = chat.id;
+                            } else {
+                                const userItem = adminState.items.find(it => it.user_id === u.id);
+                                const fallbackItemId = userItem ? userItem.id : (adminState.items[0]?.id || null);
+                                const { data: newChat, error } = await supabaseClient.from('chats')
+                                    .insert([{ buyer_id: adminUser.id, seller_id: u.id, item_id: fallbackItemId }])
+                                    .select().single();
+                                if (!error) chatId = newChat.id;
+                            }
+                            
+                            if (chatId) {
+                                await supabaseClient.from('messages').insert([{
+                                    chat_id: chatId,
+                                    sender_id: adminUser.id,
+                                    text: "📢 ИНФОРМАЦИЯ ОТ АДМИНИСТРАЦИИ SVALKA:\n\n" + text
+                                }]);
+                                successCount++;
+                            }
+                        } catch (err) { console.error("Ошибка при отправке: " + u.id); }
+                    });
+                    
+                    await Promise.all(promises);
+                    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${successCount} / ${targets.length}`;
+                }
+                
+                alert(`Рассылка завершена! Доставлено: ${successCount} пользователям.`);
+            } catch (e) {
+                alert("Критическая ошибка рассылки: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        };
+        // ==========================================
+
         async function togglePro(userId, currentStatus, btn) {
-            let days = 30; // По умолчанию
+            let days = 30;
             const makeVip = !currentStatus;
             
             if (makeVip) {
                 const inputDays = prompt("На сколько дней выдать VIP?", "30");
-                if (inputDays === null) return; // Отмена
+                if (inputDays === null) return;
                 days = parseInt(inputDays, 10);
                 if (isNaN(days) || days <= 0) return alert("Введите корректное число дней!");
             }
@@ -455,11 +577,10 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             try {
-                // Передаем новый параметр days в Supabase
                 const { error } = await supabaseClient.rpc('admin_set_vip_v2', {
                     target_user_id: userId,
                     make_vip: makeVip,
-                    vip_days: days // <--- Новый параметр
+                    vip_days: days
                 });
                 
                 if (error) throw new Error(error.message);
@@ -491,7 +612,7 @@
                 const { error: rpcErr } = await supabaseClient.rpc('admin_set_vip_v2', { 
                     target_user_id: userId, 
                     make_vip: true,
-                    vip_days: days // <--- Новый параметр
+                    vip_days: days
                 });
                 if (rpcErr) throw new Error("Сервер: " + rpcErr.message);
                 
@@ -526,8 +647,6 @@
             renderList();
         }
 
-
-        // СОХРАНЕНИЕ ТОКЕНОВ (BUMP и VIP)
         async function updateTokens(userId, btn) {
             const bumpInput = document.getElementById(`bump-${userId}`);
             const vipInput = document.getElementById(`vip-${userId}`);
@@ -572,7 +691,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. Вытягиваем точные пути файлов из ПРАВИЛЬНЫХ переменных
                 const item = adminState.items.find(i => i.id === itemId);
                 let filesToDelete = [];
                 
@@ -589,18 +707,13 @@
                     });
                 }
                 
-                // 2. УДАЛЯЕМ ФАЙЛЫ ЧЕРЕЗ JAVASCRIPT API
                 if (filesToDelete.length > 0) {
                     const { data, error: storageError } = await supabaseClient.storage.from('item-images').remove(filesToDelete);
-                    if (storageError) console.error("Ошибка удаления фото:", storageError);
-                    else console.log("Успешно удалены фото:", data);
                 }
 
-                // 3. Удаляем товар из базы
                 const { error } = await supabaseClient.rpc('admin_delete_item', { target_item_id: itemId });
                 if (error) throw error;
                 
-                // 4. Обновляем интерфейс
                 adminState.items = adminState.items.filter(i => i.id !== itemId);
                 btn.closest('.border').style.opacity = '0'; 
                 setTimeout(() => renderList(), 300);
@@ -618,7 +731,6 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            // Используем защищенный серверный метод RPC
             const { error } = await supabaseClient.rpc('admin_ban_user', { target_user_id: userId, reason: reason });
             
             if (error) { 
@@ -640,7 +752,6 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
-            // Используем защищенный серверный метод RPC
             const { error } = await supabaseClient.rpc('admin_unban_user', { target_user_id: userId });
             
             if (error) { 
@@ -662,7 +773,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
-                // 1. СОБИРАЕМ КАРТИНКИ ИЗ ПРАВИЛЬНЫХ ПЕРЕМЕННЫХ
                 const userItems = adminState.items.filter(i => i.user_id === userId);
                 let itemFilesToDelete = [];
                 
@@ -686,7 +796,6 @@
                     if (match && match[1]) avatarToDelete = decodeURIComponent(match[1]);
                 }
 
-                // 2. УДАЛЯЕМ ФОТОГРАФИИ ТОВАРОВ
                 if (itemFilesToDelete.length > 0) {
                     for (let i = 0; i < itemFilesToDelete.length; i += 50) {
                         const chunk = itemFilesToDelete.slice(i, i + 50);
@@ -694,12 +803,10 @@
                     }
                 }
                 
-                // 3. УДАЛЯЕМ АВАТАР
                 if (avatarToDelete) {
                     await supabaseClient.storage.from('avatars').remove([avatarToDelete]);
                 }
 
-                // 4. УДАЛЯЕМ САМ АККАУНТ ИЗ БАЗЫ
                 const { error } = await supabaseClient.rpc('admin_delete_user', { target_user_id: userId });
                 if (error) throw error;
                 
@@ -735,7 +842,6 @@
             renderList(); }
         }
 
-        // --- ЛОГИКА РЕДАКТИРОВАНИЯ ---
         window.openEditModal = (itemId) => {
             const item = adminState.items.find(i => i.id === itemId);
             if (!item) return;
@@ -793,7 +899,6 @@
             finally { btn.disabled = false; btn.innerHTML = originalHtml; }
         };
 
-        // --- ЛОГИКА ВЕРИФИКАЦИИ ПОЛЬЗОВАТЕЛЕЙ ---
         window.toggleVerification = async (userId, currentStatus, btn) => {
             btn.disabled = true;
             const originalHtml = btn.innerHTML;
@@ -814,7 +919,7 @@
         initAdminPanel();
     </script>
 
-    <!-- СЕНЬОР-ФИКС: Модальное окно быстрого редактирования -->
+    <!-- Модальное окно быстрого редактирования -->
     <div id="admin-edit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-stone-900 w-full max-w-md rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-stone-200 dark:border-stone-800 relative transform scale-95 transition-transform duration-300" id="admin-edit-modal-content">
             <button onclick="closeEditModal()" class="absolute top-5 right-5 text-stone-400 hover:text-red-500 transition text-2xl"><i class="fa-solid fa-xmark"></i></button>
@@ -835,7 +940,6 @@
                     </div>
                     <div class="flex-1">
                         <label class="text-xs font-bold text-stone-500 uppercase tracking-widest block mb-1.5 pl-1">Категория</label>
-                        <!-- Используем текстовое поле, чтобы не сломать сложную структуру подкатегорий (Напр. 'Одежда - Обувь') -->
                         <input type="text" id="edit-item-category" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-stone-900 dark:text-white font-medium transition-colors" required>
                     </div>
                 </div>
