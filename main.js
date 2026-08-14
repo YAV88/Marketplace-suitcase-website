@@ -1196,6 +1196,9 @@ window.closeModal = id => {
                 document.body.classList.remove('modal-open');
                 window.toggleBodyScroll(false); 
                 document.body.style.paddingRight = '';
+                
+                // Возвращаем навигацию на "Главную", если все окна закрыты
+                if (typeof window.updateBottomNav === 'function') window.updateBottomNav('home');
             }
         }
     }
@@ -4172,3 +4175,54 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 // ==========================================
+
+// ==========================================
+// СЕНЬОР-ФИКС: Контроллер анимации нижней навигации
+// ==========================================
+window.updateBottomNav = (activeTabId) => {
+    const tabs = ['home', 'saved', 'chat', 'profile'];
+    
+    tabs.forEach(tab => {
+        const btn = document.getElementById(`bot-nav-${tab}`);
+        if (!btn) return;
+        
+        const iconWrap = btn.querySelector('.nav-icon-wrap');
+        const icon = btn.querySelector('i');
+        
+        // Включаем активное состояние
+        if (tab === activeTabId) {
+            btn.classList.add('text-brand-500');
+            btn.classList.remove('text-stone-400', 'dark:text-stone-500', 'hover:text-stone-600', 'dark:hover:text-stone-300');
+            
+            if (iconWrap) {
+                iconWrap.classList.add('bg-brand-50', 'dark:bg-brand-900/30');
+                iconWrap.classList.remove('bg-transparent');
+            }
+            
+            if (icon) {
+                icon.style.transform = 'scale(1.15)';
+                // Делаем иконку залитой (Solid)
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+            }
+        } else {
+            // Выключаем и переводим в спящий режим
+            btn.classList.remove('text-brand-500');
+            btn.classList.add('text-stone-400', 'dark:text-stone-500', 'hover:text-stone-600', 'dark:hover:text-stone-300');
+            
+            if (iconWrap) {
+                iconWrap.classList.remove('bg-brand-50', 'dark:bg-brand-900/30');
+                iconWrap.classList.add('bg-transparent');
+            }
+            
+            if (icon) {
+                icon.style.transform = 'scale(1)';
+                // Возвращаем иконкам контурный вид (Regular) для легкости интерфейса
+                if (tab === 'chat' || tab === 'profile') {
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                }
+            }
+        }
+    });
+};
