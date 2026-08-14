@@ -24,7 +24,7 @@
 </head>
 <body class="p-4 sm:p-8 text-stone-800 dark:text-stone-200 bg-[#f5f5f4] dark:bg-[#1c1917] transition-colors min-h-screen">
 
-    <div class="max-w-5xl mx-auto">
+    <div class="w-full max-w-[1600px] mx-auto">
         
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
             <div class="flex items-center gap-3">
@@ -301,31 +301,35 @@
                     const proTimer = isPro ? `<span class="text-amber-600 text-[10px] ml-1">(${getTimeLeft(user.pro_until)})</span>` : '';
 
                     list.insertAdjacentHTML('beforeend', `
-                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 ${cardClass} border rounded-xl hover:shadow-md transition gap-4">
-                            <div class="flex items-center gap-4 overflow-hidden w-full lg:w-auto flex-1">
+                        <!-- СЕНЬОР-ФИКС: xl:flex-row вместо lg:flex-row для более позднего переноса кнопок на ноутбуках -->
+                        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center p-4 ${cardClass} border rounded-xl hover:shadow-md transition gap-4">
+                            <!-- СЕНЬОР-ФИКС: Убрали жесткое усечение (overflow-hidden) для текста -->
+                            <div class="flex items-center gap-4 w-full xl:w-auto flex-1 min-w-0">
                                 <div class="relative shrink-0">
                                     <img src="${avatarUrl}" class="w-14 h-14 rounded-full object-cover bg-stone-100 border-2 border-stone-200 dark:border-stone-700">
                                 </div>
-                                <div class="overflow-hidden w-full">
-                                    <div class="font-black text-stone-800 dark:text-white truncate text-base flex items-center gap-2 mb-1">
+                                <div class="w-full min-w-0">
+                                    <!-- СЕНЬОР-ФИКС: flex-wrap вместо truncate, чтобы длинные имена и бейджи переносились, а не обрезались -->
+                                    <div class="font-black text-stone-800 dark:text-white text-base flex flex-wrap items-center gap-2 mb-1">
                                         ${user.full_name || 'Без имени'} ${verifiedBadge} 
                                         ${isPro ? `<span class="bg-amber-100 text-amber-600 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest flex items-center gap-1">VIP ${proTimer}</span>` : ''}
                                         ${statusBadge}
                                     </div>
-                                    <!-- СЕНЬОР-ФИКС: Добавлен ID юзера -->
                                     <div class="text-[10px] text-stone-400 font-mono mt-0.5 mb-1 select-all bg-stone-100 dark:bg-stone-900 w-max px-1.5 py-0.5 rounded border border-stone-200 dark:border-stone-700">ID: ${user.id}</div>
                                     <div class="flex flex-wrap gap-2 text-xs text-stone-500 font-bold items-center mb-1">
-                                        <span><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</span>
+                                        <span class="break-all"><i class="fa-regular fa-envelope mr-1"></i>${user.email || 'Нет email'}</span>
                                         ${phoneDisplay}
                                     </div>
-                                    <div class="text-xs font-medium text-stone-400">Регистрация: ${regDate} • Товаров: <span onclick="findUserItems('${user.id}')" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 font-bold hover:underline cursor-pointer" title="Посмотреть все товары пользователя">${itemsCount}</span></div>
+                                    <div class="text-xs font-medium text-stone-400 flex flex-wrap gap-1">
+                                        <span>Регистрация: ${regDate}</span> <span>• Товаров:</span> <span onclick="findUserItems('${user.id}')" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 font-bold hover:underline cursor-pointer" title="Посмотреть все товары пользователя">${itemsCount}</span>
+                                    </div>
                                     ${banInfo}
                                 </div>
                             </div>
                             
-                            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 bg-stone-50 dark:bg-stone-900/50 p-2 rounded-xl border border-stone-100 dark:border-stone-800">
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full xl:w-auto shrink-0 bg-stone-50 dark:bg-stone-900/50 p-2 rounded-xl border border-stone-100 dark:border-stone-800">
                                 
-                                <!-- СЕНЬОР-ФИКС: Кнопка написать сообщение пользователю -->
+                                <!-- Кнопка написать сообщение пользователю -->
                                 <button onclick="adminMessageToUser('${user.id}', this)" class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-500 hover:text-white px-3 py-1.5 h-9 rounded-lg font-bold text-xs transition flex items-center justify-center shadow-sm" title="Написать предупреждение в чат">
                                     <i class="fa-solid fa-comment-dots mr-1.5"></i> Написать
                                 </button>
