@@ -531,10 +531,12 @@ export const ItemsModule = {
                         vipSection.classList.remove('hidden');
 
                         initialVips.forEach(v => { 
-                            if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
+                            if (!v.isPlaceholder && !window.loadedItems.find(i => i.id === v.id)) {
+                                window.loadedItems.push(v); 
+                            }
                         });
 
-                        // СЕНЬОР-ФИКС: Единый глобальный таймер для VIP-ленты (Без крашей при смене вкладок)
+                        // Единый глобальный таймер для VIP-ленты (Без крашей при смене вкладок)
                         if (window.vipCascadeGlobalTimer) {
                             clearInterval(window.vipCascadeGlobalTimer);
                         }

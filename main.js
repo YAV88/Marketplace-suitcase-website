@@ -1643,22 +1643,37 @@ window.saveProfile = async (event) => {
     const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
     try {
-        // Обновляем и full_name, и name (чтобы перебить кэш Google OAuth)
+        // 1. Обновляем Auth Метаданные (перебиваем кэш Google)
         const { data, error } = await supabase.auth.updateUser({
             data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
         });
         if (error) throw error;
 
-        // Мгновенно обновляем имя и аватарку во всех УЖЕ созданных товарах пользователя
-        await supabase.from('items').update({ 
-            author_name: name, 
-            author_avatar: avatar 
+        // 2. СЕНЬОР-ФИКС: Жестко обновляем таблицу profiles
+        await window.supabase.from('profiles').update({
+            full_name: name,
+            avatar_url: avatar,
+            phone: phone
+        }).eq('id', data.user.id);
+
+        // 3. СЕНЬОР-ФИКС: Массово обновляем имя во всех уже созданных товарах!
+        await window.supabase.from('items').update({
+            author_name: name,
+            author_avatar: avatar
         }).eq('user_id', data.user.id);
 
-        window.currentUser = data.user;
-        window.handleAuthChange({ user: data.user });
+        // 4. Обновляем локального пользователя в памяти
+        window.currentUser = { ...data.user, full_name: name, avatar_url: avatar };
+        if (window.currentUser.user_metadata) {
+            window.currentUser.user_metadata.full_name = name;
+            window.currentUser.user_metadata.name = name;
+        }
 
-        // Обновляем локальный кэш товаров без перезагрузки страницы
+        if (typeof window.handleAuthChange === 'function') {
+            window.handleAuthChange({ user: window.currentUser });
+        }
+
+        // 5. Переписываем имя в уже загруженных товарах в памяти браузера, чтобы не перезагружать страницу
         if (window.loadedItems) {
             window.loadedItems.forEach(item => {
                 if (item.userId === data.user.id || item.user_id === data.user.id) {
@@ -1673,7 +1688,7 @@ window.saveProfile = async (event) => {
         window.closeModal('edit-profile-modal');
         window.showToast("Профиль обновлен во всех карточках!");
         
-        // Перерисовываем ленту и профиль, чтобы изменения сразу отразились на экране
+        // Перерисовываем интерфейс с новыми данными
         if (typeof window.fetchItems === 'function') window.fetchItems(false);
         if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs(true);
         
@@ -2555,7 +2570,6 @@ window.submitNewItem = async (event) => {
             images: finalImages,
             image_url: finalImages[0] || '',
             user_id: window.currentUser.id,
-            // Берем отредактированные данные из корня профиля, и только потом из Google-меты
             author_name: window.currentUser.full_name || window.currentUser.name || window.currentUser.user_metadata?.full_name || window.currentUser.user_metadata?.name || 'Продавец',
             author_avatar: window.currentUser.avatar_url || window.currentUser.user_metadata?.avatar_url || '',
             status: 'active',
@@ -4149,7 +4163,7 @@ window.applyVipToItem = window.toggleItemVip;
 // ==========================================
 // БЕСШОВНОЕ ОБНОВЛЕНИЕ VIP-ЛЕНТЫ ПРИ ФОКУСЕ
 // ==========================================
-let isVipRefreshing = false; // Защита от спама запросами (Race Condition)
+let isVipRefreshing = false; 
 
 window.refreshVipOnly = async () => {
     if (isVipRefreshing || window.showUrgentOnly) return;
@@ -4167,10 +4181,11 @@ window.refreshVipOnly = async () => {
             
         if (data && data.length > 0) {
             let realVips = data.map(window.mapItemData).filter(Boolean);
-            let targetLength = realVips.length <= 5 ? 5 : 10;
+            let targetLength = 10; // СЕНЬОР-ФИКС: Всегда ровно 10 слотов
             
             let vipItems = [...realVips].sort(() => 0.5 - Math.random());
             
+            // Забиваем пустые места рекламными заглушками
             if (vipItems.length < targetLength) {
                 const placeholdersNeeded = targetLength - vipItems.length;
                 for (let j = 0; j < placeholdersNeeded; j++) {
@@ -4192,7 +4207,10 @@ window.refreshVipOnly = async () => {
             }
             
             initialVips.forEach(v => { 
-                if (!window.loadedItems.find(i => i.id === v.id)) window.loadedItems.push(v); 
+                // ЗАЩИТА! Не пускаем заглушки в глобальный массив обычной ленты (loadedItems)
+                if (!v.isPlaceholder && !window.loadedItems.find(i => i.id === v.id)) {
+                    window.loadedItems.push(v); 
+                }
             });
         }
     } catch (e) {
