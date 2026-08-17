@@ -1643,24 +1643,22 @@ window.saveProfile = async (event) => {
     const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
     try {
-        // 1. Обновляем Auth Метаданные (Здесь full_name нужен для Google)
-        const { data, error: authErr } = await supabase.auth.updateUser({
+        // 1. Обновляем Auth Метаданные (Здесь безопасно сохраняются phone и full_name от Google)
+        const { data, error: authErr } = await window.supabase.auth.updateUser({
             data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
         });
         if (authErr) throw authErr;
 
-        // 2. СЕНЬОР-ФИКС: Обновляем ТОЛЬКО те колонки, которые реально есть в таблице profiles
-        const { error: profileErr } = await supabase.from('profiles').update({
-            name: name, // <- full_name убрали отсюда, так как его нет в таблице
-            avatar_url: avatar,
-            phone: phone
+        // 2. СЕНЬОР-ФИКС: Убираем phone, обновляем только те колонки, которые точно есть в profiles
+        const { error: profileErr } = await window.supabase.from('profiles').update({
+            name: name,
+            avatar_url: avatar
         }).eq('id', data.user.id);
         
-        // Если Supabase заблокировал обновление - прерываем процесс и показываем ошибку
         if (profileErr) throw new Error("Ошибка БД (Profiles): " + profileErr.message);
 
         // 3. Обновляем товары со СТРОГОЙ проверкой ошибки
-        const { error: itemsErr } = await supabase.from('items').update({
+        const { error: itemsErr } = await window.supabase.from('items').update({
             author_name: name,
             author_avatar: avatar
         }).eq('user_id', data.user.id);
@@ -1672,6 +1670,7 @@ window.saveProfile = async (event) => {
         if (window.currentUser.user_metadata) {
             window.currentUser.user_metadata.name = name;
             window.currentUser.user_metadata.full_name = name;
+            window.currentUser.user_metadata.phone = phone; // Сохраняем телефон в локальную память
         }
 
         if (typeof window.handleAuthChange === 'function') {
