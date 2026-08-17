@@ -103,22 +103,27 @@ export const ItemsModule = {
     // 2. КАРТОЧКА ТОВАРА
     // ==========================================
     createCardHtml: (i, isVIP, isProfileView = false) => {
+        const t = window.t || (text => text);
         
         // Рендер премиальной рекламной заглушки для пустых VIP-слотов
         if (i.isPlaceholder) {
+            // Безопасный перевод с фоллбеком на русский (если ключи в словаре еще не созданы)
+            const title = t('vip_empty_title') !== 'vip_empty_title' ? t('vip_empty_title') : 'Место в ТОПе<br>свободно';
+            const desc = t('vip_empty_desc') !== 'vip_empty_desc' ? t('vip_empty_desc') : 'Твой товар увидят<br>тысячи покупателей';
+            const btn = t('vip_empty_btn') !== 'vip_empty_btn' ? t('vip_empty_btn') : 'Занять место';
+
             return `
             <div onclick="window.openModal('crypto-modal')" class="item-card bg-stone-50/50 dark:bg-stone-800/30 border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-2xl overflow-hidden cursor-pointer flex flex-col items-center justify-center relative w-full h-full min-h-[250px] transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 hover:bg-orange-50/50 dark:hover:bg-orange-900/10 group">
                 <div class="w-14 h-14 rounded-full bg-stone-200 dark:bg-stone-700 group-hover:bg-gradient-to-br group-hover:from-orange-400 group-hover:to-orange-600 flex items-center justify-center text-stone-400 group-hover:text-white mb-3 shadow-sm group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)] transition-all duration-500 group-hover:scale-110">
                     <i class="fa-solid fa-fire-flame-curved text-xl transition-all duration-500"></i>
                 </div>
-                <h4 class="font-black text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white text-center mb-1 px-4 leading-tight transition-colors">Место в ТОПе<br>свободно</h4>
-                <p class="text-[10px] font-bold text-stone-400 text-center px-4 mb-4 group-hover:text-stone-500 transition-colors">Твой товар увидят<br>тысячи покупателей</p>
-                <div class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 group-hover:bg-orange-500 group-hover:text-white text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-sm transition-all duration-300 pointer-events-none">Занять место</div>
+                <h4 class="font-black text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white text-center mb-1 px-4 leading-tight transition-colors">${title}</h4>
+                <p class="text-[10px] font-bold text-stone-400 text-center px-4 mb-4 group-hover:text-stone-500 transition-colors">${desc}</p>
+                <div class="bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 group-hover:bg-orange-500 group-hover:text-white text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl shadow-sm transition-all duration-300 pointer-events-none">${btn}</div>
             </div>`;
         }
 
-        const t = window.t || (text => text);
-
+        // Дальше идет старый код, начинающийся с...
         const safeTitle = escapeHtml(i.title || 'Без названия');
         let rawDesc = i.description ? i.description.replace(/<[^>]+>/g, ' ').replace(/[\n\r]+/g, ' ').trim() : t('Описание отсутствует.');
         if (rawDesc.length > 400) rawDesc = rawDesc.substring(0, 400) + '...';
