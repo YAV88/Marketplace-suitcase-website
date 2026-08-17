@@ -1219,7 +1219,7 @@ window.closeModal = id => {
         if (addTitle) addTitle.innerText = window.t ? window.t('add_title') : "Пристроить добро";
         if (addBtn) addBtn.innerText = window.t ? window.t('btn_publish_item') : "Опубликовать";
         const formEl = document.getElementById('add-form'); if (formEl) formEl.reset();
-        window.tempPhotos = []; window.editExistingImages = [];
+        window.tempPhotos = []; window.editExistingImages = []; window.mainPhotoIndex = 0;
         const photoList = document.getElementById('photo-preview-list'); if (photoList) photoList.innerHTML = '';
         if (typeof window.backToAddStep1 === 'function') {
             window.backToAddStep1();
@@ -2314,6 +2314,7 @@ window.editItem = async (id) => {
 
     window.editExistingImages = item.images || [];
     window.tempPhotos = []; 
+    window.mainPhotoIndex = 0; 
     window.renderPhotoPreviews();
 
     document.getElementById('del-meet').checked = item.delivery ? item.delivery.includes('Личная встреча') : true;
@@ -2523,7 +2524,7 @@ window.submitNewItem = async (event) => {
 
         if (!titleEl || !cityEl || !priceEl) throw new Error("Заполните все обязательные поля");
 
-        let finalImages = window.editingItemId ? (window.editExistingImages || []) : [];
+        let finalImages = window.editingItemId ? [...(window.editExistingImages || [])] : [];
         function dataURItoBlob(dataURI) {
             const byteString = atob(dataURI.split(',')[1]);
             const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -2557,6 +2558,12 @@ window.submitNewItem = async (event) => {
         if (progText) progText.innerText = `Сохранение данных...`;
         if (progBar) progBar.style.width = `95%`;
         if (progPerc) progPerc.innerText = `95%`;
+
+        // Вытаскиваем выбранное главное фото и ставим его на 1-е место (индекс 0)
+        if (window.mainPhotoIndex > 0 && window.mainPhotoIndex < finalImages.length) {
+            const mainImg = finalImages.splice(window.mainPhotoIndex, 1)[0];
+            finalImages.unshift(mainImg);
+        }
 
         const itemData = {
             item_type: window.currentAddType || 'product',
@@ -2621,18 +2628,82 @@ window.submitNewItem = async (event) => {
     }
 };
 
+// ==========================================
+// СЕНЬОР-ФИКС: Логика выбора главного фото
+// ==========================================
+window.mainPhotoIndex = 0;
+
+window.setMainPhoto = (idx) => {
+    window.mainPhotoIndex = idx;
+    window.renderPhotoPreviews();
+};
+
 window.renderPhotoPreviews = () => {
-    const list = document.getElementById('photo-preview-list'); if (!list) return; let html = '';
+    const list = document.getElementById('photo-preview-list'); 
+    if (!list) return; 
+    let html = '';
+    
+    let absIndex = 0; // Абсолютный счетчик для сквозной нумерации
+    const totalPhotos = (window.editExistingImages?.length || 0) + (window.tempPhotos?.length || 0);
+    
+    // Защита от выхода за пределы массива при удалениях
+    if (window.mainPhotoIndex >= totalPhotos) window.mainPhotoIndex = 0;
+
     (window.editExistingImages || []).forEach((src, i) => {
-        html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${escapeHtml(safeImageUrl(src))}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+        const isMain = absIndex === window.mainPhotoIndex;
+        html += `
+        <div class="relative w-24 h-24 sm:w-28 sm:h-28 bg-stone-100 rounded-xl shrink-0 border-2 ${isMain ? 'border-brand-500 shadow-md scale-[1.02]' : 'border-stone-200 dark:border-stone-700'} mt-2 group transition-all">
+            <img src="${escapeHtml(safeImageUrl(src))}" class="w-full h-full object-cover rounded-xl">
+            
+            ${isMain 
+                ? `<div class="absolute bottom-0 left-0 right-0 bg-brand-500 text-white text-[9px] sm:text-[10px] font-black uppercase text-center py-1 rounded-b-xl shadow-sm">Главная</div>` 
+                : `<button type="button" onclick="window.setMainPhoto(${absIndex})" class="absolute bottom-1 left-1 right-1 bg-black/60 hover:bg-black/80 backdrop-blur-sm text-white text-[9px] font-bold py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all cursor-pointer shadow-sm">Сделать главной</button>`
+            }
+            
+            <button type="button" onclick="window.removePhoto('existing', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+        absIndex++;
     });
+
     (window.tempPhotos || []).forEach((dataUrl, i) => {
-        html += `<div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl shrink-0 border border-stone-200 dark:border-stone-700 mt-2"><img src="${dataUrl}" class="w-full h-full object-cover rounded-xl"><button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button></div>`;
+        const isMain = absIndex === window.mainPhotoIndex;
+        html += `
+        <div class="relative w-24 h-24 sm:w-28 sm:h-28 bg-stone-100 rounded-xl shrink-0 border-2 ${isMain ? 'border-brand-500 shadow-md scale-[1.02]' : 'border-stone-200 dark:border-stone-700'} mt-2 group transition-all">
+            <img src="${dataUrl}" class="w-full h-full object-cover rounded-xl">
+            
+            ${isMain 
+                ? `<div class="absolute bottom-0 left-0 right-0 bg-brand-500 text-white text-[9px] sm:text-[10px] font-black uppercase text-center py-1 rounded-b-xl shadow-sm">Главная</div>` 
+                : `<button type="button" onclick="window.setMainPhoto(${absIndex})" class="absolute bottom-1 left-1 right-1 bg-black/60 hover:bg-black/80 backdrop-blur-sm text-white text-[9px] font-bold py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all cursor-pointer shadow-sm">Сделать главной</button>`
+            }
+
+            <button type="button" onclick="window.removePhoto('temp', ${i})" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-md hover:scale-110 hover:bg-red-600 transition cursor-pointer z-10"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+        absIndex++;
     });
     list.innerHTML = html;
 };
 
-window.removePhoto = (type, index) => { if (type === 'existing') window.editExistingImages.splice(index, 1); else window.tempPhotos.splice(index, 1); window.renderPhotoPreviews(); };
+window.removePhoto = (type, index) => { 
+    let removedAbsIndex = 0;
+    
+    // Удаляем из правильного массива и вычисляем сквозной индекс
+    if (type === 'existing') {
+        removedAbsIndex = index;
+        window.editExistingImages.splice(index, 1); 
+    } else {
+        removedAbsIndex = (window.editExistingImages?.length || 0) + index;
+        window.tempPhotos.splice(index, 1); 
+    }
+
+    // Умная корректировка индекса главной фотографии при удалении
+    if (window.mainPhotoIndex === removedAbsIndex) {
+        window.mainPhotoIndex = 0; // Если удалили главную, первой становится главная
+    } else if (window.mainPhotoIndex > removedAbsIndex) {
+        window.mainPhotoIndex--; // Сдвигаем индекс влево
+    }
+
+    window.renderPhotoPreviews(); 
+};
 
 window.previewPhotos = async (e) => {
     const files = Array.from(e.target.files); 
