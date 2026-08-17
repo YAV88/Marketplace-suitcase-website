@@ -3355,7 +3355,10 @@ window.triggerShare = async (platform) => {
     if (!targetId || !window.currentUser) return;
 
     const item = window.loadedItems.find(i => i.id === targetId);
+    
+    // Делаем текст репоста богатым и привлекательным (раз превью картинки статичное)
     const title = item ? item.title : 'SVALKA';
+    const price = item ? `${item.price} ${item.currency}` : '';
 
     // Генерируем уникальный токен
     const shareToken = `sh_${window.currentUser.id}_${targetId}_${Date.now().toString(36)}`;
@@ -3369,17 +3372,19 @@ window.triggerShare = async (platform) => {
         }
     } catch (e) { console.error(e); }
 
-    const text = `Смотри, что продают на SVALKA: ${title}`;
+    // Формируем красивое сообщение для мессенджеров
+    const text = `🔥 Смотри, что продают на SVALKA!\n\n📦 ${title}\n💰 Цена: ${price}\n\nПосмотреть фото и контакты:`;
 
     if (platform === 'telegram') {
         window.open(`https://t.me/share/url?url=${encodeURIComponent(trackingUrl)}&text=${encodeURIComponent(text)}`, '_blank');
     } else if (platform === 'whatsapp') {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + trackingUrl)}`, '_blank');
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + "\n" + trackingUrl)}`, '_blank');
     } else if (platform === 'viber') {
-        window.open(`viber://forward?text=${encodeURIComponent(text + " " + trackingUrl)}`, '_blank');
+        window.open(`viber://forward?text=${encodeURIComponent(text + "\n" + trackingUrl)}`, '_blank');
     } else if (platform === 'copy') {
-        navigator.clipboard.writeText(trackingUrl);
-        window.showToast("Уникальная ссылка скопирована!");
+        // Копируем и текст, и ссылку
+        navigator.clipboard.writeText(`${text}\n${trackingUrl}`);
+        window.showToast("Описание и ссылка скопированы!");
     }
 
     // Прячем кнопки соцсетей и показываем радар ожидания
@@ -3623,30 +3628,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС) ---
+// --- СКРЫТАЯ ПРОВЕРКА ВХОДЯЩИХ КЛИКОВ (АВТОМАТИЧЕСКИЙ БОНУС И ОТКРЫТИЕ) ---
 window.checkIncomingShareClick = async () => {
     try {
         const urlParams = new URLSearchParams(window.location.search);
         const shareToken = urlParams.get('share');
         const itemId = urlParams.get('item');
 
+        // 1. АВТОМАТИЧЕСКОЕ ОТКРЫТИЕ ТОВАРА ПО ССЫЛКЕ
+        if (itemId && !window.activeModalItemId) {
+            // Ждем 500мс, чтобы DOM и базовые скрипты ленты успели проинициализироваться
+            setTimeout(() => {
+                if (typeof window.openItemDetails === 'function') {
+                    window.openItemDetails(itemId);
+                }
+            }, 500);
+        }
+
         if (!shareToken || !itemId) return;
 
-        // Проверяем, не сам ли владелец кликнул по своей ссылке
-        if (window.currentUser && shareToken.includes(`sh_${window.currentUser.id}`)) return;
+        // 2. БЕЗОПАСНАЯ ПРОВЕРКА РЕПОСТА И ПОДНЯТИЕ В ТОП
+        // Даем время модулю авторизации подтянуть window.currentUser (обычно 300-500мс)
+        setTimeout(async () => {
+            // Проверяем, не сам ли владелец кликнул по своей ссылке
+            if (window.currentUser && shareToken.includes(`sh_${window.currentUser.id}`)) return;
 
-        // Защита от спама перезагрузками в одной вкладке
-        if (sessionStorage.getItem(`processed_share_${shareToken}`)) return;
+            // Защита от спама перезагрузками в одной вкладке
+            if (sessionStorage.getItem(`processed_share_${shareToken}`)) return;
 
-        // Вызываем защищенную серверную функцию, которая безопасно обновит БД
-        const { error } = await window.supabase.rpc('process_share_click', {
-            p_share_token: shareToken,
-            p_item_id: itemId
-        });
+            // Вызываем защищенную серверную функцию, которая безопасно обновит БД
+            const { error } = await window.supabase.rpc('process_share_click', {
+                p_share_token: shareToken,
+                p_item_id: itemId
+            });
 
-        if (!error) {
-            sessionStorage.setItem(`processed_share_${shareToken}`, 'true');
-        }
+            if (!error) {
+                sessionStorage.setItem(`processed_share_${shareToken}`, 'true');
+                console.log("Успех: Переход засчитан, товар поднят в ленте!");
+            }
+        }, 1500);
+
     } catch (err) {
         console.error("Ошибка при проверке ссылки:", err);
     }
