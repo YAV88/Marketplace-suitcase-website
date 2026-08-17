@@ -1643,25 +1643,30 @@ window.saveProfile = async (event) => {
     const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
     try {
-        // 1. Обновляем Auth Метаданные (перебиваем кэш Google)
-        const { data, error } = await supabase.auth.updateUser({
+        // 1. Обновляем Auth Метаданные
+        const { data, error: authErr } = await supabase.auth.updateUser({
             data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
         });
-        if (error) throw error;
+        if (authErr) throw authErr;
 
-        // 2. Жестко обновляем таблицу profiles (обновляем и name, и full_name)
-        await supabase.from('profiles').update({
+        // 2. СЕНЬОР-ФИКС: Обновляем таблицу профилей со СТРОГОЙ проверкой ошибки
+        const { error: profileErr } = await supabase.from('profiles').update({
             name: name,
             full_name: name,
             avatar_url: avatar,
             phone: phone
         }).eq('id', data.user.id);
+        
+        // Если Supabase заблокировал обновление - прерываем процесс и показываем ошибку
+        if (profileErr) throw new Error("Ошибка БД (Profiles): " + profileErr.message);
 
-        // 3. Массово обновляем имя во всех уже созданных товарах
-        await supabase.from('items').update({
+        // 3. Обновляем товары со СТРОГОЙ проверкой ошибки
+        const { error: itemsErr } = await supabase.from('items').update({
             author_name: name,
             author_avatar: avatar
         }).eq('user_id', data.user.id);
+        
+        if (itemsErr) throw new Error("Ошибка БД (Items): " + itemsErr.message);
 
         // 4. Обновляем локального пользователя в памяти
         window.currentUser = { ...data.user, name: name, full_name: name, avatar_url: avatar };
@@ -1674,7 +1679,7 @@ window.saveProfile = async (event) => {
             window.handleAuthChange({ user: window.currentUser });
         }
 
-        // 5. Переписываем имя в уже загруженных товарах в памяти браузера
+        // 5. Переписываем имя в уже загруженных товарах
         if (window.loadedItems) {
             window.loadedItems.forEach(item => {
                 if (item.userId === data.user.id || item.user_id === data.user.id) {
@@ -1687,13 +1692,14 @@ window.saveProfile = async (event) => {
         }
 
         window.closeModal('edit-profile-modal');
-        window.showToast("Профиль успешно обновлен!");
+        window.showToast("Профиль успешно обновлен!", "success");
         
-        // Перерисовываем интерфейс
         if (typeof window.fetchItems === 'function') window.fetchItems(false);
         if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs(true);
         
     } catch (e) {
+        console.error("Save Profile Error:", e);
+        // Теперь мы 100% увидим, если RLS нас блокирует!
         window.showToast(e.message, true);
     } finally {
         if (btn) { btn.disabled = false; btn.innerText = "Сохранить изменения"; }
