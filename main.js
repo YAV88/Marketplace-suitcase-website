@@ -1649,7 +1649,7 @@ window.saveProfile = async (event) => {
         });
         if (error) throw error;
 
-        // 2. СЕНЬОР-ФИКС: Жестко обновляем таблицу profiles (Добавлено поле name)
+        // 2. Жестко обновляем таблицу profiles (обновляем и name, и full_name)
         await supabase.from('profiles').update({
             name: name,
             full_name: name,
@@ -1687,9 +1687,9 @@ window.saveProfile = async (event) => {
         }
 
         window.closeModal('edit-profile-modal');
-        window.showToast("Профиль обновлен во всех карточках!");
+        window.showToast("Профиль успешно обновлен!");
         
-        // Перерисовываем интерфейс с новыми данными
+        // Перерисовываем интерфейс
         if (typeof window.fetchItems === 'function') window.fetchItems(false);
         if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs(true);
         
