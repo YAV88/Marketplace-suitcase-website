@@ -3849,6 +3849,14 @@ if (document.readyState === 'loading') {
 // Функция входа через провайдеров (OAuth)
 window.loginWithProvider = async (provider) => {
     try {
+        // СЕНЬОР-ФИКС: Если юзер находится на вкладке "Регистрация", запоминаем выбранного робота
+        if (window.authMode === 'register') {
+            const avatarEl = document.querySelector('input[name="avatar"]:checked');
+            if (avatarEl) {
+                localStorage.setItem('svalka_pending_avatar', avatarEl.value);
+            }
+        }
+
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: provider,
             options: {
@@ -3858,10 +3866,6 @@ window.loginWithProvider = async (provider) => {
         });
 
         if (error) throw error;
-        
-        // Supabase сам сделает редирект на страницу Google/Apple,
-        // поэтому тут делать ничего не нужно.
-
     } catch (err) {
         console.error('Ошибка входа через соцсеть:', err.message);
         if (typeof window.showToast === 'function') {
@@ -4283,3 +4287,41 @@ window.updateBottomNav = (activeTabId) => {
     });
 };
 
+// ==========================================
+// Перехватчик OAuth для применения выбранного робота-аватара
+// ==========================================
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+        const pendingAvatar = localStorage.getItem('svalka_pending_avatar');
+        if (pendingAvatar) {
+            // Удаляем из памяти, чтобы не затирать аватарку при будущих логинах
+            localStorage.removeItem('svalka_pending_avatar');
+            
+            try {
+                // 1. Перезаписываем Google-аватар в системной памяти авторизации
+                await supabase.auth.updateUser({ data: { avatar_url: pendingAvatar } });
+                
+                // 2. Жестко перезаписываем в публичном профиле
+                await supabase.from('profiles').update({ avatar_url: pendingAvatar }).eq('id', session.user.id);
+                
+                // 3. Обновляем в карточках товаров (на случай, если они уже есть)
+                await supabase.from('items').update({ author_avatar: pendingAvatar }).eq('user_id', session.user.id);
+                
+                // Мягко обновляем визуал без перезагрузки страницы
+                const profileAvatarCont = document.getElementById('profile-avatar-container');
+                if (profileAvatarCont) {
+                    profileAvatarCont.innerHTML = `<img src="${pendingAvatar}" alt="Аватар" class="w-full h-full object-cover transform scale-110 mt-2">`;
+                }
+                
+                if (window.currentUser) {
+                    window.currentUser.avatar_url = pendingAvatar;
+                    if (window.currentUser.user_metadata) {
+                        window.currentUser.user_metadata.avatar_url = pendingAvatar;
+                    }
+                }
+            } catch (err) {
+                console.error("Ошибка применения OAuth аватара:", err);
+            }
+        }
+    }
+});
