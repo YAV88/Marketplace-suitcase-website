@@ -1643,16 +1643,15 @@ window.saveProfile = async (event) => {
     const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
     try {
-        // 1. Обновляем Auth Метаданные
+        // 1. Обновляем Auth Метаданные (Здесь full_name нужен для Google)
         const { data, error: authErr } = await supabase.auth.updateUser({
             data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
         });
         if (authErr) throw authErr;
 
-        // 2. СЕНЬОР-ФИКС: Обновляем таблицу профилей со СТРОГОЙ проверкой ошибки
+        // 2. СЕНЬОР-ФИКС: Обновляем ТОЛЬКО те колонки, которые реально есть в таблице profiles
         const { error: profileErr } = await supabase.from('profiles').update({
-            name: name,
-            full_name: name,
+            name: name, // <- full_name убрали отсюда, так как его нет в таблице
             avatar_url: avatar,
             phone: phone
         }).eq('id', data.user.id);
@@ -1699,7 +1698,6 @@ window.saveProfile = async (event) => {
         
     } catch (e) {
         console.error("Save Profile Error:", e);
-        // Теперь мы 100% увидим, если RLS нас блокирует!
         window.showToast(e.message, true);
     } finally {
         if (btn) { btn.disabled = false; btn.innerText = "Сохранить изменения"; }
