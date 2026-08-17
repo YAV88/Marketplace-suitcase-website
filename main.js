@@ -4166,15 +4166,19 @@ window.refreshVipOnly = async () => {
             .limit(40);
             
         if (data && data.length > 0) {
-            let vipItems = data.map(window.mapItemData).filter(Boolean);
+            let realVips = data.map(window.mapItemData).filter(Boolean);
+            let targetLength = realVips.length <= 5 ? 5 : 10;
             
-            if (vipItems.length > 0 && vipItems.length < 10) {
-                const originalVips = [...vipItems];
-                while (vipItems.length < 10) vipItems.push(...originalVips);
-                vipItems = vipItems.slice(0, 10);
+            let vipItems = [...realVips].sort(() => 0.5 - Math.random());
+            
+            if (vipItems.length < targetLength) {
+                const placeholdersNeeded = targetLength - vipItems.length;
+                for (let j = 0; j < placeholdersNeeded; j++) {
+                    vipItems.push({ isPlaceholder: true, id: 'vip-placeholder-ref-' + j });
+                }
             }
             
-            window.vipPool = vipItems.sort(() => 0.5 - Math.random());
+            window.vipPool = vipItems;
             const initialVips = window.vipPool.slice(0, 10);
             
             // Если отрисовщик карточек доступен - мягко меняем HTML
