@@ -1649,31 +1649,32 @@ window.saveProfile = async (event) => {
         });
         if (error) throw error;
 
-        // 2. СЕНЬОР-ФИКС: Жестко обновляем таблицу profiles
-        await window.supabase.from('profiles').update({
+        // 2. СЕНЬОР-ФИКС: Жестко обновляем таблицу profiles (Добавлено поле name)
+        await supabase.from('profiles').update({
+            name: name,
             full_name: name,
             avatar_url: avatar,
             phone: phone
         }).eq('id', data.user.id);
 
-        // 3. СЕНЬОР-ФИКС: Массово обновляем имя во всех уже созданных товарах!
-        await window.supabase.from('items').update({
+        // 3. Массово обновляем имя во всех уже созданных товарах
+        await supabase.from('items').update({
             author_name: name,
             author_avatar: avatar
         }).eq('user_id', data.user.id);
 
         // 4. Обновляем локального пользователя в памяти
-        window.currentUser = { ...data.user, full_name: name, avatar_url: avatar };
+        window.currentUser = { ...data.user, name: name, full_name: name, avatar_url: avatar };
         if (window.currentUser.user_metadata) {
-            window.currentUser.user_metadata.full_name = name;
             window.currentUser.user_metadata.name = name;
+            window.currentUser.user_metadata.full_name = name;
         }
 
         if (typeof window.handleAuthChange === 'function') {
             window.handleAuthChange({ user: window.currentUser });
         }
 
-        // 5. Переписываем имя в уже загруженных товарах в памяти браузера, чтобы не перезагружать страницу
+        // 5. Переписываем имя в уже загруженных товарах в памяти браузера
         if (window.loadedItems) {
             window.loadedItems.forEach(item => {
                 if (item.userId === data.user.id || item.user_id === data.user.id) {
@@ -4279,145 +4280,3 @@ window.updateBottomNav = (activeTabId) => {
     });
 };
 
-// ==========================================
-// ПЕРЕХВАТЧИК СЕССИИ И МГНОВЕННОЕ ОБНОВЛЕНИЕ ПРОФИЛЯ
-// ==========================================
-
-// 1. Перехватываем обновление авторизации, чтобы убить кэш Google
-if (window.AuthModule && typeof window.AuthModule.handleAuthChange === 'function') {
-    const originalHandleAuthChange = window.AuthModule.handleAuthChange;
-    window.AuthModule.handleAuthChange = async (session) => {
-        if (session && session.user) {
-            try {
-                // Принудительно берем 100% актуальное имя из БД
-                const { data: profile } = await window.supabase.from('profiles').select('full_name, avatar_url').eq('id', session.user.id).single();
-                if (profile) {
-                    session.user.full_name = profile.full_name;
-                    session.user.name = profile.full_name; // Убиваем старое имя от Google
-                    session.user.avatar_url = profile.avatar_url;
-                    if (session.user.user_metadata) {
-                        session.user.user_metadata.full_name = profile.full_name;
-                        session.user.user_metadata.name = profile.full_name;
-                        session.user.user_metadata.avatar_url = profile.avatar_url;
-                    }
-                }
-            } catch(e) {}
-        }
-        return originalHandleAuthChange(session);
-    };
-    window.handleAuthChange = window.AuthModule.handleAuthChange;
-}
-
-// 2. Бронебойная функция сохранения
-window.saveProfile = async (event) => {
-    if (event) event.preventDefault();
-    const btn = document.getElementById('edit-submit-btn');
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>...'; }
-
-    const name = document.getElementById('edit-name').value.trim();
-    const phone = document.getElementById('edit-phone').value.trim();
-    const avatarEl = document.querySelector('input[name="edit_avatar"]:checked');
-    const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
-
-    try {
-        if (!window.currentUser) throw new Error("Пользователь не найден");
-
-        // Шаг 1: Обновляем метаданные авторизации
-        const { data: authData, error: authErr } = await window.supabase.auth.updateUser({
-            data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
-        });
-        if (authErr) throw authErr;
-
-        // Шаг 2: Жестко обновляем главную таблицу профилей
-        await window.supabase.from('profiles').update({
-            full_name: name, avatar_url: avatar, phone: phone
-        }).eq('id', window.currentUser.id);
-
-        // Шаг 3: Массово обновляем имя во всех товарах юзера!
-        await window.supabase.from('items').update({
-            author_name: name, author_avatar: avatar
-        }).eq('user_id', window.currentUser.id);
-
-        // Шаг 4: Мгновенное визуальное обновление (без ожидания загрузки)
-        const profileNameEl = document.getElementById('profile-name');
-        if (profileNameEl) profileNameEl.innerText = name;
-        
-        const profileAvatarCont = document.getElementById('profile-avatar-container');
-        if (profileAvatarCont) profileAvatarCont.innerHTML = `<img src="${avatar}" alt="Аватар" class="w-full h-full object-cover transform scale-110 mt-2">`;
-
-        // Обновляем товары, которые сейчас открыты на экране
-        if (window.loadedItems) {
-            window.loadedItems.forEach(item => {
-                if (item.userId === window.currentUser.id || item.user_id === window.currentUser.id) {
-                    item.authorName = name; item.author_name = name;
-                    item.authorAvatar = avatar; item.author_avatar = avatar;
-                }
-            });
-        }
-
-        // Закрепляем результат
-        if (typeof window.handleAuthChange === 'function') window.handleAuthChange({ user: authData.user });
-
-        window.closeModal('edit-profile-modal');
-        window.showToast("Профиль успешно обновлен!", "success");
-        
-    } catch (e) {
-        window.showToast(e.message, true);
-    } finally {
-        if (btn) { btn.disabled = false; btn.innerText = "Сохранить изменения"; }
-    }
-};
-
-// ==========================================
-// БЕСШОВНОЕ ОБНОВЛЕНИЕ VIP-ЛЕНТЫ (Фоновое)
-// ==========================================
-window.isVipRefreshing = false; 
-
-window.refreshVipOnly = async () => {
-    if (window.isVipRefreshing || window.showUrgentOnly) return;
-    const vipGrid = document.getElementById('vip-items-grid');
-    if (!vipGrid) return;
-    
-    window.isVipRefreshing = true;
-
-    try {
-        const { data } = await supabase.from('items').select('*').neq('status', 'sold').gt('highlighted_until', new Date().toISOString()).limit(40);
-            
-        if (data && data.length > 0) {
-            let realVips = data.map(window.mapItemData).filter(Boolean);
-            let targetLength = 10; // Строго 10 товаров для ТОПа
-            
-            let vipItems = [...realVips].sort(() => 0.5 - Math.random());
-            
-            // Добиваем пустые места рекламными заглушками
-            if (vipItems.length < targetLength) {
-                const placeholdersNeeded = targetLength - vipItems.length;
-                for (let j = 0; j < placeholdersNeeded; j++) {
-                    vipItems.push({ isPlaceholder: true, id: 'vip-placeholder-ref-' + j });
-                }
-            }
-            
-            window.vipPool = vipItems;
-            const initialVips = window.vipPool.slice(0, 10);
-            
-            if (typeof window.createCardHtml === 'function' || typeof ItemsModule !== 'undefined') {
-                const htmlBuilder = window.createCardHtml || ItemsModule.createCardHtml;
-                vipGrid.innerHTML = initialVips.map((i, idx) => `
-                    <div class="vip-slot transition-all duration-700 h-full flex transform-gpu w-full ${idx >= 8 ? 'hidden lg:flex' : ''}" data-slot="${idx}">
-                        ${htmlBuilder(i, true)}
-                    </div>
-                `).join('');
-            }
-            
-            initialVips.forEach(v => { 
-                // ЗАЩИТА: Заглушки НИКОГДА не попадут в общую ленту товаров
-                if (!v.isPlaceholder && !window.loadedItems.find(i => i.id === v.id)) {
-                    window.loadedItems.push(v); 
-                }
-            });
-        }
-    } catch (e) {
-    } finally {
-        window.isVipRefreshing = false;
-    }
-};
