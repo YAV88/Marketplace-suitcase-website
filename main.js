@@ -1643,16 +1643,40 @@ window.saveProfile = async (event) => {
     const avatar = avatarEl ? avatarEl.value : 'https://api.dicebear.com/9.x/bottts/svg?seed=R2D2';
 
     try {
+        // Обновляем и full_name, и name (чтобы перебить кэш Google OAuth)
         const { data, error } = await supabase.auth.updateUser({
-            data: { full_name: name, avatar_url: avatar, phone: phone } 
+            data: { full_name: name, name: name, avatar_url: avatar, phone: phone } 
         });
         if (error) throw error;
+
+        // Мгновенно обновляем имя и аватарку во всех УЖЕ созданных товарах пользователя
+        await supabase.from('items').update({ 
+            author_name: name, 
+            author_avatar: avatar 
+        }).eq('user_id', data.user.id);
 
         window.currentUser = data.user;
         window.handleAuthChange({ user: data.user });
 
+        // Обновляем локальный кэш товаров без перезагрузки страницы
+        if (window.loadedItems) {
+            window.loadedItems.forEach(item => {
+                if (item.userId === data.user.id || item.user_id === data.user.id) {
+                    item.authorName = name;
+                    item.author_name = name;
+                    item.authorAvatar = avatar;
+                    item.author_avatar = avatar;
+                }
+            });
+        }
+
         window.closeModal('edit-profile-modal');
-        window.showToast("Профиль обновлен!");
+        window.showToast("Профиль обновлен во всех карточках!");
+        
+        // Перерисовываем ленту и профиль, чтобы изменения сразу отразились на экране
+        if (typeof window.fetchItems === 'function') window.fetchItems(false);
+        if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs(true);
+        
     } catch (e) {
         window.showToast(e.message, true);
     } finally {
@@ -2531,8 +2555,9 @@ window.submitNewItem = async (event) => {
             images: finalImages,
             image_url: finalImages[0] || '',
             user_id: window.currentUser.id,
-            author_name: window.currentUser.user_metadata?.name || window.currentUser.user_metadata?.full_name || 'Продавец',
-            author_avatar: window.currentUser.user_metadata?.avatar_url || '',
+            // Берем отредактированные данные из корня профиля, и только потом из Google-меты
+            author_name: window.currentUser.full_name || window.currentUser.name || window.currentUser.user_metadata?.full_name || window.currentUser.user_metadata?.name || 'Продавец',
+            author_avatar: window.currentUser.avatar_url || window.currentUser.user_metadata?.avatar_url || '',
             status: 'active',
             coords: window.itemCoords || [0,0],
             deal_type: dealType,
