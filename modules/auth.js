@@ -1,8 +1,6 @@
-// modules/auth.js
 import { supabase } from '../config.js';
 import { safeImageUrl, renderSafeAvatar } from './security.js';
 
-// 1. Создаем черный список самых популярных одноразовых почт (Blacklist)
 const DISPOSABLE_DOMAINS = [
     'mailinator.com', '10minutemail.com', 'tempmail.com', 'guerrillamail.com', 
     'yopmail.com', 'throwawaymail.com', 'dropmail.me', 'getnada.com', 
@@ -18,21 +16,6 @@ export const AuthModule = {
                     if (typeof window.openModal === 'function') window.openModal('reset-password-modal');
                 }, 300);
                 return;
-            }
-            // Защита: Auto-Logout, если аккаунт удален в админке
-            if (session && session.user) {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                if (error || !user) {
-                    await supabase.auth.signOut();
-                    window.currentUser = null;
-                    if (window.userFavorites) window.userFavorites.clear();
-                    if (typeof window.closeModal === 'function') {
-                        window.closeModal('profile-modal');
-                        window.closeModal('edit-profile-modal');
-                    }
-                    if (typeof window.showToast === 'function') window.showToast("Ваш аккаунт был удален или сессия истекла", true);
-                    return;
-                }
             }
             AuthModule.handleAuthChange(session);
         });
@@ -62,8 +45,6 @@ export const AuthModule = {
             const btnLogoutProfile = document.getElementById('profile-logout-btn');
 
             if (session) {
-                // СЕНЬОР-ФИКС 1: МГНОВЕННОЕ ОБНОВЛЕНИЕ UI (Оптимистичный рендеринг)
-                // Сразу же показываем пользователю, что он вошел, не дожидаясь базы данных
                 window.currentUser = session.user;
                 const meta = session.user.user_metadata || {}; 
                 
@@ -88,35 +69,35 @@ export const AuthModule = {
                 if (btnEditProfile) { btnEditProfile.classList.remove('hidden'); btnEditProfile.classList.add('flex'); }
                 if (btnLogoutProfile) { btnLogoutProfile.classList.remove('hidden'); btnLogoutProfile.classList.add('flex'); }
 
-                // Закрываем окно авторизации МОМЕНТАЛЬНО
+                // Закрываем окно авторизации моментально, не дожидаясь базы данных
                 if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
 
-                // СЕНЬОР-ФИКС 2: ФОНОВАЯ ЗАГРУЗКА
-                // Запрашиваем профиль и склад параллельно, не блокируя интерфейс
+                // ОПТИМИЗАЦИЯ: Легкие фоновые запросы без блокировки сети
                 Promise.all([
                     supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
                     supabase.from('favorites').select('item_id').eq('user_id', session.user.id)
                 ]).then(([profileRes, favsRes]) => {
                     if (profileRes.data) {
                         window.currentUser = { ...window.currentUser, ...profileRes.data };
-                        // Тихо подменяем имя, если в БД оно отличается
                         const dbName = profileRes.data.name || userName;
                         safeSet('profile-name', dbName);
                         safeSet('header-user-name', dbName);
                     }
                     if (favsRes.data) {
                         window.userFavorites = new Set(favsRes.data.map(f => f.item_id));
+                        // Перекрашиваем сердечки/склад без перезагрузки всей ленты
+                        if (typeof window.syncUserFavorites === 'function') window.syncUserFavorites();
                     }
-                    
-                    // Обновляем списки только когда данные готовы
-                    if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
-                    if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
-                    if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
-                    if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
+
+                    // Даем интерфейсу "подышать" 1.5 секунды, и только потом грузим чаты
+                    setTimeout(() => {
+                        if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
+                        if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
+                    }, 1500);
+
                 }).catch(e => console.error("Фоновая ошибка:", e));
 
             } else {
-                // ЛОГИКА ДЛЯ ГОСТЯ (Срабатывает мгновенно при выходе)
                 window.currentUser = null;
                 window.userFavorites = new Set();
                 
@@ -164,9 +145,7 @@ export const AuthModule = {
         if (email) {
             const emailDomain = email.split('@')[1];
             if (emailDomain && DISPOSABLE_DOMAINS.includes(emailDomain)) {
-                if (typeof window.showToast === 'function') {
-                    window.showToast("Использование временных почт запрещено правилами SVALKA", true);
-                }
+                if (typeof window.showToast === 'function') window.showToast("Использование временных почт запрещено правилами SVALKA", true);
                 return;
             }
         }
@@ -190,9 +169,7 @@ export const AuthModule = {
             }
 
             const selectedAvatarEl = document.querySelector('input[name="avatar"]:checked');
-            if (selectedAvatarEl) {
-                avatarUrl = selectedAvatarEl.value;
-            }
+            if (selectedAvatarEl) avatarUrl = selectedAvatarEl.value;
         }
         
         try {
@@ -219,23 +196,17 @@ export const AuthModule = {
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) {
-                    if (error.message.includes('Invalid login credentials')) {
-                         throw new Error("Неверный email или пароль");
-                    }
+                    if (error.message.includes('Invalid login credentials')) throw new Error("Неверный email или пароль");
                     throw error;
                 }
                 
                 if (typeof window.showToast === 'function') window.showToast('С возвращением на SVALKA!', 'success');
-                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
             }
             
         } catch (err) {
             console.error("Auth Error:", err);
             let errorMsg = err.message;
-            
-            if (errorMsg.includes('Password should be at least')) {
-                errorMsg = 'Пароль должен быть не менее 6 символов';
-            }
+            if (errorMsg.includes('Password should be at least')) errorMsg = 'Пароль должен быть не менее 6 символов';
             
             if (typeof window.showToast === 'function') {
                 window.showToast(errorMsg, 'error');
@@ -249,29 +220,23 @@ export const AuthModule = {
     },
 
     logout: async () => {
-        // СЕНЬОР-ФИКС 3: ОПТИМИСТИЧНЫЙ ВЫХОД
-        // Мы больше не ждем сервер. Пользователь сразу видит, что он вышел!
-        
-        // 1. Мгновенно очищаем локальные данные
-        window.currentUser = null;
-        window.currentUserData = null;
-        if (window.userFavorites) window.userFavorites.clear();
-        
-        // 2. Закрываем окна и меню
-        if (typeof window.closeModal === 'function') window.closeModal('profile-modal');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
-            if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
-        }
-        
-        // 3. Мгновенно перестраиваем интерфейс (прячем кнопку профиля, показываем "Войти")
-        AuthModule.handleAuthChange(null);
-        
-        if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
-        if (typeof window.goHome === 'function') window.goHome();
-
-        // 4. Тихо отправляем запрос на сервер в фоне
         try {
+            // Оптимистичный выход: сначала убираем UI, потом делаем запрос
+            window.currentUser = null;
+            window.currentUserData = null;
+            if (window.userFavorites) window.userFavorites.clear();
+            
+            if (typeof window.closeModal === 'function') window.closeModal('profile-modal');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
+                if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
+            }
+            
+            AuthModule.handleAuthChange(null);
+            
+            if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
+            if (typeof window.goHome === 'function') window.goHome();
+
             await supabase.auth.signOut();
         } catch (error) {
             console.error("Ошибка при фоновом выходе:", error);
