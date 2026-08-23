@@ -1,4 +1,3 @@
-// modules/auth.js
 import { supabase } from '../config.js';
 import { safeImageUrl, renderSafeAvatar } from './security.js';
 
@@ -11,32 +10,15 @@ const DISPOSABLE_DOMAINS = [
 
 export const AuthModule = {
     checkUserSession: async () => {
-        // 1. СИНХРОННАЯ ПОДПИСКА (Выполняется мгновенно, ДО любых await)
+        // СЕНЬОР-ФИКС 1: Убираем смертельный await supabase.auth.getUser() из слушателя,
+        // который вызывал Deadlock (вечную загрузку без ошибок в консоли).
         supabase.auth.onAuthStateChange(async (event, session) => {
-            
-            // Перехват перехода по ссылке сброса пароля
             if (event === 'PASSWORD_RECOVERY') {
                 setTimeout(() => {
                     if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
                     if (typeof window.openModal === 'function') window.openModal('reset-password-modal');
-                }, 300); // Даем модальному менеджеру время на инициализацию
+                }, 300);
                 return;
-            }
-
-            // Защита: Auto-Logout, если аккаунт удален в админке
-            if (session && session.user) {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                if (error || !user) {
-                    await supabase.auth.signOut();
-                    window.currentUser = null;
-                    if (window.userFavorites) window.userFavorites.clear();
-                    if (typeof window.closeModal === 'function') {
-                        window.closeModal('profile-modal');
-                        window.closeModal('edit-profile-modal');
-                    }
-                    if (typeof window.showToast === 'function') window.showToast("Ваш аккаунт был удален или сессия истекла", true);
-                    return;
-                }
             }
             AuthModule.handleAuthChange(session);
         });
@@ -69,7 +51,6 @@ export const AuthModule = {
 
             if (session) {
                 window.currentUser = session.user;
-                // === ИСПРАВЛЕНИЕ: Вытягиваем скрытые метаданные ===
                 const meta = session.user.user_metadata || {}; 
                 
                 try {
@@ -77,10 +58,9 @@ export const AuthModule = {
                     if (profile) window.currentUser = { ...window.currentUser, ...profile };
                 } catch(e) {}
 
-                // Ищем аватарку: сначала в профиле, затем в метаданных (сохраненную при регистрации), затем генерируем дефолтную (версия 9.x)
                 const rawAvatarUrl = window.currentUser?.avatar_url || meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
-                // avatar_url приходит из пользовательских метаданных — валидируем схему URL перед использованием
                 const avatarUrl = safeImageUrl(rawAvatarUrl, `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`);
+                
                 document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
                 
                 const profileAvatarCont = document.getElementById('profile-avatar-container');
@@ -89,8 +69,6 @@ export const AuthModule = {
                 }
 
                 const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-                
-                // Ищем имя: в профиле ИЛИ в метаданных ИЛИ ставим стандартное
                 const userName = window.currentUser?.name || window.currentUser?.full_name || meta.name || meta.full_name || 'Свалкер';
                 
                 safeSet('profile-name', userName);
@@ -110,7 +88,7 @@ export const AuthModule = {
                     window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                 } catch(e) {}
 
-                // СЕНЬОР-ФИКС: Принудительно закрываем окно входа после успешной авторизации
+                // СЕНЬОР-ФИКС 2: Принудительно закрываем окно входа после успешной авторизации
                 if (typeof window.closeModal === 'function') {
                     window.closeModal('auth-modal');
                 }
@@ -161,19 +139,17 @@ export const AuthModule = {
 
         if (!emailEl || !passwordEl || !btn) return;
 
-        // Приводим email к нижнему регистру для надежности
         const email = emailEl.value.trim().toLowerCase();
         const password = passwordEl.value;
         const originalText = btn.innerHTML;
 
-        // СЕНЬОР-ЛОГИКА: 1. Проверка на одноразовую почту
         if (email) {
             const emailDomain = email.split('@')[1];
             if (emailDomain && DISPOSABLE_DOMAINS.includes(emailDomain)) {
                 if (typeof window.showToast === 'function') {
                     window.showToast("Использование временных почт запрещено правилами SVALKA", true);
                 }
-                return; // Останавливаем регистрацию
+                return;
             }
         }
 
@@ -206,7 +182,6 @@ export const AuthModule = {
             btn.disabled = true;
 
             if (isRegister) {
-                // СЕНЬОР-ЛОГИКА: 2. Регистрация и перехват дубликатов
                 const { error } = await supabase.auth.signUp({ 
                     email, 
                     password,
@@ -214,19 +189,16 @@ export const AuthModule = {
                 });
                 
                 if (error) {
-                    // Если почта уже есть в базе, Supabase вернет ошибку "User already registered" (или статус 400)
                     if (error.message.includes('already registered') || error.status === 400) {
                         throw new Error("Эта электронная почта уже используется. Пожалуйста, войдите в аккаунт.");
                     }
                     throw error;
                 }
 
-                // При регистрации не делаем reload страницы, чтобы пользователь точно увидел это уведомление
                 if (typeof window.showToast === 'function') window.showToast("Письмо с подтверждением отправлено на вашу почту!", "success");
                 if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
 
             } else {
-                // Логика входа (Login)
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) {
                     if (error.message.includes('Invalid login credentials')) {
@@ -236,9 +208,8 @@ export const AuthModule = {
                 }
                 
                 if (typeof window.showToast === 'function') window.showToast('С возвращением на SVALKA!', 'success');
-                // СЕНЬОР-ФИКС: Мы больше не делаем принудительный window.location.reload()
-                // Вместо этого событие onAuthStateChange (в checkUserSession) само вызовет handleAuthChange
-                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
+                // СЕНЬОР-ФИКС 3: Убрана принудительная перезагрузка. 
+                // Теперь Supabase сам вызовет onAuthStateChange и перерисует интерфейс мгновенно.
             }
             
         } catch (err) {
@@ -249,31 +220,28 @@ export const AuthModule = {
                 errorMsg = 'Пароль должен быть не менее 6 символов';
             }
             
-            // Выводим понятную ошибку пользователю
             if (typeof window.showToast === 'function') {
                 window.showToast(errorMsg, 'error');
             } else {
                 alert("Ошибка: " + errorMsg);
             }
         } finally {
-            // СЕНЬОР-ФИКС: Железобетонное восстановление кнопки всегда!
+            // СЕНЬОР-ФИКС 4: Железобетонный возврат кнопки в исходное состояние при любом исходе
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
     },
 
-    // СЕНЬОР-ФИКС: Правильная логика выхода (Logout)
+    // СЕНЬОР-ФИКС 5: Мгновенный выход без перезагрузки всей страницы
     logout: async () => {
         try {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
             
-            // 1. Очищаем стейт пользователя в памяти
             window.currentUser = null;
             window.currentUserData = null;
             if (window.userFavorites) window.userFavorites.clear();
             
-            // 2. Закрываем окна
             if (typeof window.closeModal === 'function') {
                 window.closeModal('profile-modal');
             }
@@ -282,12 +250,10 @@ export const AuthModule = {
                 if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
             }
             
-            // 3. Вызываем функцию перестройки интерфейса мгновенно
             AuthModule.handleAuthChange(null);
             
             if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
             
-            // 4. Опционально: возвращаем пользователя на главную
             if (typeof window.goHome === 'function') window.goHome();
 
         } catch (error) {
@@ -296,10 +262,6 @@ export const AuthModule = {
         }
     }
 };
-
-// ==========================================
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ (Привязка к window для HTML)
-// ==========================================
 
 window.saveNewPassword = async (event) => {
     event.preventDefault();
@@ -319,14 +281,12 @@ window.saveNewPassword = async (event) => {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Сохранение...';
 
     try {
-        // Supabase знает, кого обновлять, так как в URL есть токен восстановления
         const { error } = await supabase.auth.updateUser({ password: password });
         if (error) throw error;
 
         if (typeof window.showToast === 'function') window.showToast("Пароль успешно изменен!", "success");
         if (typeof window.closeModal === 'function') window.closeModal('reset-password-modal');
         
-        // Очищаем адресную строку от технических токенов Supabase (чтобы было красиво)
         history.replaceState(null, document.title, window.location.pathname);
         
     } catch (err) {
