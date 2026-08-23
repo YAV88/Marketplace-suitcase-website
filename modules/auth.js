@@ -1,3 +1,4 @@
+// modules/auth.js
 import { supabase } from '../config.js';
 import { safeImageUrl, renderSafeAvatar } from './security.js';
 
@@ -41,7 +42,6 @@ export const AuthModule = {
         });
 
         // 2. БРОНЕБОЙНЫЙ ФОЛЛБЕК: Проверяем URL напрямую
-        // На случай, если редиректы браузера сбили событие Supabase
         if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
             setTimeout(() => {
                 if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
@@ -110,6 +110,11 @@ export const AuthModule = {
                     window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
                 } catch(e) {}
 
+                // СЕНЬОР-ФИКС: Принудительно закрываем окно входа после успешной авторизации
+                if (typeof window.closeModal === 'function') {
+                    window.closeModal('auth-modal');
+                }
+
                 if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
                 if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
                 if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
@@ -132,7 +137,7 @@ export const AuthModule = {
                 safeSet('profile-email', 'Не авторизован');
                 
                 const profileAvatarCont = document.getElementById('profile-avatar-container');
-                if (profileAvatarCont) profileAvatarCont.innerHTML = '<i class="fa-solid fa-user"></i>';
+                if (profileAvatarCont) profileAvatarCont.innerHTML = '<i class="fa-solid fa-user text-stone-400"></i>';
 
                 if (window.globalChatSubscription) {
                     supabase.removeChannel(window.globalChatSubscription);
@@ -231,8 +236,9 @@ export const AuthModule = {
                 }
                 
                 if (typeof window.showToast === 'function') window.showToast('С возвращением на SVALKA!', 'success');
+                // СЕНЬОР-ФИКС: Мы больше не делаем принудительный window.location.reload()
+                // Вместо этого событие onAuthStateChange (в checkUserSession) само вызовет handleAuthChange
                 if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
-                setTimeout(() => window.location.reload(), 1000); 
             }
             
         } catch (err) {
@@ -250,16 +256,44 @@ export const AuthModule = {
                 alert("Ошибка: " + errorMsg);
             }
         } finally {
+            // СЕНЬОР-ФИКС: Железобетонное восстановление кнопки всегда!
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
     },
 
+    // СЕНЬОР-ФИКС: Правильная логика выхода (Logout)
     logout: async () => {
         try {
-            await supabase.auth.signOut();
-            window.location.reload();
-        } catch (err) { console.error("Ошибка при выходе:", err); }
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+            
+            // 1. Очищаем стейт пользователя в памяти
+            window.currentUser = null;
+            window.currentUserData = null;
+            if (window.userFavorites) window.userFavorites.clear();
+            
+            // 2. Закрываем окна
+            if (typeof window.closeModal === 'function') {
+                window.closeModal('profile-modal');
+            }
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
+                if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
+            }
+            
+            // 3. Вызываем функцию перестройки интерфейса мгновенно
+            AuthModule.handleAuthChange(null);
+            
+            if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
+            
+            // 4. Опционально: возвращаем пользователя на главную
+            if (typeof window.goHome === 'function') window.goHome();
+
+        } catch (error) {
+            console.error("Ошибка при выходе:", error);
+            if (typeof window.showToast === 'function') window.showToast("Ошибка при выходе", true);
+        }
     }
 };
 
