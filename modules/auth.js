@@ -1,3 +1,4 @@
+// modules/auth.js
 import { supabase } from '../config.js';
 import { safeImageUrl, renderSafeAvatar } from './security.js';
 
@@ -10,8 +11,6 @@ const DISPOSABLE_DOMAINS = [
 
 export const AuthModule = {
     checkUserSession: async () => {
-        // СЕНЬОР-ФИКС 1: Убираем смертельный await supabase.auth.getUser() из слушателя,
-        // который вызывал Deadlock (вечную загрузку без ошибок в консоли).
         supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
                 setTimeout(() => {
@@ -20,10 +19,24 @@ export const AuthModule = {
                 }, 300);
                 return;
             }
+            // Защита: Auto-Logout, если аккаунт удален в админке
+            if (session && session.user) {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (error || !user) {
+                    await supabase.auth.signOut();
+                    window.currentUser = null;
+                    if (window.userFavorites) window.userFavorites.clear();
+                    if (typeof window.closeModal === 'function') {
+                        window.closeModal('profile-modal');
+                        window.closeModal('edit-profile-modal');
+                    }
+                    if (typeof window.showToast === 'function') window.showToast("Ваш аккаунт был удален или сессия истекла", true);
+                    return;
+                }
+            }
             AuthModule.handleAuthChange(session);
         });
 
-        // 2. БРОНЕБОЙНЫЙ ФОЛЛБЕК: Проверяем URL напрямую
         if (window.location.hash.includes('type=recovery') || window.location.search.includes('type=recovery')) {
             setTimeout(() => {
                 if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
@@ -31,7 +44,6 @@ export const AuthModule = {
             }, 300);
         }
 
-        // 3. Обычная загрузка сессии
         try {
             const { data: { session }, error } = await supabase.auth.getSession();
             if (error) throw error;
@@ -50,30 +62,23 @@ export const AuthModule = {
             const btnLogoutProfile = document.getElementById('profile-logout-btn');
 
             if (session) {
+                // СЕНЬОР-ФИКС 1: МГНОВЕННОЕ ОБНОВЛЕНИЕ UI (Оптимистичный рендеринг)
+                // Сразу же показываем пользователю, что он вошел, не дожидаясь базы данных
                 window.currentUser = session.user;
                 const meta = session.user.user_metadata || {}; 
                 
-                try {
-                    const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-                    if (profile) window.currentUser = { ...window.currentUser, ...profile };
-                } catch(e) {}
-
-                const rawAvatarUrl = window.currentUser?.avatar_url || meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
+                const rawAvatarUrl = meta.avatar_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`;
                 const avatarUrl = safeImageUrl(rawAvatarUrl, `https://api.dicebear.com/9.x/bottts/svg?seed=${session.user.id}`);
+                const userName = meta.name || meta.full_name || 'Свалкер';
                 
                 document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarUrl);
-                
                 const profileAvatarCont = document.getElementById('profile-avatar-container');
-                if (profileAvatarCont) {
-                    renderSafeAvatar(profileAvatarCont, avatarUrl);
-                }
+                if (profileAvatarCont) renderSafeAvatar(profileAvatarCont, avatarUrl);
 
                 const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-                const userName = window.currentUser?.name || window.currentUser?.full_name || meta.name || meta.full_name || 'Свалкер';
-                
                 safeSet('profile-name', userName);
                 safeSet('header-user-name', userName);
-                safeSet('profile-email', window.currentUser?.email || '');
+                safeSet('profile-email', session.user.email || '');
 
                 loginIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.setProperty('display', 'none', 'important'); });
                 menuIds.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.style.setProperty('display', 'flex', 'important'); } });
@@ -83,22 +88,35 @@ export const AuthModule = {
                 if (btnEditProfile) { btnEditProfile.classList.remove('hidden'); btnEditProfile.classList.add('flex'); }
                 if (btnLogoutProfile) { btnLogoutProfile.classList.remove('hidden'); btnLogoutProfile.classList.add('flex'); }
 
-                try {
-                    const { data: favs } = await supabase.from('favorites').select('item_id').eq('user_id', session.user.id);
-                    window.userFavorites = new Set(favs?.map(f => f.item_id) || []);
-                } catch(e) {}
+                // Закрываем окно авторизации МОМЕНТАЛЬНО
+                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
 
-                // СЕНЬОР-ФИКС 2: Принудительно закрываем окно входа после успешной авторизации
-                if (typeof window.closeModal === 'function') {
-                    window.closeModal('auth-modal');
-                }
-
-                if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
-                if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
-                if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
-                if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
+                // СЕНЬОР-ФИКС 2: ФОНОВАЯ ЗАГРУЗКА
+                // Запрашиваем профиль и склад параллельно, не блокируя интерфейс
+                Promise.all([
+                    supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+                    supabase.from('favorites').select('item_id').eq('user_id', session.user.id)
+                ]).then(([profileRes, favsRes]) => {
+                    if (profileRes.data) {
+                        window.currentUser = { ...window.currentUser, ...profileRes.data };
+                        // Тихо подменяем имя, если в БД оно отличается
+                        const dbName = profileRes.data.name || userName;
+                        safeSet('profile-name', dbName);
+                        safeSet('header-user-name', dbName);
+                    }
+                    if (favsRes.data) {
+                        window.userFavorites = new Set(favsRes.data.map(f => f.item_id));
+                    }
+                    
+                    // Обновляем списки только когда данные готовы
+                    if (typeof window.renderProfileTabs === 'function') window.renderProfileTabs();
+                    if (typeof window.updateChatBadges === 'function') window.updateChatBadges();
+                    if (typeof window.initGlobalChatListener === 'function') window.initGlobalChatListener();
+                    if (typeof window.fetchItems === 'function' && !window.isInitialLoad) window.fetchItems(false);
+                }).catch(e => console.error("Фоновая ошибка:", e));
 
             } else {
+                // ЛОГИКА ДЛЯ ГОСТЯ (Срабатывает мгновенно при выходе)
                 window.currentUser = null;
                 window.userFavorites = new Set();
                 
@@ -208,8 +226,7 @@ export const AuthModule = {
                 }
                 
                 if (typeof window.showToast === 'function') window.showToast('С возвращением на SVALKA!', 'success');
-                // СЕНЬОР-ФИКС 3: Убрана принудительная перезагрузка. 
-                // Теперь Supabase сам вызовет onAuthStateChange и перерисует интерфейс мгновенно.
+                if (typeof window.closeModal === 'function') window.closeModal('auth-modal');
             }
             
         } catch (err) {
@@ -226,39 +243,38 @@ export const AuthModule = {
                 alert("Ошибка: " + errorMsg);
             }
         } finally {
-            // СЕНЬОР-ФИКС 4: Железобетонный возврат кнопки в исходное состояние при любом исходе
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
     },
 
-    // СЕНЬОР-ФИКС 5: Мгновенный выход без перезагрузки всей страницы
     logout: async () => {
-        try {
-            const { error } = await supabase.auth.signOut();
-            if (error) throw error;
-            
-            window.currentUser = null;
-            window.currentUserData = null;
-            if (window.userFavorites) window.userFavorites.clear();
-            
-            if (typeof window.closeModal === 'function') {
-                window.closeModal('profile-modal');
-            }
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
-                if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
-            }
-            
-            AuthModule.handleAuthChange(null);
-            
-            if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
-            
-            if (typeof window.goHome === 'function') window.goHome();
+        // СЕНЬОР-ФИКС 3: ОПТИМИСТИЧНЫЙ ВЫХОД
+        // Мы больше не ждем сервер. Пользователь сразу видит, что он вышел!
+        
+        // 1. Мгновенно очищаем локальные данные
+        window.currentUser = null;
+        window.currentUserData = null;
+        if (window.userFavorites) window.userFavorites.clear();
+        
+        // 2. Закрываем окна и меню
+        if (typeof window.closeModal === 'function') window.closeModal('profile-modal');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
+            if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
+        }
+        
+        // 3. Мгновенно перестраиваем интерфейс (прячем кнопку профиля, показываем "Войти")
+        AuthModule.handleAuthChange(null);
+        
+        if (typeof window.showToast === 'function') window.showToast("Вы успешно вышли из аккаунта", "success");
+        if (typeof window.goHome === 'function') window.goHome();
 
+        // 4. Тихо отправляем запрос на сервер в фоне
+        try {
+            await supabase.auth.signOut();
         } catch (error) {
-            console.error("Ошибка при выходе:", error);
-            if (typeof window.showToast === 'function') window.showToast("Ошибка при выходе", true);
+            console.error("Ошибка при фоновом выходе:", error);
         }
     }
 };
